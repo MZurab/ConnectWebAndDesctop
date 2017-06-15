@@ -1,19 +1,151 @@
-<!DOCTYPE html>
+
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>Connect - it's simple.</title>
+
+    <link rel="manifest" href="/manifest.json">
+      <!-- <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script> -->
+      <!-- <script class='CMLSourse' src="https://ramman.net/res/web/js/getdictionary.js"></script> -->
+
+
+
+    <link href="res/fonts/fonts.css" rel="stylesheet">
+    <link href="res/fonts/fontawesome/font-awesome.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="res/css/base.css">
+    <link rel="stylesheet" href="res/css/style.css">
+    <!-- <script type="text/javascript" src='res/js/jquery/jquery.js'></script> -->
+    <link href="res/fonts/fonts.css" rel="stylesheet">
+    <!-- <script src="res/js/firebase/firebase.js"></script> -->
+    <!-- <script type="text/javascript" src='res/js/jquery/jquery.countdown.min.js'></script> -->
+
+
+    <link rel="stylesheet" href='res/css/animate.css'>
+
+    <!-- <script type="text/javascript" src='res/js/modules/sweetalert2.js'></script> -->
+    <link rel="stylesheet" href='res/css/sweetalert2/sweetalert2.min.css'>
+    <!-- <script type="text/javascript" src='https://cdn.ramman.net/js/full/connect_common.js'></script> -->
+    <!-- <script type="text/javascript">
+      Connect_dictionaryAutoChange();
+        $(document).ready(function(){
+            Connect_checkToken(function(){ Connect_hLoader(); });
+        });
+      </script> -->
   </head>
   <body>
-    <h1>Hello World!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    We are using Node.js <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
-  </body>
+    <div class="rcontent_loader" style="width: 100%; height: 100%;"> 
+      <div class="connect_centerPosition">
+        <img id="rcontent_loader_image" src="res/images/gif/loader.min.gif">
+        <div style=" font-size: 1.5rem; " class='CML' cmlk='[system-load]'></div>
+      </div> 
+    </div>
+    <div id='container'>
+      <div class='backTopLineInContainer'></div>
+      <div id='block'>
+        <div id='appsBlock'>
+            <div class='bTopInAppsBlock'>
+                <img src='https://cdn.ramman.net/images/buttons/bTopInAppsBlock.png'>
+            </div>
+            <div class='AppsContainerInAppBlock'>
+                <div class="appsInAppBlock">
+                  <img src="https://cdn.ramman.net/images/icons/apps/app_chat.png">
+                  <div class="appsNameInAppsBlock CML" cmlk="[app-chat]"></div>
+                </div>
 
-  <script>
-    // You can also require other files to run in this process
-    require('./renderer.js')
-  </script>
+                <div class="appsInAppBlock">
+                  <img src="https://cdn.ramman.net/images/icons/apps/app_market.png">
+                  <div class="appsNameInAppsBlock CML" cmlk="[app-market]"></div>
+                </div>
+
+                <div class="appsInAppBlock">
+                  <img src="https://cdn.ramman.net/images/icons/apps/app_onepay.png">
+                  <div class="appsNameInAppsBlock CML" cmlk="[app-onepay]"></div>
+                </div>
+
+                <div class="appsInAppBlock">
+                  <img src="https://cdn.ramman.net/images/icons/apps/app_sharepay.png">
+                  <div class="appsNameInAppsBlock CML" cmlk="[app-sharepay]"></div>
+                </div>
+            </div>
+            <div class='bBottomInAppsBlock'>
+                <img src='https://cdn.ramman.net/images/buttons/bBottomInAppsBlock.png'>
+            </div>
+        </div>
+
+        <div id='menusBlock'>
+            <div class='topBlockInMenusBlock'>
+                <div id='IconUserInMenusBlock'>
+                  <a href='#'><img src='https://cdn.ramman.net/images/icons/users/noPhoto.png'></a>
+                </div>
+                <div id='UserNameInMenusBlock'>
+                  <a href='/sign' class='CML'>[system-signIn]/[system-signUp]</a>
+                </div>
+                <div class='ChoosePlaceInMenusBlock'></div>
+            </div>
+            <div class='searchBlockInMenusBlock'>
+                <form class='searchContainerInSearchBlock' class='CML'>
+                  <input type="text" class='searchInputInSearchBlock' placeholder="Поиск...">
+                  <input type="submit" class='submitInputInSearchBlock' value="">
+                </form>
+            </div>
+            <div class='usersBlockContainerInMenusBlock appLeftMenuWindow'>
+                 <div class='app' app-name='chat'>
+                  <div class='view' view-name='index'>
+                    <div class="scrolBlockForChat" id="MixItUpFC43CB" style="">
+
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id='viewBlock'>
+            <div class='topBlockInViewBlock'>
+                <div class='viewesInTopViewBlock'>
+                  <div id='IconUserInViewBlock'><a href='#'><img src='https://cdn.ramman.net/images/icons/apps/app_market.png'></a></div>
+                  <div id='UserNameInViewBlock'><a href='#' class='CML'>[dictionary-name]</a></div>
+                  <div id='UserTypeInViewBlock'><a href='#' class='CML'>[dictionary-service]</a></div>
+                </div>
+            </div>
+            <div id='viewAndChatBlockInViewBlock'>
+                <div id='subViewInViewAndChatBlock'>
+                    <div id="menuWindowInSubView"></div>
+                    <div id='viewWindow' class='appChiefWindow'>
+                        <div class="viewesInWindow app" app-name='chat' >
+                          <div class='view' view-name='index' id='leftBlockInViewWindow'></div> 
+
+                        </div>
+                    </div>
+                    <div class='chatBlockInViewBlock'>
+                        <div class="viewesFooterUnderWindow">
+                          <div id='senderBlockInViewBlock'>
+                            <div id='bottomViewInMsgBlock'>
+                              <ul class='rawBlockInBottomView'>
+                                <li class="LineInBottomViewRawBlock">1</li>
+                                <li class="LineInBottomViewRawBlock">2</li>
+                              </ul>
+                            </div>
+                            <div id='forTextInputInSenderBlock'>
+                              <textarea></textarea>
+                            </div>
+                            <div id='sendButtonInSenderBlock' class='sendTextMsgButton'></div>
+                            <img src='https://cdn.ramman.net/images/icons/miniConnectWebIcon.png' id='ConnectButtonInFuncButtons'>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+      </div>
+    </div>
+    <script data-main="main2" type="text/javascript" src="require.js"></script>
+    <!-- <script type="text/javascript" src='https://cdn.ramman.net/js/full/lbr/text/jquery.lettering.js'></script>
+    <script type="text/javascript" src='https://cdn.ramman.net/js/full/lbr/text/jquery.textillate.js'></script>
+
+    <script type="text/javascript" src='https://cdn.ramman.net/js/full/index.js'></script> -->
+  </body>
 </html>
