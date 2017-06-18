@@ -11,17 +11,17 @@ define(['jquery','dictionary','v_view','sweetalert2'],
 				@return 
 					bool
 			*/
-			_addDataToViewEl('body',
-				
-					v_view.initWithObj({
-						'arrListApps' : ArrForTemplate_appsForListApps
-					})
-				
-			,'change');
+			_addDataToViewEl(
+					'body',
+					v_view.initWithObj(
+						{
+							'arrListApps' : ArrForTemplate_appsForListApps
+						}
+					),
+					'change'
+			);
 			Dictionary.start();
 		}
-
-
 
 		function _issetDomEl (iNdomElement) {
 			/*
@@ -36,6 +36,7 @@ define(['jquery','dictionary','v_view','sweetalert2'],
 			if($(iNdomElement).length >0) return true;
 			return false;
 		}
+		
 		function _addDataToViewEl (iNdomElement,iNaddedData,iNwhere) {
 			/*
 				@inputs
@@ -68,36 +69,179 @@ define(['jquery','dictionary','v_view','sweetalert2'],
 				break;
 			}
 		}
+		//<? work with apps
+			var GlobalPageName = 'index';
+			function checkAppInList_ (iNapp,iNpage) {
+				/*
+					@discr
+						check for isset in list side by app code (iNapp) [and by page (iNpage)]
+					@inputs
+						@required
+							iNapp -> string
+						@optional
+							iNpage -> string
+				*/
+				var el = ".appLeftMenuWindow .app[app-name='"+iNapp+"']";
+				var page = iNpage||GlobalPageName;
+				if( typeof(page) == 'string' ) el += el + " .view[view-name='"+page+"']"; // CHANGE DELL
+				return _issetDomEl(el);
+				
+			}
+			function checkAppInChief_ (iNapp,iNpage) {
+				/*
+					@discr
+						check for isset in chief window by app code (iNapp) [and by page (iNpage)]
+					@inputs
+						@required
+							iNapp -> string
+						@optional
+							iNpage -> string
+				*/
+				var el = "#viewWindow .viewesInWindow.app[app-name='"+iNapp+"']";
+				var page = iNpage||GlobalPageName;
+				if( typeof(page) == 'string' ) el += el + " .view[view-name='"+page+"']";// CHANGE DELL
+				return _issetDomEl(el);
+			}
+			function _addToViewInChief (iNapp,iNpage) {
+				/*NOTREADY
+					@discr
+						add element to view in chief block
+					@inputs
+						@required
+							iNapp -> string
+						@optional
+							iNpage -> string
+				*/
+			}
+			function _addToPageInChief (iNapp,iNpage) {
+				/*NOTREADY
+					@discr
+						add element to page from view in chief block
+					@inputs
+						@required
+							iNapp -> string
+						@optional
+							iNpage -> string
+				*/
+			}
+			function _addToViewInList (iNapp,iNpage) {
+				/*NOTREADY
+					@discr
+						add element to view in list block
+					@inputs
+						@required
+							iNapp -> string
+						@optional
+							iNpage -> string
+				*/
+			}
+			function createAppInList_ (iNapp,iNpage) {
+				/*NOTREADY
+					@discr
+						crea
+					@inputs
+						@required
+							iNapp -> string
+						@optional
+							iNpage -> string
+				*/
+			}
+			function createAppInChief_ (iNdata) {
+				/*
+					@discr
+						check for isset in chief window by app code (iNapp) [and by page (iNpage)]
+					@inputs
+						@required
+							iNdata -> object
+								app 	-> string
+								content -> string
+								@optional
+									page 	-> string [Default - {GlobalPageName}]
+						@optional
+					@return
+					@deps
+						function : _addDataToViewEl
+						function : v_view.getApp
+						var 	 : GlobalPageName
 
-		function _checkAppInList (iNapp,iNpage) {
-			/*
-				@discr
-					check for isset in list side by app code (iNapp) [and by page (iNpage)]
-				@inputs
-					@required
-						iNapp -> string
-					@optional
-						iNpage -> string
-			*/
-			var el = ".appLeftMenuWindow .app[app-name='"+iNapp+"']";
-			if( typeof(iNpage) == 'string' ) el += el + " .view[view-name='"+iNpage+"']";
-			return _issetDomEl(el);
-			
-		}
-		function _checkAppInChief (iNapp,iNpage) {
-			/*
-				@discr
-					check for isset in chief window by app code (iNapp) [and by page (iNpage)]
-				@inputs
-					@required
-						iNapp -> string
-					@optional
-						iNpage -> string
-			*/
-			var el = "#viewWindow .viewesInWindow.app[app-name='"+iNapp+"']";
-			if( typeof(iNpage) == 'string' ) el += el + " .view[view-name='"+iNpage+"']";
-			return _issetDomEl(el);
-		}
+				*/
+				var objForGetTemplate = { 'content':iNdata['content'],'app':iNdata['app']  };
+
+				// set page if specified or set default val = index
+					if(typeof(iNdata['page'] == 'string')) 
+						objForGetTemplate['page'] = iNdata['page']; 
+					else 
+						objForGetTemplate['page'] = GlobalPageName;
+
+				// get element passed {page,content,app} in objForGetTemplate for generating apptemplate
+					var element = v_view.getApp(objForGetTemplate);
+				// get element passed objForGetTemplate for generating template
+					_addDataToViewEl(
+							'#viewWindow',
+							element,
+							'begin'
+					);
+			}
+			function createAppPageInChief_ (iNdata) {
+				/*
+					@discr
+						check for isset in chief window by app code (iNapp) [and by page (iNpage)]
+					@inputs
+						@required
+							iNdata -> object
+								app 	-> string
+								content -> string
+								@optional
+									page 	-> string [Default - {GlobalPageName}]
+						@optional
+					@return
+					@deps
+						function : _addDataToViewEl
+						function : v_view.getApp
+						var 	 : GlobalPageName
+
+				*/
+				var objForGetTemplate = { 'content':iNdata['content'],'app':iNdata['app']  };
+
+				// set page if specified or set default val = index
+					if(typeof(iNdata['page'] == 'string')) 
+						objForGetTemplate['page'] = iNdata['page']; 
+					else 
+						objForGetTemplate['page'] = GlobalPageName;
+
+				// get element passed {page,content} in objForGetTemplate for generating page template
+					var element = v_view.getPage(objForGetTemplate);
+				// get element passed objForGetTemplate for generating template
+					_addDataToViewEl(
+							"#viewWindow .viewesInWindow.app[app-name='"+iNdata['app']+"']",
+							element,
+							'begin'
+					);
+			}
+
+			function _openAppInChief (iNapp,iNpage) {
+				/*NOTREADY
+					@discr
+						check for isset in chief window by app code (iNapp) [and by page (iNpage)]
+					@inputs
+						@required
+							iNapp -> string
+						@optional
+							iNpage -> string
+				*/
+			}
+			function _openAppInChief (iNapp,iNpage) {
+				/*NOTREADY
+					@discr
+						check for isset in chief window by app code (iNapp) [and by page (iNpage)]
+					@inputs
+						@required
+							iNapp -> string
+						@optional
+							iNpage -> string
+				*/
+			}
+		//>! work with apps
 
 		//<? work with modal windows sweetalert
 			function modalWindow_vError(iName,iNtext){

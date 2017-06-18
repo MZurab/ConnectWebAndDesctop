@@ -139,7 +139,7 @@ require2(['jquery','template7','m_view','dictionary'], function($, Template7,m_v
     Запуск
 
     view -
-    `
+    `http://etp.kartoteka.ru/trade/view/purchase/general.html?id=100791615
 
     <noscript><div><img src="https://mc.yandex.ru/watch/44940067" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->

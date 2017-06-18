@@ -126,20 +126,44 @@ define(['jquery','template7'], function ($,Template7) {
 			   </div>
 		`;
 		var View_appForChiefView = `
-			<div class="viewesInWindow app" app-name="{{appName}}">
-	           {{page}}
+			<div class="viewesInWindow app" app-name="{{app}}">
+	           {{pageContent}}
 	        </div>
         `;
         var View_pageForApp = `
-	        <div class="view" view-name="{{name}}" id="leftBlockInViewWindow">
+	        <div class="view" view-name="{{page}}" id="leftBlockInViewWindow">
 	        	{{content}}
 	        </div>
         `;
-		function getChiefApp () {
-
+		function _getChiefApp (iNdata) {
+			/*
+				@discr
+					get app template by object (iNdata) with page
+				@inputs
+					@required
+						iNdata -> object
+							app 	-> string
+							page 	-> string
+							content -> string
+					@optional
+			*/
+			var temp = Template7.compile(View_appForChiefView);
+			iNdata['pageContent'] = _getPageForApp(iNdata);
+			return temp(iNdata);
 		}
-		function getPageForApp () {
-
+		function _getPageForApp (iNdata) {
+			/*
+				@discr
+					get page for app by object (iNdata)
+				@inputs
+					@required
+						iNdata -> object
+							pageName -> string
+							content -> string
+					@optional
+			*/
+			var temp = Template7.compile(View_pageForApp);
+			return temp(iNdata);
 		}
 
 	//<? View_listApps 
@@ -190,6 +214,9 @@ define(['jquery','template7'], function ($,Template7) {
 	return {
 		getViewListApps	: _getViewListApps,
 		initWithObj 	: _initWithObj,
-		html_loader		: html_loader
+		html_loader		: html_loader,
+
+		getPage 		: _getPageForApp,
+		getApp 			: _getChiefApp,
 	}
 });
