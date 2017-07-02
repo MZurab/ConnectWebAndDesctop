@@ -1,4 +1,63 @@
 define(['jquery','template7'], function ($,Template7) {
+
+	function _d_showLoader (iNid) {
+		if(typeof(iNid) == 'undefined')
+			iNid = 'body';
+		_d_closeLoader(iNid);
+		$(iNid).append(_v_html_loader);
+	}
+
+	function _d_closeLoader(iNid) {
+		if(typeof(iNid) == 'undefined') 
+			iNid = 'body';
+		$(iNid + ' .rcontent_loader').remove();
+	}
+
+	function _d_issetDomEl (iNdomElement) {
+		/*
+			@discr
+				check dom element for isset
+			@inputs
+				@required
+					iNdomElement -> string
+			@return 
+				bool
+		*/
+		if($(iNdomElement).length >0) return true;
+		return false;
+	}
+	function _d_addDataToViewEl (iNdomElement,iNaddedData,iNwhere) {
+		/*
+			@inputs
+				@required
+					iNdomElement -> string
+					iNaddedData -> string | object of dom
+				@optional
+					iNwhere -> string [default = begin] [begin, end, before, after]
+		*/
+		// if( typeof(iNwhere) != 'string')iNwhere='begin';
+		switch(iNwhere){
+			case "change":
+				$(iNdomElement).html(iNaddedData);
+			break;
+
+			case "after":
+				$(iNdomElement).append(iNaddedData);
+			break;
+
+			case "before":
+				$(iNdomElement).before(iNaddedData);
+			break;
+
+			case "after":
+				$(iNdomElement).after(iNaddedData);
+			break;
+
+			default: // begin
+				$(iNdomElement).prepend(iNaddedData);
+			break;
+		}
+	}	
 	// chief container for body
 		var html_cont = `
 			<div id='container'>
@@ -44,6 +103,9 @@ define(['jquery','template7'], function ($,Template7) {
         		}
         	);
 		}
+
+
+
 	// list view for output categories, menus, lists, chats 
 		var View_listViews = `
 			<div class='topBlockInMenusBlock'>
@@ -65,30 +127,9 @@ define(['jquery','template7'], function ($,Template7) {
                 
             </div>
 		`;
-		// appName -> String, views -> array of objects {viewName,viewContent}
-		var View_appsBlocklistViews = `
-			<div class='app' app-name='{{appName}}'>
-			  {{#each views}}
-		          <div class='view' view-name='{{viewName}}'>
-		          	{{viewContent}}
-		          </div>
-	          {{/each}}
-	        </div>
-        `;
-        function getListViewForApp (iNdata) {
-        	/*
-        		@inputs
-        			iNdata -> object
-        				appName  -> String
-        				views 	 -> Array
-							view-name 	-> String
-							viewContent -> String
-				@deps
-					View_listViews : var
-        	*/
-        	var temp = Template7.compile(View_listViews);
-        	return temp(iNdata);
-        }
+		
+
+        
 
 	// chief biggest view for output chief information
 		var View_chiefView = `
@@ -125,46 +166,7 @@ define(['jquery','template7'], function ($,Template7) {
 			      </div>
 			   </div>
 		`;
-		var View_appForChiefView = `
-			<div class="viewesInWindow app" app-name="{{app}}">
-	           {{pageContent}}
-	        </div>
-        `;
-        var View_pageForApp = `
-	        <div class="view" view-name="{{page}}" id="leftBlockInViewWindow">
-	        	{{content}}
-	        </div>
-        `;
-		function _getChiefApp (iNdata) {
-			/*
-				@discr
-					get app template by object (iNdata) with page
-				@inputs
-					@required
-						iNdata -> object
-							app 	-> string
-							page 	-> string
-							content -> string
-					@optional
-			*/
-			var temp = Template7.compile(View_appForChiefView);
-			iNdata['pageContent'] = _getPageForApp(iNdata);
-			return temp(iNdata);
-		}
-		function _getPageForApp (iNdata) {
-			/*
-				@discr
-					get page for app by object (iNdata)
-				@inputs
-					@required
-						iNdata -> object
-							pageName -> string
-							content -> string
-					@optional
-			*/
-			var temp = Template7.compile(View_pageForApp);
-			return temp(iNdata);
-		}
+		
 
 	//<? View_listApps 
 		// for output apps icon with name for chosing
@@ -199,7 +201,7 @@ define(['jquery','template7'], function ($,Template7) {
     //>! View_listApps 
 	
     //<? work with loader
-			var html_loader = `
+			var _v_html_loader = `
 			<div class="rcontent_loader" style="width: 100%; height: 100%;">
 				<div class="connect_centerPosition">
 					<img id="rcontent_loader_image" src="https://cdn.ramman.net/images/gif/loader.min.gif">
@@ -212,11 +214,20 @@ define(['jquery','template7'], function ($,Template7) {
 
 
 	return {
-		getViewListApps	: _getViewListApps,
-		initWithObj 	: _initWithObj,
-		html_loader		: html_loader,
+	  // common base functions
+	    'd_issetDomEl'          : '_d_issetDomEl',
+	    'd_addDataToViewEl'     : '_d_addDataToViewEl',
 
-		getPage 		: _getPageForApp,
-		getApp 			: _getChiefApp,
+	  // constructors functions
+	    'initWithObj'           : '_initWithObj',
+
+	  //p 'getListApps'            : 'getListApps',
+	    '_getViewListApps'      : '_getViewListApps',
+	    'v_html_loader'         : '_v_html_loader',
+
+	  // functions for loader
+	    'd_showLoader'          : '_d_showLoader',
+	    'd_closeLoader'         : '_d_closeLoader',
+
 	}
 });

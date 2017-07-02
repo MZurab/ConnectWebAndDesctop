@@ -16,13 +16,15 @@ require2.config({
         'dictionary'           : 'mvc/model/dictionary',
 
         /*<? views */
-            'v_view'               : 'mvc/view/view',
-            'v_chat'               : 'mvc/view/chat',
+            'v_view'           : 'mvc/view/view',
+            'v_chat'           : 'mvc/view/chat',
+            'v_app'            : 'mvc/view/app',
         /*>! views */
 
          /*<? models */
-            'm_view'               : 'mvc/model/view',
-            'm_chat'               : 'mvc/model/chat',
+            'm_view'           : 'mvc/model/view',
+            'm_chat'           : 'mvc/model/chat',
+            'm_app'            : 'mvc/model/app',
         /*>! models */
     }
     ,
