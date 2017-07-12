@@ -1,4 +1,4 @@
-define(['v_app','jquery','v_view'],function(v_app,$,v_view){
+define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 	//<? transactors
 		function _td_hidePages (iNapp,iNarray,iNtypeApp) {
 			v_view.d_hidePages (iNapp,iNarray,iNtypeApp)
@@ -13,6 +13,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view){
 			v_view.d_hideApps (iNarray,iNtypeApp)
 		}
 	//>! transactors
+
 	function _readyChiefApp (iNdata,iNfunction) {
 		/*
 			@discr
@@ -83,7 +84,10 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view){
 
 							extra
 				@optional
-					iNfunction -> function
+					iNfunction -> object
+						createApp  : function
+						createPage : function
+						createPage : function
 			@deps
 			@return
 			@algorithm
@@ -100,7 +104,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view){
 		if(typeof(iNdata['extra']) == 'string') dataForCheckApp['extra'] = iNdata['extra'];
 		// get count this apps
 		issetApps = v_app.d_checkListApp(dataForCheckApp);
-		// create app if is not isset
+		// create app if it is not isset
 		if (issetApps < 1) {
 			// prepare obj
 			objectForCreateApp = dataForCheckApp;
@@ -128,6 +132,8 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view){
 	function _openChiefApp (iNdata,iNfunction) {
 		/*
 			@discr
+			@example
+				_openChiefApp({'app':'chat'}
 			@input
 				@required
 					iNdata -> object

@@ -26,8 +26,7 @@ require2.config({
             'm_chat'           : 'mvc/model/chat',
             'm_app'            : 'mvc/model/app',
         /*>! models */
-    }
-    ,
+    },
     shim: {
         /* <? jquery modules */
             'jquery.countdown': {
@@ -74,7 +73,6 @@ require2.config({
         'css': 'require-css/css' // or whatever the path to require-css is
       }
     }
-
 });
 require2(['jquery','template7','m_view','dictionary'], function($, Template7,m_view,Dictionary) {
     $(function() {

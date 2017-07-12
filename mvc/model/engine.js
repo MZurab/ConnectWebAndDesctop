@@ -1,4 +1,12 @@
-define([], function () {
+define(['jquery','v_view','m_app'], function ($,v_view,m_app) {
+
+
+
+
+
+
+
+
 	//@<<< TIME FUNCTIONS
 		function Connect_getSec () {
 		    return new Date().getTime()/1000;
@@ -58,24 +66,94 @@ define([], function () {
 		         // addSource(audio, 'audio/'+Math.ceil(Math.random() * 5)+'.ogg');
 		         audio.appendTo('body');
 		    }
-	/*?<<< SOUND  */  
-	return {
+	/*?<<< SOUND  */
 
+
+	/*?<<< APP */
+		function _openApp ( iName, iNpage ) {
+			/*
+				@disc
+				@deps
+					function : getAppByName
+			*/
+
+			//get module name by app name
+			var app = getAppByName(iName);
+			m_app.openChiefApp ( { 'app': iName, 'page' : iNpage } , function () {
+				app.onInit();
+				app.onStart();
+				app.onCreate();
+				app.onLoad();
+				app.onAppear();
+			});
+		}
+
+		function _closeApp (iName,iNpage) {
+			/*
+				@disc
+				@deps
+					function : getAppByName
+			*/
+
+			//get module name by app name
+			var app = getAppByName(iName);
+			app.onDisappear();
+			app.onClose();
+		}
+		function getAppByName(iName){
+			/*
+				@disc
+				@ipputs
+					iName -> string
+				@return
+					+: object
+					-: false -> bool 
+			*/
+			switch (iName) {
+				case "chat":
+					return m_chat;
+				break;
+
+				case "onepay":
+					return m_onepay;
+				break;
+
+				case "market":
+					return m_market;
+				break;
+
+				default:
+					return false;
+				break;
+
+			}
+		}
+	/*?>>> APP */
+
+	return {
+		// apps
+
+		// local storage
 		clearStorage 	: Connect_clear,
 		delStorage  	: Connect_del,
 		getStorage 		: Connect_get,
 		saveStorage 	: Connect_save,
 
+		// time functions
 		getTime 		: Connect_getTime,
 		getTimeSec 		: Connect_getSec,
 
+		// add script to dom
 		addScript 		: Connect_addScript,
+		
+		// Cycles
+		foreach			: Connect_forEach
 
-		'foreach'		: Connect_forEach
-
+		//json
 		getJsonKeys 	: Connect_getJsonKeys,
 		getJsonKey 		: Connect_getJsonKey
 		
+		//audio
 		playSendMsgSound: Connect_playSendMsgSound,
 		addSource 		: addSource,
 

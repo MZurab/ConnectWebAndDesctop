@@ -205,9 +205,21 @@ define(['jquery','template7'], function ($,Template7) {
 			<div class="rcontent_loader" style="width: 100%; height: 100%;">
 				<div class="connect_centerPosition">
 					<img id="rcontent_loader_image" src="https://cdn.ramman.net/images/gif/loader.min.gif">
-					<div class ="CML" style=" font-size: 1.5rem;">[system-load]</div>
+					<div class ="CML operationName" style=" font-size: 1.5rem;">[system-load]</div>
 				</div> 
 			</div>`;
+			function setTextInLoader (iNtext) {
+				/*
+					@discr
+						set text in loader
+					@inputs
+						@required
+							iNtext -> string
+
+				*/
+				$('.rcontent_loader operationName').iNtext();
+			}
+			
 	//>! work with loader
 
 	

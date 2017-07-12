@@ -8,6 +8,10 @@ define(['jquery','dictionary','v_view','sweetalert2'],
 		function _t_addDataToViewEl (iNdomElement,iNaddedData,iNwhere) {
 			v_view.d_addDataToViewEl(iNdomElement,iNaddedData,iNwhere)
 		}
+		function _t_setTextInLoader (iNtext) {
+			v_view.setTextInLoader(iNtext)
+		}
+		
 	//>! transactor methods
 
 	//<? base methods
@@ -93,6 +97,21 @@ define(['jquery','dictionary','v_view','sweetalert2'],
 			function _t_closeLoader (iNid) {
 				v_view.d_closeLoader(iNid);
 			}
+			function _d_setTextInLoaderByKey (iNkey) {
+				/*
+					@discr
+						set text in loader by dictionary key
+					@inputs
+						@required
+							iNtext -> string
+					@deps
+						function: Dictionary -> withString
+						function: _t_setTextInLoader
+
+				*/
+				var text = Dictionary.withString(iNkey);
+				_t_setTextInLoader(text);
+			}
 
 		// for hide loader  [optional with determine view by path to delete loader]
 			
@@ -107,7 +126,9 @@ define(['jquery','dictionary','v_view','sweetalert2'],
 		checkAppInList  : _checkAppInList,
 		checkAppInChief : _checkAppInChief,
 
-		init 			: _init,
+		init 					: _init,
+		d_setTextInLoader 		: _td_setTextInLoader,
+		d_setTextInLoaderByKey 	: _d_setTextInLoaderByKey,
 
 		/* private
 			getViewListApps
