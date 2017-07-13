@@ -227,19 +227,19 @@ define(['jquery','template7'], function ($,Template7) {
 
 	return {
 	  // common base functions
-	    'd_issetDomEl'          : '_d_issetDomEl',
-	    'd_addDataToViewEl'     : '_d_addDataToViewEl',
+	    'd_issetDomEl'          : _d_issetDomEl,
+	    'd_addDataToViewEl'     : _d_addDataToViewEl,
 
 	  // constructors functions
-	    'initWithObj'           : '_initWithObj',
+	    'initWithObj'           : _initWithObj,
 
 	  //p 'getListApps'            : 'getListApps',
-	    '_getViewListApps'      : '_getViewListApps',
-	    'v_html_loader'         : '_v_html_loader',
+	    '_getViewListApps'      : _getViewListApps,
+	    'v_html_loader'         : _v_html_loader,
 
 	  // functions for loader
-	    'd_showLoader'          : '_d_showLoader',
-	    'd_closeLoader'         : '_d_closeLoader',
+	    'd_showLoader'          : _d_showLoader,
+	    'd_closeLoader'         : _d_closeLoader,
 
 	}
 });

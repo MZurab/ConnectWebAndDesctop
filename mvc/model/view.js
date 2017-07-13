@@ -8,7 +8,7 @@ define(['jquery','dictionary','v_view','sweetalert2'],
 		function _t_addDataToViewEl (iNdomElement,iNaddedData,iNwhere) {
 			v_view.d_addDataToViewEl(iNdomElement,iNaddedData,iNwhere)
 		}
-		function _t_setTextInLoader (iNtext) {
+		function _td_setTextInLoader (iNtext) {
 			v_view.setTextInLoader(iNtext)
 		}
 		
@@ -121,10 +121,10 @@ define(['jquery','dictionary','v_view','sweetalert2'],
 		showLoader 		: _showLoader,
 		closeLoader 	: _t_closeLoader,
 
-		isset 			: _issetDomEl,
-		add 			: _addDataToViewEl,
-		checkAppInList  : _checkAppInList,
-		checkAppInChief : _checkAppInChief,
+		isset 			: _t_issetDomEl,
+		add 			: _t_addDataToViewEl,
+		// checkAppInList  : _checkAppInList,
+		// checkAppInChief : _checkAppInChief,
 
 		init 					: _init,
 		d_setTextInLoader 		: _td_setTextInLoader,

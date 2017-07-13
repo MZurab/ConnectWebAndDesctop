@@ -25,6 +25,7 @@ require2.config({
             'm_view'           : 'mvc/model/view',
             'm_chat'           : 'mvc/model/chat',
             'm_app'            : 'mvc/model/app',
+            'm_engine'         : 'mvc/model/engine',
         /*>! models */
     },
     shim: {
@@ -74,7 +75,7 @@ require2.config({
       }
     }
 });
-require2(['jquery','template7','m_view','dictionary'], function($, Template7,m_view,Dictionary) {
+require2(['jquery','template7','m_view','dictionary','m_engine'], function($, Template7,m_view,Dictionary,m_engine) {
     $(function() {
         console.log('start!');
         // view1.rend('black');  
@@ -96,9 +97,11 @@ require2(['jquery','template7','m_view','dictionary'], function($, Template7,m_v
       
         console.log( 'html', html);
 
+            m_engine.openApp('chat','index');
         Dictionary.autoChange(function () {
-            m_view.hideLoader();
-            m_view.init();
+            // m_view.hideLoader();
+            // m_view.init();
+            m_engine.openApp('chat','index');
         });
         
 

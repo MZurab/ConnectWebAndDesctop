@@ -58,7 +58,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		} else if( typeof(iNdata['page'] ) == 'string' ) {
 			objectForCreatePage = {'page':iNdata['page'],'app':iNdata['app']};
 			if(typeof(iNdata['content']) == 'string') 	objectForCreatePage['content'] 	= iNdata['content'];
-			intIssetPages = v_app._d_checkPageInChiefApp(objectForCreatePage);
+			intIssetPages = v_app.d_checkPageInChiefApp(objectForCreatePage);
 			if(intIssetPages < 1) {
 				//if page is not isset
 				v_app.d_createPageInChiefApp(objectForCreatePage);
@@ -154,6 +154,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 				#2 invoke func ready app
 				#3 close loader
 		*/
+		console.log('open chief app from app model funciton _openChiefApp started')
 		v_view.d_showLoader();
 		_readyChiefApp (iNdata,function () {
 			if(typeof(iNfunction) == 'function') iNfunction();
@@ -196,14 +197,14 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 
 
 	return {
-	    'openChiefApp'  : '_openChiefApp',
-	    'openListApp'   : '_openListApp',
-	    'readyListApp'  : '_readyListApp',
-	    'readyChiefApp' : '_readyChiefApp',
+	    'openChiefApp'  : _openChiefApp,
+	    'openListApp'   : _openListApp,
+	    'readyListApp'  : _readyListApp,
+	    'readyChiefApp' : _readyChiefApp,
 
-	    'd_hidePages'   : '_td_hidePages',
-	    'd_showPages'   : '_td_showPages',
-	    'd_hideApps'    : '_td_hideApps',
-	    'd_showApps'    : '_td_showApps',
-	  }
+	    'd_hidePages'   : _td_hidePages,
+	    'd_showPages'   : _td_showPages,
+	    'd_hideApps'    : _td_hideApps,
+	    'd_showApps'    : _td_showApps,
+	}
 });

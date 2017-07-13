@@ -1,4 +1,4 @@
-define(['jquery','template7','v_view'],function($,Template7,'v_view'){
+define(['jquery','template7','v_view'],function($,Template7,v_view){
 	// appName -> String, views -> array of objects {viewName,viewContent}
 	var View_chiefForAppInList = `
 		<div class='app' app-name='{{app}}'>
@@ -485,30 +485,30 @@ define(['jquery','template7','v_view'],function($,Template7,'v_view'){
 
         return {
 		  // functions for list app
-		    'getListApp'            : '_getListApp',
-		    'getPageForListApp'     : '_getPageForListApp',
-		    'd_updatePageInListApp' : '_d_updatePageInListApp',
-		    'd_clearPageInListApp'  : '_d_clearPageInListApp',
-		    'd_checkPageInListApp'  : '_d_checkPageInListApp',
-		    'd_checkListApp'        : '_d_checkListApp',
-		    'd_createPageInListApp' : '_d_createPageInListApp',
-		    'd_createListApp'       : '_d_createListApp',
+		    'getListApp'            : _getListApp,
+		    'getPageForListApp'     : _getPageForListApp,
+		    'd_updatePageInListApp' : _d_updatePageInListApp,
+		    'd_clearPageInListApp'  : _d_clearPageInListApp,
+		    'd_checkPageInListApp'  : _d_checkPageInListApp,
+		    'd_checkListApp'        : _d_checkListApp,
+		    'd_createPageInListApp' : _d_createPageInListApp,
+		    'd_createListApp'       : _d_createListApp,
 
 		  // functions for chief app
-		    'getChiefApp'           : '_getChiefApp',
-		    'getPageForChiefApp'    : '_getPageForChiefApp',
-		    'd_updatePageInChiefApp': '_d_updatePageInChiefApp',
-		    'd_clearPageInChiefApp' : '_d_clearPageInChiefApp',
-		    'd_checkPageInChiefApp' : '_d_checkPageInChiefApp',
-		    'd_checkChiefApp'       : '_d_checkChiefApp',
-		    'd_createPageInChiefApp': '_d_createPageInChiefApp',
-		    'd_createChiefApp'      : '_d_createChiefApp',
+		    'getChiefApp'           : _getChiefApp,
+		    'getPageForChiefApp'    : _getPageForChiefApp,
+		    'd_updatePageInChiefApp': _d_updatePageInChiefApp,
+		    'd_clearPageInChiefApp' : _d_clearPageInChiefApp,
+		    'd_checkPageInChiefApp' : _d_checkPageInChiefApp,
+		    'd_checkChiefApp'       : _d_checkChiefApp,
+		    'd_createPageInChiefApp': _d_createPageInChiefApp,
+		    'd_createChiefApp'      : _d_createChiefApp,
 
 		   // effect functions for chief and list apps
-		    'd_showApps'            : '_d_showApps',
-		    'd_hideApps'            : '_d_hideApps',
-		    'd_showPages'           : '_d_showPages',
-		    'd_hidePages'           : '_d_hidePages'
+		    'd_showApps'            : _d_showApps,
+		    'd_hideApps'            : _d_hideApps,
+		    'd_showPages'           : _d_showPages,
+		    'd_hidePages'           : _d_hidePages
 		}
 
 });

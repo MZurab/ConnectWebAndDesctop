@@ -116,9 +116,9 @@ define(
         }
 
 		return {
-			vLoader  : vLoader,
-			hLoader	 : hLoader,
-			getViewListApps	 : _getViewListApps,
+			// vLoader  : vLoader,
+			// hLoader	 : hLoader,
+			// getViewListApps	 : _getViewListApps,
 		}
 
 	}

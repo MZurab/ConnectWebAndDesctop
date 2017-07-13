@@ -1,4 +1,4 @@
-define(['jquery','v_view','m_app'], function ($,v_view,m_app) {
+define(['jquery','v_view','m_app','m_chat'], function ($,v_view,m_app,m_chat) {
 
 
 
@@ -78,7 +78,10 @@ define(['jquery','v_view','m_app'], function ($,v_view,m_app) {
 			*/
 
 			//get module name by app name
+			console.log('_openApp from engine started');
 			var app = getAppByName(iName);
+			console.log('_openApp app from engine',app);
+			console.log('_openApp m_app from engine',m_app);
 			m_app.openChiefApp ( { 'app': iName, 'page' : iNpage } , function () {
 				app.onInit();
 				app.onStart();
@@ -147,15 +150,20 @@ define(['jquery','v_view','m_app'], function ($,v_view,m_app) {
 		addScript 		: Connect_addScript,
 		
 		// Cycles
-		foreach			: Connect_forEach
+		foreach			: Connect_forEach,
 
 		//json
 		getJsonKeys 	: Connect_getJsonKeys,
-		getJsonKey 		: Connect_getJsonKey
+		getJsonKey 		: Connect_getJsonKey,
 		
 		//audio
 		playSendMsgSound: Connect_playSendMsgSound,
 		addSource 		: addSource,
+
+		//aps
+		openApp  		: _openApp,
+		closeApp  		: _closeApp,
+
 
 	}
 });
