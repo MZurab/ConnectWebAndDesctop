@@ -12,6 +12,10 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		function _td_hideApps (iNarray,iNtypeApp) {
 			v_view.d_hideApps (iNarray,iNtypeApp)
 		}
+		function _td_openPage (iNapp,iNpage,iNtype) {
+			v_view.d_openPage (iNapp,iNpage,iNtype);
+		}
+		
 	//>! transactors
 
 	function _readyChiefApp (iNdata,iNfunction) {
@@ -158,7 +162,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		v_view.d_showLoader();
 		_readyChiefApp (iNdata,function () {
 			if(typeof(iNfunction) == 'function') iNfunction();
-			v_view.d_showLoader();
+			// v_view.d_showLoader();
 		});
 	}
 

@@ -5,12 +5,14 @@ define(['jquery','template7'], function ($,Template7) {
 			iNid = 'body';
 		_d_closeLoader(iNid);
 		$(iNid).append(_v_html_loader);
+		console.log(iNid + ' .rcontent_loader view');
 	}
 
 	function _d_closeLoader(iNid) {
 		if(typeof(iNid) == 'undefined') 
 			iNid = 'body';
 		$(iNid + ' .rcontent_loader').remove();
+		console.log(iNid + ' .rcontent_loader hide');
 	}
 
 	function _d_issetDomEl (iNdomElement) {
@@ -41,7 +43,7 @@ define(['jquery','template7'], function ($,Template7) {
 				$(iNdomElement).html(iNaddedData);
 			break;
 
-			case "after":
+			case "end":
 				$(iNdomElement).append(iNaddedData);
 			break;
 

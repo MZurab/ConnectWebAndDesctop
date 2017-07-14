@@ -97,11 +97,12 @@ require2(['jquery','template7','m_view','dictionary','m_engine'], function($, Te
       
         console.log( 'html', html);
 
-            m_engine.openApp('chat','index');
+            m_engine.openApp('chat','private');
+            m_engine.openApp('chat','private2');
         Dictionary.autoChange(function () {
             // m_view.hideLoader();
             // m_view.init();
-            m_engine.openApp('chat','index');
+            m_engine.openApp('chat','private');
         });
         
 

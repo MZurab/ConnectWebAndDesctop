@@ -243,6 +243,8 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 			var selector = '#viewWindow .app[app-name="'+iNdata['app']+'"] .view[view-name="'+iNdata['page']+'"]';
 			if(typeof(iNdata['extra']) == 'string') 	selector += ' ' + iNdata['extra'];
         	$(selector).html(iNdata['content']);
+        	console.log('_d_updatePageInChiefApp selector',selector);
+
         }
         function _d_clearPageInChiefApp (iNdata) {
         	/*
@@ -281,6 +283,8 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 			*/
 			var selector = '#viewWindow .app[app-name="'+iNdata['app']+'"] .view[view-name="'+iNdata['page']+'"]';
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
+			console.log('_d_checkPageInChiefApp selector',selector);
+			console.log('_d_checkPageInChiefApp selector length',$(selector).length);
         	return $(selector).length;
         }
 
@@ -300,6 +304,8 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 			*/
 			var selector = '#viewWindow .app[app-name="'+iNdata['app']+'"]';
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
+			console.log('v_app _d_checkChiefApp selector',selector);
+			console.log('v_app _d_checkChiefApp selector length',$(selector).length);
         	return $(selector).length;
         }
 		
@@ -322,7 +328,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 			*/
 			var selector = '#viewWindow .app[app-name="'+iNdata['app']+'"] ';
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
-        	v_view.addDataToViewEl(selector, _getPageForChiefApp(iNdata) ,'change')
+        	v_view.d_addDataToViewEl(selector, _getPageForChiefApp(iNdata) ,'end')
         }
         
         function _d_createChiefApp (iNdata) {
@@ -347,7 +353,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 			*/
 			var selector = '#viewWindow'; 
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
-        	v_view.addDataToViewEl(selector, _getChiefApp(iNdata) ,'change')
+        	v_view.d_addDataToViewEl(selector, _getChiefApp(iNdata) ,'change')
         }
 
         function _d_showApps (iNarray,iNtypeApp) {
@@ -377,14 +383,15 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
     		if(typeof(iNarray) !=  'object' || Array.isArray(iNarray) != true) iNarray = [iNarray];
     		for (var iKey in iNarray) {
     			appNameForIletiral = iNarray[iKey];
-    			$(selector + ' [app-name="' + appNameForIletiral + '"]').show();
+    			$(selector + '[app-name="' + appNameForIletiral + '"]').show();
     		}
         }
         function _d_hideApps (iNarray,iNtypeApp) {
         	/*
         		@example
-        			d_showApps(['chat'],'chief')
-        			d_showApps('chat') == d_showApps('chat','chief')
+        			_d_hideApps(['chat'],'chief')
+        			_d_hideApps('chat') == d_showApps('chat','chief')
+        			_d_hideApps() 		== d_showApps('all','chief')
         		@disc
 					did show apps in passed by 1st argument as string or array (multu effect) and by 2nd argument in Chief (default) or List container
         		@input
@@ -394,20 +401,26 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 	        					namesOfApp
 	    					(stirng)
 	    						nameOfApp
+    						Default [all]
 					@optional
 						iNtypeApp -> string [chief || list]
 							{DEFAULT - chief}
 				@return
 				@deps
         	*/
-        	var selector, appNameForIletiral;
+        	var selector, appNameForIletiral,thisSelector;
 
-        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewWindow .app'
+        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewWindow .app';
+        	if( typeof(iNarray) != 'string' && typeof(iNarray) != 'object' ) iNarray = 'all';
         	else selector = '.usersBlockContainerInMenusBlock .app'
     		if(typeof(iNarray) !=  'object' || Array.isArray(iNarray) != true) iNarray = [iNarray];
     		for (var iKey in iNarray) {
+    			thisSelector = selector
     			appNameForIletiral = iNarray[iKey];
-    			$(selector + ' [app-name="' + appNameForIletiral + '"]').hide();
+    			if(appNameForIletiral != 'all') {
+    				thisSelector += '[app-name="' + appNameForIletiral + '"]';
+    			}
+    			$(thisSelector).hide();
     		}
         }
 		function _d_showPages (iNapp,iNarray,iNtypeApp) {
@@ -442,14 +455,48 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
     		if(typeof(iNarray) !=  'object' || Array.isArray(iNarray) != true) iNarray = [iNarray];
     		for (var iKey in iNarray) {
     			pageNameForIletiral = iNarray[iKey];
-    			$(selector + ' [app-name="' + appName + '"] .view[view-name="'+pageNameForIletiral+'"]').show();
+    			$(selector + '[app-name="' + appName + '"] .view[view-name="'+pageNameForIletiral+'"]').show();
     		}
     	}
+    	function _d_openPage (iNapp,iNpage,iNtype) {
+    		/*
+        		@example
+        			_d_openPage('chat','index')
+        		@disc
+					open page with hide all other app and other pages in this app
+				@input
+        			@required
+        				iNapp -> string
+        				iNpage -> string
+					@optional
+						iNtype -> string
+							by default 'chief' OR 'list'
+
+				@return
+				@algoritm
+					#0 set default values if need
+					#1 hide all apps
+					#2 hide all pages in this app
+					#3 show this app
+					#4 show this page in this app
+				@deps
+					function : _d_hideApps
+					function : _d_showApps
+					function : _d_hidePages
+					function : _d_hidePages
+        	*/
+        	if(typeof(iNtype) != 'string' || iNtype != 'list') iNtype = 'chief'
+        	_d_hideApps('all',iNtype);
+        	_d_hidePages(iNapp,'all',iNtype);
+        	_d_showApps(iNapp,iNtype);
+        	_d_showPages(iNapp,iNpage,iNtype);
+		}
         function _d_hidePages (iNapp,iNarray,iNtypeApp) {
         	/*
         		@example
         			_d_hidePages('chat',['private'],'chief')
         			_d_hidePages('chat','private') == _d_hidePages('chat','chief')
+        			_d_hidePages('chat') == _d_hidePages('chat','all')
         		@disc
 					did hide page of apps in passed by 1nd argument as string name of app, by 2nd argument as string or array (multu effect) and by 3d argument in Chief (default) or List container
         		@input
@@ -467,17 +514,24 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 				@deps
 					function : _d_hideApps
         	*/
-        	var selector, appName, pageNameForIletiral;
+        	var selector, appName, pageNameForIletiral, thisSelector;
         	// show app
         	_d_hideApps(iNapp,iNtypeApp)
         	// choose list of chief container
-        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewWindow .app'
+        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewWindow .app';
+        	if( typeof(iNarray) != 'string' || typeof(iNarray) == 'object') iNarray = 'all';
         	else selector = '.usersBlockContainerInMenusBlock .app'
     		// create array if need with page names for show
     		if(typeof(iNarray) !=  'object' || Array.isArray(iNarray) != true) iNarray = [iNarray];
+
+    		selector += '[app-name="' + appName + '"] .view';
     		for (var iKey in iNarray) {
+    			thisSelector = selector;
     			pageNameForIletiral = iNarray[iKey];
-    			$(selector + ' [app-name="' + appName + '"] .view[view-name="'+pageNameForIletiral+'"]').hide();
+    			if(pageNameForIletiral != 'all') {
+    				thisSelector += '[view-name="'+pageNameForIletiral+'"]';
+    			}
+    			$(thisSelector).hide();
     		}
     			
         }
@@ -508,7 +562,8 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		    'd_showApps'            : _d_showApps,
 		    'd_hideApps'            : _d_hideApps,
 		    'd_showPages'           : _d_showPages,
-		    'd_hidePages'           : _d_hidePages
+		    'd_hidePages'           : _d_hidePages,
+		    'd_openPage'            : _d_openPage
 		}
 
 });

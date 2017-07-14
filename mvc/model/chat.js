@@ -20,6 +20,7 @@ define(['jquery','v_chat','m_view','m_app'],function($,v_chat,m_view,m_app){
 		}
 		//@required
 		function onAppear () {
+			m_view.closeLoader();
 			console.log('onAppear');
 
 		}
