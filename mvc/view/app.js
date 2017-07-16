@@ -176,14 +176,16 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 
     var View_chiefForAppInChief = `
 			<div class="viewesInWindow app" app-name="{{app}}">
-			   {{#if page}}
-		           <div class="view" view-name="{{page}}" {{attr}}>
-		        		{{content}}
-		        	</div>
-	        	{{/if}}
-	           {{other}}
+			   {{other}}
 	        </div>
         `;
+        /*
+	        {{#if page}}
+	           <div class="view" view-name="{{page}}" {{attr}}>
+	        		{{content}}
+	        	</div>
+	    	{{/if}}
+    	*/
         var View_pageForAppInChief = `
 	        <div class="view" view-name="{{page}}" {{attr}}>
 	        	{{content}}
@@ -202,11 +204,11 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 							@required
 								app -> string
 							@optional
-								content 	-> string
+								content -> string
 								page 	-> string
 								other 	-> string
 					@optional
-			*/
+			
 			var temp = Template7.compile(View_chiefForAppInChief);
 			return temp(iNdata);
 		}
@@ -304,12 +306,10 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 			*/
 			var selector = '#viewWindow .app[app-name="'+iNdata['app']+'"]';
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
-			console.log('v_app _d_checkChiefApp selector',selector);
-			console.log('v_app _d_checkChiefApp selector length',$(selector).length);
         	return $(selector).length;
         }
 		
-		function _d_createPageInChiefApp (iNdata) {
+		function _d_createPageInChiefApp (iNdata ) {
         	/*
 				@discr
 					create page for chief app
@@ -447,7 +447,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
         	*/
         	var selector, appName, pageNameForIletiral;
         	// show app
-        	d_showApps(iNapp,iNtypeApp)
+        	_d_showApps(iNapp,iNtypeApp)
         	// choose list of chief container
         	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewWindow .app'
         	else selector = '.usersBlockContainerInMenusBlock .app'
@@ -458,7 +458,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
     			$(selector + '[app-name="' + appName + '"] .view[view-name="'+pageNameForIletiral+'"]').show();
     		}
     	}
-    	function _d_openPage (iNapp,iNpage,iNtype) {
+    	function _d_viewPage (iNdata) {
     		/*
         		@example
         			_d_openPage('chat','index')
@@ -466,30 +466,53 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 					open page with hide all other app and other pages in this app
 				@input
         			@required
-        				iNapp -> string
-        				iNpage -> string
-					@optional
-						iNtype -> string
-							by default 'chief' OR 'list'
+        				iNdata -> object
+	        				app -> string
+	        				page -> string
+							@optional
+								type -> string
+									by default 'chief' OR 'list'
+
+				@return
+				@algoritm
+					#0 set default values if need
+					#1 hide all pages in this app
+					#2 show this page in this app
+				@deps
+					function : _d_showPages
+					function : _d_hidePages
+        	*/
+        	if(typeof(iNdata['type']) != 'string' || iNdata['type'] != 'list') iNdata['type'] = 'chief'
+        	_d_hidePages(iNdata['app'],'all',iNdata['type']);
+        	_d_showPages(iNdata['app'],iNdata['page'],iNdata['type']);
+		}
+		function _d_viewApp (iNdata) {
+    		/*
+        		@example
+        			_d_viewApp('chat','index','chief')
+        			_d_viewApp('chat','index')
+        		@disc
+					open page with hide all other app and other pages in this app
+				@input
+        			@required
+        				iNdata
+	        				app -> string
+						@optional
+							type -> string
+								by default 'chief' OR 'list'
 
 				@return
 				@algoritm
 					#0 set default values if need
 					#1 hide all apps
-					#2 hide all pages in this app
-					#3 show this app
-					#4 show this page in this app
+					#2 show this app
 				@deps
 					function : _d_hideApps
 					function : _d_showApps
-					function : _d_hidePages
-					function : _d_hidePages
         	*/
-        	if(typeof(iNtype) != 'string' || iNtype != 'list') iNtype = 'chief'
-        	_d_hideApps('all',iNtype);
-        	_d_hidePages(iNapp,'all',iNtype);
-        	_d_showApps(iNapp,iNtype);
-        	_d_showPages(iNapp,iNpage,iNtype);
+        	if(typeof(iNdata['type']) != 'string' || iNdata['type'] != 'list') iNdata['type'] = 'chief'
+        	_d_hideApps('all',iNdata['type']);
+        	_d_showApps(iNdata['app'],iNdata['type']);
 		}
         function _d_hidePages (iNapp,iNarray,iNtypeApp) {
         	/*
@@ -563,7 +586,8 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		    'd_hideApps'            : _d_hideApps,
 		    'd_showPages'           : _d_showPages,
 		    'd_hidePages'           : _d_hidePages,
-		    'd_openPage'            : _d_openPage
+		    'd_viewPage'            : _d_viewPage,
+		    'd_viewApp'             : _d_viewApp
 		}
 
 });

@@ -1,5 +1,13 @@
 define(['jquery','v_chat','m_view','m_app'],function($,v_chat,m_view,m_app){
-	var pages = ['index','private'];
+	var pages = {
+		'index' 	: '',
+		'private' 	: {
+			'attr' : {
+				'id2' : '2',
+				'id3' : '3',
+			}
+		}
+	};
 	var name = 'chat';
 	//@<<< APP BLOCK
 		function onInit () {
