@@ -45,6 +45,25 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		var thisApp = window.thisRammanApp||false;
 		return thisApp;
 	}
+	function _invokeFunctionOpenedApp (iNfunctionName) {
+		/*
+			@discr
+				invoke Method For Open App
+			@input
+				@required
+				@optional
+					iNfunctionName -> string
+		*/
+		if( typeof(iNfunctionName) == 'string' ) {
+			var appName = _thisApp(),appPrefix = 'rammanApp_',functionName=iNfunctionName;
+			if( typeof(window[appPrefix+ appName]) == 'object' )
+				if( typeof(window[appPrefix+ appName][functionName]) == 'function' ) {
+					window[appPrefix+ appName][functionName]();
+					return true;
+				}
+		}
+		return false;
+	}
 	//<? transactors
 		function _td_hidePages (iNapp,iNarray,iNtypeApp) {
 			v_view.d_hidePages (iNapp,iNarray,iNtypeApp)
@@ -109,9 +128,14 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 			iNapp.onInit();
 		}
 
-		// if we open this app from another 
+		// if we open this app from another this.appName != nowOpenedApp
 		if ( iNdata['app'] != _thisApp() )
-			// did safe invoke app.onIn in
+
+			// did safe invoke onDisappear, onOut methods for app is opening now
+			_invokeFunctionOpenedApp('onDisappear');
+			_invokeFunctionOpenedApp('onOut');
+
+			// did safe invoke thisApp.onIn in
 			if ( typeof(iNapp.onIn) == 'function' )iNapp.onIn(); 
 		
 		// did app appear
@@ -204,7 +228,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		if (typeof(iNfunction) == 'function')iNfunction();
 	}
 
-	function _openChiefApp (iNdata,iNfunction) {
+	function _openChiefApp (iNdata,iNapp,iNfunction) {
 		/*
 			@discr
 			@example
@@ -231,7 +255,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		*/
 		console.log('open chief app from app model funciton _openChiefApp started')
 		v_view.d_showLoader();
-		_readyChiefApp (iNdata,function () {
+		_readyChiefApp (iNdata,iNapp,function () {
 			if(typeof(iNfunction) == 'function') iNfunction();
 			// v_view.d_showLoader();
 		});
@@ -287,6 +311,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 								extra
 								content
 								other
+						iNapp -> app object
 					@optional
 						iNtype
 
@@ -299,17 +324,16 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		var page, objForOpenApp = iNdata, appName = objForOpenApp['app'], pageName = objForOpenApp['page'];
 		// iNapp = getAppByName(appName);
 		if ( typeof(iNapp.pages) != 'object' || typeof(iNapp.pages[pageName]) != 'object' ) return false;
-		//get attr from pages
+		//get data from pages
 		page = iNapp.pages[pageName];
 
 
 
 		console.log('_openApp app from engine',iNapp);
-		openChiefApp ( objForOpenApp , function () {
+		_openChiefApp ( objForOpenApp ,iNapp, function () {
 			if( typeof(iNapp['onStart']) == 'function' ) iNapp.onStart();
-			iNapp.onInit();
-			iNapp.onCreate();
-			iNapp.onLoad();
+			// iNapp.onInit();
+
 			if ( typeof(iNapp['openPage']) != 'function' )
 				d_openPage(appName,pageName, iNtype);
 			else
@@ -338,6 +362,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 	    'openListApp'   : _openListApp,
 	    'readyListApp'  : _readyListApp,
 	    'readyChiefApp' : _readyChiefApp,
+	    'invokeOpenApp' : _invokeFunctionOpenedApp,
 
 	    'setApp' 		: _setApp,
 	    'setPage' 		: _setPage,

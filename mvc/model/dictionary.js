@@ -13,7 +13,6 @@ define(['jquery'],function($) {
 						string : emptry string or string with value from dictianary
 				*/
 			var DICTIONARY = window.CONNECT_DICTIONARY;
-				console.log('DICTIONARY',DICTIONARY);
 			  if(typeof(DICTIONARY) != 'object') return '';
 			  var val = iNval,languageCode,result,body,field=null,header,key,fieldKey,keyBlock,blockName,lang;
 			  t = val.split('-');
@@ -30,7 +29,6 @@ define(['jquery'],function($) {
 			  
 			  field = header[fieldKey];
 			  result = body[key][field];
-			  console.log('getFromDictionary',fieldKey,result);
 			  if(!result) result = '';
 
 			  return result;
@@ -81,7 +79,6 @@ define(['jquery'],function($) {
 				    	var thisValue = arrayWithKeys[iKey].replace(/[\[\]]+/g,'');
 				      var newValue = getFromDictionary(thisValue);
 				      val = val.replace(arrayWithKeys[iKey],newValue);
-				      console.log('_transByString',arrayWithKeys[iKey],newValue);
 				    }
 				    return val;
 			}

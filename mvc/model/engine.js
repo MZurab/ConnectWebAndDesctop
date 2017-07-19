@@ -97,24 +97,24 @@ define(['jquery','v_view','m_app','m_chat'], function ($,v_view,m_app,m_chat) {
 			*/
 
 			//get module name by app name
-			console.log('_openApp from engine started');
-			var app, page, objForOpenApp = iNdata, appName = objForOpenApp['app'], pageName = objForOpenApp['page'];
-			app = getAppByName(appName);
-			if ( typeof(app.pages) != 'object' || typeof(app.pages[pageName]) != 'object' ) return false;
-			page = app.pages[pageName];
-			console.log('_openApp app from engine',app);
-			console.log('_openApp m_app from engine',m_app);
-			m_app.openChiefApp ( objForOpenApp , function () {
-				if( typeof(app['onStart']) == 'function' ) app.onStart();
-				app.onCreate();
-				app.onLoad();
-				if ( typeof(app['openPage']) != 'function' )
-					m_app.d_openPage(appName,pageName, iNtype);
-				else
-					app.openPage( appName, pageName, iNtype);
-				app.onAppear();
-				if( typeof(app['onFinish']) == 'function' ) app.onFinish();
-			});
+			// console.log('_openApp from engine started');
+			// var app, page, objForOpenApp = iNdata, appName = objForOpenApp['app'], pageName = objForOpenApp['page'];
+			// app = getAppByName(appName);
+			// if ( typeof(app.pages) != 'object' || typeof(app.pages[pageName]) != 'object' ) return false;
+			// page = app.pages[pageName];
+			// console.log('_openApp app from engine',app);
+			// console.log('_openApp m_app from engine',m_app);
+			// m_app.openChiefApp ( objForOpenApp , function () {
+			// 	if( typeof(app['onStart']) == 'function' ) app.onStart();
+			// 	app.onCreate();
+			// 	app.onLoad();
+			// 	if ( typeof(app['openPage']) != 'function' )
+			// 		m_app.d_openPage(appName,pageName, iNtype);
+			// 	else
+			// 		app.openPage( appName, pageName, iNtype);
+			// 	app.onAppear();
+			// 	if( typeof(app['onFinish']) == 'function' ) app.onFinish();
+			// });
 		}
 
 		function _closeApp (iName,iNpage) {

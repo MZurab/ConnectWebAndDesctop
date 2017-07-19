@@ -102,7 +102,7 @@ require2(['jquery','template7','m_view','dictionary','m_engine'], function($, Te
         Dictionary.autoChange(function () {
             // m_view.hideLoader();
             // m_view.init();
-            m_engine.openApp('chat','private');
+            // m_engine.openApp('chat','private');
         });
         
 
@@ -147,5 +147,14 @@ require2(['jquery','template7','m_view','dictionary','m_engine'], function($, Te
 
     <noscript><div><img src="https://mc.yandex.ru/watch/44940067" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
+
+
+      "pack:osx":   "electron-packager . $npm_package_productName --out=dist/osx --platform=darwin --arch=x64 --icon=assets/build/osx/icon.icns && npm run codesign",
+  "pack:win32": "electron-packager . $npm_package_productName --out=dist/win --platform=win32 --arch=ia32",
+  "pack:win64": "electron-packager . $npm_package_productName --out=dist/win --platform=win32 --arch=x64 --version=0.36.2 app-version=1.0 --icon=assets/build/win/icon.ico",
+  "build": "npm run pack:osx && npm run pack:win32 && npm run pack:win64"
+  https://stackoverflow.com/questions/36941605/electron-packager-set-app-icons-for-osx-windows
+  https://www.christianengvall.se/electron-packager-tutorial/
+  https://www.christianengvall.se/electron-app-icons/
 
 */

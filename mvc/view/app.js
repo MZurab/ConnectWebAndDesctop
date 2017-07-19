@@ -208,7 +208,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 								page 	-> string
 								other 	-> string
 					@optional
-			
+				*/
 			var temp = Template7.compile(View_chiefForAppInChief);
 			return temp(iNdata);
 		}
