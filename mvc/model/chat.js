@@ -5,9 +5,54 @@ define(['jquery','v_chat','m_view','m_app'],function($,v_chat,m_view,m_app){
 			'attr' : {
 				'id2' : '2',
 				'id3' : '3',
+			},
+			'menus': {
+				'attr' : {
+					'id1' : 'id2',
+					'id3' : 'id4'
+				}
 			}
 		}
 	};
+	var options = {
+		'attr' 	: {
+			'attr' : {
+				'id2' : '2',
+				'id3' : '3',
+			}
+		},
+		// options for list app menus
+		'menus': {
+			'attr' : {
+				'id2' : '2',
+				'id3' : '3',
+			}
+		}
+	};
+	// for chat view
+		var templates = {
+			'pages' : {
+				'menus' : {
+
+				},
+				'viewes' : {
+
+				}
+
+			}
+
+		}
+	/*
+		getTemplate
+		getMenuTemplate
+		getViewTemplate
+
+		getPage
+		getView
+	*/
+	// for chat view
+
+
 	var name = 'chat';
 	//@<<< APP BLOCK
 		//@required
@@ -29,6 +74,12 @@ define(['jquery','v_chat','m_view','m_app'],function($,v_chat,m_view,m_app){
 				//@required
 				function onDisappear () {
 					// here must be page disapear functions
+					/*
+						безопасно берем pages если есть
+						безопасно узнаем название открывшегося сейчась page +getPageName +setPageName
+						безопасно вызываем pages[openedPageName][onDisapear] функцию
+
+					*/
 					console.log('onDisappear');
 
 				}

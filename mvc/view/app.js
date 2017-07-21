@@ -11,9 +11,11 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
         </div>
     `;
     var View_pageForAppInList = `
-          <div class='view' view-name='{{page}} {{attr}}'>
-          	{{content}}
-          </div>
+    		{{before}}
+    		<div class='view {{class}}' view-name='{{page}}' {{attr}}>
+	          	{{content}}
+	        </div>
+	        {{after}}
     `;
     function _getListApp (iNdata) {
     	/*
@@ -24,11 +26,14 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 						@optional
 							page 	-> String {chain #1}
 							content -> String {chain #1}
-							other 	-> String 
+							after 	-> String 
+							before 	-> String 
+							class 	-> String 
 
 			@deps
 				View_listViews : var
     	*/
+    	getAttrAndClassForAppAndPage(iNdata);
     	var temp = Template7.compile(View_listViews);
     	return temp(iNdata);
     }
@@ -42,9 +47,12 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 						page 		-> string
 						content 	-> string
 						@optional
-							attr 		-> string
+							after 	-> String 
+							before 	-> String 
+							class 	-> String 
 				@optional
 		*/
+		getAttrAndClassForAppAndPage(iNdata);
 		var temp = Template7.compile(View_pageForAppInList);
 		return temp(iNdata);
     }
@@ -144,6 +152,9 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 			@return
 				int : 0 - false, 0< true
 		*/
+		// if we have app
+
+		
 		var selector = '.usersBlockContainerInMenusBlock .app[app-name="'+iNdata['app']+'"] ';
 		if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
     	v_view.addDataToViewEl(selector, _getPageForListApp(iNdata) ,'change')
@@ -160,7 +171,10 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 						@optional
 							page 		-> string
 							content 	-> string
-							attr		-> string
+							attr		-> object
+								class		-> string
+							before		-> string 
+							after		-> string 
 
 							extra		-> string 
 				@optional
@@ -169,13 +183,14 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		*/
 		var selector = '.usersBlockContainerInMenusBlock'; 
 		if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
+		getAttrAndClassForAppAndPage(iNdata);
     	v_view.addDataToViewEl(selector, _getListApp(iNdata) ,'change')
     }
 
 
 
     var View_chiefForAppInChief = `
-			<div class="viewesInWindow app" app-name="{{app}}">
+			<div class="viewesInWindow app {{class}}" app-name="{{app}}" {{attr}}>
 			   {{other}}
 	        </div>
         `;
@@ -187,7 +202,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 	    	{{/if}}
     	*/
         var View_pageForAppInChief = `
-	        <div class="view" view-name="{{page}}" {{attr}}>
+	        <div class="view {{class}}" view-name="{{page}}" {{attr}}>
 	        	{{content}}
 	        </div>
         `;//id="leftBlockInViewWindow"
@@ -207,8 +222,14 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 								content -> string
 								page 	-> string
 								other 	-> string
+								attr 	-> object
+									class 	-> string OR array
 					@optional
+				@deps
+					function: getAttrAndClassForAppAndPage
+					object: Template7
 				*/
+			getAttrAndClassForAppAndPage(iNdata);
 			var temp = Template7.compile(View_chiefForAppInChief);
 			return temp(iNdata);
 		}
@@ -222,12 +243,54 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 							page 		-> string
 							content 	-> string
 							@otional
-								attr 		-> string
+								attr 	-> object
+									class 	-> string OR array
 					@optional
+				@deps
+					function: getAttrAndClassForAppAndPage
+					object: Template7
 			*/
+
+			getAttrAndClassForAppAndPage(iNdata);
 			var temp = Template7.compile(View_pageForAppInChief);
 			return temp(iNdata);
 		}
+			function getAttrAndClassForAppAndPage (iNdata) {
+				/*
+					@example
+						getAttrAndClassForAppAndPage({
+							attr: { 
+								'class' : ['myNewClass'],
+								'attrName' : 'attrValue'
+							}
+						});
+					@discr
+						get page for app by object (iNdata)
+					@inputs
+						@required
+						@optional
+							iNdata -> object
+								attr 		-> string
+						@optional
+					@return 
+						void [result = to iNdata right date]
+				*/
+				var attrString = '',classString = '', attrArray = iNdata['attr'],thisValue;
+				if( typeof(iNdata['attr']) == 'object' ) {
+					for (var iKey in attrArray ) {
+						if( iKey == 'class' ) {
+							// add class 
+							if( typeof(attrArray[iKey]) == 'string') 
+								attrArray[iKey] = [attrArray[iKey]];
+							classString += ' ' + attrArray[iKey].join(' ');
+						} else {
+							//add attr
+							attrString +=  iKey + "='" + attrArray[iKey] + "'";
+						}
+					}
+				}
+				iNdata['class'] = classString; iNdata['attr'] = attrString;
+			}
 		function _d_updatePageInChiefApp (iNdata) {
         	/*
 				@discr
@@ -320,9 +383,13 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 							page 		-> string
 							content 	-> string
 							@optional
-								attr		-> string
-								extra		-> string 
+								attr	-> object
+									class	-> 
+									attrKey : attrBalue
+								extra	-> string 
 					@optional
+				@deps
+					function : _getPageForChiefApp
 				@return
 					int : 0 - false, 0< true
 			*/
