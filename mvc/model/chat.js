@@ -1,4 +1,8 @@
-define(['jquery','v_chat','m_view','m_app'],function($,v_chat,m_view,m_app){
+define(['jquery','v_chat','m_view','m_app'],function($,v_chat,m_view,m_app) {
+	//@< init
+		// init from app view templates
+			var templates = v_chat.templates;
+	//@> init
 	var pages = {
 		'index' 	: '',
 		'private' 	: {
@@ -30,18 +34,22 @@ define(['jquery','v_chat','m_view','m_app'],function($,v_chat,m_view,m_app){
 		}
 	};
 	// for chat view
-		var templates = {
-			'pages' : {
-				'menus' : {
+		// var templates = {
+		// 	'page' : {
+		// 		'menu' : {
 
-				},
-				'viewes' : {
+		// 		},
+		// 		'view' : {
 
-				}
+		// 		}
 
-			}
+		// 	},
+		// 	'app' : {
+		// 		'name'
+		// 	}
 
-		}
+		// }
+		
 	/*
 		getTemplate
 		getMenuTemplate

@@ -1,4 +1,9 @@
 define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
+	//@< private vars
+		var prefixForApp_ = 'rammanApp';
+		var openPageName_ = 'openPage';
+	//@> private vars
+
 	function _setApp (iNapp) {
 		/*
 			@discr
@@ -19,7 +24,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 					iNpage -> string
 		*/
 		_setApp(iNapp);
-		window['rammanApp-'+iNapp+'-openPage'] = iNpage;
+		window[this.prefixForApp_ + '-' + iNapp+'-'+this.openPageName_] = iNpage;
 	}
 	function _thisPage (iNapp) {
 		/*
@@ -29,7 +34,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 				@required
 					iNapp -> string
 		*/
-		return window['rammanApp-'+iNapp+'-openPage']||false;
+		return window[this.refixForApp_ + '-' + iNapp + '-' + this.openPageName_ ] || false;
 	}
 	function _thisApp () {
 		/*
@@ -70,7 +75,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 			@return
 				false OR 
 		*/
-		var appName = iNappName,appPrefix = 'rammanApp_',method=iNmethodName;
+		var appName = iNappName,appPrefix = this.prefixForApp_+'-',method=iNmethodName;
 		if( typeof(window[appPrefix+ appName]) == 'object' && typeof(window[appPrefix+ appName][method]) != 'undefined')
 				switch( typeof(window[appPrefix+ appName][method]) ){
 					case 'function':
@@ -100,7 +105,6 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		function _td_openPage (iNapp,iNpage,iNtype) {
 			v_app.d_openPage (iNapp,iNpage,iNtype);
 		}
-		
 	//>! transactors
 	function createOrUpdateApp (objectForCreateApp,iNapp) {
 		/*
@@ -380,8 +384,8 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 
 		if (issetApps < 1) {
 			v_app.d_createPageInListApp(objectForCreateApp);
-
 		} 
+
 		if( typeof(iNdata['page'] ) == 'string' ) {
 			objectForCreatePage = {'page':iNdata['page'],'app':iNdata['app']};
 
@@ -390,7 +394,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 			if( pagesMenusAttr != false) 	objectForCreatePage['attr'] 	= pagesMenusAttr;
 
 			if( typeof(iNdata['content']) == 'string') 	objectForCreatePage['content'] 	= iNdata['content'];
-			
+
 			intIssetPages = v_app.d_checkPageInListApp(objectForCreatePage);
 			if(intIssetPages < 1) {
 				//if page is not isset
@@ -509,7 +513,6 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		}
 
 	//@> getter for  options from app funcitons
-
 
 
 

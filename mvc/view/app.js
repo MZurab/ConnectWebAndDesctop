@@ -36,7 +36,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
     	getAttrAndClassForAppAndPage(iNdata);
     	var temp = Template7.compile(View_listViews);
     	return temp(iNdata);
-    }
+    };
     function _getPageForListApp (iNdata) {
     	/*
 			@discr
@@ -626,8 +626,63 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
     			
         }
 
+		//@< work with menus from app
+			function addAppMenu (iNapp.iNarray,iNtemplateName) {
+				var template = _getAppTemplate(iNapp,iNtemplateName);
+				if ( template != false ) {
+					template = Template7.compile(template);
+
+					if( typeof(iNarray) == 'object' && Array.isArray(iNarray)) {
+						
+					}
+				}
+
+				return false;
+			}
+			function addPageMenu (iNapp.iNdata,iNtemplateName) {
+				var template = getPageTemplate
+			}
+		//@> work with menus from app
+
+		//@> work with templates from app
+	 		function getTemplate (iNapp) {
+				if(typeof(iNapp.templates) == 'object')
+					return iNapp.templates;
+				return false;
+			}
+			function getPageTemplate (iNapp) {
+				var templates = getTemplate(iNapp);
+				if(typeof(templates['page']) == 'object')
+					return templates['page'];
+				return false;
+			}
+			
+			function _getPageMenuTemplate (iNapp,iName) {
+				var pageTemplate = getPageTemplate(iNapp);
+				if( typeof pageTemplate['menu'] == 'object' && typeof pageTemplate['menu'][iName] != 'undefined')
+					return pageTemplate['menu'][iName];
+				return false;
+			}
+			function _getPageViewTemplate (iNapp,iName) {
+				var pageTemplate = getPageTemplate(iNapp);
+				if(typeof(pageTemplate['view']) == 'object' && typeof(pageTemplate['view'][iName]) != 'undefined')
+					return pageTemplate['view'][iName];
+				return false;
+			}
+			function _getAppTemplate (iNapp,iName) {
+				var templates = getTemplate(iNapp);
+				if(typeof(templates['app']) == 'object' && typeof(pageTemplate['app'][iName]) != 'undefined')
+					return templates['app'];
+				return false;
+			}
+		//@>  work with templates  from app
 
         return {
+    	  // functions for work with template
+    	  	'getAppTemplate'		: _getAppTemplate,
+    	  	'getPageViewTemplate'	: _getPageViewTemplate,
+    	  	'getPageMenuTemplate'	: _getPageMenuTemplate,
+
 		  // functions for list app
 		    'getListApp'            : _getListApp,
 		    'getPageForListApp'     : _getPageForListApp,
