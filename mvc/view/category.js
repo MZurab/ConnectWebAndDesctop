@@ -34,10 +34,10 @@ define(['jquery','v_chat','m_view','m_app'],function() {
 		`;
 	*/
 	templates['UserMenuChildN'] = `
-  	<li menuid='{{id}}' menuparent='{{parent}}' class='appUserMenu flagSubMenu'>
-      <a {{#if thisSubMenu}} class="backType" {{/if}}href="{{data}}">{{name}}</a>
+  	<li menuid='{{id}}' menuparent='{{parent}}' class='appUserMenu flagSubMenu{{#if thisSubMenu}} userMenuSubFlag{{/if}}{{#if parentBox}} {{join parentBox delimiter=" "}}{{/if}}' >
+      <a href="{{data}}">{{name}}</a>
       {{#if children.length}}
-    		<div class="menuButtonInTheMenu"></div>
+    		<div class="userMenuParentButton"></div>
       {{/if}}
     </li>
   `;
@@ -45,7 +45,7 @@ define(['jquery','v_chat','m_view','m_app'],function() {
   	<li menuid='{{id}}' class='appUserMenu'>
         <a href="{{data}}">{{name}}</a>
 		{{#if sub}}
-			<div class="menuButtonInTheMenu"></div>
+			<div class="userMenuParentButton"></div>
 			<ul class="subMenusForUid">
 				 {{sub}}
 			</ul>
@@ -75,7 +75,16 @@ define(['jquery','v_chat','m_view','m_app'],function() {
 	  	if(iNmenu.children.length > 0) {
 			for(var menu3SubKey in iNmenu.children) {
 		  		iNmenu.children[menu3SubKey]['thisSubMenu'] = 1;
-		    	iNmenu.children[menu3SubKey]['parent'] = iNmenu.id;	addUserMenuChildN(iNmenu.children[menu3SubKey],iNdataBlockN);
+		    	iNmenu.children[menu3SubKey]['parent'] = iNmenu.id;
+          
+          if(typeof(iNmenu['parentBox']) == 'object') 
+          	iNmenu.children[menu3SubKey]['parentBox'] = iNmenu['parentBox'].concat([ 'UMP' + iNmenu.id ]);
+          else 
+		    		iNmenu.children[menu3SubKey]['parentBox'] = ['UMP' + iNmenu.id];
+          
+            addUserMenuChildN(iNmenu.children[menu3SubKey],iNdataBlockN);
+           
+         
 		    }
 	  	}
 	}
@@ -89,6 +98,7 @@ define(['jquery','v_chat','m_view','m_app'],function() {
 	  	if(childrenMenu2.length > 0) {
 	    	for(var menu3Key in childrenMenu2) {
       			childrenMenu2[menu3Key]['parent'] = iNmenu.id;
+      			childrenMenu2[menu3Key]['parentBox'] = ['UMP'+iNmenu.id];
 	      		addUserMenuChildN(childrenMenu2[menu3Key],dataBlockN);
 	    	}
     		iNmenu['sub'] = dataBlockN.join(' ');
