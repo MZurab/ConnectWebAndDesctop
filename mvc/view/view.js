@@ -184,9 +184,11 @@ define(['jquery','template7'], function ($,Template7) {
 	        // icon, name, dictionaryKey  {listApps} -> View_listApps
 		        var Template_listApps_apps = `
 		        	{{#each apps}}
-		        	<div class="appsInAppBlock">
-					  <img src="{{icon}}">
-					  <div class="appsNameInAppsBlock CML" cmlk="{{dc}}">{{name}}</div>
+		        	<div class='appBlockInAppBlock'>
+			        	<div class="appsInAppBlock">
+						  <img src="{{icon}}">
+						  <div class="appsNameInAppsBlock CML" cmlk="{{dc}}">{{name}}</div>
+						</div>
 					</div>
 					{{/each}}
 		        `;
@@ -223,7 +225,7 @@ define(['jquery','template7'], function ($,Template7) {
 			}
 			
 	//>! work with loader
-
+	
 	
 
 

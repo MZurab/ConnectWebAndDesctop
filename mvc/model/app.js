@@ -106,6 +106,12 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 			v_app.d_openPage (iNapp,iNpage,iNtype);
 		}
 	//>! transactors
+
+	//< lambda funtions
+		var initFunction = (iNapp) => {
+
+		}
+	//> lambda function
 	function createOrUpdateApp (objectForCreateApp,iNapp) {
 		/*
 			@discr
@@ -410,7 +416,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 
 	//@< getter for pages from app funcitons
 		function getPageMenus (iNapp,iName) {
-			var page = getPage(iNapp,iName)
+			var page = getPage(iNapp,iName);
 			if( 
 				page != false && 
 				typeof page['menus'] == 'object'  
@@ -420,7 +426,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 			return false;
 		}
 		function getPageFuncitons (iNapp,iName) {
-			var page = getPage(iNapp,iName)
+			var page = getPage(iNapp,iName);
 			if( 
 				page != false && 
 				typeof page['functions'] == 'object'  
@@ -449,7 +455,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 			return false;
 		}
 		function getPage (iNapp,iName) {
-			var pages = getPages(iNapp)
+			var pages = getPages(iNapp);
 			if( 
 				pages != false && 
 				typeof pages[ iName ] == 'object'  
@@ -460,7 +466,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 
 		}
 		function getPageAttr (iNapp,iName) {
-			var page = getPage(iNapp,iName)
+			var page = getPage(iNapp,iName);
 			if( 
 				page != false && 
 				typeof page['attr'] == 'object'  
@@ -482,7 +488,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 			return false;
 		}
 		function getAppAttr (iNapp) {
-			var options = getAppOptions(iNapp)
+			var options = getAppOptions(iNapp);
 			if( 
 				options != false && 
 				typeof options['attr'] == 'object'  
@@ -492,7 +498,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 			return false;
 		}
 		function getAppMenus (iNapp) {
-			var options = getAppOptions(iNapp)
+			var options = getAppOptions(iNapp);
 			if( 
 				options != false && 
 				typeof options['menus'] == 'object'  
@@ -502,7 +508,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 			return false;
 		}
 		function getAppMenusAttr (iNapp) {
-			var menus = getAppMenus(iNapp)
+			var menus = getAppMenus(iNapp);
 			if( 
 				menus != false && 
 				typeof menus['attr'] == 'object'  

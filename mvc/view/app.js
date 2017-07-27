@@ -1,22 +1,89 @@
 define(['jquery','template7','v_view'],function($,Template7,v_view){
+	let CONSTANTS = {
+		'pathAppHeader' 	  : '#block #viewBlock .topBlockInViewBlock',
+		'nameInAppHeader' 	  : 'appHeaderInChiefBlock', // class
+		'pageNameInAppHeader' : 'appPage',// class
+
+		'pathMenuHeader' 	  : '#block #menusBlock .topBlockInMenusBlock',
+		'nameInMenuHeader' 	  : 'menuHeaderInMenusBlock', // class
+		'pageNameInMenuHeader': 'appPage', // class
+
+
+	};
 	// appName -> String, views -> array of objects {viewName,viewContent}
-	var View_chiefForAppInList = `
-		<div class='app' app-name='{{app}}'>
-		  {{#if page}}
-	          <div class='view' view-name='{{page}}'>
-	          	{{content}}
-	          </div>
-          {/if}
-          {{other}}
-        </div>
-    `;
-    var View_pageForAppInList = `
-    		{{before}}
-    		<div class='view {{class}}' view-name='{{page}}' {{attr}}>
-	          	{{content}}
+	var templates = {};
+		
+		templates['chiefForAppInList'] = `
+			<div class='app' app-name='{{app}}'>
+			  {{#if page}}
+		          <div class='view' view-name='{{page}}'>
+		          	{{content}}
+		          </div>
+	          {/if}
+	          {{other}}
 	        </div>
-	        {{after}}
-    `;
+	    `;
+	    templates['pageForAppInList'] = `
+	    		{{before}}
+	    		<div class='view {{class}}' view-name='{{page}}' {{attr}}>
+		          	{{content}}
+		        </div>
+		        {{after}}
+	    `;
+
+	    //< templates for header
+		    templates['appContentChiefHeader'] = `
+				<div class="`+ CONSTANTS['nameInAppHeader'] +`" app-name="{{app}}">
+					{{#if page}}
+						<div class='`+ CONSTANTS['pageNameInAppHeader'] +`' page-name="{{page}}">
+							{{content}}
+						</div>
+					{{else}}
+						{{content}}
+					{{/if}}
+				</div>
+		    `;
+			    templates['pageContentChiefHeader'] = `
+					<div class='`+ CONSTANTS['pageNameInAppHeader'] +`' page-name="{{page}}">
+						{{content}}
+					</div>
+			    `;
+		    templates['appContentMenuHeader'] = `
+				<div class="`+ CONSTANTS['nameInMenuHeader'] +`" app-name="{{app}}">
+					{{#if page}}
+						<div class='`+ CONSTANTS['pageNameInMenuHeader'] +`' page-name="{{page}}">
+							{{content}}
+						</div>
+					{{else}}
+						{{content}}
+					{{/if}}
+				</div>
+		    `;
+			    templates['pageContentMenuHeader'] = `
+					<div class='`+ CONSTANTS['pageNameInMenuHeader'] +`'  page-name="{{page}}">
+					    {{content}}
+					</div>
+			    `;
+	    //> templates for header
+
+	    //< template for modal window
+		    templates['fullWindow'] = `
+				<div class="appModalFullWindow background {{#if attr}}{{attr}}{{/if}}">
+					{{#if defaultHeaderBlock}}
+					    <div class="headerForAppFullWindow background">
+							{{#if defaultCloseButton}}
+					    		<div class="closeButtonInHeaderForAppFullWindow"></div>
+					    	{{/if}}
+						</div>
+					{{/if}}
+				    <div class="contentForAppFullWindow background">
+				    	{{content}}
+				    </div>
+				</div>
+			`;
+	    //< template for modal window
+
+	   
     function _getListApp (iNdata) {
     	/*
     		@inputs
@@ -53,7 +120,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 				@optional
 		*/
 		getAttrAndClassForAppAndPage(iNdata);
-		var temp = Template7.compile(View_pageForAppInList);
+		var temp = Template7.compile(templates['pageForAppInList']);
 		return temp(iNdata);
     }
 
@@ -422,6 +489,303 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
         	v_view.d_addDataToViewEl(selector, _getChiefApp(iNdata) ,'change')
         }
+        //< app headers
+	        
+        	function _d_hideAppHeader (iNdata) {
+	        	/*
+	        		@discr
+	        			hide app page of header
+	        		@inputs
+	        			iNdata -> object
+	        				app  -> string
+	        	*/
+	        	$( 
+	        		CONSTANTS['pathAppHeader'] + ' ' 	+ 
+	        		CONSTANTS['nameInAppHeader'] 	+
+        			'[app-name="' + iNdata['app'] + '"]'
+        		).hide();
+	        }
+		        function _d_hideAppPagesHeader (iNdata) {
+		        	/*
+		        		@discr
+		        			hide app page of header
+		        		@inputs
+		        			iNdata -> object
+		        				app  -> string
+		        	*/
+		        	$( 
+		        		CONSTANTS['pathAppHeader'] + ' ' 		+ 
+		        		CONSTANTS['nameInAppHeader'] 		+
+	        			'[app-name="' + iNdata['app'] + '"] '	+
+	        			CONSTANTS['pageNameInAppHeader']
+	        		).hide();
+		        }
+	        function _d_showAppHeader (iNdata) {
+	        	/*
+	        		@discr
+	        			show app of header
+	        		@inputs
+	        			iNdata -> object
+	        				app  -> string
+	        	*/
+	        	$( 
+	        		CONSTANTS['pathAppHeader'] + ' ' 		+ 
+	        		CONSTANTS['nameInAppHeader']  		+
+	        		'[app-name="'+ iNdata['app'] +'"]' 
+        		).show();
+	        }
+		        function _d_showAppPageHeader (iNdata) {
+		        	/*
+		        		@discr
+		        			show app of header
+		        		@inputs
+		        			iNdata -> object
+		        				app  -> string
+		        				page -> string
+		        	*/
+		        	$(
+		        		CONSTANTS['pathAppHeader'] + ' ' 		+ 
+		        		CONSTANTS['nameInAppHeader']  		+
+		        		'[app-name="'+ iNdata['app'] +'"]' + ' '+ 
+		        		CONSTANTS['pageNameInAppHeader']  +
+		        		'[page-name="'+ iNdata['page'] +'"]' 
+	        		).show();
+		        }
+            function _d_viewAppPageHeader (iNdata) {
+	        	/*
+	        		@discr
+	        			wathc app page of header
+	        		@inputs
+	        			iNdata -> object
+	        				app  -> string
+	        				page -> string
+	        	*/
+	        	// hide apps
+	        	_d_hideAppHeader(iNdata);
+
+	        	// show this app
+	        	_d_showAppHeader(iNdata); 
+
+				// hide other pages app
+	        	_d_hideAppPagesHeader(iNdata);
+
+	        	// show this page
+	        	_d_showAppPageHeader(iNdata); 
+	        }
+	        function _d_setAppHeader (iNcontent) {
+	        	/*
+	        		@discr
+	        			set content for app into header block
+	        		@inputs
+	        			iNcontent -> string
+	        	*/
+	        	$( CONSTANTS['pathAppHeader'] + ' .topBlockInViewBlock' ).html(iNcontent);
+	        }
+	       	function _getAppHeader (iNdata) {
+	        	/*
+	        		@discr
+	        			get content for app headery by template
+	        		@inputs
+	        			iNdata -> object
+	        				@required
+	        					app
+	        				@optional
+	        					page
+	        					content
+	        					attr
+				*/
+        		var temp = Template7.compile(templates['appContentChiefHeader']);
+        		return temp(iNdata)
+        	}
+
+        	function _getPageAppHeader (iNdata) {
+	        	/*
+	        		@discr
+	        			get content for app menu headery by template
+	        		@inputs
+	        			iNdata -> object
+	        				@required
+	        					page
+	        					content
+	        				@optional
+				*/
+        		var temp = Template7.compile(templates['pageContentChiefHeader']);
+        		return temp(iNdata)
+        	}
+        function _d_addAppHeaderByTemplate (iNdata) {
+        	/*
+        		@discr
+        			add content for app into  header block by template
+        		@inputs
+        			iNdata -> object
+        	*/
+        	var selector = CONSTANTS['pathAppHeader'],
+        		content = _getAppHeader(iNdata);
+			v_view.addDataToViewEl(selector, _getPageForListApp(content) ,'end');
+        }
+        function _d_addPageAppHeaderByTemplate (iNdata) {
+        	/*
+        		@discr
+        			add content with page for app into  header block by template
+        		@inputs
+        			iNdata -> object
+        				app
+        				page
+        				content
+        	*/
+        	var selector = CONSTANTS['pathAppHeader'] + ' ' + CONSTANTS['nameInAppHeader']+'[app-name="'+iNdata['app']+'"]',
+        		content = _getPageAppHeader(iNdata);
+			v_view.addDataToViewEl(selector, _getPageForListApp(content) ,'end');
+        }
+
+
+	        function _d_hideMenuHeader (iNdata) {
+	        	/*
+	        		@discr
+	        			hide app page of header
+	        		@inputs
+	        			iNdata -> object
+	        				app  -> string
+	        	*/
+	        	$( 
+	        		CONSTANTS['pathMenuHeader'] + ' ' 	+ 
+	        		CONSTANTS['nameInMenuHeader'] 	+
+        			'[app-name="' + iNdata['app'] + '"]'
+        		).hide();
+	        }
+		        function _d_hideMenuPagesHeader (iNdata) {
+		        	/*
+		        		@discr
+		        			hide app page of header
+		        		@inputs
+		        			iNdata -> object
+		        				app  -> string
+		        	*/
+		        	$( 
+		        		CONSTANTS['pathMenuHeader'] + ' ' 		+ 
+		        		CONSTANTS['nameInMenuHeader'] 			+
+	        			'[app-name="' + iNdata['app'] + '"] '	+
+	        			CONSTANTS['pageNameInMenuHeader']
+	        		).hide();
+		        }
+	        function _d_showMenuHeader (iNdata) {
+	        	/*
+	        		@discr
+	        			show app of menu header
+	        		@inputs
+	        			iNdata -> object
+	        				app  -> string
+	        	*/
+	        	$( 
+	        		CONSTANTS['pathMenuHeader'] + ' ' 		+ 
+	        		CONSTANTS['nameInMenuHeader']  		+
+	        		'[app-name="'+ iNdata['app'] +'"]' 
+        		).show();
+	        }
+		        function _d_showMenuPageHeader (iNdata) {
+		        	/*
+		        		@discr
+		        			show app of menu header
+		        		@inputs
+		        			iNdata -> object
+		        				app  -> string
+		        				page -> string
+		        	*/
+		        	$(
+		        		CONSTANTS['pathMenuHeader'] + ' ' 		+ 
+		        		CONSTANTS['nameInMenuHeader']  		+
+		        		'[app-name="'+ iNdata['app'] +'"]' + ' '+ 
+		        		CONSTANTS['pageNameInMenuHeader']  +
+		        		'[page-name="'+ iNdata['page'] +'"]' 
+	        		).show();
+		        }
+            function _d_viewMenuPageHeader (iNdata) {
+	        	/*
+	        		@discr
+	        			wathc app page of menu header
+	        		@inputs
+	        			iNdata -> object
+	        				app  -> string
+	        				page -> string
+	        	*/
+	        	// hide apps
+	        	_d_hideMenuHeader(iNdata);
+
+	        	// show this app
+	        	_d_showMenuHeader(iNdata); 
+
+				// hide other pages app
+	        	_d_hideMenuPagesHeader(iNdata);
+
+	        	// show this page
+	        	_d_showMenuPageHeader(iNdata); 
+	        }
+	        function _d_setMenuHeader (iNcontent) {
+	        	/*
+	        		@discr
+	        			set content for app into menu header block
+	        		@inputs
+	        			iNcontent -> string
+				*/
+	        	$( CONSTANTS['pathMenuHeader']).html(iNcontent);
+	        }
+	        	function _getAppMenuHeader (iNdata) {
+		        	/*
+		        		@discr
+		        			get content for app menu headery by template
+		        		@inputs
+		        			iNdata -> object
+		        				@required
+		        					app
+		        				@optional
+		        					page
+		        					content
+		        					attr
+					*/
+	        		var temp = Template7.compile(templates['appContentMenuHeader']);
+	        		return temp(iNdata)
+	        	}
+
+	        	function _getPageMenuHeader (iNdata) {
+		        	/*
+		        		@discr
+		        			get content for app menu headery by template
+		        		@inputs
+		        			iNdata -> object
+		        				@required
+		        					page
+		        					content
+		        				@optional
+					*/
+	        		var temp = Template7.compile(templates['pageContentMenuHeader']);
+	        		return temp(iNdata)
+	        	}
+	        function _d_addAppMenuHeaderByTemplate (iNdata) {
+	        	/*
+	        		@discr
+	        			add content for app into menu header block by template
+	        		@inputs
+	        			iNdata -> object
+	        	*/
+	        	var selector = CONSTANTS['pathMenuHeader'],
+	        		content = _getAppMenuHeader(iNdata);
+				v_view.addDataToViewEl(selector, _getPageForListApp(content) ,'end');
+	        }
+	        function _d_addPageMenuHeaderByTemplate (iNdata) {
+	        	/*
+	        		@discr
+	        			add content with page for app into menu header block by template
+	        		@inputs
+	        			iNdata -> object
+	        				app
+	        				page
+	        				content
+	        	*/
+	        	var selector = CONSTANTS['pathMenuHeader'] + ' ' + CONSTANTS['nameInMenuHeader']+'[app-name="'+iNdata['app']+'"]',
+	        		content = _getPageMenuHeader(iNdata);
+				v_view.addDataToViewEl(selector, _getPageForListApp(content) ,'end');
+	        }
+        //> app headers
 
         function _d_showApps (iNarray,iNtypeApp) {
         	/*
@@ -626,23 +990,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
     			
         }
 
-		//@< work with menus from app
-			function addAppMenu (iNapp.iNarray,iNtemplateName) {
-				var template = _getAppTemplate(iNapp,iNtemplateName);
-				if ( template != false ) {
-					template = Template7.compile(template);
-
-					if( typeof(iNarray) == 'object' && Array.isArray(iNarray)) {
-						
-					}
-				}
-
-				return false;
-			}
-			function addPageMenu (iNapp.iNdata,iNtemplateName) {
-				var template = getPageTemplate
-			}
-		//@> work with menus from app
+		
 
 		//@> work with templates from app
 	 		function getTemplate (iNapp) {
@@ -651,9 +999,9 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 				return false;
 			}
 			function getPageTemplate (iNapp) {
-				var templates = getTemplate(iNapp);
-				if(typeof(templates['page']) == 'object')
-					return templates['page'];
+				var template = getTemplate(iNapp);
+				if(typeof(template['page']) == 'object')
+					return template['page'];
 				return false;
 			}
 			
@@ -670,12 +1018,54 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 				return false;
 			}
 			function _getAppTemplate (iNapp,iName) {
-				var templates = getTemplate(iNapp);
-				if(typeof(templates['app']) == 'object' && typeof(pageTemplate['app'][iName]) != 'undefined')
-					return templates['app'];
+				var template = getTemplate(iNapp);
+				if(typeof(template['app']) == 'object' && typeof(pageTemplate['app'][iName]) != 'undefined')
+					return template['app'];
 				return false;
 			}
 		//@>  work with templates  from app
+
+
+
+		//@< work with modal window
+			function addFullWindowByTemplate (iNdata) {
+				/*
+					@discr
+					@inputs
+						@required
+				*/
+				var temp = Template7.compile(iNdata), selector = 'body #container';
+				v_view.addDataToViewEl(selector,temp(iNdata));
+			}
+			function showFullWindow () {
+				/*
+					@discr
+					@inputs
+						@required
+				*/
+				$('.appModalFullWindow').show();
+				
+			}
+			function hideFullWindow () {
+				/*
+					@discr
+					@inputs
+						@required
+				*/
+				$('.appModalFullWindow').hide();
+				
+			}
+			function clearFullWindow () {
+				/*
+					@discr
+					@inputs
+						@required
+				*/
+				$('.appModalFullWindow').remove();
+			}
+		//@> work with modal window
+
+
 
         return {
     	  // functions for work with template
@@ -709,7 +1099,40 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		    'd_showPages'           : _d_showPages,
 		    'd_hidePages'           : _d_hidePages,
 		    'd_viewPage'            : _d_viewPage,
-		    'd_viewApp'             : _d_viewApp
+		    'd_viewApp'             : _d_viewApp,
+
+		   // work with modal windows
+		    'd_addFullWindowByTemplate'	: _d_addFullWindowByTemplate,
+		    'd_showFullWindow'          : _d_showFullWindow,
+		    'd_hideFullWindow'          : _d_hideFullWindow,
+		    'd_clearFullWindow'     	: _d_clearFullWindow,
+
+	       //< functions for headers
+		    	//app menu header
+				    'd_addPageMenuHeaderByTemplate'		: _d_addPageMenuHeaderByTemplate,
+				    'd_addAppMenuHeaderByTemplate'		: _d_addAppMenuHeaderByTemplate,
+				    'getPageMenuHeader'           		: _getPageMenuHeader,
+				    'getAppMenuHeader'           		: _getAppMenuHeader,
+				    'd_setMenuHeader'            		: _d_setMenuHeader,
+				    'd_viewMenuPageHeader' 				: _d_viewMenuPageHeader,
+				    'd_showMenuPageHeader' 				: _d_showMenuPageHeader,
+				    'd_showMenuHeader'            		: _d_showMenuHeader,
+				    'd_hideMenuPagesHeader'           	: _d_hideMenuPagesHeader,
+				    'd_hideMenuHeader'          		: _d_hideMenuHeader,
+
+		    	//app header
+				    'd_addPageAppHeaderByTemplate'		: _d_addPageAppHeaderByTemplate,
+				    'd_addAppHeaderByTemplate'			: _d_addAppHeaderByTemplate,
+				    'getPageAppHeader'           		: _getPageAppHeader,
+				    'getAppHeader'           			: _getAppHeader,
+				    'd_setAppHeader'            		: _d_setAppHeader,
+				    'd_viewAppPageHeader' 				: _d_viewAppPageHeader,
+				    'd_showAppPageHeader' 				: _d_showAppPageHeader,
+				    'd_showAppHeader'            		: _d_showAppHeader,
+				    'd_hideAppPagesHeader'           	: _d_hideAppPagesHeader,
+				    'd_hideAppHeader'          			: _d_hideAppHeader,
+	       //> functions for headers
+
 		}
 
 });
