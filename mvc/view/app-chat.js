@@ -1,5 +1,6 @@
 define(['jquery','m_view'],function($,m_view){
-	var templates = {
+	const _ = {};
+	const templates = {
 		'page' : {
 			'menus' : {
 				'pageName': {
@@ -18,10 +19,9 @@ define(['jquery','m_view'],function($,m_view){
 			'someName': '',
 		}
 
-	},
+	};
+	_['templates'] = templates;
 
 
-	return {
-		'templates' : templates,
-	}
+	return _;
 });

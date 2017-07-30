@@ -1,7 +1,7 @@
-define(['jquery','v_chat','m_view','m_app'],function($,v_chat,m_view,m_app) {
+define(['jquery','v_app-chat', 'm_view', 'm_app'],function($, V_APP_CHAT, m_view, m_app) {
 	//@< init
 		// init from app view templates
-			var templates = v_chat.templates;
+			var templates = V_APP_CHAT.templates;
 	//@> init
 	var pages = {
 		'index' 	: '',

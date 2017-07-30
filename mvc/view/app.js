@@ -401,7 +401,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
         function _d_checkPageInChiefApp (iNdata) {
         	/*
 				@discr
-					update isset page in chief app by object (iNdata)
+					get isset page lengthin chief app by object (iNdata)
 				@inputs
 					@required
 						iNdata -> object
@@ -501,7 +501,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 	        	*/
 	        	$( 
 	        		CONSTANTS['pathAppHeader'] + ' ' 	+ 
-	        		CONSTANTS['nameInAppHeader'] 	+
+	        		'.'+CONSTANTS['nameInAppHeader'] 	+
         			'[app-name="' + iNdata['app'] + '"]'
         		).hide();
 	        }
@@ -515,9 +515,9 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		        	*/
 		        	$( 
 		        		CONSTANTS['pathAppHeader'] + ' ' 		+ 
-		        		CONSTANTS['nameInAppHeader'] 		+
+		        		'.'+CONSTANTS['nameInAppHeader'] 		+
 	        			'[app-name="' + iNdata['app'] + '"] '	+
-	        			CONSTANTS['pageNameInAppHeader']
+	        			'.'+CONSTANTS['pageNameInAppHeader']
 	        		).hide();
 		        }
 	        function _d_showAppHeader (iNdata) {
@@ -530,7 +530,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 	        	*/
 	        	$( 
 	        		CONSTANTS['pathAppHeader'] + ' ' 		+ 
-	        		CONSTANTS['nameInAppHeader']  		+
+	        		'.'+CONSTANTS['nameInAppHeader']  		+
 	        		'[app-name="'+ iNdata['app'] +'"]' 
         		).show();
 	        }
@@ -545,9 +545,9 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		        	*/
 		        	$(
 		        		CONSTANTS['pathAppHeader'] + ' ' 		+ 
-		        		CONSTANTS['nameInAppHeader']  		+
+		        		'.'+CONSTANTS['nameInAppHeader']  		+
 		        		'[app-name="'+ iNdata['app'] +'"]' + ' '+ 
-		        		CONSTANTS['pageNameInAppHeader']  +
+		        		'.'+CONSTANTS['pageNameInAppHeader']  +
 		        		'[page-name="'+ iNdata['page'] +'"]' 
 	        		).show();
 		        }
@@ -633,7 +633,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
         				page
         				content
         	*/
-        	var selector = CONSTANTS['pathAppHeader'] + ' ' + CONSTANTS['nameInAppHeader']+'[app-name="'+iNdata['app']+'"]',
+        	var selector = CONSTANTS['pathAppHeader'] + ' .' + CONSTANTS['nameInAppHeader']+'[app-name="'+iNdata['app']+'"]',
         		content = _getPageAppHeader(iNdata);
 			v_view.addDataToViewEl(selector, _getPageForListApp(content) ,'end');
         }
@@ -649,7 +649,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 	        	*/
 	        	$( 
 	        		CONSTANTS['pathMenuHeader'] + ' ' 	+ 
-	        		CONSTANTS['nameInMenuHeader'] 	+
+	        		'.'+CONSTANTS['nameInMenuHeader'] 	+
         			'[app-name="' + iNdata['app'] + '"]'
         		).hide();
 	        }
@@ -663,9 +663,9 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		        	*/
 		        	$( 
 		        		CONSTANTS['pathMenuHeader'] + ' ' 		+ 
-		        		CONSTANTS['nameInMenuHeader'] 			+
+		        		'.'+CONSTANTS['nameInMenuHeader'] 			+
 	        			'[app-name="' + iNdata['app'] + '"] '	+
-	        			CONSTANTS['pageNameInMenuHeader']
+	        			'.'+CONSTANTS['pageNameInMenuHeader']
 	        		).hide();
 		        }
 	        function _d_showMenuHeader (iNdata) {
@@ -678,7 +678,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 	        	*/
 	        	$( 
 	        		CONSTANTS['pathMenuHeader'] + ' ' 		+ 
-	        		CONSTANTS['nameInMenuHeader']  		+
+	        		'.'+CONSTANTS['nameInMenuHeader']  		+
 	        		'[app-name="'+ iNdata['app'] +'"]' 
         		).show();
 	        }
@@ -693,9 +693,9 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		        	*/
 		        	$(
 		        		CONSTANTS['pathMenuHeader'] + ' ' 		+ 
-		        		CONSTANTS['nameInMenuHeader']  		+
+		        		'.'+CONSTANTS['nameInMenuHeader']  		+
 		        		'[app-name="'+ iNdata['app'] +'"]' + ' '+ 
-		        		CONSTANTS['pageNameInMenuHeader']  +
+		        		'.'+CONSTANTS['pageNameInMenuHeader']  +
 		        		'[page-name="'+ iNdata['page'] +'"]' 
 	        		).show();
 		        }
@@ -781,7 +781,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 	        				page
 	        				content
 	        	*/
-	        	var selector = CONSTANTS['pathMenuHeader'] + ' ' + CONSTANTS['nameInMenuHeader']+'[app-name="'+iNdata['app']+'"]',
+	        	var selector = CONSTANTS['pathMenuHeader'] + ' .' + CONSTANTS['nameInMenuHeader']+'[app-name="'+iNdata['app']+'"]',
 	        		content = _getPageMenuHeader(iNdata);
 				v_view.addDataToViewEl(selector, _getPageForListApp(content) ,'end');
 	        }
@@ -914,7 +914,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 					function : _d_hidePages
         	*/
         	if(typeof(iNdata['type']) != 'string' || iNdata['type'] != 'list') iNdata['type'] = 'chief'
-        	_d_hidePages(iNdata['app'],'all',iNdata['type']);
+        	// _d_hidePages(iNdata['app'],'all',iNdata['type']);
         	_d_showPages(iNdata['app'],iNdata['page'],iNdata['type']);
 		}
 		function _d_viewApp (iNdata) {
@@ -942,7 +942,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 					function : _d_showApps
         	*/
         	if(typeof(iNdata['type']) != 'string' || iNdata['type'] != 'list') iNdata['type'] = 'chief'
-        	_d_hideApps('all',iNdata['type']);
+        	// _d_hideApps('all',iNdata['type']);
         	_d_showApps(iNdata['app'],iNdata['type']);
 		}
         function _d_hidePages (iNapp,iNarray,iNtypeApp) {
@@ -1027,46 +1027,30 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 
 
 
-		//@< work with modal window
-			function addFullWindowByTemplate (iNdata) {
-				/*
-					@discr
-					@inputs
-						@required
-				*/
-				var temp = Template7.compile(iNdata), selector = 'body #container';
-				v_view.addDataToViewEl(selector,temp(iNdata));
-			}
-			function showFullWindow () {
-				/*
-					@discr
-					@inputs
-						@required
-				*/
-				$('.appModalFullWindow').show();
-				
-			}
-			function hideFullWindow () {
-				/*
-					@discr
-					@inputs
-						@required
-				*/
-				$('.appModalFullWindow').hide();
-				
-			}
-			function clearFullWindow () {
-				/*
-					@discr
-					@inputs
-						@required
-				*/
-				$('.appModalFullWindow').remove();
-			}
-		//@> work with modal window
+		
 
 
+		//@< work with header
+			function _d_loadCSS (filename,iNclass){ 
+				var file = document.createElement("link");
+			   file.setAttribute("rel", "stylesheet");
+			   file.setAttribute("type", "text/css");
+			   file.setAttribute("href", filename);
+			  fileref.setAttribute("class", iNclass);
+			   document.head.appendChild(file);
+			}
+			function _d_loadJS (filename,iNclass) { 
+			  var fileref=document.createElement('script');
+			  fileref.setAttribute("type","text/javascript");
+			  fileref.setAttribute("src", filename);
+			  fileref.setAttribute("class", iNclass);
+			  document.getElementsByTagName("head")[0].appendChild(fileref);
 
+			}
+			function _d_removeByClass (iNclass) {
+				$('.'+iNclass).remove();
+			}
+		//@> work with header
         return {
     	  // functions for work with template
     	  	'getAppTemplate'		: _getAppTemplate,
@@ -1101,11 +1085,6 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		    'd_viewPage'            : _d_viewPage,
 		    'd_viewApp'             : _d_viewApp,
 
-		   // work with modal windows
-		    'd_addFullWindowByTemplate'	: _d_addFullWindowByTemplate,
-		    'd_showFullWindow'          : _d_showFullWindow,
-		    'd_hideFullWindow'          : _d_hideFullWindow,
-		    'd_clearFullWindow'     	: _d_clearFullWindow,
 
 	       //< functions for headers
 		    	//app menu header
@@ -1132,6 +1111,11 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 				    'd_hideAppPagesHeader'           	: _d_hideAppPagesHeader,
 				    'd_hideAppHeader'          			: _d_hideAppHeader,
 	       //> functions for headers
+
+			//work with header
+				'd_loadCSS' 		: _d_loadCSS,
+				'd_loadJS' 			: _d_loadJS,
+				'd_removeByClass' 	: _d_removeByClass,
 
 		}
 

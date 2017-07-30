@@ -23,7 +23,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 					iNapp -> string
 					iNpage -> string
 		*/
-		_setApp(iNapp);
+		// _setApp(iNapp);
 		window[this.prefixForApp_ + '-' + iNapp+'-'+this.openPageName_] = iNpage;
 	}
 	function _thisPage (iNapp) {
@@ -44,6 +44,8 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 				@required
 					iNapp -> string
 					iNpage -> string
+			@return
+				object: app
 		*/
 		var thisApp = window.rammanNowOpenedApp||false;
 		return thisApp;
@@ -112,7 +114,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 
 		}
 	//> lambda function
-	function createOrUpdateApp (objectForCreateApp,iNapp) {
+	function createOrUpdateApp (objectForCreateApp,iNapp,iNdataForApp) {
 		/*
 			@discr
 				create app with app init or invoke app update functions
@@ -127,6 +129,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 
 							extra
 					iNapp -> app object
+					iNdataForApp -> string
 				@optional
 			@deps
 				funciton : v_app.d_checkChiefApp,
@@ -141,23 +144,55 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 					#4 [- create page] [with $content if isset] -> [did function] -> end
 				#2 [did function] -> end
 		*/
-		// get count this apps
-	  var issetApps = v_app.d_checkChiefApp( {'app':iNdata['app']} );
-		if (issetApps < 1) {
-				// create app and invoke app init method
-				// safe add attributes if it exists 
+		// know about isset app
+		if ( !isApp(iNapp) ) {
+				// create app if its has not custom onCreate method 
+				if ( typeof iNapp.onCreate != 'function' ) {
+					// safe add attributes if it exists 
 					var appAttr = getAppAttr(iNapp);
-					if( appAttr != false)
-						objectForCreateApp['attr'] = appAttr;
-				v_app.d_createChiefApp(objectForCreateApp);
-				iNapp.onInit();
-			} else if ( _thisPage(iNdata['app']) != iNdata['page']) {
-				// we safe invoke app onUpdate method
-				if ( typeof(iNapp['onUpdate']) == 'function' ) iNapp.onUpdate();
-			}
+					if( appAttr != false) objectForCreateApp['attr'] = appAttr;
+					v_app.d_createChiefApp(objectForCreateApp);
+				}
+				//then invoke app init method
+				iNapp.onInit(iNdataForApp);
+		} else if ( _thisPage(objectForCreateApp['app']) != objectForCreateApp['page']) {
+			// we safe invoke app onUpdate method
+			if ( typeof(iNapp['onUpdate']) == 'function' ) iNapp.onUpdate(iNdataForApp);
+		}
 	}
 
-
+		function isApp (iNapp) {
+			/*
+			 	@discr
+			 		know isset app with default or custom method
+		 		@input
+		 			@required
+		 				iNapp -> object of app
+		 		@return BOOL
+			*/
+			if( typeof iNapp['isApp'] != 'function' )
+				 return (v_app.d_checkChiefApp ( {'app': iNapp.name } ) > 0) ? true : false;
+			else 
+				return iNapp['isApp']();
+		}
+		function isPage (iNapp,iNpage) {
+			/*
+			 	@discr
+			 		know isset page of app  with default or custom method
+		 		@input
+		 			@required
+		 				iNapp 	-> object of  app
+		 				iNpage 	-> string
+		 		@return BOOL
+			*/
+			var thisPage = getPageFuncitons(iNapp,iNpage);
+			var objectForGetPage = {'app': iNapp.name, 'page' : iNpage };
+			if( typeof thisPage['isPage'] != 'function' ) 
+				 return (v_app.d_checkPageInChiefApp ( objectForGetPage ) > 0) ? true : false;
+			else
+				return thisPage['isPage']();
+			
+		}
 
 
 	function rightCloseLastAppOrAnotherPageFromThisApp (iNapp,iNdata) {
@@ -181,9 +216,9 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 			@algorithmh 
 		*/
 		// if we open this app from another this.appName != nowOpenedApp
-		if ( iNdata['app'] != _thisApp() ) {
+		if ( iNdata['app'] != _thisApp().name ) {
 			// did safe invoke onDisappear, onOut methods for app is opening now
-			var pagesFunctionsFromAnotherApp =  getPageFuncitons(_thisApp(),_thisPage( _thisApp() ) );//  _invokeApp(_thisApp(),'pages');
+			var pagesFunctionsFromAnotherApp =  getPageFuncitons(_thisApp(),_thisPage( _thisApp().name ) );//  _invokeApp(_thisApp(),'pages');
 			// did safe invoke for pages from another app onDisappear, onOut
 			if ( pagesFunctionsFromAnotherApp != false) {
 				// invoke onDesappear for page 
@@ -193,14 +228,29 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 				// invoke onOut for page
 					if ( typeof(pagesFunctionsFromAnotherApp['onOut']) == 'function' )
 						pagesFunctionsFromAnotherApp['onOut']();
+
+				// hide another app page with custom or default mehtods
+					if ( typeof(pagesFunctionsFromAnotherApp['onHide']) == 'function' )
+						pagesFunctionsFromAnotherApp['onHide']();
+					else 
+						v_app.d_hidePages(_thisApp().name, _thisPage( _thisApp().name ));
 			}
+
 
 			// did safe close last open app
 			_invokeOpenedApp('onDisappear');
 			_invokeOpenedApp('onOut');
 
+			// hide another app with custom or defatult methods
+			if( typeof _thisApp()['onHide'] == 'function' ) {
+				_thisApp()['onHide']();
+			} else {
+				v_app.d_hideApps( _thisApp().name );
+			}
+
+
 			// did safe invoke thisApp.onIn in
-			if ( typeof(iNapp.onIn) == 'function' )iNapp.onIn(); 
+			if ( typeof(iNapp.onIn) == 'function' ) iNapp.onIn(); 
 
 			//did app appear functions and 
 			iNapp.onAppear();
@@ -214,9 +264,15 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 					if ( typeof(pagesFunctionsFromThisApp['onDisappear']) == 'function' )
 						pagesFunctionsFromThisApp['onDisappear']();
 			}
+
+			// hide  app last page with custom or default mehtods
+				if ( typeof(pagesFunctionsFromThisApp['onHide']) == 'function' )
+					pagesFunctionsFromThisApp['onHide']();
+				else 
+					v_app.d_hidePages( iNdata['app'], _thisPage( iNdata['app'] ));		
 		}
 	}
-	function rightInvokePageFunctions (iNapp,iNdata,objectForCreatePage) {
+	function rightInvokePageFunctions (iNapp,iNdata,objectForCreatePage,iNdataForApp) {
 		/*
 			@discr
 			@input
@@ -224,7 +280,9 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 					iNapp -> app object
 					objectForCreatePage -> object
 						app
+						page
 						@optional
+					iNdataForApp -> string
 				@optional
 					iNapp 		-> app object
 					iNfunction  -> function
@@ -239,42 +297,52 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 				#2 [did function] -> end
 		*/
 		// we invoke onInit or onUpate for page functions if it need
-		var intIssetPages = v_app.d_checkPageInChiefApp(objectForCreatePage);
+
 		// get this page functions
-		var pageFunctions = getPageFuncitons(iNapp,objectForCreateApp['page']);
-		if(intIssetPages < 1) {
+		var pageFunctions = getPageFuncitons(iNapp,objectForCreatePage['page']);
+		if( !isPage(iNapp,objectForCreatePage['page']) ) {
 			// page is not isset - create page
 			// create page and invoke page init method
 			// safe add attributes if it exists 
-				var pageAttr = getPageAttr(iNapp,iNdata['page']);
-				if( pageAttr != false)
-					objectForCreatePage['attr'] = pageAttr;
+			var pageAttr = getPageAttr(iNapp,iNdata['page']);
+			if( pageAttr != false) objectForCreatePage['attr'] = pageAttr;
 
-			v_app.d_createPageInChiefApp(objectForCreatePage);
-			if(typeof(pageFunctions.onInit) == 'function') pageFunctions.onInit();
+			// 
+			if(typeof pageFunctions['onCreate'] == 'function')
+				pageFunctions['onCreate']();
+			else
+				v_app.d_createPageInChiefApp(objectForCreatePage);
+
+			if( typeof pageFunctions.onInit == 'function') 
+				pageFunctions.onInit(iNdataForApp,objectForCreatePage);
 
 		} else {
 			// page isset - change content page because if already isset
 			// safe invoke page init method
-			v_app.d_updatePageInChiefApp(objectForCreatePage)
-			if( typeof (pageFunctions.onUpdate) == 'function') pageFunctions.onUpdate();
+			if( typeof (pageFunctions.onUpdate) == 'function') 
+				pageFunctions.onUpdate(iNdataForApp,objectForCreatePage);
+			else
+				v_app.d_updatePageInChiefApp(objectForCreatePage)
+		}
+
+		// set this page as openinig
+		if( typeof pageFunctions['setPage'] != 'function' )
+			_setPage(iNdata['app'],iNdata['page']);
+		else
+			pageFunctions['setPage'](iNdataForApp,objectForCreatePage);
+
+		// invoke safe page appear functions
+		if( typeof(pageFunctions['onAppear']) == 'function' ){
+			pageFunctions ['onAppear'](iNdataForApp,objectForCreatePage);
 		}
 
 		// if we have not onView functions for pages we need invoke default viewPage functions
 		if( typeof(pageFunctions['onView']) != 'function')
-			v_app.d_viewPage(objectForCreateApp);
+			v_app.d_viewPage(objectForCreatePage);
 		else // if we have override function onView for page we invoke it
-			pageFunctions['onView'](objectForCreateApp);
-
-		// set this page as openinig
-		_setPage(iNdata['app'],iNdata['page']);
-
-		// invoke safe page appear functions
-		if( typeof(pageFunctions['onAppear']) == 'function' ){
-			pageFunctions ['onAppear']();
-		}
+			pageFunctions['onView'](iNdataForApp,objectForCreatePage);
 	}
-	function _readyChiefApp (iNdata,iNapp,iNfunction) {
+	function _readyChiefApp (iNdata,iNapp,iNdataForApp,iNfunction) {
 		/*
 			@discr
 			@input
@@ -302,7 +370,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		*/
 		var dataForCheckApp, issetApps, objectForCreateApp,intIssetPages,objectForCreatePage;
 		// create obj for check for isset app
-		dataForCheckApp = {'app':iNdata['app']};
+		dataForCheckApp = {'app':iNdata['app'],'page':iNdata['page']};
 		if(typeof(iNdata['extra']) == 'string') dataForCheckApp['extra'] = iNdata['extra'];
 		// create app if is not isset
 		objectForCreateApp  = _clone(dataForCheckApp);
@@ -313,7 +381,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		if(typeof(iNdata['page']) 		== 'string') 	objectForCreateApp['page'] 		= iNdata['page'];
 
 		//creating app or invoke on update
-		createOrUpdateApp (objectForCreateApp,iNapp);
+		createOrUpdateApp (objectForCreateApp,iNapp,iNdataForApp);
 
 		// safe right closed app another app what is opening now or close open page
 		rightCloseLastAppOrAnotherPageFromThisApp (iNapp,iNdata);
@@ -324,22 +392,26 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		if( typeof(iNapp['onView']) != 'function')
 			v_app.d_viewApp(objectForCreateApp);
 		else // if we have override function we invoke it
-			iNapp['onView'](objectForCreateApp);
+			iNapp['onView'](iNdataForApp,objectForCreateApp);
 
-		// set this app as openinig
-		_setApp(iNdata['app']);
+		// set this app as openinig if this app inited
+		if(typeof iNapp['setApp'] != 'function')
+			_setApp(iNdata['app']);
+		else
+			iNapp['setApp'](iNdataForApp,iNdata);
+
 
 		// invoke app on appear functions
-		iNapp['onAppear']();
+		iNapp['onAppear'](iNdataForApp,iNdataForApp);
 
 		// right functions OnInit OnUpdate OnDisappear
-		rightInvokePageFunctions (iNapp,iNdata,objectForCreatePage);
+		rightInvokePageFunctions (iNapp,iNdata,objectForCreatePage,iNdataForApp);
 
 
 		// safe did appear function for page
-		if(typeof(iNapp.pages[objectForCreateApp['page']].onAppear) == 'function') iNapp.pages[objectForCreateApp['page']].onAppear();
+		// if(typeof(iNapp.pages[objectForCreateApp['page']].onAppear) == 'function') iNapp.pages[objectForCreateApp['page']].onAppear();
 		// did show this app + show if need and invoke onEnter if need ADD
-		v_app._d_viewPage(objectForCreateApp);
+		// v_app._d_viewPage(objectForCreateApp);
 
 		// safe invoke passed function
 		if (typeof(iNfunction) == 'function')iNfunction();
@@ -522,7 +594,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 
 
 
-	function _openChiefApp (iNdata,iNapp,iNfunction) {
+	function _openChiefApp (iNdata,iNapp,iNstring,iNfunction) {
 		/*
 			@discr
 			@example
@@ -547,9 +619,8 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 				#2 invoke func ready app
 				#3 close loader
 		*/
-		console.log('open chief app from app model funciton _openChiefApp started')
 		v_view.d_showLoader();
-		_readyChiefApp (iNdata,iNapp,function () {
+		_readyChiefApp (iNdata,iNapp,iNstring,function () {
 			if(typeof(iNfunction) == 'function') iNfunction();
 			// v_view.d_showLoader();
 		});
@@ -662,6 +733,15 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 	    return copy;
 	}
 
+
+
+	//@< work with header
+		var _td_loadCSS  		= v_app.d_loadCSS;
+		var _td_removeByClass  	= v_app.d_removeByClass;
+		var _td_loadJS  		= v_app.d_loadJS;
+	//@< work with header
+
+
 	return {
 	    'openChiefApp'  : _openChiefApp,
 	    'openListApp'   : _openListApp,
@@ -681,5 +761,10 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 	    'd_hideApps'    : _td_hideApps,
 	    'd_showApps'    : _td_showApps,
 	    'd_openPage'    : _td_openPage,
+
+	    //work with header
+	    'd_loadCSS' 		: _td_loadCSS,
+	    'd_loadJS' 			: _td_loadJS,
+	    'd_removeByClass' 	: _td_removeByClass,
 	}
 });

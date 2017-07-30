@@ -1,38 +1,5 @@
 define(['jquery','v_chat','m_view','m_app'],function() {
 	var templates = {};
-	/*
-		templates['appMenuForUser'] =  `
-			<div class="menuListForUsers">
-			   {{#each apps}}
-				   <div class="appMenusForUsers"  app-name="{{code}}">
-					      <div class="appNameInMenuList app-{{code}}">
-						      <span>{{name}}</span>
-					      </div>
-						      <ul class="menusForUid">
-						         <li>
-						            <a href="#">Компьютеры</a>
-
-						            <div class="menuButtonInTheMenu"></div>
-						            <ul class="subMenusForUid">
-						               <li>
-						                  <div class="backButtonInTheMenu"></div>
-						                  <a href="#">Asus</a>
-						                  <div class="menuButtonInTheMenu"></div>
-						               </li>
-						               <li class="backType"><a href="#">Apple</a></li>
-						               <li class=""><a href="#">Apple</a></li>
-						            </ul>
-
-						         </li>
-						         <li><a href="#">Телевизоры</a></li>
-						         <li><a href="#">Мебель</a></li>
-						         <li><a href="#">Люстры</a></li>
-						      </ul>
-				   </div>
-			   {{/each}}
-			</div>
-		`;
-	*/
 	templates['UserMenuChildN'] = `
   	<li menuid='{{id}}' menuparent='{{parent}}' class='appUserMenu flagSubMenu{{#if thisSubMenu}} userMenuSubFlag{{/if}}{{#if parentBox}} {{join parentBox delimiter=" "}}{{/if}}' >
       <a href="{{data}}">{{name}}</a>

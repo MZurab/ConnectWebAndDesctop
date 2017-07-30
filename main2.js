@@ -17,14 +17,18 @@ require2.config({
 
         /*<? views */
             'v_view'           : 'mvc/view/view',
-            'v_chat'           : 'mvc/view/chat',
+            'v_app-chat'       : 'mvc/view/app-chat',
             'v_app'            : 'mvc/view/app',
+            'v_app-page'       : 'mvc/view/app-page',
+            'v_app-base'       : 'mvc/view/app-base',
         /*>! views */
 
          /*<? models */
             'm_view'           : 'mvc/model/view',
-            'm_chat'           : 'mvc/model/chat',
+            'm_app-chat'       : 'mvc/model/app-chat',
             'm_app'            : 'mvc/model/app',
+            'm_app-page'       : 'mvc/model/app-page',
+            'm_app-base'       : 'mvc/model/app-base',
             'm_engine'         : 'mvc/model/engine',
         /*>! models */
     },
@@ -97,13 +101,13 @@ require2(['jquery','template7','m_view','dictionary','m_engine'], function($, Te
       
         console.log( 'html', html);
 
-            m_engine.openApp('chat','private');
-            m_engine.openApp('chat','private2');
-        Dictionary.autoChange(function () {
-            // m_view.hideLoader();
-            // m_view.init();
-            // m_engine.openApp('chat','private');
-        });
+        m_engine.openApp({'app':'page','page':'private'},'data');
+            // m_engine.openApp('chat','private2');
+        // Dictionary.autoChange(function () {
+        //     // m_view.hideLoader();
+        //     // m_view.init();
+        //     // m_engine.openApp('chat','private');
+        // });
         
 
         console.log('end!');

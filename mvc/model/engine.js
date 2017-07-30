@@ -1,4 +1,4 @@
-define(['jquery','v_view','m_app','m_chat'], function ($,v_view,m_app,m_chat) {
+define(['jquery','v_view','m_app','m_app-chat','m_app-base','m_app-page'], function ($,V_VIEW,M_APP,APP_CHAT,APP_BASE,APP_PAGE) {
 
 
 
@@ -70,7 +70,7 @@ define(['jquery','v_view','m_app','m_chat'], function ($,v_view,m_app,m_chat) {
 
 
 	/*?<<< APP */
-		function _openApp ( iNdata, iNapp,iNfunction) {
+		function _openApp ( iNdata, iNstring,iNfunction) {
 			/*
 				@disc
 					open app
@@ -93,14 +93,16 @@ define(['jquery','v_view','m_app','m_chat'], function ($,v_view,m_app,m_chat) {
 							iNtype
 
 				@deps
-					function : m_app
+					function : M_APP
 			*/
-			m_app.openChiefApp (iNdata,iNapp,iNfunction); 
+			// M_APP.openChiefApp (iNdata,iNapp,iNfunction); 
 			// get module name by app name
 			console.log('_openApp from engine started');
 			var app, page, objForOpenApp = iNdata, appName = objForOpenApp['app'], pageName = objForOpenApp['page'];
+			console.log('appName',appName);
 			app = getAppByName(appName);
-			m_app.openChiefApp (iNdata,app,iNfunction);
+			console.log('app',app);
+			M_APP.openChiefApp (iNdata,app,iNstring,iNfunction);
 		}
 
 		function _closeApp (iName,iNpage) {
@@ -126,15 +128,23 @@ define(['jquery','v_view','m_app','m_chat'], function ($,v_view,m_app,m_chat) {
 			*/
 			switch (iName) {
 				case "chat":
-					return m_chat;
+					return APP_CHAT;
 				break;
 
 				case "onepay":
-					return m_onepay;
+					return APP_ONEPAY;
 				break;
 
 				case "market":
-					return m_market;
+					return APP_MARKET;
+				break;
+
+				case "page":
+					return APP_PAGE;
+				break;
+
+				case "base":
+					return APP_BASE;
 				break;
 
 				default:
@@ -143,6 +153,13 @@ define(['jquery','v_view','m_app','m_chat'], function ($,v_view,m_app,m_chat) {
 
 			}
 		}
+
+		function getAppBySafe () {
+
+		}
+			function getGlobalAppRef () {
+
+			}
 	/*?>>> APP */
 
 	return {
