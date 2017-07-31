@@ -152,7 +152,8 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 					var appAttr = getAppAttr(iNapp);
 					if( appAttr != false) objectForCreateApp['attr'] = appAttr;
 					v_app.d_createChiefApp(objectForCreateApp);
-				}
+				} else
+					iNapp.onCreate(iNdataForApp,objectForCreateApp);
 				//then invoke app init method
 				iNapp.onInit(iNdataForApp);
 		} else if ( _thisPage(objectForCreateApp['app']) != objectForCreateApp['page']) {

@@ -1,5 +1,21 @@
-define([],function(){
-	const result = {};
+define(['v_view'],function(v_view){
+	const _ = {};
+	const templates = {};
+	//< template for modal window
+		    templates['fullWindow'] = `
+				<div class="appModalFullWindow background {{#if attr}}{{attr}}{{/if}}">
+					{{#if defaultHeaderBlock}}
+					    <div class="headerForAppFullWindow background">
+							{{#if defaultCloseButton}}
+					    		<div class="closeButtonInHeaderForAppFullWindow"></div>
+					    	{{/if}}
+						</div>
+					{{/if}}
+				    <div class="contentForAppFullWindow background">
+				    	{{content}}
+				    </div>
+				</div>
+			`;
 	//@< work with modal window
 		function addFullWindowByTemplate (iNdata) {
 			/*
@@ -14,10 +30,10 @@ define([],function(){
 								defaultHeader => bool
 								defaultCloseButton => bool
 			*/
-			var temp = Template7.compile(iNdata), selector = 'body #container';
-			v_view.addDataToViewEl(selector,temp(iNdata));
+			var temp = Template7.compile(templates['fullWindow']), selector = 'body #container';
+			v_view.d_addDataToViewEl(selector,temp(iNdata)); console.log('temp(iNdata)',temp(iNdata))
 		}
-		result['addFullWindowByTemplate'] = addFullWindowByTemplate;
+		_['addFullWindowByTemplate'] = addFullWindowByTemplate;
 
 		function showFullWindow () {
 			/*
@@ -29,7 +45,7 @@ define([],function(){
 			$('.appModalFullWindow').show();
 			
 		}
-		result['showFullWindow'] = showFullWindow;
+		_['showFullWindow'] = showFullWindow;
 
 		function hideFullWindow () {
 			/*
@@ -41,7 +57,7 @@ define([],function(){
 			$('.appModalFullWindow').hide();
 			
 		}
-		result['hideFullWindow'] = hideFullWindow;
+		_['hideFullWindow'] = hideFullWindow;
 
 		function clearFullWindow () {
 			/*
@@ -52,10 +68,10 @@ define([],function(){
 			*/
 			$('.appModalFullWindow').remove();
 		}
-		result['clearFullWindow'] = clearFullWindow;
+		_['clearFullWindow'] = clearFullWindow;
 	//@> work with modal window
 
 
 
-	return result;
+	return _;
 });

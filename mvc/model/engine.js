@@ -99,9 +99,7 @@ define(['jquery','v_view','m_app','m_app-chat','m_app-base','m_app-page'], funct
 			// get module name by app name
 			console.log('_openApp from engine started');
 			var app, page, objForOpenApp = iNdata, appName = objForOpenApp['app'], pageName = objForOpenApp['page'];
-			console.log('appName',appName);
 			app = getAppByName(appName);
-			console.log('app',app);
 			M_APP.openChiefApp (iNdata,app,iNstring,iNfunction);
 		}
 

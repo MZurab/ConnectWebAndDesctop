@@ -1,4 +1,4 @@
-define( ['jquery','m_view'] , function ($,M_VIEW) {
+define( ['jquery','m_view','v_app-page'] , function ($,M_VIEW,V_APP_PAGE) {
 
   const _ = {};
   const pages = {
@@ -16,9 +16,10 @@ define( ['jquery','m_view'] , function ($,M_VIEW) {
       },
       'functions': {
         'isPage'  : function () {console.log('app private','isPage'); return true;},
-        'onView'  : function () { M_VIEW.closeLoader(); console.log('app private','onView'); return true;},
+        'onView'  : function () { M_VIEW.closeLoader(); V_APP_PAGE.addFullWindowByTemplate({'content':'Hellow World!!!'}); console.log('app private','onView'); return true;},
         'onHide'  : function () {console.log('app private','onHide'); return true;},
         'setPage' : function () {console.log('app private','setPage'); return true;},
+        'onCreate' : function () {console.log('app private','onCreate'); return true;},
 
       }
     }
@@ -53,7 +54,7 @@ define( ['jquery','m_view'] , function ($,M_VIEW) {
   _['setApp'] = setApp;
 
 
-  // function onCreate
+  // function onView
   function onView (iNstring,iNobject) {
     console.log('app-page','onView',iNstring,iNobject);
 
@@ -84,8 +85,7 @@ define( ['jquery','m_view'] , function ($,M_VIEW) {
 
     // function onIn
     function onIn (iNstring,iNobject) {
-    console.log('app-page','onIn');
-      
+      console.log('app-page','onIn');
     }
     _['onIn'] = onIn;
 
@@ -99,14 +99,12 @@ define( ['jquery','m_view'] , function ($,M_VIEW) {
       // function onDisappear
       function onDisappear (iNstring,iNobject) {
         console.log('app-page','onDisappear');
-
       }
       _['onDisappear'] = onDisappear;
 
     // function onOut
     function onOut (iNstring,iNobject) {
       console.log('app-page','onOut');
-
     }
     _['onOut'] = onOut;
 

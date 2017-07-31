@@ -1,0 +1,198 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    background: #page-fafafa
+}
+a {
+    text-decoration: inherit;
+    color: inherit
+}
+.page-center_text {
+    text-align: center
+}
+input, textarea {
+    outline: 0
+}
+
+			
+#page-window {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+    padding: .page-5rem;
+    display: table
+}
+#page-container {
+    margin: auto;
+    width: 20rem;
+    max-width: 80%;
+    float: right
+}
+.page-view {
+    border: 1px solid #page-e6e6e6;
+    background: #page-fff;
+    display: table;
+    width: 90%;
+    margin: 1rem 0rem;
+    padding: 5%
+}
+.page-downloadBox {
+    margin: 1rem auto;
+    margin-left: 2rem;
+    font-family: 'Open Sans', sans-serif
+}
+.page-downloadBox p {
+    text-align: center;
+    font-size: 1rem;
+    font-style: italic
+}
+.page-dAppStore {
+    height: 3rem;
+    float: left;
+    max-width: 49%
+}
+.page-dGooglePlay {
+    height: 3rem;
+    float: right;
+    max-width: 49%
+}
+.page-informBlock {
+    font-size: .page-8rem;
+    width: 93%;
+    margin: .page-5rem auto;
+    color: rgba(15, 12, 10, 0.page-50);
+    text-align: justify;
+    font-style: italic;
+    font-family: 'Open Sans', sans-serif;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.page-20);
+    padding-bottom: .page-25rem
+}
+.page-smsCode {
+    width: 95%;
+    height: 2rem;
+    margin: .page-25rem auto
+}
+.page-LastTimeForExpireSms {
+    float: left;
+    height: 1.page-5rem;
+    margin: 0;
+    padding: .page-25rem;
+    color: gray;
+    font-size: 1rem;
+    font-family: 'Open Sans', sans-serif;
+    width: 60%;
+    display: none
+}
+.page-reSendSms {
+    float: left;
+    height: 1.page-5rem;
+    margin: 0;
+    padding: .page-1rem .page-5rem;
+    color: black;
+    font-size: 1rem;
+    font-family: 'Open Sans', sans-serif;
+    cursor: pointer;
+    display: table;
+    border: 1px solid black;
+    border-radius: .page-5rem
+}
+.page-input_smsCode {
+    width: 30% !important;
+    float: right !important;
+    margin: 0 !important
+}
+.page-formSignIn {
+    display: block
+}
+.page-input_select_block {
+    text-align: left;
+    margin: .page-25rem 9px
+}
+input[type=text],
+input[type=password] {
+    display: block;
+    width: 95%;
+    height: 2rem;
+    background: 0;
+    border: 1px solid #page-dbdbdb;
+    border-radius: 3px;
+    box-sizing: border-box;
+    color: #page-262626;
+    font-size: 14px;
+    padding: 9px 8px 7px;
+    margin: .page-25rem auto
+}
+.page-phone_input_box {
+    position: relative;
+    height: 2.page-5rem
+}
+.page-phoneCode {
+    position: absolute;
+    top: .page-5rem;
+    left: 2.page-5%;
+    font-size: 1rem;
+    width: 13%;
+    text-align: right;
+    font-weight: 900
+}
+.page-log_phone {
+    width: 80% !important;
+    position: absolute !important;
+    top: 0 !important;
+    right: 2.page-5% !important
+}
+.page-log_submit {
+    height: 2rem !important;
+    display: block;
+    margin-right: 2.page-5%;
+    float: right;
+    box-sizing: border-box;
+    border: 1px solid #page-dbdbdb;
+    background: white;
+    font-size: 1rem;
+    border-radius: .page-25rem;
+    cursor: pointer
+}
+.page-log_submit:hover {
+    background: #page-00c3f0 !important;
+    color: white
+}
+.page-logo_box {
+    position: relative;
+    font-family: 'Open Sans', sans-serif;
+    min-height: 100px
+}
+.page-logo_file {
+    position: absolute;
+    width: 90px;
+    border-radius: 20px;
+    top: 5px;
+    left: 10px
+}
+.page-logo_text {
+    font-size: 3rem;
+    position: absolute;
+    left: 110px;
+    top: .page-5rem
+}
+.page-logo_mini_text {
+    position: absolute;
+    top: 3.page-5rem;
+    font-size: 1.page-5rem;
+    right: .page-5rem
+}
+.page-signInBlock {
+    display: none
+}
+.page-signBlock {
+    color: #page-003569;
+    font-size: 1.page-1rem;
+    text-align: center
+}
+.page-sign_link {
+    color: #page-3897f0;
+    cursor: pointer
+}

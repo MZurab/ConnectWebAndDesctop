@@ -66,21 +66,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 			    `;
 	    //> templates for header
 
-	    //< template for modal window
-		    templates['fullWindow'] = `
-				<div class="appModalFullWindow background {{#if attr}}{{attr}}{{/if}}">
-					{{#if defaultHeaderBlock}}
-					    <div class="headerForAppFullWindow background">
-							{{#if defaultCloseButton}}
-					    		<div class="closeButtonInHeaderForAppFullWindow"></div>
-					    	{{/if}}
-						</div>
-					{{/if}}
-				    <div class="contentForAppFullWindow background">
-				    	{{content}}
-				    </div>
-				</div>
-			`;
+	    
 	    //< template for modal window
 
 	   

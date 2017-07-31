@@ -1,813 +1,883 @@
 body, html {
-    margin:0px;
-    padding: 0px;
+	margin:0px;
+	padding: 0px;
 }
 a {
-    text-decoration: inherit;
-    color: inherit;
+	text-decoration: inherit;
+	color: inherit;
 }
 input,textarea {outline:none;}
 #container {
-    width:100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.40);
+	width:100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.40);
 }
-    .backTopLineInContainer {
-        height: 100px;
-        width: 100%;
-        position: fixed;
-        top: 0px;
-        left: 0px;
-        background: url(https://cdn.ramman.net/images/backTopLine.jpg);
-        background-size: cover;
-    }
-    
-    #block {
-        width: 85%;
-        max-width: 1500px;
-        min-width: 1200px;
-        background-color: #eeeeee;
-        height: 99%;
-        margin: auto;
-        position: relative;
-        top: 0.5%;
-        bottom: 0.5%;
-    }
-        #appsBlock {
-            background: #f2f2f2;
-            width:  7.3%;
-            background: #f2f2f2;
-            height: 100%;
-            float:left;
-            position: relative;
-        }
-            .bTopInAppsBlock {
-                height: 50px;
-                width: 94%;
-                text-align: center;
-                cursor: pointer;
-                position: absolute;
-                top: 0.2rem;
-                left: 2%;
-            }
-                .bTopInAppsBlock img {
-                    margin:10px 0px 8px 0px; 
-                }
-            .bBottomInAppsBlock {
-                height: 50px;
-                width: 94%;
-                text-align: center;
-                cursor: pointer;
-                position: absolute;
-                bottom: 0.2rem;
-                left: 2%;
-            }
-                .bBottomInAppsBlock img {
-                    margin:10px 0px 8px 0px; 
-                }
-            .AppsContainerInAppBlock {
-                position: absolute;
-                top:55px;
-                bottom: 55px;
-                width: 92%;
-                left: 4%;
-                right: 4%;
-            }
-                .appsInAppBlock {
-                    width: 80%;
-                    min-height: 90px;
-                    cursor: pointer;
-                    border-radius: 1rem;
-                    position: relative;
-                    /* overflow: hidden; */
-                    margin: auto;
-                    margin-bottom: 0.25rem;
-                }
-                    .appsInAppBlock img{
-                        width: 100%;
-                        border-radius: 1rem;
-                    }
-                    .appsNameInAppsBlock {
-                        font-size: 0.8rem;
-                        font-weight: 800;
-                        text-align: center;
-                        padding-top: 0.05rem;
-                    }
-                    .blackTransparentBlockInAppsBlock {
-                        position: absolute;
-                        width: 100%;
-                        height: 100%;
-                        background: rgba(255, 255, 255, 0.47);
-                        border-radius: 1rem;
-                    }
-            
-        #menusBlock {
-            width: 28%;
-            background: #ffffff;
-            height: 100%;
-            float:left;
-            border-right:0.1rem solid #dfd7cf;
-            position: relative;
-        }
-            .topBlockInMenusBlock {
-                height: 69px;
-                background-color:#eeeeee; 
-                border-bottom:0.1rem solid #dfd7cf;
-                position: relative;
-            }
-                .topBlockInMenusBlock .ChoosePlaceInMenusBlock {
-                    position: absolute;
-                    right: 5px;
-                    bottom: 5px;
-                    font-size: 1rem;
-                    cursor: pointer;
+	/*< appModalFullWindow in container */
+		.appModalFullWindow {
+		    position: fixed;
+		    width: 100%;
+		    height: 100%;
+		    background: white;
+		    z-index: 999;
+		}
+			.headerForAppFullWindow {
+			    height: 3.5rem;
+			    margin: 0px;
+			    padding: 0px;
+			    position: relative;
+			    border-bottom: 0.15rem solid black;
+			    margin-bottom: 2rem;
+			}
+				.closeButtonInHeaderForAppFullWindow {
+				    background-image: url(https://cdn.ramman.net/web/res/images/buttons/closeButton.png);
+				    width: 2.5rem;
+				    height: 2.5rem;
+				    background-size: 100%;
+				    position: absolute;
+				    top: 0.5rem;
+				    left: 0.5rem;
+				    cursor: pointer;
+				}
 
-                }
-                #IconUserInMenusBlock {
-                    height: 60px;
-                    width: 60px;
-                    background: rgba(0, 0, 0, 0.47);
-                    border-radius: 100%;
-                    position: absolute;
-                    top: 5px;
-                    left: 5px;
-                    cursor: pointer;
-                    overflow: hidden;
-                }
-                    #IconUserInMenusBlock img, #IconUserInMenusBlock a {
-                        width: inherit;
-                        height: inherit;
-                        border-radius: inherit; 
-                    }
-                #UserNameInMenusBlock {
-                    position: absolute;
-                    left: 70px;
-                    top: 10px;
-                    font-size: 1rem;
-                    font-weight: 900;
-                    cursor: pointer;
-                }
+	/*> appModalFullWindow in container */
+	.backTopLineInContainer {
+		height: 100px;
+		width: 100%;
+		position: fixed;
+		top: 0px;
+		left: 0px;
+		background: url(https://cdn.ramman.net/images/backTopLine.jpg);
+		background-size: cover;
+	}
+	
+	#block {
+	    width: 85%;
+	    max-width: 1500px;
+	    min-width: 1200px;
+	    background-color: #eeeeee;
+	    height: 99%;
+	    margin: auto;
+	    position: relative;
+	    top: 0.5%;
+	    bottom: 0.5%;
+	}
+		#appsBlock {
+			background: #f2f2f2;
+			width:  7.3%;
+			background: #f2f2f2;
+			height: 100%;
+			float:left;
+			position: relative;
+		}
+			.bTopInAppsBlock {
+				height: 50px;
+				width: 94%;
+				text-align: center;
+				cursor: pointer;
+				position: absolute;
+				top: 0.2rem;
+				left: 2%;
+			}
+				.bTopInAppsBlock img {
+					margin:10px 0px 8px 0px; 
+				}
+			.bBottomInAppsBlock {
+				height: 50px;
+				width: 94%;
+				text-align: center;
+				cursor: pointer;
+				position: absolute;
+				bottom: 0.2rem;
+				left: 2%;
+			}
+				.bBottomInAppsBlock img {
+					margin:10px 0px 8px 0px; 
+				}
+			.AppsContainerInAppBlock {
+				position: absolute;
+				top:55px;
+				bottom: 55px;
+				width: 92%;
+				left: 4%;
+				right: 4%;
+			}
+				.appBlockInAppBlock {
+					width: 110%;
+				    position: relative;
+				    left: -10%;
+				    background: rgba(128, 128, 128, 0.1);
+				    padding-top: 0.5rem;
+				    border-left: 5px solid transparent;
+				}
+					.appBlockInAppBlock.opened {
+						border-color: rgb(224, 84, 84);
+					}
+						.appsInAppBlock {
+						    width: 80%;
+						    min-height: 90px;
+						    cursor: pointer;
+						    border-radius: 1rem;
+						    position: relative;
+						    /* overflow: hidden; */
+						    margin: auto;
+		    				margin-bottom: 0.25rem;
+						}
+							.appsInAppBlock img{
+								width: 100%;
+							    border-radius: 1rem;
+							}
+							.appsNameInAppsBlock {
+							    font-size: 0.8rem;
+							    font-weight: 800;
+							    text-align: center;
+							    padding-top: 0.05rem;
+							}
+							.blackTransparentBlockInAppsBlock {
+							    position: absolute;
+							    width: 100%;
+							    height: 100%;
+							    background: rgba(255, 255, 255, 0.47);
+							    border-radius: 1rem;
+							}
+			
+		#menusBlock {
+			width: 28%;
+			background: #ffffff;
+			height: 100%;
+			float:left;
+			border-right:0.1rem solid #dfd7cf;
+			position: relative;
+		}
+			.topBlockInMenusBlock {
+				height: 69px;
+				background-color:#eeeeee; 
+				border-bottom:0.1rem solid #dfd7cf;
+				position: relative;
+			}
+				.topBlockInMenusBlock .ChoosePlaceInMenusBlock {
+					position: absolute;
+					right: 5px;
+    				bottom: 5px;
+					font-size: 1rem;
+					cursor: pointer;
 
-            #menusBlock .searchBlockInMenusBlock {
-                background-color:#fbfbfb;
-                height: 45px;
-                border-bottom: 1px solid #e9ebeb;
+				}
+				#IconUserInMenusBlock {
+					height: 60px;
+				    width: 60px;
+				    background: rgba(0, 0, 0, 0.47);
+				    border-radius: 100%;
+				    position: absolute;
+				    top: 5px;
+				    left: 5px;
+				    cursor: pointer;
+				    overflow: hidden;
+				}
+					#IconUserInMenusBlock img, #IconUserInMenusBlock a {
+						width: inherit;
+						height: inherit;
+						border-radius: inherit; 
+					}
+				#UserNameInMenusBlock {
+					position: absolute;
+				    left: 70px;
+				    top: 10px;
+				    font-size: 1rem;
+				    font-weight: 900;
+				    cursor: pointer;
+				}
 
-            }
-                .searchBlockInMenusBlock .searchContainerInSearchBlock {
-                    width: 94%;
-                    border: 1px solid #f6f6f6;
-                    background: white;
-                    margin: 0.25rem 3%;
-                    height: 80%;
-                    border-radius: 0.35rem;
-                    position: relative;
-                }
-                    .searchBlockInMenusBlock .searchContainerInSearchBlock .searchInputInSearchBlock {
-                        position: absolute;
-                        width: 92%;
-                        border: 0;
-                        height: 100%;
-                        font-size: 1rem;
-                        padding-left: 2%;
-                        padding-top: 1%;
-                        left: 8%;
-                    }
-                    .searchBlockInMenusBlock .searchContainerInSearchBlock  .submitInputInSearchBlock {
-                        background-image: url(https://cdn.ramman.net/images/buttons/searchButton.png);
-                        position: absolute;
-                        border: 0px;
-                        width: 1.5rem;
-                        height: 1.5rem;
-                        background-size: 95%;
-                        cursor: pointer;
-                        top: 20%;
-                        left: 1%;
+			#menusBlock .searchBlockInMenusBlock {
+				background-color:#fbfbfb;
+				height: 45px;
+				border-bottom: 1px solid #e9ebeb;
 
-                    }
+			}
+				.searchBlockInMenusBlock .searchContainerInSearchBlock {
+					width: 94%;
+				    border: 1px solid #f6f6f6;
+				    background: white;
+				    margin: 0.25rem 3%;
+				    height: 80%;
+				    border-radius: 0.35rem;
+					position: relative;
+				}
+					.searchBlockInMenusBlock .searchContainerInSearchBlock .searchInputInSearchBlock {
+						position: absolute;
+					    width: 92%;
+					    border: 0;
+					    height: 100%;
+					    font-size: 1rem;
+					    padding-left: 2%;
+					    padding-top: 1%;
+					    left: 8%;
+					}
+					.searchBlockInMenusBlock .searchContainerInSearchBlock  .submitInputInSearchBlock {
+						background-image: url(https://cdn.ramman.net/images/buttons/searchButton.png);
+					    position: absolute;
+					    border: 0px;
+					    width: 1.5rem;
+					    height: 1.5rem;
+					    background-size: 95%;
+					    cursor: pointer;
+					    top: 20%;
+					    left: 1%;
 
-            #menusBlock .usersBlockContainerInMenusBlock .usersBlockInMenusBlock {
-                border-bottom: 1px solid #e9ebeb;
-                min-height: 80px;
-                background: white;
-                position: relative;
-            }
-            .usersBlockContainerInMenusBlock {
-                bottom: 0px;
-                position: absolute;
-                width: 100%;
-                top: 114px;
-                overflow: hidden;
-            }
-                .scrolBlockForChat {
-                    height: 100%;
-                    width: 100%;
-                    overflow: scroll;
-                    padding-right: 10%;
-                }
-                    .usersBlockInMenusBlock:hover {
-                        background: #e9ebeb !important;
-                    }
-                    .usersBlockInMenusBlock .iconBlockInUserBlock {
-                        position: absolute;
-                        top: 5px;
-                        left: 10px;
-                        cursor: pointer;
-                    }
-                        .usersBlockInMenusBlock .iconInUserBlock {
-                            height: 50px;
-                            width: 65px;
-                            margin: auto;
-                            overflow: hidden;
-                            border-radius:100%;
-                            text-align: center;
-                        }
-                            .iconInUserBlock img{
-                                max-width: 95%;
-                                max-height: 95%;
-                                margin-top: 2.5%;
-                            }
-                        .usersBlockInMenusBlock .typeInUserBlock {
-                            display: table;
-                            margin: auto;
-                            margin-top: 0.1rem; 
-                            background: #1ca4d6;
-                            color: white;
-                            border-radius:5px;
-                            padding: 0px 5px;
-                            font-size: 0.9rem;
+					}
 
-                        }
-                    .usersBlockInMenusBlock .firstLineInUserBlock {
-                        position: absolute;
-                        font-size: 1rem;
-                        left: 80px;
-                        top: 7px;
-                        right: 5px;
-                        height: 20px;
+			#menusBlock .usersBlockContainerInMenusBlock .usersBlockInMenusBlock {
+				border-bottom: 1px solid #e9ebeb;
+				min-height: 80px;
+				background: white;
+				position: relative;
+			}
+			.usersBlockContainerInMenusBlock {
+				bottom: 0px;
+			    position: absolute;
+			    width: 100%;
+			    top: 114px;
+			    overflow: hidden;
+			}
+				.scrolBlockForChat {
+					height: 100%;
+				    width: 100%;
+				    overflow: scroll;
+				    padding-right: 10%;
+				}
+					.usersBlockInMenusBlock:hover {
+						background: #e9ebeb !important;
+					}
+					.usersBlockInMenusBlock .iconBlockInUserBlock {
+						position: absolute;
+						top: 5px;
+						left: 10px;
+						cursor: pointer;
+					}
+						.usersBlockInMenusBlock .iconInUserBlock {
+							height: 50px;
+							width: 65px;
+							margin: auto;
+							overflow: hidden;
+							border-radius:100%;
+    						text-align: center;
+						}
+							.iconInUserBlock img{
+								max-width: 95%;
+							    max-height: 95%;
+							    margin-top: 2.5%;
+							}
+						.usersBlockInMenusBlock .typeInUserBlock {
+							display: table;
+							margin: auto;
+							margin-top: 0.1rem; 
+							background: #1ca4d6;
+							color: white;
+							border-radius:5px;
+							padding: 0px 5px;
+							font-size: 0.9rem;
 
-                    }
-                        .firstLineInUserBlock .usersNameInUserBlock {
-                            display: table;
-                            font-weight: 900;
-                            float: left;
-                            cursor: pointer;
+						}
+					.usersBlockInMenusBlock .firstLineInUserBlock {
+					    position: absolute;
+					    font-size: 1rem;
+					    left: 80px;
+					    top: 7px;
+	    				right: 5px;
+					    height: 20px;
 
-                        }
-                            .isVerificateinUserBlock {
-                                background-image: url(https://cdn.ramman.net/images/sprite/1.png);
-                                display: inline-block;
-                                width: 20px;
-                                height: 20px;
-                                background-size: 100%;
-                                background-position-y: 20px;
-                                margin-left: 0.25rem;
-                                cursor: pointer;
-                            }
+					}
+						.firstLineInUserBlock .usersNameInUserBlock {
+							display: table;
+						    font-weight: 900;
+						    float: left;
+						    cursor: pointer;
 
-                            .toCallBlockInUserNameBlock {
-                                height: 100%;
-                                float: right;
-                                display: table;
-                            }
-                                .btnToVoiceCallInFirstLine {
-                                    display: inline-block;
-                                    background-image: url(https://cdn.ramman.net/images/sprite/1.png);
-                                    display: inline-block;
-                                    width: 20px;
-                                    height: 20px;
-                                    background-position-y: 200px;
-                                    margin-right: 0.25rem;
-                                    background-size: 100%;
-                                    cursor: pointer;
-                                }
-                                .btnToVideoCallInFirstLine {
-                                    display: inline-block;
-                                    background-image: url(https://cdn.ramman.net/images/sprite/1.png);
-                                    display: inline-block;
-                                    width: 20px;
-                                    height: 20px;
-                                    background-position-y: 80px;
-                                    margin-right: 0.1rem;
-                                    background-size: 100%;
-                                    cursor: pointer;
-                                }
-                    .usersBlockInMenusBlock .secondLineInUserBlock {
-                        position: absolute;
-                        font-size: 1rem;
-                        left: 80px;
-                        top: 32px;
-                        right: 5px;
-                        height: 21px;
+						}
+							.isVerificateinUserBlock {
+								background-image: url(https://cdn.ramman.net/images/sprite/1.png);
+							    display: inline-block;
+							    width: 20px;
+							    height: 20px;
+							    background-size: 100%;
+							    background-position-y: 20px;
+							    margin-left: 0.25rem;
+							    cursor: pointer;
+							}
 
-                    }
-                        .leftBlockInSecondLine {
-                            display: table;
-                            float: left;
-                        }
-                            .liveBlocks {
-                                position: relative;
-                                display: none;
-                            }
-                            .liveStatusTextBlock {
+							.toCallBlockInUserNameBlock {
+								height: 100%;
+								float: right;
+								display: table;
+							}
+								.btnToVoiceCallInFirstLine {
+									display: inline-block;
+									background-image: url(https://cdn.ramman.net/images/sprite/1.png);
+								    display: inline-block;
+								    width: 20px;
+								    height: 20px;
+							    	background-position-y: 200px;
+								    margin-right: 0.25rem;
+							    	background-size: 100%;
+								    cursor: pointer;
+								}
+								.btnToVideoCallInFirstLine {
+									display: inline-block;
+									background-image: url(https://cdn.ramman.net/images/sprite/1.png);
+								    display: inline-block;
+								    width: 20px;
+								    height: 20px;
+							    	background-position-y: 80px;
+								    margin-right: 0.1rem;
+							    	background-size: 100%;
+								    cursor: pointer;
+								}
+					.usersBlockInMenusBlock .secondLineInUserBlock {
+					    position: absolute;
+					    font-size: 1rem;
+					    left: 80px;
+					    top: 32px;
+	    				right: 5px;
+					    height: 21px;
 
-                            }
-                                .liveStatusTextWriting {
-                                    background-image: url(https://cdn.ramman.net/images/gif/live_writing_text.gif);
-                                    background-size: 100%;
-                                    width: 45px;
-                                    height: 45px;
-                                    position: absolute;
-                                    top: -18px;
-                                    left: 0px;
-                                }
-                                .valueInLiveBlocks {
-                                    position: absolute;
-                                    left: 40px;
-                                    font-size: 0.9rem;
-                                    font-style: italic;
-                                    font-weight: 600;
-                                    padding: 1px 3px;
-                                    color: rgb(110, 97, 151);
-                                    display: table;
-                                    white-space: nowrap;
-                                    top: 5px;
+					}
+						.leftBlockInSecondLine {
+							display: table;
+							float: left;
+						}
+							.liveBlocks {
+								position: relative;
+								display: none;
+							}
+							.liveStatusTextBlock {
 
-                                }
-                                    .printingAmount {
-                                        
-                                    }
-                            .btnSubscribeInFirstLine {
-                                display: table;
-                                background: #7ac82e;
-                                color: white;
-                                font-size: 0.9rem;
-                                height: 19px;
-                                border-radius: 0.40rem;
-                                padding: 0rem 0.5rem;
-                                padding-top: 0.1rem;
-                                cursor: pointer;
-                            }
-                        .rightBlockInSecondLine {
-                            display: table;
-                            float: right;
-                            text-align: right;
-                        }
-                            .newMsgInSecondLine {
-                                line-height: 20px;
-                                height: 20px;
-                                width: 20px;
-                                background: #715d96;
-                                border-radius: 100%;
-                                display: inline-block;
-                                color: white;
-                                text-align: center;
-                                padding: 2px;
-                                cursor: pointer;
-                                font-size: 0.9rem;
-                                margin-top: -2px;
-                            }
-                    /* menul list for users */
-                        .appMenusForUsers {
-                            margin-bottom: 0.25rem;
-                            border-bottom: 1px solid #e1e1e1;
-                        }
-                            .menuListForUsers {
-                                /*position: absolute;
-                                top: 100%;*/
-                                min-height: 2rem;
-                                width: 100%;
-                            }
-                                .appNameInMenuList {
-                                    /*margin: 0.25rem;
-                                    background: rgba(255, 255, 255, 0.05);
-                                    padding: 0.05rem;*/
-                                        padding: 0.25rem 0.5rem;
-                                }
-                                    .appNameInMenuList img {
-                                        height: 1.75rem;
-                                        border-radius: 0.5rem;
-                                        vertical-align: middle;
-                                    }
-                                    .appNameInMenuList span {
-                                        font-size: 1rem;
-                                        margin: 0rem 0.5rem;
-                                        vertical-align: middle;
-                                        font-weight: bold;
+							}
+								.liveStatusTextWriting {
+									background-image: url(https://cdn.ramman.net/images/gif/live_writing_text.gif);
+								    background-size: 100%;
+								    width: 45px;
+								    height: 45px;
+								    position: absolute;
+								    top: -18px;
+								    left: 0px;
+								}
+								.valueInLiveBlocks {
+									position: absolute;
+								    left: 40px;
+								    font-size: 0.9rem;
+								    font-style: italic;
+								    font-weight: 600;
+								    padding: 1px 3px;
+								    color: rgb(110, 97, 151);
+								    display: table;
+								    white-space: nowrap;
+								    top: 5px;
 
-                                        font-family: 'Roboto', sans-serif;
-                                    }
+								}
+									.printingAmount {
+										
+									}
+							.btnSubscribeInFirstLine {
+								display: table;
+							    background: #7ac82e;
+							    color: white;
+							    font-size: 0.9rem;
+							    height: 19px;
+							    border-radius: 0.40rem;
+							    padding: 0rem 0.5rem;
+							    padding-top: 0.1rem;
+							    cursor: pointer;
+							}
+						.rightBlockInSecondLine {
+							display: table;
+							float: right;
+							text-align: right;
+						}
+							.newMsgInSecondLine {
+							    line-height: 20px;
+							    height: 20px;
+							    width: 20px;
+							    background: #715d96;
+							    border-radius: 100%;
+							    display: inline-block;
+							    color: white;
+							    text-align: center;
+							    padding: 2px;
+							    cursor: pointer;
+	    						font-size: 0.9rem;
+	    						margin-top: -2px;
+							}
+					/* menul list for users */
+						.appMenusForUsers {
+						    margin-bottom: 0.25rem;
+						    border-bottom: 1px solid rgba(225, 225, 225, 0.25);
+						}
+							.menuListForUsers {
+							    /*position: absolute;
+							    top: 100%;*/
+							    min-height: 2rem;
+							    width: 100%;
+							}
+								.appNameInMenuList {
+								    /*margin: 0.25rem;
+								    background: rgba(255, 255, 255, 0.05);
+								    padding: 0.05rem;*/
+								        padding: 0.25rem 0.5rem;
+								}
+									.appNameInMenuList img {
+									    height: 1.75rem;
+									    border-radius: 0.5rem;
+									    vertical-align: middle;
+									}
+									.appNameInMenuList span {
+									    font-size: 1rem;
+									    margin: 0rem 0.5rem;
+									    vertical-align: middle;
+									    font-weight: bold;
 
-                                .menusForUid {
-                                    /*list-style: none;
-                                    margin: 0 0 0 2.75rem;
-                                    padding: 0px;
-                                    font-size: 1rem;*/
-                                        list-style: none;
-                                    margin: 0 0 0 0;
-                                    padding: 0px;
-                                    font-size: 1rem;
-                                    font-family: 'Open Sans', sans-serif;
-                                }
-                                    ul.menusForUid li {
-                                        /*padding: 0.025rem 0rem;
-                                        border-bottom: 1px solid rgba(0, 0, 0, 0.1);*/
-                                        padding: 0.15rem 0.5rem;
-                                        font-size: 0.9rem;
-                                    }
-                                        ul.subMenusForUid {
-                                            list-style: none;
-                                            margin: 0px;
-                                            padding-left: 1rem;
-                                        }
-                    /* menul list for users */
-                    .usersBlockInMenusBlock .thirdLineInUserBlock {
-                        position: absolute;
-                        font-size: 1rem;
-                        left: 80px;
-                        top: 55px;
-                        right: 5px;
-                        height: 20px;
+									    font-family: 'Roboto', sans-serif;
+									}
 
-                    }
-                        .leftBlockInThirdLine {
-                            display: table;
-                            float: left;
-                        }
-                            .lastMessageInThirdLine {
-                                font-size: 0.8rem;
-                                font-style: italic;
-                                color: gray;
-                                padding-top: 0.2rem;
-                            }
-                        .rightBlockInThirdLine {
-                            display: table;
-                            float: right;
-                        }
-                            .timelastMsgInThirdLine {
-                                font-size: 0.8rem;
-                                text-align: right;
-                                padding-top: 0.2rem;
-                                color:gray;
-                            }
-        #viewBlock {
-            width: 64.5%;
-            background: #f2f2f2;
-            height: 100%;
-            float:left;
-            position: relative;
-        }
-            .topBlockInViewBlock {
-                height: 69px;
-                background-color:#eeeeee; 
-                border-bottom:0.1rem solid #dfd7cf;
-                position: relative;
-            }
-                #IconUserInViewBlock {
-                    height: 60px;
-                    width: 60px;
-                    background: rgba(0, 0, 0, 0.47);
-                    border-radius: 100%;
-                    position: absolute;
-                    top: 5px;
-                    left: 5px;
-                    cursor: pointer;
-                    overflow: hidden;
-                }
-                    #IconUserInViewBlock img, #IconUserInViewBlock a {
-                        width: inherit;
-                        height: inherit;
-                        border-radius: inherit; 
-                    }
+								.menusForUid {
+							        list-style: none;
+								    margin: 0 0 0 0;
+								    padding: 0px;
+								    font-size: 1rem;
+								    font-family: 'Open Sans', sans-serif;
+								}
+									/*< user app MENU */
+										ul.menusForUid li {
+									        padding: 0.15rem 0.5rem;
+	    									font-size: 0.9rem;
+										}
+											ul.subMenusForUid {
+											    list-style: none;
+											    margin: 0px;
+											    padding-left: 1rem;
+											}
+										.appNameInMenuList:before {
+										    content: '';
+										    width: 1.75rem;
+										    height: 1.75rem;
+										    border-radius: 0.5rem;
+										    vertical-align: middle;
+										    display: inline-block;
+										    background-size: 100%;
+										}
 
-                #UserNameInViewBlock {
-                    position: absolute;
-                    left: 70px;
-                    top: 10px;
-                    font-size: 1rem;
-                    font-weight: 900;
-                    cursor: pointer;
-                }
-                #UserTypeInViewBlock {
-                    position: absolute;
-                    top: 30px;
-                    left: 71px;
-                    font-size: 0.9rem;
-                    background: #1ca4d6;
-                    padding: 1px 1rem;
-                    border-radius: 15rem;
-                    color: white;
-                }
-                /* */
-                #righBlockInViewBlock {
-                    position: absolute;
-                    bottom: 0.5rem;
-                    right: 0.5rem;
-                }
-                    .miniIconsRightBlockInViewBlock {
-                        display: inline-block;
-                        width: 4rem;
-                        text-align: center;
-                    }
-                        .miniIconsRightBlockInViewBlock img {
-                            height: 1.5rem;
-                        }
-                        .namesInRightBlockInViewBlock {
-                            font-size: 0.9rem;
-                        }
-                /* */
+										.appNameInMenuList.app-market:before {
+										    background-image: url(https://cdn.ramman.net/images/icons/apps/app_market.png);
+										}
 
-            #viewAndChatBlockInViewBlock {
-                overflow: hidden;
-                position: absolute;
-                top: 69px;
-                bottom: 0px;
-                width: 100%;
-            } 
-                #subViewInViewAndChatBlock {
-                    position: relative;
-                    height: 100%;
-                    width: 100%;
-                    /*-655*/
-                }
+										.userMenuParentButton {
+										    background-image: url(https://cdn.ramman.net/images/icons/menuButton.png);
+										    width: 1.25rem;
+										    height: 1.25rem;
+										    background-size: 100%;
+										    float: right;
+										    cursor: pointer;
+										}
+										.userMenuBackButton {
+										    background-image: url(https://cdn.ramman.net/images/icons/backMenuButton.png);
+										    width: 1.25rem;
+										    height: 1.25rem;
+										    display: inline-block;
+										    background-size: 100%;
+										    vertical-align: bottom;
+										    margin-right: 0.5rem;
+										    cursor: pointer;
+										}
+										.userMenuSubFlag {
+											margin-left: 1.5rem;
+										}
+									/*> user app MENU */
+					/* menul list for users */
+					.usersBlockInMenusBlock .thirdLineInUserBlock {
+					    position: absolute;
+					    font-size: 1rem;
+					    left: 80px;
+					    top: 55px;
+	    				right: 5px;
+					    height: 20px;
 
-                    #menuWindowInSubView {
-                        position: absolute;
-                        width: 53%;
-                        right: -54%;
-                        /*width: 53%;
-                        right: -54%;*/
-                        background: white;
-                        height: 100%;
-                    }
+					}
+						.leftBlockInThirdLine {
+							display: table;
+							float: left;
+						}
+							.lastMessageInThirdLine {
+								font-size: 0.8rem;
+							    font-style: italic;
+							    color: gray;
+							    padding-top: 0.2rem;
+							}
+						.rightBlockInThirdLine {
+							display: table;
+							float: right;
+						}
+							.timelastMsgInThirdLine {
+								font-size: 0.8rem;
+								text-align: right;
+							    padding-top: 0.2rem;
+								color:gray;
+							}
+		#viewBlock {
+			width: 64.5%;
+			background: #f2f2f2;
+			height: 100%;
+			float:left;
+			position: relative;
+		}
+			.topBlockInViewBlock {
+				height: 69px;
+				background-color:#eeeeee; 
+				border-bottom:0.1rem solid #dfd7cf;
+				position: relative;
+			}
+				#IconUserInViewBlock {
+					height: 60px;
+				    width: 60px;
+				    background: rgba(0, 0, 0, 0.47);
+				    border-radius: 100%;
+				    position: absolute;
+				    top: 5px;
+				    left: 5px;
+				    cursor: pointer;
+				    overflow: hidden;
+				}
+					#IconUserInViewBlock img, #IconUserInViewBlock a {
+						width: inherit;
+						height: inherit;
+						border-radius: inherit; 
+					}
 
-                    #viewWindow {
-                        width: 100%;
-                        overflow: hidden;
-                        position: absolute;
-                        bottom: 3.1rem;
-                        top: 0rem;
-                    }
-                        #rightBlockInViewWindow {
-                            position: absolute;
-                            width: 30%;
-                            overflow: hidden;
-                            height: 100%;
-                            right: -10rem;
-                            background: white;
-                        }
-                        #leftBlockInViewWindow {
-                            position: relative;
-                            width: 95%;
-                            overflow-y: scroll;
-                            height: 90%;
-                            padding-bottom: 5000px;
-                            padding-right: 5%;
-                            margin-left: 3%;
-                        }
-                            #viewWindow .ChatViewInAppWindow {
-                                padding: 0.25rem 1rem;
+				#UserNameInViewBlock {
+					position: absolute;
+				    left: 70px;
+				    top: 10px;
+				    font-size: 1rem;
+				    font-weight: 900;
+				    cursor: pointer;
+				}
+				#UserTypeInViewBlock {
+					position: absolute;
+				    top: 30px;
+				    left: 71px;
+				    font-size: 0.9rem;
+				    background: #1ca4d6;
+				    padding: 1px 1rem;
+				    border-radius: 15rem;
+				    color: white;
+				}
+				/* */
+				#righBlockInViewBlock {
+				    position: absolute;
+				    bottom: 0.5rem;
+				    right: 0.5rem;
+				}
+					.miniIconsRightBlockInViewBlock {
+					    display: inline-block;
+					    width: 4rem;
+					    text-align: center;
+					}
+						.miniIconsRightBlockInViewBlock img {
+						    height: 1.5rem;
+						}
+						.namesInRightBlockInViewBlock {
+						    font-size: 0.9rem;
+						}
+				/* */
 
-                            }
+			#viewAndChatBlockInViewBlock {
+				overflow: hidden;
+			    position: absolute;
+			    top: 69px;
+			    bottom: 0px;
+			    width: 100%;
+			} 
+				#subViewInViewAndChatBlock {
+					position: relative;
+					height: 100%;
+					width: 100%;
+					/*-655*/
+				}
 
-                                .centerMsgInChatView {
-                                    display: table;
-                                    margin: auto;
-                                    padding: 0.25rem 1rem;
-                                    text-align: center;
-                                    font-size: 0.9rem;
-                                    color: white;
-                                    background: rgba(0, 0, 0, 0.31);
-                                    border-radius: 0.5rem;
-                                    clear: both;
-                                }   
+					#menuWindowInSubView {
+						position: absolute;
+						width: 53%;
+						right: -54%;
+						/*width: 53%;
+    					right: -54%;*/
+						background: white;
+						height: 100%;
+					}
 
-                                /*@<<< FROM ME MSG BLOCK*/
-                                .fromMeMessageInChatView {
-                                    width: 80%;
-                                    display: table;
-                                    position: relative;
-                                    margin:0.6rem 0rem;
-                                    float: right;
-                                }
-                                    .lineInFromMeMessage {
-                                        position: absolute;
-                                        bottom: 0.25rem;
-                                        top: 0.25rem;
-                                        right: 0rem;
-                                        width: 0.25rem;
-                                    }
-                                        .lineInFromMeMessage .lineInBoxInLine {
-                                            position: relative;
-                                            width: 100%;
-                                            height: 100%;
-                                            background: #645889;
-                                        }
-                                            /*.topCircleInMessages {
-                                                position: absolute;
-                                                width: 0.65rem;
-                                                height: 0.65rem;
-                                                background: inherit;
-                                                border-radius:100%;
-                                                top: -0.2rem;
-                                                right: -0.2rem;
-                                            }
-                                            .botCircleInMessages {
-                                                position: absolute;
-                                                width: 0.65rem;
-                                                height: 0.65rem;
-                                                border-radius:100%;
-                                                background: inherit;
-                                                right: -0.2rem;
-                                                bottom: -0.2rem;
-                                            }
-                                            .timeTopInMessages {
-                                                position: absolute;
-                                                top: -0.95rem;
-                                                left: -0.75rem;
-                                                font-size: 0.7rem;
+					#viewWindow {
+						width: 100%;
+					    overflow: hidden;
+					    position: absolute;
+					    bottom: 3.1rem;
+					    top: 0rem;
+					}
+						#rightBlockInViewWindow {
+							position: absolute;
+							width: 30%;
+							overflow: hidden;
+							height: 100%;
+							right: -10rem;
+							background: white;
+						}
+						#leftBlockInViewWindow {
+							position: relative;
+						    width: 95%;
+						    overflow-y: scroll;
+						    height: 90%;
+						    padding-bottom: 5000px;
+						    padding-right: 5%;
+						    margin-left: 3%;
+						}
+							#viewWindow .ChatViewInAppWindow {
+								padding: 0.25rem 1rem;
 
+							}
 
-                                            }
-                                            .timeBotInMessages {
-                                                position: absolute;
-                                                bottom: -0.95rem;
-                                                right: -0.75rem;
-                                                font-size: 0.7rem;
-                                            }*/
-                                    .contentTextInFromMeMessage {
-                                        margin-top: 0.25rem;
-                                        display: table;
-                                        padding: 0.5rem;
-                                        max-width: 80%;
-                                        background: white;
-                                        margin-right: 0.9rem;
-                                        margin-bottom: 0.25rem;
-                                        border-radius: 0.3rem 0 0 0.3rem;
-                                        font-size: 1.2rem;
-                                        float: right;
-                                    }
-                                /*@>>> FROM ME MSG BLOCK*/
+								.centerMsgInChatView {
+								    display: table;
+								    margin: auto;
+								    padding: 0.25rem 1rem;
+								    text-align: center;
+								    font-size: 0.9rem;
+								    color: white;
+								    background: rgba(0, 0, 0, 0.31);
+								    border-radius: 0.5rem;
+								    clear: both;
+								}	
 
-                                /*@<<< TO ME MSG BLOCK*/
-                                .toMeMessageInChatView {
-                                    width: 80%;
-                                    display: table;
-                                    position: relative;
-                                    margin:0.6rem 0rem;
-                                    float: left;
-                                }
-                                    .lineInToMeMessage {
-                                        position: absolute;
-                                        bottom: 0.25rem;
-                                        top: 0.25rem;
-                                        width: 0.25rem;
-                                        left: 0rem;
-                                    }
-                                        .lineInToMeMessage .lineInBoxInLine {
-                                            position: relative;
-                                            width: 100%;
-                                            height: 100%;
-                                            background: #1cb5e1;
-                                        }
-                                            .topCircleInMessages {
-                                                position: absolute;
-                                                width: 0.65rem;
-                                                height: 0.65rem;
-                                                background: inherit;
-                                                border-radius:100%;
-                                                top: -0.2rem;
-                                                left: -0.2rem;
-                                            }
-                                            .botCircleInMessages {
-                                                position: absolute;
-                                                width: 0.65rem;
-                                                height: 0.65rem;
-                                                border-radius:100%;
-                                                background: inherit;
-                                                left: -0.2rem;
-                                                bottom: -0.2rem;
-                                            }
-                                            .timeTopInMessages {
-                                                position: absolute;
-                                                top: -0.95rem;
-                                                left: -0.75rem;
-                                                font-size: 0.7rem;
+								/*@<<< FROM ME MSG BLOCK*/
+								.fromMeMessageInChatView {
+									width: 80%;
+									display: table;
+									position: relative;
+									margin:0.6rem 0rem;
+									float: right;
+								}
+									.lineInFromMeMessage {
+										position: absolute;
+										bottom: 0.25rem;
+										top: 0.25rem;
+										right: 0rem;
+										width: 0.25rem;
+									}
+										.lineInFromMeMessage .lineInBoxInLine {
+											position: relative;
+											width: 100%;
+											height: 100%;
+											background: #645889;
+										}
+											/*.topCircleInMessages {
+												position: absolute;
+												width: 0.65rem;
+												height: 0.65rem;
+												background: inherit;
+												border-radius:100%;
+												top: -0.2rem;
+												right: -0.2rem;
+											}
+											.botCircleInMessages {
+												position: absolute;
+												width: 0.65rem;
+												height: 0.65rem;
+												border-radius:100%;
+												background: inherit;
+												right: -0.2rem;
+												bottom: -0.2rem;
+											}
+											.timeTopInMessages {
+												position: absolute;
+											    top: -0.95rem;
+											    left: -0.75rem;
+											    font-size: 0.7rem;
 
 
-                                            }
-                                            .timeBotInMessages {
-                                                position: absolute;
-                                                bottom: -0.95rem;
-                                                left: -0.75rem;
-                                                font-size: 0.7rem;
-                                            }
-                                    .contentTextInToMeMessage {
-                                        margin-top: 0.25rem;
-                                        display: table;
-                                        padding: 0.5rem;
-                                        max-width: 80%;
-                                        background: white;
-                                        margin-left: 0.9rem;
-                                        margin-bottom: 0.25rem;
-                                        border-radius: 0 0.3rem 0.3rem 0;
-                                        font-size: 1.2rem;
-                                    }
-                                /*@>>> TO ME MSG BLOCK*/
+											}
+											.timeBotInMessages {
+												position: absolute;
+											    bottom: -0.95rem;
+											    right: -0.75rem;
+											    font-size: 0.7rem;
+											}*/
+									.contentTextInFromMeMessage {
+										margin-top: 0.25rem;
+									    display: table;
+									    padding: 0.5rem;
+									    max-width: 80%;
+									    background: white;
+									    margin-right: 0.9rem;
+									    margin-bottom: 0.25rem;
+									    border-radius: 0.3rem 0 0 0.3rem;
+									    font-size: 1.2rem;
+									    float: right;
+									}
+								/*@>>> FROM ME MSG BLOCK*/
 
-                    .chatBlockInViewBlock {
-                        height: 3.1rem;
-                        position: absolute;
-                        width: 100%;
-                        bottom: 0px;
-                        left: 0px;
-                        background: #d9d9d9;
-                    }
-                #senderBlockInViewBlock{
-                    width: inherit;
-                    height: inherit;
-                    position: relative;
-                    /*overflow: hidden;*/
-                }
-                    #bottomViewInMsgBlock {
-                        position: relative;
-                        top: 0rem;
-                        left: 0px;
-                        background: white;
-                        display: table;
-                        width: 100%;
-                        opacity: 0
-                    }
-                        #bottomViewInMsgBlock .rawBlockInBottomView {
-                            list-style: none;
-                            padding: 0px;
-                            margin:0px;
-                            padding-top:0.1rem; 
-                        }
-                        #bottomViewInMsgBlock .rawBlockInBottomView .LineInBottomViewRawBlock {
-                            background-color:rgba(243, 243, 243, 0.4);
-                            padding-top: 0.5rem;
-                            padding-left: 0.5rem;
-                            height: 2rem;
-                            font-size: 1.1rem;
-                            margin-bottom:0.2rem; 
-                            cursor: pointer;
-                        }
-                            .LineInBottomViewRawBlock:hover {
-                                background-color: #edf7fb !important; 
-                            }
-                    #forTextInputInSenderBlock {
-                        position: absolute;
-                        width: 93.5%;
-                        background: white;
-                        border-radius: 0.5rem;
-                        height: 2.5rem;
-                        border: 0px;
-                        padding: inherit;
-                        left: 6%;
-                        top: 0.25rem;
-                        font-size: 1rem;
-                        overflow: hidden;
-                    }
-                        #forTextInputInSenderBlock textarea {
-                            border: 0px;
-                            resize: none;
-                            width: 100%;
-                            height: 1005;
-                            padding-top: 0.5rem;
-                            font-size: 1rem;
-                            padding-left: 0.5rem;
-                            padding-right: 2.5rem;
-                            text-align: left;
-                        }
-                    #sendButtonInSenderBlock {
-                        height: 1.8rem;
-                        width: 1.8rem;
-                        position: absolute;
-                        right: 0.75rem;
-                        top: 0.4rem;
-                        cursor: pointer;
-                        background-size:100%;
+								/*@<<< TO ME MSG BLOCK*/
+								.toMeMessageInChatView {
+									width: 80%;
+									display: table;
+									position: relative;
+									margin:0.6rem 0rem;
+									float: left;
+								}
+									.lineInToMeMessage {
+										position: absolute;
+										bottom: 0.25rem;
+										top: 0.25rem;
+										width: 0.25rem;
+										left: 0rem;
+									}
+										.lineInToMeMessage .lineInBoxInLine {
+											position: relative;
+											width: 100%;
+											height: 100%;
+											background: #1cb5e1;
+										}
+											.topCircleInMessages {
+												position: absolute;
+												width: 0.65rem;
+												height: 0.65rem;
+												background: inherit;
+												border-radius:100%;
+												top: -0.2rem;
+												left: -0.2rem;
+											}
+											.botCircleInMessages {
+												position: absolute;
+												width: 0.65rem;
+												height: 0.65rem;
+												border-radius:100%;
+												background: inherit;
+												left: -0.2rem;
+												bottom: -0.2rem;
+											}
+											.timeTopInMessages {
+												position: absolute;
+											    top: -0.95rem;
+											    left: -0.75rem;
+											    font-size: 0.7rem;
 
-                    }
-                    .sendTextMsgButton {
-                        background-image: url(https://cdn.ramman.net/images/sprite/1.png);
-                        background-position-y:9rem; 
-                        top: 0.6rem !important;
-                    }
-                    .sendAudioMsgButton {
-                        background-image: url(https://cdn.ramman.net/images/sprite/1.png);
-                        background-position-y: 5.4rem; 
-                    }
-                    .sendVideoMsgButton {
-                        background-image: url(https://cdn.ramman.net/images/sprite/1.png);
-                        background-position-y: 7.2rem; 
-                    }
-                    
-                    #ConnectButtonInFuncButtons {
-                        position: absolute;
-                        width: 4.5%;
-                        cursor: pointer;
-                        top: 0.45rem;
-                        left: 0.80%;
-                    }
+
+											}
+											.timeBotInMessages {
+												position: absolute;
+											    bottom: -0.95rem;
+											    left: -0.75rem;
+											    font-size: 0.7rem;
+											}
+									.contentTextInToMeMessage {
+										margin-top: 0.25rem;
+									    display: table;
+									    padding: 0.5rem;
+									    max-width: 80%;
+									    background: white;
+									    margin-left: 0.9rem;
+									    margin-bottom: 0.25rem;
+									    border-radius: 0 0.3rem 0.3rem 0;
+									    font-size: 1.2rem;
+									}
+								/*@>>> TO ME MSG BLOCK*/
+
+					.chatBlockInViewBlock {
+						height: 3.1rem;
+					    position: absolute;
+					    width: 100%;
+					    bottom: 0px;
+					    left: 0px;
+					    background: #d9d9d9;
+					}
+				#senderBlockInViewBlock{
+					width: inherit;
+					height: inherit;
+					position: relative;
+					/*overflow: hidden;*/
+				}
+					#bottomViewInMsgBlock {
+						position: relative;
+					    top: 0rem;
+					    left: 0px;
+					    background: white;
+					    display: table;
+					    width: 100%;
+					    opacity: 0
+					}
+						#bottomViewInMsgBlock .rawBlockInBottomView {
+							list-style: none;
+							padding: 0px;
+							margin:0px;
+							padding-top:0.1rem; 
+						}
+						#bottomViewInMsgBlock .rawBlockInBottomView .LineInBottomViewRawBlock {
+							background-color:rgba(243, 243, 243, 0.4);
+							padding-top: 0.5rem;
+							padding-left: 0.5rem;
+							height: 2rem;
+							font-size: 1.1rem;
+							margin-bottom:0.2rem; 
+							cursor: pointer;
+						}
+							.LineInBottomViewRawBlock:hover {
+								background-color: #edf7fb !important; 
+							}
+					#forTextInputInSenderBlock {
+						position: absolute;
+					    width: 93.5%;
+					    background: white;
+					    border-radius: 0.5rem;
+					    height: 2.5rem;
+					    border: 0px;
+					    padding: inherit;
+					    left: 6%;
+					    top: 0.25rem;
+					    font-size: 1rem;
+					    overflow: hidden;
+					}
+						#forTextInputInSenderBlock textarea {
+							border: 0px;
+						    resize: none;
+						    width: 100%;
+						    height: 1005;
+						    padding-top: 0.5rem;
+						    font-size: 1rem;
+						    padding-left: 0.5rem;
+						    padding-right: 2.5rem;
+						    text-align: left;
+						}
+					#sendButtonInSenderBlock {
+						height: 1.8rem;
+						width: 1.8rem;
+					    position: absolute;
+					    right: 0.75rem;
+					    top: 0.4rem;
+					    cursor: pointer;
+					    background-size:100%;
+
+					}
+					.sendTextMsgButton {
+					    background-image: url(https://cdn.ramman.net/images/sprite/1.png);
+					    background-position-y:9rem; 
+					    top: 0.6rem !important;
+					}
+					.sendAudioMsgButton {
+					    background-image: url(https://cdn.ramman.net/images/sprite/1.png);
+					    background-position-y: 5.4rem; 
+					}
+					.sendVideoMsgButton {
+					    background-image: url(https://cdn.ramman.net/images/sprite/1.png);
+					    background-position-y: 7.2rem; 
+					}
+					
+					#ConnectButtonInFuncButtons {
+						position: absolute;
+					    width: 4.5%;
+					    cursor: pointer;
+					    top: 0.45rem;
+					    left: 0.80%;
+					}

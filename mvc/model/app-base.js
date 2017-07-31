@@ -37,28 +37,28 @@ define( ['jquery'] , function ($) {
     }
     result['onIn'] = onIn;
 
-      // function onAppear
+      //@overide
       function onAppear (iNstring,iNobject) {
     console.log('app-page','onAppear');
 
       }
       result['onAppear'] = onAppear;
 
-      // function onDisappear
+      //@overide
       function onDisappear (iNstring,iNobject) {
         console.log('app-page','onDisappear');
 
       }
       result['onDisappear'] = onDisappear;
 
-    // function onOut
+    //@overide
     function onOut (iNstring,iNobject) {
       console.log('app-page','onOut');
 
     }
     result['onOut'] = onOut;
 
-  // function onDeinit
+  //@overide
   function onDeinit (iNstring,iNobject) {
     console.log('app-page','onDeinit');
 
