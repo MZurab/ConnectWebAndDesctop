@@ -1019,18 +1019,20 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		//@< work with header
 			function _d_loadCSS (filename,iNclass){ 
 				var file = document.createElement("link");
-			   file.setAttribute("rel", "stylesheet");
-			   file.setAttribute("type", "text/css");
-			   file.setAttribute("href", filename);
-			  fileref.setAttribute("class", iNclass);
+				   file.setAttribute("rel", "stylesheet");
+				   file.setAttribute("type", "text/css");
+				   file.setAttribute("href", filename);
+				   file.setAttribute("class", iNclass);
 			   document.head.appendChild(file);
+			   console.log('_d_loadCSS file',file);
 			}
 			function _d_loadJS (filename,iNclass) { 
-			  var fileref=document.createElement('script');
-			  fileref.setAttribute("type","text/javascript");
-			  fileref.setAttribute("src", filename);
-			  fileref.setAttribute("class", iNclass);
+			  var fileref = document.createElement('script');
+				  fileref.setAttribute("type","text/javascript");
+				  fileref.setAttribute("src", filename);
+				  fileref.setAttribute("class", iNclass);
 			  document.getElementsByTagName("head")[0].appendChild(fileref);
+			   console.log('_d_loadJS fileref',fileref);
 
 			}
 			function _d_removeByClass (iNclass) {

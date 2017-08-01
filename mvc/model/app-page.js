@@ -1,4 +1,4 @@
-define( ['jquery','m_view','v_app-page'] , function ($,M_VIEW,V_APP_PAGE) {
+define( ['jquery','m_view','v_app-page','m_app'] , function ($,M_VIEW,V_APP_PAGE,M_APP) {
 
   const _ = {};
   const pages = {
@@ -16,7 +16,14 @@ define( ['jquery','m_view','v_app-page'] , function ($,M_VIEW,V_APP_PAGE) {
       },
       'functions': {
         'isPage'  : function () {console.log('app private','isPage'); return true;},
-        'onView'  : function () { M_VIEW.closeLoader(); V_APP_PAGE.addFullWindowByTemplate({'content':'Hellow World!!!'}); console.log('app private','onView'); return true;},
+        'onView'  : function () { 
+          console.log('app private','onView');
+          addPageToFullWindow({'id':'sign','uid':'@system'});
+          M_VIEW.closeLoader(); 
+          // V_APP_PAGE.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
+          // console.log('app private','onView');
+          return true;
+        },
         'onHide'  : function () {console.log('app private','onHide'); return true;},
         'setPage' : function () {console.log('app private','setPage'); return true;},
         'onCreate' : function () {console.log('app private','onCreate'); return true;},
@@ -53,13 +60,22 @@ define( ['jquery','m_view','v_app-page'] , function ($,M_VIEW,V_APP_PAGE) {
   }
   _['setApp'] = setApp;
 
+  //@overide
+  function onHide (iNstring,iNobject) {
+    clearFullWindow();
+    console.log('app-page','onHide',iNstring);
 
-  // function onView
+  }
+  _['onHide'] = onHide;
+
+
+    //@overide
   function onView (iNstring,iNobject) {
-    console.log('app-page','onView',iNstring,iNobject);
+    console.log('app-page','onView',iNstring);
 
   }
   _['onView'] = onView;
+
 
   // function onCreate
   function onCreate (iNstring,iNobject) {
@@ -153,14 +169,14 @@ define( ['jquery','m_view','v_app-page'] , function ($,M_VIEW,V_APP_PAGE) {
     */
     $.get (
       url_getPage, 
-      iNdata, 
-      function (_) {
-        iNfunction(_);
+      iNdata,
+      function (iNcontent) {
+        iNfunction(iNcontent);
       },
       'json'
     );
   };
-    function processingData (iNdata,iNid) {
+    function processingData (iNdata) {
       /*
         @example
           add scrips and styles vire
@@ -173,25 +189,39 @@ define( ['jquery','m_view','v_app-page'] , function ($,M_VIEW,V_APP_PAGE) {
         @algoritm
           1 - get page object from server 
       */
-      var c = 'pageId' + iNid;
+      var c = 'pageId' + iNdata['id'] + ' headerFromPage';
       if(typeof iNdata == 'object') {
-        var obj = iNdata;
+        var obj = iNdata['header'];
+        console.log('processingData obj',obj);
+        console.log('processingData obj css',obj['css']);
         if ( typeof obj['css']  == 'object' && obj['css'].length > 0 ) {
           // add css
           for ( var i in obj['css'] ) {
-            m_app.d_loadCSS(obj['css'][i],c);
+            console.log('processingData css i - '+i,obj['css'][i]);
+            M_APP.d_loadCSS(obj['css'][i],c);
           }
         }
+        console.log('processingData obj js',obj['js']);
         if ( typeof obj['js']   == 'object' && obj['js'].length > 0 ) {
           // add js
           for ( var i in obj['js'] ) {
-            m_app.d_loadJS(obj['js'][i],c);
+            console.log('processingData js i - '+i,obj['js'][i]);
+            M_APP.d_loadJS(obj['js'][i],c);
           }
         }
       }
     }; 
+    function addPageToFullWindow (iNdata) {
+        getPage ( 
+          iNdata,
+          function (iNresult){ 
+            V_APP_PAGE.addFullWindowByTemplate( { 'content' : iNresult['content'] } );
+            processingData(iNresult);
+          }
+        );
+    }
 
-  function closePage () {
+  function deleteHeaders () {
     /*
       @example
       @discr
@@ -202,6 +232,24 @@ define( ['jquery','m_view','v_app-page'] , function ($,M_VIEW,V_APP_PAGE) {
       @algoritm
         1 - clear page
     */
+    $('.headerFromPage').remove();
+  }
+  function deleteHeaders () {
+    /*
+      @example
+      @discr
+        get page by iNuid and iNid from server
+      @inputs
+        @required
+      @return
+      @algoritm
+        1 - clear page
+    */
+    $('.headerFromPage').remove();
+  }
+  function clearFullWindow () {
+    deleteHeaders();
+    $('.appModalFullWindow').rempove();
   }
 
 

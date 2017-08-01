@@ -31,7 +31,7 @@ define(['v_view'],function(v_view){
 								defaultCloseButton => bool
 			*/
 			var temp = Template7.compile(templates['fullWindow']), selector = 'body #container';
-			v_view.d_addDataToViewEl(selector,temp(iNdata)); console.log('temp(iNdata)',temp(iNdata))
+			v_view.d_addDataToViewEl(selector,temp(iNdata));
 		}
 		_['addFullWindowByTemplate'] = addFullWindowByTemplate;
 

@@ -14,9 +14,11 @@ let mainWindow
 function createWindow () {
     // Create the browser window.
     mainWindow = new BrowserWindow({width: 1200, height: 755})
+    const ses = mainWindow.webContents.session
     // mainWindow.setResizable(false);
 
     // and load the index.html of the app.
+    ses.clearCache(function(){ console.log('clearedCache');});
     mainWindow.loadURL( url.format({
       pathname: path.join(__dirname, 'index.html'),
       protocol: 'file:',
