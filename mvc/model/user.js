@@ -1,61 +1,105 @@
-define([], function () {
+define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'], function ($,FIREBASE,DICTIONARY,M_VIEW,M_APP) {
+  	const _ = {};
 	//@@@<<< USER
-		function Connect_getUserCountry () {
-			return Connect_get('ConnectUserCountry');
+		function getUserCountry() {
+			return M_APP.get('ConnectUserCountry');
 		}
-		function Connect_saveUserCountry (iNcountry) {
-			return Connect_save('ConnectUserCountry',iNcountry);
+    	_['getUserCountry'] = getUserCountry;
+
+		function saveUserCountry(iNcountry) {
+			return M_APP.save('ConnectUserCountry',iNcountry);
 		}
-		function Connect_getUserLang () {
-			return Connect_get('ConnectUserLang');
+    	_['saveUserCountry'] = saveUserCountry;
+
+		function getUserLang () {
+			return M_APP.get('ConnectUserLang');
 		}
-		function Connect_saveUserLang (iNlang) {
-			return Connect_save('ConnectUserLang',iNlang);
+    	_['getUserLang'] = getUserLang;
+
+		function saveUserLang (iNlang) {
+			return M_APP.save('ConnectUserLang',iNlang);
 		}
+    	_['saveUserLang'] = saveUserLang;
 	//@@@>>> USER
-	function Connect_signOut(){
-	    localStorage.clear();
-	    firebase.auth().signOut().then(function() {
+	function signOut (){
+	    M_APP.clear();
+	    FIREBASE.auth().signOut().then(function() {
 	    }, function(error) {
 	    });
 	}
-	function Connect_signIn(token,iNfuntion) {
-	    firebase.auth().signInWithCustomToken(token).then(function(user) {
+    _['signOut'] = signOut;
+
+	function signIn (token,iNfuntion) {
+	        	console.log('signIn start');
+	    FIREBASE.auth().signInWithCustomToken(token).then(function(user) {
+	        	console.log('signIn in');
 	       // user signed in
-	        Connect_save('uid', firebase.auth().currentUser.uid );
-	        if(typeof(iNfuntion) != 'undefined')
+	        M_APP.save('uid', FIREBASE.auth().currentUser.uid );
+	        if(typeof(iNfuntion) != 'undefined') {
 	        	iNfuntion(); 
-	        else Connect_goToUrl('https://ramman.net/');
+	        	console.log('signIn !getGlobalVar iNfuntion -',iNfuntion);
+	        }
+	        else {
+	        	console.log("M_APP.getGlobalVar('engine')",M_APP.getGlobalVar('engine'));
+	        	M_APP.getGlobalVar('engine').prepareUrl({'app':'base','page':'index','user':'zurab','data':'data'});
+            	M_APP.getGlobalVar('engine').startUrl();
+	        	console.log('signIn getGlobalVar');
+	        }
 		}).catch(function(error) {
 	      var errorCode = error.code;
 	      var errorMessage = error.message;
+	      console.log('signIn errorMessage',errorMessage);
+	      console.log('signIn errorCode',errorCode);
 	    });
 	}
-	function Connect_getMyId() {
-    	var uidType = Connect_get('uidType');
+    _['signIn'] = signIn;
+
+	function getMyId () {
+    	var uidType = M_APP.get('uidType');
     	if(uidType != null) {
     		if (uidType == '?' ) {
-    			return Connect_get('aUid');
+    			return M_APP.get('aUid');
     		} else {
-    			return Connect_get('uid');
+    			return M_APP.get('uid');
 			}
     	}
 		//old CHANGE
-    	var result = Connect_checkSignIn();
+    	var result = checkSignIn();
     	if(result){
-    		result = firebase.auth().currentUser.uid;
+    		result = FIREBASE.auth().currentUser.uid;
     	}
         return result;
     }
-    	function Connect_checkSignIn () {
-    		return firebase.auth().currentUser;
+    _['getMyId'] = getMyId;
+
+    function getMyLogin () {
+    	var uidType = M_APP.get('uidType');
+    	if(uidType != null) {
+    		if (uidType == '?' ) {
+    			return '@anonym';
+    		} else {
+    			return M_APP.get('user');
+			}
     	}
+		//old CHANGE
+    	var result = checkSignIn();
+    	if(result){
+    		result = FIREBASE.auth().currentUser.uid;
+    	}
+        return result;
+    }
+    _['getMyLogin'] = getMyLogin;
+
+    	function  checkSignIn () {
+    		return FIREBASE.auth().currentUser;
+    	}
+		_['checkSignIn'] = checkSignIn;
 
 
 
-	function Connect_authByAnonym  ( iNfuntion,iNloader ) {
+	function  authByAnonym( iNfuntion,iNloader ) {
 		if ( typeof ( iNloader ) == 'undefined' ) iNloader=true;
-		if ( iNloader == true  ) Connect_vLoader ();
+		if ( iNloader == true  ) M_VIEW.showLoader ();
 	    $.ajax(
 	    {
 	        url: 'https://ramman.net/api/web/sign',
@@ -71,28 +115,29 @@ define([], function () {
 	                var fkey 	= iNdate2['fkey']; 
 	                 	uid 	= iNdate2['uid'];  
 	                 	token 	= iNdate2['token'];      
-	                Connect_save('uidCreated',Connect_getTime());
-	                Connect_save('uidType',"?");
-	                Connect_save('aUid',uid);
-	                Connect_save('aToken',token);
-	                Connect_save('fkey',fkey);
-	                Connect_del('sentConfirmedTime');
-	                Connect_del('sentSmsTime');
-	                Connect_del('user');
-	                Connect_signIn(fkey,iNfuntion);
+	                M_APP.save('uidCreated',M_APP.getTime());
+	                M_APP.save('uidType',"?");
+	                M_APP.save('aUid',uid);
+	                M_APP.save('aToken',token);
+	                M_APP.save('fkey',fkey);
+	                M_APP.del('sentConfirmedTime');
+	                M_APP.del('sentSmsTime');
+	                M_APP.del('user');
+	                signIn(fkey,iNfuntion);
 	            } else {                                        
-	                Connect_error ( Connect_getFromDictionary('error-wrongLogin') );
+	                M_VIEW.error ( DICTIONARY.get('error-wrongLogin') );
 	            }
-	            if( iNloader==true ) Connect_hLoader();
+	            if( iNloader==true ) M_VIEW.closeLoader();
 	        },
 	        error: function () {
-	        	if( iNloader==true ) Connect_hLoader();
+	        	if( iNloader==true ) M_VIEW.closeLoader();
 	        }
 
 	    });
 	}
+	_['authByAnonym'] = authByAnonym;
 
-	function Connect_authByUserAndPswd (iNdata) {
+	function authByUserAndPswd (iNdata) {
 	    $.ajax({
 	        url: 'https://ramman.net/api/web/sign',
 	        type: 'POST',
@@ -107,26 +152,28 @@ define([], function () {
 	            if(status == 1) {                               // Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð²Ñ…Ð¾Ð´Ð° Ð²ÐµÑ€Ð½Ñ‹, ÑÐ¼Ñ ÐºÐ¾Ð´ Ð¾Ñ‚Ð¿Ñ€Ð°Ð²Ð»ÐµÐ½
 	                var tokenObject = iNdate2.token;
 	                var user = iNdate2.user;
-	                Connect_save('token',tokenObject);
-	                Connect_save('user',user);
-	                Connect_save('sentSmsTime',Connect_getTime());
-	                Connect_startSmsTimer ('signin');
+	                M_APP.save('token',tokenObject);
+	                M_APP.save('user',user);
+	                M_APP.save('sentSmsTime',M_APP.getTime());
+	                startSmsTimer ('signin');
 	            } else {                                        // Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð²Ñ…Ð¾Ð´Ð° Ð½Ðµ Ð²ÐµÑ€Ð½Ñ‹
-	                Connect_error(Connect_getFromDictionary('error-wrongLogin'));
+	                M_VIEW.error(DICTIONARY.get('error-wrongLogin'));
 	            }
 	        }
 	    });
 	}
-	function Connect_checkSmsCode (Obj) {
-	    if( typeof(Connect_get('token')) != 'undefined' &&  typeof(Connect_get('user')) != 'undefined'){
+	_['authByUserAndPswd'] = authByUserAndPswd;
+
+	function checkSmsCode (Obj) {
+	    if( typeof(M_APP.get('token')) != 'undefined' &&  typeof(M_APP.get('user')) != 'undefined'){
 	        var iNdata 		= {};
 	        var formBlock 	= $(Obj).serializeObject();
-	        iNdata['token'] = Connect_get('token');
-	        iNdata['user'] 	= Connect_get('user');
-	        iNdata['aToken']= Connect_get('aToken');
-	        iNdata['lang']	= Connect_getUserLang('aToken');
-	        iNdata['country']= Connect_getUserCountry();
-	        iNdata['aUid']		= Connect_getMyId();
+	        iNdata['token'] = M_APP.get('token');
+	        iNdata['user'] 	= M_APP.get('user');
+	        iNdata['aToken']= M_APP.get('aToken');
+	        iNdata['lang']	= getUserLang('aToken');
+	        iNdata['country']= getUserCountry();
+	        iNdata['aUid']		= getMyId();
 
 	        var formBlockSignIn = $('.formSignIn').serializeObject();
 	        var formBlockCheckCode = $('.formSmsCode').serializeObject();
@@ -134,7 +181,7 @@ define([], function () {
 	        iNdata.type 		= 'checkCode';
 	        iNdata.code 		= formBlock.code;
 	        iNdata['codeType'] 	= formBlock['codeType'];
-	        Connect_vLoader ();
+	        M_VIEW.showLoader ();
 	        $.ajax({
 	            url: 'https://ramman.net/api/web/sign',
 	            type: 'POST',
@@ -147,32 +194,34 @@ define([], function () {
 	                var status = iNdate2.status;
 	                if(status == 1) {
 	                    var fkey 	= iNdate2.fkey;
-	                    Connect_save('confirmed',1);
-	                    Connect_save('sentConfirmedTime',Connect_getTime());
-	                    Connect_save('uidType','@');
-	                    Connect_signIn(fkey);
+	                    M_APP.save('confirmed',1);
+	                    M_APP.save('sentConfirmedTime',M_APP.getTime());
+	                    M_APP.save('uidType','@');
+	                    signIn(fkey);
 	                } else {                                        // Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð²Ñ…Ð¾Ð´Ð° Ð½Ðµ Ð²ÐµÑ€Ð½Ñ‹
-	                	Connect_hLoader(); 
-	                    Connect_error(Connect_getFromDictionary('error-wrongCode'));
+	                	M_VIEW.closeLoader(); 
+	                    M_VIEW.error(DICTIONARY.get('error-wrongCode'));
 	                }
 	            },
-	            error: function (){Connect_hLoader(); }
+	            error: function (){M_VIEW.closeLoader(); }
 	        });
 	        return false;
 	    }
 	    
 	}
-	function Connect_checkToken (iNfuntion,iNloader) {
+    _['checkSmsCode'] = checkSmsCode;
+
+	function checkToken (iNfuntion,iNloader) {
 		// checkSignIn
-		var checkSign  		= Connect_getMyId();
+		var checkSign  		= getMyId();
 		if ( checkSign == null ) {
 			// if not signed
-			Connect_authByAnonym(iNfuntion,iNloader);
+			authByAnonym(iNfuntion,iNloader);
 		} else 
 			if(typeof(iNfuntion)=='function')iNfuntion(); 
 	}
-	function Connect_signUpByUserAndPswd (Obj) {
-		Connect_vLoader();
+	_['signUpByUserAndPswd'] = function  (Obj) {
+		M_VIEW.showLoader();
 	    var formBlock = $(Obj).serializeObject();
 	    $.ajax({
 	        url: 'https://ramman.net/api/web/sign',
@@ -188,24 +237,26 @@ define([], function () {
 	            if(status == 1) {                               // Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð²Ñ…Ð¾Ð´Ð° Ð²ÐµÑ€Ð½Ñ‹, ÑÐ¼Ñ ÐºÐ¾Ð´ Ð¾Ñ‚Ð¿Ñ€Ð°Ð²Ð»ÐµÐ½
 	                var tokenObject = iNdate2.token;
 	                var user = iNdate2.user;
-	                Connect_save('token',tokenObject);
-	                Connect_save('user',user);
-	                Connect_saveUserCountry(formBlock['country']);
-	                Connect_saveUserLang(formBlock['lang']);
-	                Connect_save('sentSmsTime',Connect_getTime());
-	                Connect_startSmsTimer('signup');
+	                M_APP.save('token',tokenObject);
+	                M_APP.save('user',user);
+	                M_APP.saveUserCountry(formBlock['country']);
+	                M_APP.saveUserLang(formBlock['lang']);
+	                M_APP.save('sentSmsTime',M_APP.getTime());
+	                _startSmsTimer('signup');
 	            } else {                                        // Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð²Ñ…Ð¾Ð´Ð° Ð½Ðµ Ð²ÐµÑ€Ð½Ñ‹
-	                Connect_error(Connect_getFromDictionary('error-issetUser'));
+	                M_VIEW.error(DICTIONARY.get('error-issetUser'));
 	            }
-	            Connect_hLoader();
+	            M_VIEW.closeLoader();
 	        },
 	        error: function () {
-	        	Connect_hLoader();
+	        	M_VIEW.closeLoader();
 	        }
 	    });
 	    return false;
 	}
-	function Connect_startTimer(iNid,iNendTime,enfFunction){
+    _['checkToken'] = checkToken;
+
+	function startTimer (iNid,iNendTime,enfFunction){
 	    $(iNid).countdown(iNendTime)
 	    .on('update.countdown', function(event) {
 	      var format = '%M:%S';//%H:
@@ -225,26 +276,31 @@ define([], function () {
 	        }
 	    );
 	}
+    _['startTimer'] = startTimer;
 
-	function Connect_startSmsTimer (iNtype) {
-	    var sentSmsTime = parseInt(Connect_get('sentSmsTime'));
-	    var nowSec = Connect_getTime();
+	function startSmsTimer (iNtype) {
+	    var sentSmsTime = parseInt(M_APP.get('sentSmsTime'));
+	    var nowSec = M_APP.getTime();
 	    if( typeof(sentSmsTime) != 'undefined' & (sentSmsTime + 300000) > nowSec ) {
-	        $('.reSendSms').hide();
-	        $('.LastTimeForExpireSms').show();
-	        $('.formSignIn,.formSignUp').hide();
-	        $('.formSmsCode').show();
+	        $('.page-reSendSms').hide();
+	        $('.page-LastTimeForExpireSms').show();
+	        $('.page-formSignIn,.formSignUp').hide();
+	        $('.page-formSmsCode').show();
 	        if(typeof(iNtype) == 'string') $('#codeType').val(iNtype);
-	        Connect_startTimer('.LastTimeForExpireSms',sentSmsTime + 300000,function (){$('.reSendSms').show();$('.LastTimeForExpireSms').hide()});
+	        startTimer('.page-LastTimeForExpireSms',sentSmsTime + 300000,function (){$('.reSendSms').show();$('.LastTimeForExpireSms').hide()});
 	    }
 	}
+    _['startSmsTimer'] = startSmsTimer;
+
 	//to other file
-	function Connect_sendForm (iNform) {
-	    Connect_authByUserAndPswd(
+	function sendForm (iNform) {
+	    authByUserAndPswd(
 	        $(iNform).serializeObject()
 	    );
 	    return false;
 	}
+    _['sendForm'] = sendForm;
+
 	$.fn.serializeObject = function()
 	{
 	   var o = {};
@@ -263,12 +319,12 @@ define([], function () {
 	};
 
 
-	function Connect_reSendSms () {
-	    var iNdata = {'type':'reSendSms','user':Connect_get('user'),'token':Connect_get('token')};
-	    var st = parseInt( Connect_get('sentSmsTime') )+ 300000;
-	    var nowSec = Connect_getTime();
+	function reSendSms () {
+	    var iNdata = {'type':'reSendSms','user':M_APP.get('user'),'token':M_APP.get('token')};
+	    var st = parseInt( M_APP.get('sentSmsTime') )+ 300000;
+	    var nowSec = M_APP.getTime();
 	    if(st<nowSec) {
-	    	Connect_vLoader();
+	    	M_VIEW.showLoader();
 	        $.ajax({
 	            url: 'https://ramman.net/api/web/sign',
 	            type: 'POST',
@@ -278,30 +334,25 @@ define([], function () {
 	            },
 	            dataType: 'json',
 	            success: function(iNdate2) {
-	                console.log(iNdate2);
 	                var status = iNdate2.status;
 	                if(status == 1) {                               // Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð²Ñ…Ð¾Ð´Ð° Ð²ÐµÑ€Ð½Ñ‹, ÑÐ¼Ñ ÐºÐ¾Ð´ Ð¾Ñ‚Ð¿Ñ€Ð°Ð²Ð»ÐµÐ½
-	                    Connect_save('sentSmsTime',Connect_getTime());
-	                    Connect_startSmsTimer();
+	                    M_APP.save('sentSmsTime',M_APP.getTime());
+	                    startSmsTimer();
 	                } else if(status == 0){                                     // Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð²Ñ…Ð¾Ð´Ð° Ð½Ðµ Ð²ÐµÑ€Ð½Ñ‹
-	                    Connect_error(Connect_getFromDictionary('error-wrongCode'));
+	                    M_VIEW.error(DICTIONARY.get('error-wrongCode'));
 	                }else {
-	                    Connect_error(Connect_getFromDictionary('error-needUpdatePage'));
+	                    M_VIEW.error(DICTIONARY.get('error-needUpdatePage'));
 	                }
-	                Connect_hLoader();
+	                M_VIEW.closeLoader();
 	            },
 	            error: function () {
-	            	Connect_hLoader();
+	            	M_VIEW.closeLoader();
 	            }
 	        });
-	    } else Connect_error(Connect_getFromDictionary('error-smsCodeIsNotExpired'));
+	    } else M_VIEW.error(DICTIONARY.get('error-smsCodeIsNotExpired'));
 	    return false;
 	}
+    _['reSendSms'] = reSendSms;
 
-	return {
-		getCountry 		: Connect_getUserCountry,
-		setCountry		: Connect_saveUserCountry,
-		getLang 		: Connect_getUserLang,
-		setLang 		: Connect_saveUserLang,
-	}
+	return _;
 });

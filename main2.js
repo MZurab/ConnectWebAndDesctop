@@ -1,16 +1,16 @@
 require2.config({
     // baseUrl: 'https://cdn.ramman.net/web/',
     paths: {
-    	'firebase'             : 'https://www.gstatic.com/firebasejs/3.6.10/firebase',
+    	'firebase'             : ['https://www.gstatic.com/firebasejs/4.2.0/firebase','res/js/firebase/firebase'],
         'template7'            : 'res/js/template7/template7',
         "yametrika"            : ["//mc.yandex.ru/metrika/watch","res/js/analytics/yandex/metrika"],
         "sweetalert2"          : "res/js/sweetalert2/sweetalert2",
-        "onesignal"            : "https://cdn.onesignal.com/sdks/OneSignalSDK",
+        "onesignal"            : ["https://cdn.onesignal.com/sdks/OneSignalSDK","res/js/onesignal/OneSignalSDK"],
         "mixitup"              : 'res/js/mixitup/mixitup.min',
         'jquery'               : 'res/js/jquery/jquery',
-        "jquery.lettering.js"  : "res/js/jquery/jquery.lettering",
-        "jquery.textillate.js" : "res/js/jquery/jquery.textillate",
-        'jquery.countdown'     : 'res/js/jquery/jquery/jquery.countdown.min',
+        "jquery.lettering"     : "res/js/jquery/jquery.lettering",
+        "jquery.textillate"    : "res/js/jquery/jquery.textillate",
+        'jquery.countdown'     : 'res/js/jquery/jquery.countdown',
         'lazyload'             : 'res/js/lazyload/lazyload',
         'rx'                   : 'res/js/rxjs/rx.min',
         'dictionary'           : 'mvc/model/dictionary',
@@ -21,15 +21,23 @@ require2.config({
             'v_app'            : 'mvc/view/app',
             'v_app-page'       : 'mvc/view/app-page',
             'v_app-base'       : 'mvc/view/app-base',
+            'v_category'       : 'mvc/view/category',
         /*>! views */
 
          /*<? models */
             'm_view'           : 'mvc/model/view',
             'm_app-chat'       : 'mvc/model/app-chat',
             'm_app'            : 'mvc/model/app',
-            'm_app-page'       : 'mvc/model/app-page',
+            'APP_PAGE'         : 'mvc/model/app-page',
             'm_app-base'       : 'mvc/model/app-base',
+
             'm_engine'         : 'mvc/model/engine',
+            'm_category'         : 'mvc/model/category',
+            'm_firebase'       : 'mvc/model/firebase',
+            'm_user'           : 'mvc/model/user',
+            'm_routing'        : 'mvc/model/routing',
+
+
         /*>! models */
     },
     shim: {
@@ -79,72 +87,25 @@ require2.config({
       }
     }
 });
-require2(['jquery','template7','m_view','dictionary','m_engine'], function($, Template7,m_view,Dictionary,m_engine) {
+
+// window['ConnectDeviseType'] = '@browser';
+window['ConnectDeviseType'] = '@desktop';
+
+require2(['jquery','template7','m_view','dictionary','m_engine','m_routing','m_app'], function($, Template7,m_view,Dictionary,m_engine,ROUTING,M_APP) {
     $(function() {
         console.log('start!');
-        // view1.rend('black');  
-        // compile it with Template7
-        var template = `
-            <script id="template" type="text/template7">
-                <p>Hello, my name is {{firstName}} {{lastName}}</p>
-            </script>
-        `;
 
-        var compiledTemplate = Template7.compile(template);
-         
-        // Now we may render our compiled template by passing required context
-        var context = {
-            firstName: 'Zurab',
-            lastName: 'Magomadov'
-        };
-        var html = compiledTemplate(context);
-      
-        console.log( 'html', html);
+        Dictionary.autoChange(function () {
+            // m_engine.prepareUrl({'app':'base','page':'index','user':'zurab','data':'data'});
+            m_engine.prepareUrl({'app':'page','page':'fullWindow','user':'zurab','data':'data'});
+            m_engine.startUrl();
+        });
 
-        m_engine.openApp({'app':'page','page':'private'},'data');
-            // m_engine.openApp('chat','private2');
-        // Dictionary.autoChange(function () {
-        //     // m_view.hideLoader();
-        //     // m_view.init();
-        //     // m_engine.openApp('chat','private');
-        // });
-        
-
-        console.log('end!');
-
+        M_APP.setGlobalVar('engine',m_engine);
     });
 });
 
 /*
-Добавить 
-    jquery moduls
-        counter
-        text litering
-    sweet alet
-    Yandex metrika + Google analythics
-    template7
-    OneSignal
-    Firibase
-    require css
-    
-
-    Добрый день!
- 
- 
-    Для Татаев 15*25 мм
-    100 000 шт - 65 000 р
-    200 000 шт - 99 000 р
-     
-     
-    Для Интерии 15 мм
-    5000 шт - 18 100 р
-    10 000 шт - 20 700 р
-
-    
-    Подгрузка определение пользователя
-    Создание основы
-    Определение запроса routing
-    Запуск
 
     view -
     `http://etp.kartoteka.ru/trade/view/purchase/general.html?id=100791615

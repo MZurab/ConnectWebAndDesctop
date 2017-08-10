@@ -1,7 +1,73 @@
-define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
+define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
+	//@<<< TIME FUNCTIONS
+		function _getSec () {
+		    return new Date().getTime()/1000;
+		}
+		function _getTime () {
+		    return new Date().getTime();
+		}
+	//@>>> TIME FUNCTIONS
+
+	//@<<< LOCAL STORAGE
+		function _save ( name, value ) {
+		    return localStorage.setItem( name , value );
+		}
+		function _get (name){
+		    return localStorage.getItem(name);
+		}
+		function _del (name){
+		    localStorage.removeItem(name);
+		}
+		function _clear (){
+		    localStorage.clear();
+		}
+	//@>>> LOCAL STORAGE
+
+	//@@@<<< IMPORTS
+		function _addScript (iNhref,iNfuntion) {
+			$.getScript(iNhref, iNfuntion );//( data, textStatus, jqxhr )
+		}
+	//@@@>>> IMPORTS
+
+	function _forEach (data, callback){
+	  for(var key in data){
+	    if(data.hasOwnProperty(key)){
+	      callback(key, data[key]);
+	    }
+	  }
+	}
+
+	/*?<<< json object  */
+		function _getJsonKey (ObjectThis){
+		    return Object.keys(ObjectThis)[0];
+		}
+		function _getJsonKeys (ObjectThis){
+		    return Object.keys(ObjectThis);
+		}
+	/*!>>> json object  */
+
+	/*?<<< SOUND */
+		function addSource (elem, path) {
+		  $('<source>').attr('src', path).appendTo(elem);
+		}
+		    function _playSendMsgSound(){
+		        var audio = $('<audio />', {
+		           autoPlay : 'autoplay'
+		         });
+		         addSource(audio, "https://cdn.ramman.net/audio/effects/sendMessage.mp3");
+		         // addSource(audio, 'audio/'+Math.ceil(Math.random() * 5)+'.ogg');
+		         audio.appendTo('body');
+		    }
+	/*?<<< SOUND  */
+
+
+
 	//@< private vars
-		var prefixForApp_ = 'rammanApp';
-		var openPageName_ = 'openPage';
+		const globalPrefix = 'global-';
+		const prefixForApp_ = 'rammanApp-';
+		const prefixForGlobalApp_ = globalPrefix + prefixForApp_;
+		const prefixForGlobalVar = globalPrefix + 'var-';
+		const openPageName_ = 'openPage';
 	//@> private vars
 
 	function _setApp (iNapp) {
@@ -13,6 +79,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 					iNapp -> string
 		*/
 		window.rammanNowOpenedApp = iNapp;
+		console.log('_setApp',iNapp.name);
 	}
 	function _setPage (iNapp,iNpage) {
 		/*
@@ -50,7 +117,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		var thisApp = window.rammanNowOpenedApp||false;
 		return thisApp;
 	}
-	function _invokeOpenedApp () {
+	function _invokeOpenedApp (iNmethodName) {
 		/*
 			@discr
 				invoke Method For Open App
@@ -59,7 +126,13 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 				@optional
 					iNmethodName -> string
 		*/
-		return _invokeApp(_thisApp());
+		console.log('_invokeOpenedApp _thisApp()',_thisApp());
+		if ( typeof iNmethodName == 'string' && _thisApp() != false && typeof _thisApp()[iNmethodName] == 'function') {
+			let thisFunc =  _thisApp()[iNmethodName];	
+			console.log('_invokeOpenedApp thisFunc',thisFunc);
+			thisFunc();
+		}
+		return _thisApp();
 	}
 	function _invokeApp (iNappName,iNmethodName) {
 		/*
@@ -93,19 +166,19 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 	}
 	//<? transactors
 		function _td_hidePages (iNapp,iNarray,iNtypeApp) {
-			v_view.d_hidePages (iNapp,iNarray,iNtypeApp)
+			V_VIEW.d_hidePages (iNapp,iNarray,iNtypeApp)
 		}
 		function _td_showPages (iNapp,iNarray,iNtypeApp) {
-			v_view.d_showPages (iNapp,iNarray,iNtypeApp)
+			V_VIEW.d_showPages (iNapp,iNarray,iNtypeApp)
 		}
 		function _td_showApps (iNarray,iNtypeApp) {
-			v_view.d_showApps (iNarray,iNtypeApp)
+			V_VIEW.d_showApps (iNarray,iNtypeApp)
 		}
 		function _td_hideApps (iNarray,iNtypeApp) {
-			v_view.d_hideApps (iNarray,iNtypeApp)
+			V_VIEW.d_hideApps (iNarray,iNtypeApp)
 		}
 		function _td_openPage (iNapp,iNpage,iNtype) {
-			v_app.d_openPage (iNapp,iNpage,iNtype);
+			V_APP.d_openPage (iNapp,iNpage,iNtype);
 		}
 	//>! transactors
 
@@ -132,8 +205,8 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 					iNdataForApp -> string
 				@optional
 			@deps
-				funciton : v_app.d_checkChiefApp,
-				funciton : v_app.d_createChiefApp,
+				funciton : V_APP.d_checkChiefApp,
+				funciton : V_APP.d_createChiefApp,
 				funciton : _thisPage
 			@return
 			@algorithm
@@ -151,7 +224,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 					// safe add attributes if it exists 
 					var appAttr = getAppAttr(iNapp);
 					if( appAttr != false) objectForCreateApp['attr'] = appAttr;
-					v_app.d_createChiefApp(objectForCreateApp);
+					V_APP.d_createChiefApp(objectForCreateApp);
 				} else
 					iNapp.onCreate(iNdataForApp,objectForCreateApp);
 				//then invoke app init method
@@ -172,7 +245,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		 		@return BOOL
 			*/
 			if( typeof iNapp['isApp'] != 'function' )
-				 return (v_app.d_checkChiefApp ( {'app': iNapp.name } ) > 0) ? true : false;
+				 return (V_APP.d_checkChiefApp ( {'app': iNapp.name } ) > 0) ? true : false;
 			else 
 				return iNapp['isApp']();
 		}
@@ -189,7 +262,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 			var thisPage = getPageFuncitons(iNapp,iNpage);
 			var objectForGetPage = {'app': iNapp.name, 'page' : iNpage };
 			if( typeof thisPage['isPage'] != 'function' ) 
-				 return (v_app.d_checkPageInChiefApp ( objectForGetPage ) > 0) ? true : false;
+				 return (V_APP.d_checkPageInChiefApp ( objectForGetPage ) > 0) ? true : false;
 			else
 				return thisPage['isPage']();
 			
@@ -218,10 +291,12 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		*/
 		// if we open this app from another this.appName != nowOpenedApp
 		if ( iNdata['app'] != _thisApp().name ) {
+			console.log("iNdata['app'] , _thisApp().name",iNdata['app'], _thisApp().name)
 			// did safe invoke onDisappear, onOut methods for app is opening now
 			var pagesFunctionsFromAnotherApp =  getPageFuncitons(_thisApp(),_thisPage( _thisApp().name ) );//  _invokeApp(_thisApp(),'pages');
 			// did safe invoke for pages from another app onDisappear, onOut
 			if ( pagesFunctionsFromAnotherApp != false) {
+				console.log('rightCloseLastAppOrAnotherPageFromThisApp pagesFunctionsFromAnotherApp',pagesFunctionsFromAnotherApp);
 				// invoke onDesappear for page 
 					if ( typeof(pagesFunctionsFromAnotherApp['onDisappear']) == 'function' )
 						pagesFunctionsFromAnotherApp['onDisappear']();
@@ -234,7 +309,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 					if ( typeof(pagesFunctionsFromAnotherApp['onHide']) == 'function' )
 						pagesFunctionsFromAnotherApp['onHide']();
 					else 
-						v_app.d_hidePages(_thisApp().name, _thisPage( _thisApp().name ));
+						V_APP.d_hidePages(_thisApp().name, _thisPage( _thisApp().name ));
 			}
 
 
@@ -246,10 +321,10 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 			if( typeof _thisApp()['onHide'] == 'function' ) {
 				_thisApp()['onHide']();
 			} else {
-				v_app.d_hideApps( _thisApp().name );
+				V_APP.d_hideApps( _thisApp().name );
 			}
 
-
+			console.log('iNapp rightCloseLastAppOrAnotherPageFromThisApp',iNapp);
 			// did safe invoke thisApp.onIn in
 			if ( typeof(iNapp.onIn) == 'function' ) iNapp.onIn(); 
 
@@ -270,7 +345,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 				if ( typeof(pagesFunctionsFromThisApp['onHide']) == 'function' )
 					pagesFunctionsFromThisApp['onHide']();
 				else 
-					v_app.d_hidePages( iNdata['app'], _thisPage( iNdata['app'] ));		
+					V_APP.d_hidePages( iNdata['app'], _thisPage( iNdata['app'] ));		
 		}
 	}
 	function rightInvokePageFunctions (iNapp,iNdata,objectForCreatePage,iNdataForApp) {
@@ -312,7 +387,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 			if(typeof pageFunctions['onCreate'] == 'function')
 				pageFunctions['onCreate']();
 			else
-				v_app.d_createPageInChiefApp(objectForCreatePage);
+				V_APP.d_createPageInChiefApp(objectForCreatePage);
 
 			if( typeof pageFunctions.onInit == 'function') 
 				pageFunctions.onInit(iNdataForApp,objectForCreatePage);
@@ -323,7 +398,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 			if( typeof (pageFunctions.onUpdate) == 'function') 
 				pageFunctions.onUpdate(iNdataForApp,objectForCreatePage);
 			else
-				v_app.d_updatePageInChiefApp(objectForCreatePage)
+				V_APP.d_updatePageInChiefApp(objectForCreatePage)
 		}
 
 		// set this page as openinig
@@ -339,7 +414,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 
 		// if we have not onView functions for pages we need invoke default viewPage functions
 		if( typeof(pageFunctions['onView']) != 'function')
-			v_app.d_viewPage(objectForCreatePage);
+			V_APP.d_viewPage(objectForCreatePage);
 		else // if we have override function onView for page we invoke it
 			pageFunctions['onView'](iNdataForApp,objectForCreatePage);
 	}
@@ -391,13 +466,13 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		
 		// if we have not onViewApp functions we need invoke default viewApp functions
 		if( typeof(iNapp['onView']) != 'function')
-			v_app.d_viewApp(objectForCreateApp);
+			V_APP.d_viewApp(objectForCreateApp);
 		else // if we have override function we invoke it
 			iNapp['onView'](iNdataForApp,objectForCreateApp);
 
 		// set this app as openinig if this app inited
 		if(typeof iNapp['setApp'] != 'function')
-			_setApp(iNdata['app']);
+			_setApp (iNapp);
 		else
 			iNapp['setApp'](iNdataForApp,iNdata);
 
@@ -412,7 +487,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		// safe did appear function for page
 		// if(typeof(iNapp.pages[objectForCreateApp['page']].onAppear) == 'function') iNapp.pages[objectForCreateApp['page']].onAppear();
 		// did show this app + show if need and invoke onEnter if need ADD
-		// v_app._d_viewPage(objectForCreateApp);
+		// V_APP._d_viewPage(objectForCreateApp);
 
 		// safe invoke passed function
 		if (typeof(iNfunction) == 'function')iNfunction();
@@ -451,7 +526,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		// dataForCheckApp = {'app':iNdata['app']};
 		if(typeof(iNdata['extra']) == 'string') dataForCheckApp['extra'] = iNdata['extra'];
 		// get count this apps
-		issetApps = v_app.d_checkListApp(dataForCheckApp);
+		issetApps = V_APP.d_checkListApp(dataForCheckApp);
 		// create app if it is not isset
 
 		// prepare obj
@@ -462,7 +537,7 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 		if(typeof(iNdata['page']) == 'string') 		objectForCreateApp['page'] 		= iNdata['page'];
 
 		if (issetApps < 1) {
-			v_app.d_createPageInListApp(objectForCreateApp);
+			V_APP.d_createPageInListApp(objectForCreateApp);
 		} 
 
 		if( typeof(iNdata['page'] ) == 'string' ) {
@@ -474,13 +549,13 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 
 			if( typeof(iNdata['content']) == 'string') 	objectForCreatePage['content'] 	= iNdata['content'];
 
-			intIssetPages = v_app.d_checkPageInListApp(objectForCreatePage);
+			intIssetPages = V_APP.d_checkPageInListApp(objectForCreatePage);
 			if(intIssetPages < 1) {
 				//if page is not isset
-				v_app.d_createPageInListApp(objectForCreatePage);
+				V_APP.d_createPageInListApp(objectForCreatePage);
 			} else {
 				// page isset - change content if isset
-				// v_app.d_updatePageInListApp(objectForCreatePage)
+				// V_APP.d_updatePageInListApp(objectForCreatePage)
 			}
 		}
 		if (typeof(iNfunction) == 'function')iNfunction();
@@ -620,10 +695,10 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 				#2 invoke func ready app
 				#3 close loader
 		*/
-		v_view.d_showLoader();
+		V_VIEW.d_showLoader();
 		_readyChiefApp (iNdata,iNapp,iNstring,function () {
 			if(typeof(iNfunction) == 'function') iNfunction();
-			// v_view.d_showLoader();
+			// V_VIEW.d_showLoader();
 		});
 	}
 
@@ -650,10 +725,10 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 				#2 invoke func ready app
 				#3 close loader
 		*/
-		v_view.d_showLoader();
+		V_VIEW.d_showLoader();
 		_readyListApp (iNdata,function () {
 			if(typeof(iNfunction) == 'function') iNfunction();
-			v_view.d_showLoader();
+			V_VIEW.d_showLoader();
 		});
 	}
 	
@@ -736,10 +811,36 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 
 
 
+
+	function getGlobalApp(iNname){
+		if( typeof window[prefixForGlobalApp_+iNname] == 'undefined' )
+			return false;
+		return window[prefixForGlobalApp_+iNname];
+	}
+	function setGlobalApp(iNapp){
+
+		if( typeof window[prefixForGlobalVar+iNapp.name] == 'undefined' && typeof iNapp == 'object' && typeof iNapp.name == 'string') {
+			window[prefixForGlobalApp_+iNapp.name] = iNapp;
+			console.log( 'setGlobalApp', prefixForGlobalApp_+iNapp.name+';', window[prefixForGlobalApp_+iNapp.name]);
+		}
+	}
+	function getGlobalVar (iNname) {
+		if( typeof window[prefixForGlobalVar+iNname] == 'undefined' )
+			return false;
+		return window[prefixForGlobalVar+iNname];
+	}
+	function setGlobalVar(iNname,iNobject){
+		if( typeof window[prefixForGlobalVar+iNname] == 'undefined' && typeof iNobject == 'object' && typeof iNname == 'string') {
+			window[prefixForGlobalVar+iNname] = iNobject;
+			console.log( 'setGlobalVar', prefixForGlobalVar+iNname, window[prefixForGlobalVar+iNname]);
+		}
+	}
+
+
 	//@< work with header
-		var _td_loadCSS  		= v_app.d_loadCSS;
-		var _td_removeByClass  	= v_app.d_removeByClass;
-		var _td_loadJS  		= v_app.d_loadJS;
+		var _td_loadCSS  		= V_APP.d_loadCSS;
+		var _td_removeByClass  	= V_APP.d_removeByClass;
+		var _td_loadJS  		= V_APP.d_loadJS;
 	//@< work with header
 
 
@@ -767,5 +868,34 @@ define(['v_app','jquery','v_view'],function(v_app,$,v_view) {
 	    'd_loadCSS' 		: _td_loadCSS,
 	    'd_loadJS' 			: _td_loadJS,
 	    'd_removeByClass' 	: _td_removeByClass,
+		'addScript' 		: _addScript,
+
+	    //  time functions
+	    'getSec' : _getSec,
+		'getTime' : _getTime,
+
+		//  local storage
+		'save' : _save,
+		'get' : _get,
+		'del' : _del,
+		'clear' : _clear,
+
+		//  object functions
+		'getJsonKey' : _getJsonKey,
+		'getJsonKeys' : _getJsonKeys,
+		'forEach' : _forEach,
+
+		//  audio functions
+		'playSendMsgSound' : _playSendMsgSound,
+		'addSource' : addSource,
+
+
+		//  global resourse
+		'setGlobalApp' : setGlobalApp,
+		'setGlobalVar' : setGlobalVar,
+		'getGlobalVar' : getGlobalVar,
+		'getGlobalApp' : getGlobalApp,
+
+		'view' : V_APP
 	}
 });

@@ -1,37 +1,42 @@
-define( ['jquery','m_view','v_app-page','m_app'] , function ($,M_VIEW,V_APP_PAGE,M_APP) {
+define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function ($,M_VIEW,V_APP_PAGE,M_APP,M_USER) {
 
+  // init result const
   const _ = {};
-  const pages = {
-    'index'   : '',
-    'private'   : {
-      'attr' : {
-        'id2' : '2',
-        'id3' : '3',
-      },
-      'menus': {
-        'attr' : {
-          'id1' : 'id2',
-          'id3' : 'id4'
-        }
-      },
-      'functions': {
-        'isPage'  : function () {console.log('app private','isPage'); return true;},
-        'onView'  : function () { 
-          console.log('app private','onView');
-          addPageToFullWindow({'id':'sign','uid':'@system'});
-          M_VIEW.closeLoader(); 
-          // V_APP_PAGE.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
-          // console.log('app private','onView');
-          return true;
-        },
-        'onHide'  : function () {console.log('app private','onHide'); return true;},
-        'setPage' : function () {console.log('app private','setPage'); return true;},
-        'onCreate' : function () {console.log('app private','onCreate'); return true;},
+  //
+  // function _ () {
 
-      }
-    }
-  };
-  _['pages'] = pages;
+  // }
+
+  // init pages const
+  const pages = {}; _['pages'] = pages;
+    //< page full window
+        pages['fullWindow']  = {'attr':{},'menus':{},'functions':{}};
+          pages['fullWindow']['attr'] = {
+            'id2' : '2',
+            'id3' : '3',
+          };
+          pages['fullWindow']['menus'] ={
+            'attr' : {
+              'id1' : 'id2',
+              'id3' : 'id4'
+            }
+          };
+          pages['fullWindow']['functions'] = {
+            'isPage'  : function () {console.log('app-page fullWindow','isPage'); return true;},
+            'onOut'  : function () {console.log('app-page fullWindow','onOut'); return true;},
+            'onView'  : function () {
+              addPageToFullWindow({'id':'sign','uid':'@system'});
+              // V_APP_PAGE.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
+              // console.log('app private','onView');
+              return true;
+            },
+            'onHide'  : function () {console.log('app-page fullWindow','onHide'); return true;},
+            // 'setPage' : function () {console.log('app-page fullWindow','setPage'); return true;},
+            'onCreate' : function () {console.log('app-page fullWindow','onCreate'); return true;},
+            'onDisappear' : function () {console.log('app-page fullWindow','onDisappear'); return true;},
+          };
+    //> page full window
+  
 
   const options = {
     'attr'  : {
@@ -54,11 +59,11 @@ define( ['jquery','m_view','v_app-page','m_app'] , function ($,M_VIEW,V_APP_PAGE
   _['name'] = name;  
 
   // function setApp
-  function setApp (iNstring,iNobject) {
-    console.log('app-page','setApp',iNstring);
+  // function setApp (iNstring,iNobject) {
+  //   console.log('app-page','setApp',iNstring);
 
-  }
-  _['setApp'] = setApp;
+  // }
+  // _['setApp'] = setApp;
 
   //@overide
   function onHide (iNstring,iNobject) {
@@ -215,8 +220,14 @@ define( ['jquery','m_view','v_app-page','m_app'] , function ($,M_VIEW,V_APP_PAGE
         getPage ( 
           iNdata,
           function (iNresult){ 
+            //add content
             V_APP_PAGE.addFullWindowByTemplate( { 'content' : iNresult['content'] } );
+            //add headers
             processingData(iNresult);
+            //add events default pages
+            addActionForEvents(iNdata['id']);
+            //hide loader
+            M_VIEW.closeLoader(); 
           }
         );
     }
@@ -249,12 +260,46 @@ define( ['jquery','m_view','v_app-page','m_app'] , function ($,M_VIEW,V_APP_PAGE
   }
   function clearFullWindow () {
     deleteHeaders();
-    $('.appModalFullWindow').rempove();
+    $('.appModalFullWindow').remove();
   }
 
+  console.log('this.name',this.name)
+  
+  _['init'] = function () {
+    console.log('appPage init',this.name);
+    console.log('init this',this);
+    M_APP.setGlobalApp(this);
+    return this;
+  }
 
-
-
+  // ever
+    function addActionForEvents (iNid) {
+      console.log('addActionForEvents iNid - ',iNid);
+      if(iNid == 'sign')
+        addActionsForEventsPageSign();
+    }
+      function addActionsForEventsPageSign () {
+        $('.page-formSignIn').submit(function(e){
+          e.preventDefault();
+          console.log('page-formSignIn submit');
+          console.log('M_USER',M_USER);
+          return M_USER.sendForm('.page-formSignIn');
+        });
+        $('.page-formSmsCode').submit(function(e){
+          e.preventDefault();
+          console.log('page-formSmsCode submit');
+          return M_USER.checkSmsCode(this);
+        });
+        $('.page-formSignUp').submit(function(e){
+          e.preventDefault();
+          console.log('page-formSignUp submit');
+          return M_USER.signUpByUserAndPswd(this);
+        });
+        $('.page-reSendSms').click(function(){
+          return M_USER.reSendSms()
+        });
+      }
+  // ever
 
 
   return _;

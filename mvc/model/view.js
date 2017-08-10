@@ -43,14 +43,14 @@ define(['jquery','dictionary','v_view','sweetalert2'],
 
 		//<? work with modal windows sweetalert
 			function _modalWindow_vError(iName,iNtext){
-			    swal.swal (
+			    swal (
 			      iName,
 			      iNtext,
 			      'error'
 			    )
 			}
 			function _modalWindow_vSuccess(iName,iNtext){
-			    swal.swal (
+			    swal (
 			      iName,
 			      iNtext,
 			      'success'
@@ -123,6 +123,9 @@ define(['jquery','dictionary','v_view','sweetalert2'],
 
 		isset 			: _t_issetDomEl,
 		add 			: _t_addDataToViewEl,
+
+		success 		: _modalWindow_vSuccess,
+		error 			: _modalWindow_vError,
 		// checkAppInList  : _checkAppInList,
 		// checkAppInChief : _checkAppInChief,
 

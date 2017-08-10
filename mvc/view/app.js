@@ -1,6 +1,7 @@
 define(['jquery','template7','v_view'],function($,Template7,v_view){
 	let CONSTANTS = {
 		'pathAppHeader' 	  : '#block #viewBlock .topBlockInViewBlock',
+		'pathAppView' 	  	  : '#block #viewBlock #viewAndChatBlockInViewBlock.appChiefWindow',
 		'nameInAppHeader' 	  : 'appHeaderInChiefBlock', // class
 		'pageNameInAppHeader' : 'appPage',// class
 
@@ -19,7 +20,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		          <div class='view' view-name='{{page}}'>
 		          	{{content}}
 		          </div>
-	          {/if}
+	          {{/if}}
 	          {{other}}
 	        </div>
 	    `;
@@ -39,7 +40,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 							{{content}}
 						</div>
 					{{else}}
-						{{content}}
+						{{other}}
 					{{/if}}
 				</div>
 		    `;
@@ -55,7 +56,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 							{{content}}
 						</div>
 					{{else}}
-						{{content}}
+						{{other}}
 					{{/if}}
 				</div>
 		    `;
@@ -64,8 +65,25 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 					    {{content}}
 					</div>
 			    `;
-	    //> templates for header
 
+	    templates['chiefForAppInView'] = `
+			<div class='viewesInWindow app {{class}}' app-name='{{app}}' {{attr}}>
+			  {{#if page}}
+		          <div class='view' view-name='{{page}}'>
+		          	{{content}}
+		          </div>
+	          {{/if}}
+			  {{other}}
+	        </div>
+
+	    `;
+	    templates['pageForAppInView'] = `
+	          <div class='view {{class}}' view-name='{{page}}' {{attr}}>
+	          	{{content}}{{other}}
+	          </div>
+	    `;
+	    //> templates for header
+	   
 	    
 	    //< template for modal window
 
@@ -84,10 +102,10 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 							class 	-> String 
 
 			@deps
-				View_listViews : var
+				templates['chiefForAppInList'] : var
     	*/
     	getAttrAndClassForAppAndPage(iNdata);
-    	var temp = Template7.compile(View_listViews);
+    	var temp = Template7.compile(templates['chiefForAppInList']);
     	return temp(iNdata);
     };
     function _getPageForListApp (iNdata) {
@@ -120,14 +138,13 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 						app 		-> string
 						page 		-> string
 						content 	-> string
-						html 		-> string
 						@optional
 							extra		-> string
 				@optional
 		*/
 		var selector = '.usersBlockContainerInMenusBlock .app[app-name="'+iNdata['app']+'"] .view[view-name="'+iNdata['page']+'"]';
 		if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
-    	$(selector).html(iNdata['html']);
+    	$(selector).html(iNdata['content']);
     }
     function _d_clearPageInListApp (iNdata) {
     	/*
@@ -210,7 +227,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		
 		var selector = '.usersBlockContainerInMenusBlock .app[app-name="'+iNdata['app']+'"] ';
 		if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
-    	v_view.addDataToViewEl(selector, _getPageForListApp(iNdata) ,'change')
+    	v_view.d_addDataToViewEl(selector, _getPageForListApp(iNdata) ,'change');
     }
 
     function _d_createListApp (iNdata) {
@@ -237,28 +254,12 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		var selector = '.usersBlockContainerInMenusBlock'; 
 		if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
 		getAttrAndClassForAppAndPage(iNdata);
-    	v_view.addDataToViewEl(selector, _getListApp(iNdata) ,'change')
+    	v_view.d_addDataToViewEl(selector, _getListApp(iNdata) ,'end');
     }
 
 
 
-    var View_chiefForAppInChief = `
-			<div class="viewesInWindow app {{class}}" app-name="{{app}}" {{attr}}>
-			   {{other}}
-	        </div>
-        `;
-        /*
-	        {{#if page}}
-	           <div class="view" view-name="{{page}}" {{attr}}>
-	        		{{content}}
-	        	</div>
-	    	{{/if}}
-    	*/
-        var View_pageForAppInChief = `
-	        <div class="view {{class}}" view-name="{{page}}" {{attr}}>
-	        	{{content}}
-	        </div>
-        `;//id="leftBlockInViewWindow"
+    
 		function _getChiefApp (iNdata) {
 			/*
 				@discr
@@ -283,7 +284,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 					object: Template7
 				*/
 			getAttrAndClassForAppAndPage(iNdata);
-			var temp = Template7.compile(View_chiefForAppInChief);
+			var temp = Template7.compile(templates['chiefForAppInView']);
 			return temp(iNdata);
 		}
 		function _getPageForChiefApp (iNdata) {
@@ -305,7 +306,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 			*/
 
 			getAttrAndClassForAppAndPage(iNdata);
-			var temp = Template7.compile(View_pageForAppInChief);
+			var temp = Template7.compile(templates['pageForAppInView']);
 			return temp(iNdata);
 		}
 			function getAttrAndClassForAppAndPage (iNdata) {
@@ -361,7 +362,6 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 			var selector = '#viewWindow .app[app-name="'+iNdata['app']+'"] .view[view-name="'+iNdata['page']+'"]';
 			if(typeof(iNdata['extra']) == 'string') 	selector += ' ' + iNdata['extra'];
         	$(selector).html(iNdata['content']);
-        	console.log('_d_updatePageInChiefApp selector',selector);
 
         }
         function _d_clearPageInChiefApp (iNdata) {
@@ -401,8 +401,6 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 			*/
 			var selector = '#viewWindow .app[app-name="'+iNdata['app']+'"] .view[view-name="'+iNdata['page']+'"]';
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
-			console.log('_d_checkPageInChiefApp selector',selector);
-			console.log('_d_checkPageInChiefApp selector length',$(selector).length);
         	return $(selector).length;
         }
 
@@ -607,7 +605,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
         	*/
         	var selector = CONSTANTS['pathAppHeader'],
         		content = _getAppHeader(iNdata);
-			v_view.addDataToViewEl(selector, _getPageForListApp(content) ,'end');
+			v_view.d_addDataToViewEl(selector, _getPageForListApp(content) ,'end');
         }
         function _d_addPageAppHeaderByTemplate (iNdata) {
         	/*
@@ -621,7 +619,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
         	*/
         	var selector = CONSTANTS['pathAppHeader'] + ' .' + CONSTANTS['nameInAppHeader']+'[app-name="'+iNdata['app']+'"]',
         		content = _getPageAppHeader(iNdata);
-			v_view.addDataToViewEl(selector, _getPageForListApp(content) ,'end');
+			v_view.d_addDataToViewEl(selector, _getPageForListApp(content) ,'end');
         }
 
 
@@ -752,10 +750,15 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 	        			add content for app into menu header block by template
 	        		@inputs
 	        			iNdata -> object
+	        				app
+	        				page
+	        				content
+	        				@optional
+	        					other
 	        	*/
 	        	var selector = CONSTANTS['pathMenuHeader'],
 	        		content = _getAppMenuHeader(iNdata);
-				v_view.addDataToViewEl(selector, _getPageForListApp(content) ,'end');
+				v_view.d_addDataToViewEl(selector, _getPageForListApp(content) ,'end');
 	        }
 	        function _d_addPageMenuHeaderByTemplate (iNdata) {
 	        	/*
@@ -766,10 +769,12 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 	        				app
 	        				page
 	        				content
+	        				@optional
+	        					other
 	        	*/
 	        	var selector = CONSTANTS['pathMenuHeader'] + ' .' + CONSTANTS['nameInMenuHeader']+'[app-name="'+iNdata['app']+'"]',
 	        		content = _getPageMenuHeader(iNdata);
-				v_view.addDataToViewEl(selector, _getPageForListApp(content) ,'end');
+				v_view.d_addDataToViewEl(selector, _getPageForListApp(content) ,'end');
 	        }
         //> app headers
 
@@ -1024,7 +1029,6 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 				   file.setAttribute("href", filename);
 				   file.setAttribute("class", iNclass);
 			   document.head.appendChild(file);
-			   console.log('_d_loadCSS file',file);
 			}
 			function _d_loadJS (filename,iNclass) { 
 			  var fileref = document.createElement('script');
@@ -1032,7 +1036,6 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 				  fileref.setAttribute("src", filename);
 				  fileref.setAttribute("class", iNclass);
 			  document.getElementsByTagName("head")[0].appendChild(fileref);
-			   console.log('_d_loadJS fileref',fileref);
 
 			}
 			function _d_removeByClass (iNclass) {

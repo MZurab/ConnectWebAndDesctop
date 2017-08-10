@@ -1,72 +1,10 @@
-define(['jquery','v_view','m_app','m_app-chat','m_app-base','m_app-page'], function ($,V_VIEW,M_APP,APP_CHAT,APP_BASE,APP_PAGE) {
+define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAGE'], function ($,ROUTING,V_VIEW,M_APP,APP_CHAT,APP_BASE,APP_PAGE) {
 
+	function _startUrl () {
+		ROUTING.startUrl(this);
+	} 
 
-
-
-
-
-
-
-	//@<<< TIME FUNCTIONS
-		function Connect_getSec () {
-		    return new Date().getTime()/1000;
-		}
-		function Connect_getTime () {
-		    return new Date().getTime();
-		}
-	//@>>> TIME FUNCTIONS
-
-	//@<<< LOCAL STORAGE
-		function Connect_save ( name, value ) {
-		    return localStorage.setItem( name , value );
-		}
-		function Connect_get (name){
-		    return localStorage.getItem(name);
-		}
-		function Connect_del (name){
-		    localStorage.removeItem(name);
-		}
-		function Connect_clear (){
-		    localStorage.clear();
-		}
-	//@>>> LOCAL STORAGE
-
-	//@@@<<< IMPORTS
-		function Connect_addScript (iNhref,iNfuntion) {
-			$.getScript(iNhref, iNfuntion );//( data, textStatus, jqxhr )
-		}
-	//@@@>>> IMPORTS
-
-	function Connect_forEach(data, callback){
-	  for(var key in data){
-	    if(data.hasOwnProperty(key)){
-	      callback(key, data[key]);
-	    }
-	  }
-	}
-
-	/*?<<< json object  */
-		function Connect_getJsonKey (ObjectThis){
-		    return Object.keys(ObjectThis)[0];
-		}
-		function Connect_getJsonKeys (ObjectThis){
-		    return Object.keys(ObjectThis);
-		}
-	/*!>>> json object  */
-
-	/*?<<< SOUND */
-		function addSource(elem, path) {
-		  $('<source>').attr('src', path).appendTo(elem);
-		}
-		    function Connect_playSendMsgSound(){
-		        var audio = $('<audio />', {
-		           autoPlay : 'autoplay'
-		         });
-		         addSource(audio, "https://cdn.ramman.net/audio/effects/sendMessage.mp3");
-		         // addSource(audio, 'audio/'+Math.ceil(Math.random() * 5)+'.ogg');
-		         audio.appendTo('body');
-		    }
-	/*?<<< SOUND  */
+	
 
 
 	/*?<<< APP */
@@ -97,7 +35,8 @@ define(['jquery','v_view','m_app','m_app-chat','m_app-base','m_app-page'], funct
 			*/
 			// M_APP.openChiefApp (iNdata,iNapp,iNfunction); 
 			// get module name by app name
-			console.log('_openApp from engine started');
+			console.log('_openApp from engine started iNdata',iNdata);
+			console.log('_openApp from engine started iNstring',iNstring)
 			var app, page, objForOpenApp = iNdata, appName = objForOpenApp['app'], pageName = objForOpenApp['page'];
 			app = getAppByName(appName);
 			M_APP.openChiefApp (iNdata,app,iNstring,iNfunction);
@@ -115,6 +54,8 @@ define(['jquery','v_view','m_app','m_app-chat','m_app-base','m_app-page'], funct
 			app.onDisappear();
 			app.onClose();
 		}
+
+		var APP_PAGE_INSTANCE;
 		function getAppByName(iName){
 			/*
 				@disc
@@ -138,7 +79,12 @@ define(['jquery','v_view','m_app','m_app-chat','m_app-base','m_app-page'], funct
 				break;
 
 				case "page":
-					return APP_PAGE;
+					if(typeof APP_PAGE_INSTANCE != 'object') {
+						console.log('APP_PAGE_INSTANCE before',typeof APP_PAGE_INSTANCE);
+						APP_PAGE_INSTANCE = APP_PAGE.init();
+						console.log('APP_PAGE_INSTANCE after',typeof APP_PAGE_INSTANCE );
+					}
+					return APP_PAGE_INSTANCE;
 				break;
 
 				case "base":
@@ -161,37 +107,12 @@ define(['jquery','v_view','m_app','m_app-chat','m_app-base','m_app-page'], funct
 	/*?>>> APP */
 
 	return {
-		// apps
-
-		// local storage
-		clearStorage 	: Connect_clear,
-		delStorage  	: Connect_del,
-		getStorage 		: Connect_get,
-		saveStorage 	: Connect_save,
-
-		// time functions
-		getTime 		: Connect_getTime,
-		getTimeSec 		: Connect_getSec,
-
-		// add script to dom
-		addScript 		: Connect_addScript,
-		
-		// Cycles
-		foreach			: Connect_forEach,
-
-		//json
-		getJsonKeys 	: Connect_getJsonKeys,
-		getJsonKey 		: Connect_getJsonKey,
-		
-		//audio
-		playSendMsgSound: Connect_playSendMsgSound,
-		addSource 		: addSource,
-
 		//aps
 		openApp  		: _openApp,
 		closeApp  		: _closeApp,
-
-
+		// routing
+		startUrl		: _startUrl,
+		prepareUrl 		: ROUTING.prepareUrl
 	}
 });
 /*
