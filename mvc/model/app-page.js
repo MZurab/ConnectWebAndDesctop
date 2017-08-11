@@ -2,6 +2,7 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
 
   // init result const
   const _ = {};
+  var thisPageName;
   //
   // function _ () {
 
@@ -9,7 +10,7 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
 
   // init pages const
   const pages = {}; _['pages'] = pages;
-    //< page full window
+    //< page fullWindow
         pages['fullWindow']  = {'attr':{},'menus':{},'functions':{}};
           pages['fullWindow']['attr'] = {
             'id2' : '2',
@@ -35,7 +36,49 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
             'onCreate' : function () {console.log('app-page fullWindow','onCreate'); return true;},
             'onDisappear' : function () {console.log('app-page fullWindow','onDisappear'); return true;},
           };
-    //> page full window
+    //> page fullWindow
+
+    //< page miniPage
+        thisPageName = 'miniPage';
+        pages[thisPageName]  = {'attr':{},'menus':{},'functions':{}};
+          pages[thisPageName]['attr'] = {};
+          pages[thisPageName]['menus'] = {};
+          pages[thisPageName]['functions'] = {
+            'isPage'  : function () {
+              console.log('app-page '+thisPageName,'isPage'); 
+              return true;
+            },
+            'onOut'  : function () {
+              console.log('app-page '+thisPageName,'onOut'); 
+              return true;
+            },
+            'onView'  : function (iNdata, iNobject) {
+              /*
+                getPage -> checkData
+                create app view with page 
+                create header view with page
+              */
+              addMiniPageToAppView({'id':'sign','uid':'@system'});
+              return true;
+            },
+            'onHide'  : function () {
+              console.log('app-page '+thisPageName,'onHide'); 
+              return true;
+            },
+            'onOut'  : function () {
+              console.log('app-page '+thisPageName,'onOut'); 
+              // dell app header
+              // dell app view
+              return true;
+            },
+            'onCreate' : function () {
+              console.log('app-page '+thisPageName,'onCreate'); 
+
+              return true;
+            },
+            'onDisappear' : function () {console.log('app-page '+thisPageName,'onDisappear'); return true;},
+          };
+    //> page miniPage
   
 
   const options = {
@@ -231,20 +274,38 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
           }
         );
     }
+    function addMiniPageToAppView (iNdata) {
+        getPage ( 
+          iNdata,
+          function (iNresult){ 
+            //add content
+            M_APP.view.d_addAppHeaderByTemplate ({
+              app : 'page',
+              page : 'miniPage',
+              content : V_APP_PAGE.getMiniPageHeader(iNresult['head'])
+            });
+            console.log("V_APP_PAGE.getMiniPageHeader(iNresult['head'])",V_APP_PAGE.getMiniPageHeader(iNresult['head']));
+            console.log("iNresult['head'])",iNresult['head']);
+            M_APP.view.d_createChiefApp({
+              app : 'page',
+              page : 'miniPage',
+              content : iNresult['content']
+            });
 
-  function deleteHeaders () {
-    /*
-      @example
-      @discr
-        get page by iNuid and iNid from server
-      @inputs
-        @required
-      @return
-      @algoritm
-        1 - clear page
-    */
-    $('.headerFromPage').remove();
-  }
+            //add headers
+            processingData(iNresult);
+            //add events default pages
+            //hide loader
+            M_VIEW.closeLoader(); 
+          }
+        );
+    }
+    function clearMiniPage () {
+      deleteHeaders();
+      M_APP.view.d_removeAppHeader({'app':'page'});
+      M_APP.view.d_removeApps('page');
+    }
+
   function deleteHeaders () {
     /*
       @example

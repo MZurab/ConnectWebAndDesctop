@@ -97,7 +97,9 @@ require2(['jquery','template7','m_view','dictionary','m_engine','m_routing','m_a
 
         Dictionary.autoChange(function () {
             // m_engine.prepareUrl({'app':'base','page':'index','user':'zurab','data':'data'});
-            m_engine.prepareUrl({'app':'page','page':'fullWindow','user':'zurab','data':'data'});
+            // m_engine.prepareUrl({'app':'page','page':'fullWindow','user':'zurab','data':'data'});
+            m_engine.prepareUrl({'app':'page','page':'miniPage','user':'zurab','data':'data'});
+            
             m_engine.startUrl();
         });
 

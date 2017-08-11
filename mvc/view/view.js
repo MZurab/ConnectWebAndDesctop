@@ -136,38 +136,39 @@ define(['jquery','template7'], function ($,Template7) {
 	// chief biggest view for output chief information
 		var View_chiefView = `
 			<div class="topBlockInViewBlock">
-			      <div class="viewesInTopViewBlock">
-			         <div id="IconUserInViewBlock"><a href="#"><img src="https://cdn.ramman.net/images/icons/apps/app_market.png"></a></div>
-			         <div id="UserNameInViewBlock"><a href="#" class="CML" cmlk="[dictionary-name]">Название</a></div>
-			         <div id="UserTypeInViewBlock"><a href="#" class="CML" cmlk="[dictionary-service]">Сервис</a></div>
-			      </div>
+			   <div class="viewesInTopViewBlock">
+			      <div id="IconUserInViewBlock"><a href="#"><img src="https://cdn.ramman.net/images/icons/apps/app_market.png"></a></div>
+			      <div id="UserNameInViewBlock"><a href="#" class="CML" cmlk="[dictionary-name]">Название</a></div>
+			      <div id="UserTypeInViewBlock"><a href="#" class="CML" cmlk="[dictionary-service]">Сервис</a></div>
 			   </div>
-			   <div id="viewAndChatBlockInViewBlock">
-			      <div id="subViewInViewAndChatBlock">
-			         <div id="menuWindowInSubView"></div>
-			         <div id="viewWindow" class="appChiefWindow">
-			            
-			         </div>
-			         <div class="chatBlockInViewBlock">
-			            <div class="viewesFooterUnderWindow">
-			               <div id="senderBlockInViewBlock">
-			                  <div id="bottomViewInMsgBlock">
-			                     <ul class="rawBlockInBottomView">
-			                        <li class="LineInBottomViewRawBlock">1</li>
-			                        <li class="LineInBottomViewRawBlock">2</li>
-			                     </ul>
-			                  </div>
-			                  <div id="forTextInputInSenderBlock">
-			                     <textarea></textarea>
-			                  </div>
-			                  <div id="sendButtonInSenderBlock" class="sendTextMsgButton"></div>
-			                  <img src="https://cdn.ramman.net/images/icons/miniConnectWebIcon.png" id="ConnectButtonInFuncButtons">
-			               </div>
-			            </div>
-			         </div>
-			      </div>
-			   </div>
+			</div>
+			<div id="viewAndChatBlockInViewBlock" class="appChiefWindow">
+			</div>
 		`;
+		/* in viewAndChatBlockInViewBlock for chat app
+			<div id="subViewInViewAndChatBlock">
+			  <div id="menuWindowInSubView"></div>
+			  <div id="viewWindow" class="appChiefWindow">
+			  </div>
+			  <div class="chatBlockInViewBlock">
+			     <div class="viewesFooterUnderWindow">
+			        <div id="senderBlockInViewBlock">
+			           <div id="bottomViewInMsgBlock">
+			              <ul class="rawBlockInBottomView">
+			                 <li class="LineInBottomViewRawBlock">1</li>
+			                 <li class="LineInBottomViewRawBlock">2</li>
+			              </ul>
+			           </div>
+			           <div id="forTextInputInSenderBlock">
+			              <textarea></textarea>
+			           </div>
+			           <div id="sendButtonInSenderBlock" class="sendTextMsgButton"></div>
+			           <img src="https://cdn.ramman.net/images/icons/miniConnectWebIcon.png" id="ConnectButtonInFuncButtons">
+			        </div>
+			     </div>
+			  </div>
+			</div>
+	    */
 		
 
 	//<? View_listApps 

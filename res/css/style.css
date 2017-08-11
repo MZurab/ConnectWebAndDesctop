@@ -12,34 +12,7 @@ input,textarea {outline:none;}
 	height: 100%;
 	background: rgba(0, 0, 0, 0.40);
 }
-	/*< appModalFullWindow in container */
-		.appModalFullWindow {
-		    position: fixed;
-		    width: 100%;
-		    height: 100%;
-		    background: white;
-		    z-index: 999;
-		}
-			.headerForAppFullWindow {
-			    height: 3.5rem;
-			    margin: 0px;
-			    padding: 0px;
-			    position: relative;
-			    border-bottom: 0.15rem solid black;
-			    margin-bottom: 2rem;
-			}
-				.closeButtonInHeaderForAppFullWindow {
-				    background-image: url(https://cdn.ramman.net/web/res/images/buttons/closeButton.png);
-				    width: 2.5rem;
-				    height: 2.5rem;
-				    background-size: 100%;
-				    position: absolute;
-				    top: 0.5rem;
-				    left: 0.5rem;
-				    cursor: pointer;
-				}
-
-	/*> appModalFullWindow in container */
+	
 	.backTopLineInContainer {
 		height: 100px;
 		width: 100%;
@@ -593,7 +566,12 @@ input,textarea {outline:none;}
 			    top: 69px;
 			    bottom: 0px;
 			    width: 100%;
-			} 
+			}
+				#viewAndChatBlockInViewBlock .viewesInWindow.app {
+					overflow-y: auto;
+				    height: 100%;
+				    position: relative;
+				} 
 				#subViewInViewAndChatBlock {
 					position: relative;
 					height: 100%;
@@ -881,3 +859,78 @@ input,textarea {outline:none;}
 					    top: 0.45rem;
 					    left: 0.80%;
 					}
+
+
+/*----------------*/
+/*< APPS */
+
+	/*< APP-PAGE */
+      	/*< page miniPage */
+		.appPageCloseButton {
+		   background-image: url(https://cdn.ramman.net/web/res/images/buttons/closeButton.png);
+		   background-size: 100%;
+		   width: 1.75rem;
+		   height: 1.75rem;
+		   position: absolute;
+		   right: 0.45rem;
+		   top: 0.45rem;
+		   cursor: pointer;
+		}
+		.appPageIcon {
+		   height: 60px;
+		   width: 60px;
+		   background: rgba(0,0,0,0.47);
+		   border-radius: 100%;
+		   position: absolute;
+		   top: 5px;
+		   left: 5px;
+		   cursor: pointer;
+		   overflow: hidden;
+		}
+		.appPageDataBlock {
+		   position: absolute;
+		   left: 4.6rem;
+		   top: 0.75rem;
+		   right: 3rem;
+		   overflow: hidden;
+		}
+		  .appPageName {
+		      font-size: 1rem;
+		      font-weight: 900;
+		  }
+		  .appPageDiscr {
+		      font-style: italic;
+	      }
+      	/*> page miniPage */
+      	/*----------------*/
+      	/*< page fullWindow */
+			.appModalFullWindow {
+			    position: fixed;
+			    width: 100%;
+			    height: 100%;
+			    background: white;
+			    z-index: 999;
+			}
+				.headerForAppFullWindow {
+				    height: 3.5rem;
+				    margin: 0px;
+				    padding: 0px;
+				    position: relative;
+				    border-bottom: 0.15rem solid black;
+				    margin-bottom: 2rem;
+				}
+					.closeButtonInHeaderForAppFullWindow {
+					    background-image: url(https://cdn.ramman.net/web/res/images/buttons/closeButton.png);
+					    width: 2.5rem;
+					    height: 2.5rem;
+					    background-size: 100%;
+					    position: absolute;
+					    top: 0.5rem;
+					    left: 0.5rem;
+					    cursor: pointer;
+					}
+
+		/*> page fullWindow */
+	/*> APP-PAGE */
+/*> APPS */
+/*----------------*/
