@@ -50,17 +50,16 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 		function addSource (elem, path) {
 		  $('<source>').attr('src', path).appendTo(elem);
 		}
-		    function _playSendMsgSound(){
+		    function _playSound(iNsrc){
 		        var audio = $('<audio />', {
 		           autoPlay : 'autoplay'
 		         });
-		         addSource(audio, "https://cdn.ramman.net/audio/effects/sendMessage.mp3");
-		         // addSource(audio, 'audio/'+Math.ceil(Math.random() * 5)+'.ogg');
+		         addSource(audio, iNsrc);
 		         audio.appendTo('body');
 		    }
 	/*?<<< SOUND  */
 
-
+	
 
 	//@< private vars
 		const globalPrefix = 'global-';
@@ -886,7 +885,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 		'forEach' : _forEach,
 
 		//  audio functions
-		'playSendMsgSound' : _playSendMsgSound,
+		'playSound' : _playSound,
 		'addSource' : addSource,
 
 

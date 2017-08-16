@@ -55,7 +55,7 @@ define(['jquery','template7'], function ($,Template7) {
 				$(iNdomElement).after(iNaddedData);
 			break;
 
-			default: // begin
+			default: // start
 				$(iNdomElement).prepend(iNaddedData);
 			break;
 		}

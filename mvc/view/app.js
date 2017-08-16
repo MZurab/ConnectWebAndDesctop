@@ -1109,6 +1109,14 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 				$('.'+iNclass).remove();
 			}
 		//@> work with header
+
+		//@< effects animation
+		function effScrollToButtom(el,iNspeed){
+	        if(typeof(iNspeed) == 'undefined') iNspeed ='slow';
+	        $(el).animate({ scrollTop: $(el)[0].scrollHeight }, iNspeed);
+	    }
+		//@> effects animation
+
         return {
     	  // functions for work with template
     	  	'getAppTemplate'		: _getAppTemplate,
@@ -1177,6 +1185,9 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 				'd_loadCSS' 		: _d_loadCSS,
 				'd_loadJS' 			: _d_loadJS,
 				'd_removeByClass' 	: _d_removeByClass,
+
+			//effects
+				'effScrollToButtom' 		: effScrollToButtom,
 
 		}
 

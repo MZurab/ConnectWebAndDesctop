@@ -94,7 +94,7 @@ window['ConnectDeviseType'] = '@desktop';
 require2(['jquery','template7','m_view','dictionary','m_engine','m_routing','m_app'], function($, Template7,m_view,Dictionary,m_engine,ROUTING,M_APP) {
     $(function() {
         console.log('start!');
-
+        m_engine.init();
         Dictionary.autoChange(function () {
             // m_engine.prepareUrl({'app':'base','page':'index','user':'zurab','data':'data'});
             // m_engine.prepareUrl({'app':'page','page':'fullWindow','user':'zurab','data':'data'});

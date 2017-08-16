@@ -22,6 +22,19 @@ define(['jquery','m_user'],function($,USER){
 			return r;
 		} _['getUrlObjectByDomEl'] = getUrlObjectByDomEl;
 
+		/*?<<< APP PATCH */
+			if( typeof window['connectAppPath'] != 'object' ) window['connectAppPath'] = [];
+			if( typeof window['connectAppPathNumber'] != 'number' ) window['connectAppPathNumber'] = -1;
+
+			
+
+		    function addAppToPath (iNdata) {
+		    	window['connectAppPathNumber']++;
+		    	window['connectAppPath'][window['connectAppPathNumber']] = iNdata;
+		    } _['addAppToPath'] = addAppToPath;
+
+		/*?<<< APP PATCH  */
+
 		function prepareUrl (iNobj) {
 			var r, userDomain  = getUserDomain();
 
@@ -55,12 +68,20 @@ define(['jquery','m_user'],function($,USER){
 			}
 			return true;
 		} _['prepareUrl'] = prepareUrl;
-		function startUrl (iNengine) {
+
+		function startUrl (iNengine,iNpathType) {
+			console.log('startUrl iNengine',iNengine);
 			var objectForEngine = {};
 			objectForEngine['user'] = getUser();
 			objectForEngine['app'] 	= getApp();
 			objectForEngine['page'] = getPage();
 			var dataForApp 			= getData();
+			objectForEngine['data'] = dataForApp;
+
+			if ( typeof iNpathType != 'string' ) {
+				// if we dont back or top in app path
+				addAppToPath(objectForEngine);
+			}
             iNengine.openApp(objectForEngine,dataForApp);
 		} _['startUrl'] = startUrl;
 

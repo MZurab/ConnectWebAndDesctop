@@ -1,10 +1,54 @@
 define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAGE'], function ($,ROUTING,V_VIEW,M_APP,APP_CHAT,APP_BASE,APP_PAGE) {
 
 	function _startUrl () {
+		console.log('_startUrl this',this);
+        console.log('init!');
 		ROUTING.startUrl(this);
-	} 
+	}
 
-	
+	function setInitEvents () {
+		$('.connect_href').on( "click", "body", function() {
+			if ( $(this).hasClass('appHref') == true ) {
+				var app 	= $(this).attr('app-name'),
+					page 	= $(this).attr('page-name'),
+					data 	= $(this).attr('data');
+				prepareUrl({'app':app,'page':page,'data':data});
+	            startUrl();
+			} 
+		});
+	}
+
+	function init () {
+		setInitEvents();
+	}
+
+	/*?<<< APP PATCH */
+		function _toBackApp () {
+			if( window['connectAppPath'].length > 1 && window['connectAppPathNumber'] > 0) {
+				window['connectAppPathNumber']--;
+				var thisObject = window['connectAppPath'][window['connectAppPathNumber']];
+
+				ROUTING.prepareUrl(thisObject);
+				ROUTING.startUrl(this,'toBackApp');
+
+	    		return true;
+	    	}
+	    	return false;
+		} 
+
+	    function _toUpApp () {
+	    	if( window['connectAppPath'].length > (window['connectAppPathNumber'] + 1) && window['connectAppPathNumber'] > -1) {
+				window['connectAppPathNumber']++;
+				var thisObject = window['connectAppPath'][window['connectAppPathNumber']];
+
+				ROUTING.prepareUrl(thisObject);
+				ROUTING.startUrl(this,'toUpApp');
+
+	    		return true;
+	    	}
+	    	return false;
+	    } 
+	/*?>>> APP PATCH */
 
 
 	/*?<<< APP */
@@ -112,7 +156,14 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 		closeApp  		: _closeApp,
 		// routing
 		startUrl		: _startUrl,
-		prepareUrl 		: ROUTING.prepareUrl
+		prepareUrl 		: ROUTING.prepareUrl,
+
+		toUpApp 		: _toUpApp,
+		toBackApp 		: _toBackApp,
+		init 			: init,
+
+
+
 	}
 });
 /*

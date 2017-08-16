@@ -135,8 +135,16 @@ define(['jquery','mixitup','jquery.textillate','jquery.lettering'], function($,m
 	    	var temp = Template7.compile(templates['UserMenuChildOne']);
     		return temp(iNdata);
 		}
-		
-	function addUserMenuContainer (iNmenu) {
+	
+
+
+	function addMenuByContentAndUid (iNcontent,iNuserId) {
+		var path = ".usersBlockInMenusBlock[connect_uid='"+iNuserId+"']";
+		V_VIEW.d_addDataToViewEl(path,iNcontent,'after');
+	}
+	_['addMenuByContentAndUid'] = addMenuByContentAndUid;
+
+	function getUserMenuContainerByCats (iNmenu) {
 	  	var data = iNmenu.data;
     	var dataBlock2 = [];
 	    for(var appKey in data) {
@@ -146,14 +154,15 @@ define(['jquery','mixitup','jquery.textillate','jquery.lettering'], function($,m
 			}
 	    }
    		iNmenu['sub'] = dataBlock2.join(' ');
-	  	return getUserMenuContainer(iNmenu).replace(/[  \n\t\r]+/g,' ');
+	  	return getUserMenuContainerFromTemplate(iNmenu).replace(/[  \n\t\r]+/g,' ');
 	}
-	_['addUserMenuContainer'] = addUserMenuContainer;
+	_['getUserMenuContainerByCats'] = getUserMenuContainerByCats;
   
-		function getUserMenuContainer (iNdata) {
+		function getUserMenuContainerFromTemplate (iNdata) {
 	    	var temp = Template7.compile(templates['UserMenuContainer']);
 	    	return temp(iNdata);
 		}
+		// _['getUserMenuContainerFromTemplate'] = getUserMenuContainerFromTemplate;
 
 
 

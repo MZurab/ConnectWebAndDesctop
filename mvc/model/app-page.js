@@ -2,6 +2,11 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
 
   // init result const
   const _ = {};
+  const name = 'page';
+  _['name'] = name;  
+
+
+  
   var thisPageName;
   //
   // function _ () {
@@ -98,8 +103,6 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
   };
   _['options'] = options;
 
-  const name = 'page';
-  _['name'] = name;  
 
   // function setApp
   // function setApp (iNstring,iNobject) {
@@ -339,6 +342,14 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
       if(iNid == 'sign')
         addActionsForEventsPageSign();
     }
+
+      function addActionsForEventsPageSign () {
+        $('.appPageCloseButton').click(function(){
+            M_APP.getGlobalVar('engine').prepareUrl({'app':'base','page':'index','user':'zurab','data':'data'});
+            M_APP.getGlobalVar('engine').startUrl();
+        });
+      }
+
       function addActionsForEventsPageSign () {
         $('.page-formSignIn').submit(function(e){
           e.preventDefault();

@@ -22,11 +22,19 @@ define( ['jquery','m_firebase','m_category','m_app','m_view'] , function ($ , FI
               return i;
             },
             'onView'  : function (d,d1) { 
+              console.log('app-base page index','onView',d,d1);
               M_APP.view.d_hideApps('all','list');
               M_APP.view.d_showApps('base','list');
               // V_APP_PAGE.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
               getMyChats();
-              console.log('app-base page index','onView',d,d1);
+
+                console.log('connectAppPath', window['connectAppPath']);
+                console.log('connectAppPathNumber', window['connectAppPathNumber']);
+              // setTimeout(function () {
+
+              //   M_APP.getGlobalVar('engine').toBackApp();
+              //   setTimeout( () => { M_APP.getGlobalVar('engine').toUpApp(); },10000);
+              // } ,10000);
               return true;
             },
             'onAppear'  : function () {
