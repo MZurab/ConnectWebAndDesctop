@@ -41,7 +41,8 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	        }
 	        else {
 	        	console.log("M_APP.getGlobalVar('engine')",M_APP.getGlobalVar('engine'));
-	        	M_APP.getGlobalVar('engine').prepareUrl({'app':'base','page':'index','user':'zurab','data':'data'});
+
+	        	M_APP.getGlobalVar('engine').prepareUrl({'app':'base','page':'one','user':'Zurab','data':'uid=769b72df-6e67-465c-9334-b1a8bfb95a1a2'});
             	M_APP.getGlobalVar('engine').startUrl();
 	        	console.log('signIn getGlobalVar');
 	        }
@@ -71,6 +72,11 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
         return result;
     }
     _['getMyId'] = getMyId;
+
+    function getMyToken () {
+    	return M_APP.get('token');
+    }
+    _['getMyToken'] = getMyToken;
 
     function getMyLogin () {
     	var uidType = M_APP.get('uidType');

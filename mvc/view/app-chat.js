@@ -109,7 +109,7 @@ define([ 'jquery', 'template7'],function( $, Template7){
 		*/
 		var el;
 		if ( iNdata.user == iNmyUid )
-            el = getMsgFrom(iNdata);;
+            el = getMsgFrom(iNdata);
         else 
             el = getMsgTo(iNdata);
         return el;

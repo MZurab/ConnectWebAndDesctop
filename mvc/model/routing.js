@@ -75,7 +75,7 @@ define(['jquery','m_user'],function($,USER){
 			objectForEngine['user'] = getUser();
 			objectForEngine['app'] 	= getApp();
 			objectForEngine['page'] = getPage();
-			var dataForApp 			= getData();
+			var dataForApp 			= getObjectFromString(getData());
 			objectForEngine['data'] = dataForApp;
 
 			if ( typeof iNpathType != 'string' ) {

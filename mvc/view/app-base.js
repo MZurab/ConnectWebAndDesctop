@@ -22,6 +22,6 @@ define(['jquery','m_view'],function($,m_view) {
 	};
 	_['templates'] = templates;
 
-
+	
 	return _;
 });

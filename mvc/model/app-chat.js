@@ -1,4 +1,4 @@
-define(['v_app-chat', 'm_app','m_firebase','user'],function( V_APP_CHAT, M_APP, FIREBASE, USER ) {
+define(['v_app-chat', 'm_app','m_firebase','m_user'],function( V_APP_CHAT, M_APP, FIREBASE, USER ) {
 	//@< init
 		// init from app view templates
 	  const _ = {};
@@ -75,14 +75,28 @@ define(['v_app-chat', 'm_app','m_firebase','user'],function( V_APP_CHAT, M_APP, 
 
 
 
+	function pageIndex_getChatByUid () {
+
+	}
+	function pageIndex_sendMsg () {
+
+	}
+	function pageIndex_createChatByUid () {
+
+	}
 
 
 
 
-	function pageIndex_openChatByChatId (iNchatId) {
+	function pageIndex_openChatByChatId (iNchatId,iNuserId) {
         var chatView = "#leftBlockInViewWindow .ChatViewInAppWindow";
         var needView = chatView + "[connect_chatid='"+iNchatId+"']";
-        setCurrentChatId (iNchatId);
+
+        setCurrentChatId(iNchatId);
+        setCurrentChatUserId(iNuserId);
+        setCurrentChatType('private');
+
+
         V_APP_CHAT.hideChatContainers();
         if ( V_APP_CHAT.getCountsOfChatContainers == 0 ) {
             // need chat isset open it
@@ -155,11 +169,24 @@ define(['v_app-chat', 'm_app','m_firebase','user'],function( V_APP_CHAT, M_APP, 
 	}
 
 	function setCurrentChatId (iNchatId) {
-            return M_APP.get('connect_currentChatId');
+            return M_APP.get('connectThisOpenChatId');
     }
     function getCurrentChatId (iNchatId) {
-        return M_APP.get('connect_currentChatId');
-        
+        return M_APP.get('connectThisOpenChatId');
+    }
+
+    function setCurrentChatType (iNchatId) {
+            return M_APP.get('connectThisOpenChatType');
+    }
+    function getCurrentChatType (iNchatId) {
+        return M_APP.get('connectThisOpenChatType');
+    }
+
+    function setCurrentChatUserId (iNchatId) {
+            return M_APP.get('connectThisOpenChatUserId');
+    }
+    function getCurrentChatUserId (iNchatId) {
+        return M_APP.get('connectThisOpenChatUserId');
     }
 
     function getTodayTime (iNtime) {

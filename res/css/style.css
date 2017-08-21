@@ -421,6 +421,7 @@ input,textarea {outline:none;}
 										ul.menusForUid li {
 									        padding: 0.15rem 0.5rem;
 	    									font-size: 0.9rem;
+    									    min-height: 1.2rem;
 										}
 											ul.subMenusForUid {
 											    list-style: none;
@@ -440,6 +441,21 @@ input,textarea {outline:none;}
 										.appNameInMenuList.app-market:before {
 										    background-image: url(https://cdn.ramman.net/images/icons/apps/app_market.png);
 										}
+										.appNameInMenuList.app-sharepay:before {
+										    background-image: url(https://cdn.ramman.net/images/icons/apps/app_sharepay.png);
+										}
+										.appNameInMenuList.app-onepay:before {
+										    background-image: url(https://cdn.ramman.net/images/icons/apps/app_onepay.png);
+										}
+										.appNameInMenuList.app-page:before {
+										    background-image: url(https://cdn.ramman.net/images/icons/apps/app_market.png);
+										}
+										.appNameInMenuList.app-chat:before {
+										    background-image: url(https://cdn.ramman.net/images/icons/apps/app_chat.png);
+										}
+
+
+
 
 										.userMenuParentButton {
 										    background-image: url(https://cdn.ramman.net/images/icons/menuButton.png);
@@ -456,11 +472,18 @@ input,textarea {outline:none;}
 										    display: inline-block;
 										    background-size: 100%;
 										    vertical-align: bottom;
-										    margin-right: 0.5rem;
+										    /*margin-right: 0.5rem;*/
 										    cursor: pointer;
 										}
-										.userMenuSubFlag {
+										.flagMenuLevelN {
 											margin-left: 1.5rem;
+											display: none;
+										}
+										.flagMenuNoOffset {
+											margin-left: 0px !important;
+										}
+										.flagMenuLevel2 {
+											display: none;
 										}
 									/*> user app MENU */
 					/* menul list for users */
