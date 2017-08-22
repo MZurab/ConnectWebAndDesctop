@@ -42,8 +42,9 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	        else {
 	        	console.log("M_APP.getGlobalVar('engine')",M_APP.getGlobalVar('engine'));
 
-	        	M_APP.getGlobalVar('engine').prepareUrl({'app':'base','page':'one','user':'Zurab','data':'uid=769b72df-6e67-465c-9334-b1a8bfb95a1a2'});
-            	M_APP.getGlobalVar('engine').startUrl();
+	        	M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'one','user':'Zurab','data':'uid=769b72df-6e67-465c-9334-b1a8bfb95a1a2'});
+	        	// M_APP.getGlobalVar('engine').prepareUrl({'app':'base','page':'one','user':'Zurab','data':'uid=769b72df-6e67-465c-9334-b1a8bfb95a1a2'});
+          //   	M_APP.getGlobalVar('engine').startUrl();
 	        	console.log('signIn getGlobalVar');
 	        }
 		}).catch(function(error) {

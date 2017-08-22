@@ -1,8 +1,8 @@
-define(['v_view','jquery','mixitup','jquery.textillate','jquery.lettering'], function(V_VIEW,$,mixitup) {//'m_view','m_app'
+define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.lettering'], function(M_APP,V_VIEW,$,mixitup) {//'m_view','m_app'
 	const _ = {};
 	const templates = {}; _['templates'] = templates;
 	templates['UserMenuChildN'] = `
-  	<li menuid='{{id}}' menuparent='{{parent}}' class='appUserMenu {{#if children}}flagMenuHasChildren{{/if}}  flagSubMenu {{#if thisSubMenu}}flagMenuLevelN{{else}}flagMenuLevel2{{/if}}{{#if parentBox}} {{join parentBox delimiter=" "}}{{/if}}' >
+  	<li menuid='{{id}}' menuparent='{{parent}}'  appName='{{app}}' pageName='{{page}}' class='appUserMenu {{#if children}}flagMenuHasChildren{{/if}}  flagSubMenu {{#if thisSubMenu}}flagMenuLevelN{{else}}flagMenuLevel2{{/if}}{{#if parentBox}} {{join parentBox delimiter=" "}}{{/if}}' >
       <a href="{{data}}">{{name}}</a>
       {{#if children}}
     		<div class="userMenuParentButton"></div>
@@ -10,7 +10,7 @@ define(['v_view','jquery','mixitup','jquery.textillate','jquery.lettering'], fun
     </li>
   `;
   	templates['UserMenuChildOne'] = `
-  	<li menuid='{{id}}' class='appUserMenu {{#if sub}}flagMenuHasChildren{{/if}} flagMenuLevel1'>
+  	<li menuid='{{id}}' class='appUserMenu {{#if sub}}flagMenuHasChildren{{/if}} flagMenuLevel1' appName='{{app}}' pageName='{{page}}'>
         <a href="{{data}}" class='menuLink flagMenuLevel1'>{{name}}</a>
 		{{#if sub}}
 			<div class="userMenuParentButton"></div>
@@ -104,7 +104,7 @@ define(['v_view','jquery','mixitup','jquery.textillate','jquery.lettering'], fun
 	          if(typeof(iNmenu['parentBox']) == 'object') 
 	          	iNmenu.children[menu3SubKey]['parentBox'] = iNmenu['parentBox'].concat([ 'UMP' + iNmenu.id ]);
 	          else 
-			    		iNmenu.children[menu3SubKey]['parentBox'] = ['UMP' + iNmenu.id];
+	    		iNmenu.children[menu3SubKey]['parentBox'] = ['UMP' + iNmenu.id];
 	          
 	            addUserMenuChildN(iNmenu.children[menu3SubKey],iNdataBlockN);
            
@@ -152,9 +152,9 @@ define(['v_view','jquery','mixitup','jquery.textillate','jquery.lettering'], fun
 	}
 	_['addMenuByCategoryList'] = addMenuByCategoryList;
 		function activeActionsForMenuEvents () {
-	    	$('.appUserMenu.flagMenuLevel1 > a').click(clickToMenuFirstLevel);
-	    	$('.appUserMenu.flagMenuLevel2 > a').click(clickToMenuSecondLevel);
-	    	$('.appUserMenu.flagMenuLevelN > a').click(clickToMenuLevelN);
+	    	$('.appUserMenu.flagMenuLevel1 > a, .appUserMenu.flagMenuLevel1 > div.userMenuParentButton').click(clickToMenuFirstLevel);
+	    	$('.appUserMenu.flagMenuLevel2 > a, .appUserMenu.flagMenuLevel2 > div.userMenuParentButton').click(clickToMenuSecondLevel);
+	    	$('.appUserMenu.flagMenuLevelN > a, .appUserMenu.flagMenuLevelN > div.userMenuParentButton').click(clickToMenuLevelN);
 	    }
 		_['activeActionsForMenuEvents'] = activeActionsForMenuEvents;
 
@@ -170,9 +170,20 @@ define(['v_view','jquery','mixitup','jquery.textillate','jquery.lettering'], fun
 				$('ul.subMenusForUid').hide(250);
 				if ( $(this).parent().hasClass('flagMenuHasChildren') ) {
 					// menu has children
-					var hrefData = $(this).attr('href');
 					$(this).parent().children('ul.subMenusForUid').show(350).children('li.flagMenuLevel2[menuparent="'+thisMenuId+'"]').show();
 					
+				}
+
+				var hrefData = $(this).attr('href');
+				var isTegA = $(this).is('a');
+				console.log('clickToMenuFirstLevel isTegA' , isTegA );
+				if (isTegA && hrefData) {
+					// open app
+					var appName = $(this).parent().attr('appName');
+					var pageName = $(this).parent().attr('pageName');
+					console.log('clickToMenuFirstLevel openApp appName' , appName );
+					console.log('clickToMenuFirstLevel openApp pageName', pageName);
+					console.log('clickToMenuFirstLevel openApp hrefData', hrefData);
 				}
 			}
 			_['clickToMenuFirstLevel'] = clickToMenuFirstLevel;
@@ -186,14 +197,20 @@ define(['v_view','jquery','mixitup','jquery.textillate','jquery.lettering'], fun
 				removeMenuButtonAndFlag();
 
 
-				//add menu button with actions
-				addBackMenuButtonWithActions(thisParentMenuId,this);
 
 				$('li.appUserMenu.flagMenuLevelN').hide(250);
 				if ( $(this).parent().hasClass('flagMenuHasChildren') ) {
+					//add menu button with actions
+					addBackMenuButtonWithActions(thisParentMenuId,this);
 					// menu has children
-					var hrefData = $(this).attr('href');
 					$(this).closest('ul.subMenusForUid').children('li.appUserMenu.flagMenuLevelN[menuparent="'+thisMenuId+'"]').show(350);
+				}
+				var hrefData = $(this).attr('href');
+				if ($(this).is('a') && hrefData) {
+					// open app
+					var appName 	= $(this).parent().attr('appName');
+					var pageName 	= $(this).parent().attr('pageName');
+	        		M_APP.getGlobalVar('engine').passToApp({'app':appName,'page':pageName,'data':hrefData});
 				}
 			}
 			_['clickToMenuFirstLevel'] = clickToMenuFirstLevel;
@@ -207,13 +224,19 @@ define(['v_view','jquery','mixitup','jquery.textillate','jquery.lettering'], fun
 				// delete menuButtons and flagMenuNoOffset
 				removeMenuButtonAndFlag();
 				if ( $(this).parent().hasClass('flagMenuHasChildren') ) {
-					var hrefData = $(this).attr('href');
 					//remove offset margin left
 					$(this).parent().addClass('flagMenuNoOffset');
 					//add menu button with actions
 					addBackMenuButtonWithActions(thisParentMenuId,this);
 					$(this).parent().show(150);
 					$(this).closest('ul.subMenusForUid').children('li.appUserMenu.flagMenuLevelN[menuparent="'+thisMenuId+'"]').show(250);
+				}
+				var hrefData = $(this).attr('href');
+				if ($(this).is('a') && hrefData) {
+					// open app
+					var appName 	= $(this).parent().attr('appName');
+					var pageName 	= $(this).parent().attr('pageName');
+	        		M_APP.getGlobalVar('engine').passToApp({'app':appName,'page':pageName,'data':hrefData});
 				}
 			}
 				function removeMenuButtonAndFlag () {
@@ -232,14 +255,12 @@ define(['v_view','jquery','mixitup','jquery.textillate','jquery.lettering'], fun
 					e.preventDefault();
 					var parentId = $(this).attr('menuparent');
 					var parentPath = 'li.appUserMenu[menuid="'+parentId+'"]';
-					$(parentPath + ' > a').trigger('click');
+					$(parentPath + ' > div.userMenuParentButton').trigger('click');
 				}
 
 	function addMenuByContentAndUid (iNcontent,iNuserId) {
 		var path = ".usersBlockInMenusBlock[connect_uid='"+iNuserId+"']";
 		V_VIEW.d_addDataToViewEl(path,iNcontent,'after');
-		console.log('addMenuByCategoryList path',path);
-		console.log('addMenuByCategoryList iNcontent',iNcontent);
 	}
 	_['addMenuByContentAndUid'] = addMenuByContentAndUid;
 

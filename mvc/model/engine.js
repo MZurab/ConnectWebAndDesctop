@@ -52,6 +52,21 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 
 
 	/*?<<< APP */
+		function _passToApp (iNdata) {
+			/*
+				@inputs
+				@required
+					iNdata -> object
+						@required
+							app
+							page
+						@optional
+							data
+							user
+			*/
+			ROUTING.prepareUrl(iNdata);
+        	ROUTING.startUrl(this);
+		}
 		function _openApp ( iNdata, iNstring,iNfunction) {
 			/*
 				@disc
@@ -154,6 +169,7 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 		//aps
 		openApp  		: _openApp,
 		closeApp  		: _closeApp,
+		passToApp  		: _passToApp,
 		// routing
 		startUrl		: _startUrl,
 		prepareUrl 		: ROUTING.prepareUrl,
