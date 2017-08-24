@@ -68,15 +68,16 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 
 	    templates['chiefForAppInView'] = `
 			<div class='viewesInWindow app {{class}}' app-name='{{app}}' {{attr}}>
-			  {{#if page}}
-		          <div class='view' view-name='{{page}}'>
-		          	{{content}}
-		          </div>
-	          {{/if}}
-			  {{other}}
-	        </div>
-
-	    `;
+				  {{other}}
+			</div>
+		`;
+		/* DELETED because this twart for auto add page attr when app not exist
+			{{#if page1}}
+				  {{if content}}
+			    <div class='view' view-name='{{page}}'>{{content}}</div>
+			  {{/if}}
+			{{/if}}
+	  	*/
 	    templates['pageForAppInView'] = `
 	          <div class='view {{class}}' view-name='{{page}}' {{attr}}>
 	          	{{content}}{{other}}
@@ -123,6 +124,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 							class 	-> String 
 				@optional
 		*/
+
 		getAttrAndClassForAppAndPage(iNdata);
 		var temp = Template7.compile(templates['pageForAppInList']);
 		return temp(iNdata);
@@ -229,6 +231,28 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
     	v_view.d_addDataToViewEl(selector, _getPageForListApp(iNdata) ,'change');
     }
+    
+    function addContentToChiefApp (iNdata,iNcontent) {
+    	/*
+			@discr
+				add content to isset in DOM app and page
+			@inputs
+				@required
+					iNdata -> object
+						app 		-> string
+						page 		-> string
+						content 	-> string
+						@optional
+							type		-> string
+				@optional
+			@return
+		*/
+    	var selector = '#viewAndChatBlockInViewBlock .viewesInWindow.app[app-name="'+iNdata['app']+'"] .view[view-name="'+ iNdata['page']+ '"]';
+    	if (typeof iNdata['type'] != 'string') iNdata['type']='begin';
+    	v_view.d_addDataToViewEl(selector, iNcontent,iNdata['type']);
+    	console.log('addContentToChiefApp selector',selector);
+    	console.log('addContentToChiefApp type',iNdata['type']);
+    }
 
     function _d_createListApp (iNdata) {
     	/*
@@ -251,6 +275,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 			@return
 				int : 0 - false, 0< true
 		*/
+		console.log('createListApp start');
 		var selector = '.usersBlockContainerInMenusBlock'; 
 		if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
 		getAttrAndClassForAppAndPage(iNdata);
@@ -305,8 +330,10 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 					object: Template7
 			*/
 
+			console.log('createPageForChiefApp start');
 			getAttrAndClassForAppAndPage(iNdata);
 			var temp = Template7.compile(templates['pageForAppInView']);
+			console.log('attr _getPageForChiefApp temp(iNdata)',temp(iNdata));
 			return temp(iNdata);
 		}
 			function getAttrAndClassForAppAndPage (iNdata) {
@@ -329,6 +356,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 					@return 
 						void [result = to iNdata right date]
 				*/
+				console.log('attr getAttrAndClassForAppAndPage iNdata start',iNdata);
 				var attrString = '',classString = '', attrArray = iNdata['attr'],thisValue;
 				if( typeof(iNdata['attr']) == 'object' ) {
 					for (var iKey in attrArray ) {
@@ -344,6 +372,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 					}
 				}
 				iNdata['class'] = classString; iNdata['attr'] = attrString;
+				console.log('attr getAttrAndClassForAppAndPage iNdata finish',iNdata);
 			}
 		function _d_updatePageInChiefApp (iNdata) {
         	/*
@@ -469,6 +498,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 				@return
 					int : 0 - false, 0< true
 			*/
+			console.log('createChiefApp start');
 			var selector = CONST['pathAppView']; 
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
         	v_view.d_addDataToViewEl(selector, _getChiefApp(iNdata) ,'change')
@@ -616,6 +646,9 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
         			add content for app into  header block by template
         		@inputs
         			iNdata -> object
+        				app 
+        				page
+        				content
         	*/
         	var selector = CONST['pathAppHeader'],
         		content = _getAppHeader(iNdata);
@@ -788,7 +821,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 	        	*/
 	        	var selector = CONST['pathMenuHeader'],
 	        		content = _getAppMenuHeader(iNdata);
-				v_view.d_addDataToViewEl(selector, _getPageForListApp(content) ,'end');
+				v_view.d_addDataToViewEl(selector, content ,'end');//_getPageForListApp(content)
 	        }
 	        function _d_addPageMenuHeaderByTemplate (iNdata) {
 	        	/*
@@ -1142,6 +1175,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		    'd_checkChiefApp'       : _d_checkChiefApp,
 		    'd_createPageInChiefApp': _d_createPageInChiefApp,
 		    'd_createChiefApp'      : _d_createChiefApp,
+		    'addContentToChiefApp'	: addContentToChiefApp,
 
 		   // effect functions for chief and list apps
 		    'd_showApps'            : _d_showApps,

@@ -1,4 +1,4 @@
-define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictionary'] , function ($ , FIREBASE , M_CATEGORY , M_APP , M_VIEW,USER, DICTIONARY ) {
+define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictionary','v_app-base','m_user'] , function ($ , FIREBASE , M_CATEGORY , M_APP , M_VIEW,USER, DICTIONARY, VIEW , USER) {
 
   const _ = {}; _['name'] = 'base';
   const CONST = {};
@@ -45,7 +45,7 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
                 console.log('app-base '+thisPageName,'onAppear');
                 M_VIEW.closeLoader(); 
               },
-              'onHide'  : function () {console.log('app-base private','onHide'); return true;},
+              'onHide'  : function () {console.log('app-base '+thisPageName,'onHide'); return true;},
               // 'setPage' : function () {console.log('app private','setPage'); return true;},
               'onCreate' : function (d,d1) { 
                 console.log('app-base page '+thisPageName,'onCreate',d,d1);
@@ -86,7 +86,7 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
                   console.log('app-base '+thisPageName,'onAppear');
                   M_VIEW.closeLoader(); 
                 },
-                'onHide'  : function () {console.log('app-base private','onHide'); return true;},
+                'onHide'  : function () {console.log('app-base '+thisPageName,'onHide'); return true;},
                 // 'setPage' : function () {console.log('app private','setPage'); return true;},
                 'onCreate' : function (d,d1) { 
                   console.log('app-base page '+thisPageName,'onCreate',d,d1);
@@ -107,6 +107,7 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
   function onCreate (iNstring,iNobject) {
     console.log('app-base','onCreate');
     M_APP.view.d_createListApp({app:'base'}); 
+    d_addMyHeader();
 
   }
   _['onCreate'] = onCreate;
@@ -122,6 +123,7 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
 
   // function onInit
   function onInit (iNstring,iNobject) {
+
     console.log('app-base','onInit');
 
   }
@@ -136,7 +138,8 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
 
       //@overide
       function onAppear (iNstring,iNobject) {
-    console.log('app-base','onAppear');
+
+        console.log('app-base','onAppear');
 
       }
       _['onAppear'] = onAppear;
@@ -163,9 +166,24 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
   _['onDeinit'] = onDeinit;
 
 
+  function onHide () {
+    return true;
+  }
+  _['onHide'] = onHide;
 
 
 
+
+
+
+
+  function d_addMyHeader () {
+    VIEW.addUserHeaderInList({
+      'icon' : USER.getMyIcon(),
+      'name' : USER.getMyDisplayName(),
+      'login': USER.getMyLogin(),
+    })
+  }
 
 
   const baseSite  = 'https://ramman.net/';

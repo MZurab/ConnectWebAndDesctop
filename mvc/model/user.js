@@ -156,11 +156,12 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	        success: function(iNdate2) {
 	            console.log(iNdate2);
 	            var status = iNdate2.status;
-	            if(status == 1) {                               // Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð²Ñ…Ð¾Ð´Ð° Ð²ÐµÑ€Ð½Ñ‹, ÑÐ¼Ñ ÐºÐ¾Ð´ Ð¾Ñ‚Ð¿Ñ€Ð°Ð²Ð»ÐµÐ½
-	                var tokenObject = iNdate2.token;
-	                var user = iNdate2.user;
-	                M_APP.save('token',tokenObject);
-	                M_APP.save('user',user);
+	            if(status == 1) {
+	                setMyIcon(iNdate2.info.icon);
+	                setMyToken(iNdate2.token);
+	                setMyLogin(iNdate2.user);
+	                setMyDisplayName(iNdate2.displayName);
+	                
 	                M_APP.save('sentSmsTime',M_APP.getTime());
 	                startSmsTimer ('signin');
 	            } else {                                        // Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð²Ñ…Ð¾Ð´Ð° Ð½Ðµ Ð²ÐµÑ€Ð½Ñ‹
@@ -227,7 +228,9 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 		} else 
 			if(typeof(iNfuntion)=='function')iNfuntion(); 
 	}
-	_['signUpByUserAndPswd'] = function  (Obj) {
+    _['checkToken'] = checkToken;
+
+	function  signUpByUserAndPswd (Obj) {
 		M_VIEW.showLoader();
 	    var formBlock = $(Obj).serializeObject();
 	    $.ajax({
@@ -241,11 +244,11 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	        success: function(iNdate2) {
 	            console.log(iNdate2);
 	            var status = iNdate2.status;
-	            if(status == 1) {                               // Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð²Ñ…Ð¾Ð´Ð° Ð²ÐµÑ€Ð½Ñ‹, ÑÐ¼Ñ ÐºÐ¾Ð´ Ð¾Ñ‚Ð¿Ñ€Ð°Ð²Ð»ÐµÐ½
-	                var tokenObject = iNdate2.token;
-	                var user = iNdate2.user;
-	                M_APP.save('token',tokenObject);
-	                M_APP.save('user',user);
+	            if(status == 1) {
+	                setMyIcon(iNdate2.info.icon);
+	                setMyToken(iNdate2.token);
+	                setMyLogin(iNdate2.user);
+	                setMyDisplayName(iNdate2.displayName);
 	                M_APP.saveUserCountry(formBlock['country']);
 	                M_APP.saveUserLang(formBlock['lang']);
 	                M_APP.save('sentSmsTime',M_APP.getTime());
@@ -261,7 +264,43 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	    });
 	    return false;
 	}
-    _['checkToken'] = checkToken;
+    _['signUpByUserAndPswd'] = signUpByUserAndPswd;
+
+
+    
+	function setMyDisplayName (iNname) {
+	    M_APP.save('userDisplayName',iNname);
+    }
+    function getMyDisplayName (iNname) {
+	    return M_APP.get('userDisplayName');
+	}
+    _['getMyDisplayName'] = getMyDisplayName;
+    
+
+
+    function setMyIcon (iNurl) {
+	    M_APP.save('userIcon',iNurl);
+    }
+    function getMyIcon () {
+    	return M_APP.get('userIcon');
+	}
+    _['getMyIcon'] = getMyIcon;
+
+    function setMyLogin (iNlogin) {
+	    M_APP.save('user',iNlogin);
+	}
+    function getMyLogin () {
+	    return M_APP.get('user');
+	}
+    _['getMyLogin'] = getMyLogin;
+
+	function setMyToken (iNtoken) {
+	    M_APP.save('token',iNtoken);
+	}
+    function getMyToken (iNlogin) {
+	    return M_APP.get('token');
+	}
+    _['getMyToken'] = getMyToken;
 
 	function startTimer (iNid,iNendTime,enfFunction){
 	    $(iNid).countdown(iNendTime)

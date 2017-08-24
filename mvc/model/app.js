@@ -443,6 +443,26 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 					#4 [- create page] [with $content if isset] -> [did function] -> end
 				#2 [did function] -> end
 		*/
+		if (typeof iNapp != 'object' ) {
+			console.log('typeof iNapp != object -> exit',typeof iNapp);
+			return false;
+		}
+
+		if( typeof(iNapp['onLoader']) != 'function')
+			V_VIEW.d_showLoader();
+		else
+			iNapp['onLoader'](iNdataForApp,objectForCreateApp);
+
+		if(iNapp['name'] != iNdata['app'] || typeof iNapp['pages'][ iNdata['page'] ] != 'object') {
+			console.log('_readyChiefApp app name wrong -> exit',iNapp['name'],iNdata['app']);
+			console.log('_readyChiefApp page != object -> exit',typeof iNdata['page'],iNapp['pages'][ iNdata['page'] ]);
+			return false;
+		}
+		if( typeof(iNapp['onAccess']) == 'function' && !iNapp['onAccess'](iNdataForApp,objectForCreateApp) ) {
+			console.log('_readyChiefApp onAccess -> exit',false);
+			return false;
+		}
+
 		var dataForCheckApp, issetApps, objectForCreateApp,intIssetPages,objectForCreatePage;
 		// create obj for check for isset app
 		dataForCheckApp = {'app':iNdata['app'],'page':iNdata['page']};
@@ -614,10 +634,14 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 		}
 		function getPageAttr (iNapp,iName) {
 			var page = getPage(iNapp,iName);
+			console.log('getPageAttr page',page);
+			console.log('getPageAttr appName',iNapp.name);
+			console.log('getPageAttr pageName',iName);
 			if( 
 				page != false && 
 				typeof page['attr'] == 'object'  
 			) {
+				console.log('pageAttr getPageAttr attr',page['attr']);
 				return page['attr'];
 			}
 			return false;
@@ -640,6 +664,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 				options != false && 
 				typeof options['attr'] == 'object'  
 			) {
+				console.log('getAppAttr attr',options['attr']);
 				return options['attr'];
 			}
 			return false;
@@ -694,7 +719,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 				#2 invoke func ready app
 				#3 close loader
 		*/
-		V_VIEW.d_showLoader();
+		
 		_readyChiefApp (iNdata,iNapp,iNstring,function () {
 			if(typeof(iNfunction) == 'function') iNfunction();
 			// V_VIEW.d_showLoader();

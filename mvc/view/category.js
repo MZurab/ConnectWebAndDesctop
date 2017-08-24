@@ -174,16 +174,15 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
 					
 				}
 
-				var hrefData = $(this).attr('href');
-				var isTegA = $(this).is('a');
-				console.log('clickToMenuFirstLevel isTegA' , isTegA );
-				if (isTegA && hrefData) {
+				const hrefData = $(this).attr('href');
+				if ($(this).is('a') && hrefData) {
 					// open app
-					var appName = $(this).parent().attr('appName');
-					var pageName = $(this).parent().attr('pageName');
+					const appName = $(this).parent().attr('appName');
+					const pageName = $(this).parent().attr('pageName');
 					console.log('clickToMenuFirstLevel openApp appName' , appName );
 					console.log('clickToMenuFirstLevel openApp pageName', pageName);
 					console.log('clickToMenuFirstLevel openApp hrefData', hrefData);
+	        		M_APP.getGlobalVar('engine').passToApp({'app':appName,'page':pageName,'data':hrefData});
 				}
 			}
 			_['clickToMenuFirstLevel'] = clickToMenuFirstLevel;

@@ -1,17 +1,24 @@
-define(['v_app-chat', 'm_app','m_firebase','m_user'],function( V_APP_CHAT, M_APP, FIREBASE, USER ) {
+define(['v_app-chat', 'm_app','m_firebase','m_user','m_view'],function( VIEW, M_APP, FIREBASE, USER, M_VIEW ) {
 	//@< init
 		// init from app view templates
 	  const _ = {};
-	  const name = 'chat';
-	  _['name'] = name;  
+	  const name = 'chat'; _['name'] = name;
+	  const pages = {};
+	    
+	  _['options'] = {
+	  	// 'attr' : {
+	  	// 	'id' : 'leftBlockInViewWindow'
+	  	// }
+	  }
+	  var thisPageName; 
 
 	  //< init pages const
-		  const pages = {}; _['pages'] = pages;
 		    //< page fullWindow
-		        pages['fullWindow']  = {'attr':{},'menus':{},'functions':{}};
-		          pages['fullWindow']['functions'] = {
+		    	thisPageName = 'index';
+		        pages[thisPageName]  = {'attr':{'id' : 'leftBlockInViewWindow'},'menus':{}};
+		          pages[thisPageName]['functions'] = {
 		            // 'isPage'  : function () {console.log('app-page fullWindow','isPage'); return true;},
-		            'onOut'  : function () {console.log('app-page fullWindow','onOut'); return true;},
+		            'onOut'  : function () {console.log('app-page '+thisPageName,'onOut'); return true;},
 		            // 'onView'  : function () {
 		            //   addPageToFullWindow({'id':'sign','uid':'@system'});
 		            //   // V_APP_PAGE.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
@@ -20,32 +27,42 @@ define(['v_app-chat', 'm_app','m_firebase','m_user'],function( V_APP_CHAT, M_APP
 		            // },
 		            // 'onHide'  : function () {console.log('app-page fullWindow','onHide'); return true;},
 		            // 'setPage' : function () {console.log('app-page fullWindow','setPage'); return true;},
-		            'onInit' : function () {console.log('app-page fullWindow','onInit'); return true;},
-		            'onAppear' : function () {console.log('app-page fullWindow','onAppear'); return true;},
-		            'onDisappear' : function () {console.log('app-page fullWindow','onDisappear'); return true;},
+		            'onInit' 		: function () {console.log('app-page '+thisPageName,'onInit'); return true;},
+		            'onAppear' 		: function (d1,d2) {
+		            	console.log('d1,d2',d1,d2);
+		            	pageIndex_openChatByChatId(d1['chatId'],d1['userId']);
+		            	// M_APP.view.addContentToChiefApp({'app':name,'page':thisPageName},'<div>#1</div>');
+		            	// M_APP.view.addContentToChiefApp({'app':name,'page':thisPageName},'<div>#2</div>');
+		            	// M_APP.view.addContentToChiefApp({'app':name,'page':thisPageName},'<div>#3</div>');
+
+		            	console.log('app-page '+thisPageName,'onAppear'); return true;},
+		            'onDisappear' 	: function () {console.log('app-page '+thisPageName,'onDisappear'); return true;},
 		          };
 		    //> page fullWindow
 
 	  //> init pages const
-
+	_['pages'] = pages; 
 
 	//@<<< APP BLOCK
 		//@required
 		function onInit () {
 			console.log('onInit');
 		}
+		_['onInit'] = onInit; 
 		
 			//@optional	
 			function onIn () {
 				console.log('onIn');
 
 			}
+			_['onIn'] = onIn; 
 				//@required
 				function onAppear () {
-					m_view.closeLoader();
+					M_VIEW.closeLoader();
 					console.log('onAppear');
 
 				}
+				_['onAppear'] = onAppear; 
 				//@required
 				function onDisappear () {
 					// here must be page disapear functions
@@ -58,6 +75,7 @@ define(['v_app-chat', 'm_app','m_firebase','m_user'],function( V_APP_CHAT, M_APP
 					console.log('onDisappear');
 
 				}
+			_['onDisappear'] = onDisappear; 
 
 			//@optional	
 			function onOut () {
@@ -65,11 +83,13 @@ define(['v_app-chat', 'm_app','m_firebase','m_user'],function( V_APP_CHAT, M_APP
 				console.log('onOut');
 
 			}
+			_['onOut'] = onOut; 
 		//@required
 		function onDeinit () {
 			console.log('onDeinit');
 
 		}
+		_['onDeinit'] = onDeinit; 
 	//@>>> APP BLOCK
 
 
@@ -89,23 +109,25 @@ define(['v_app-chat', 'm_app','m_firebase','m_user'],function( V_APP_CHAT, M_APP
 
 
 	function pageIndex_openChatByChatId (iNchatId,iNuserId) {
-        var chatView = "#leftBlockInViewWindow .ChatViewInAppWindow";
-        var needView = chatView + "[connect_chatid='"+iNchatId+"']";
+        // var chatView = "#leftBlockInViewWindow .ChatViewInAppWindow";
+        // var needView = chatView + "[connect_chatid='"+iNchatId+"']";
 
         setCurrentChatId(iNchatId);
         setCurrentChatUserId(iNuserId);
         setCurrentChatType('private');
 
 
-        V_APP_CHAT.hideChatContainers();
-        if ( V_APP_CHAT.getCountsOfChatContainers == 0 ) {
-            // need chat isset open it
-            V_APP_CHAT.createChatContainer(iNchatId);
-        }
-        V_APP_CHAT.showChatContainerByChatId(iNchatId);
 
-        getChatDataByChatId(iNchatId);
-        M_APP.view.effScrollToButtom('#leftBlockInViewWindow',0);
+        VIEW.addUserHeaderInChief({'name':'SharePay','icon':'https://cdn.ramman.net/images/icons/apps/app_sharepay.png','login':'sharepay','online':true,'servise':true});
+
+        if ( VIEW.getCountsOfChatContainers(iNchatId) == 0 ) {
+            // need chat isset open it
+            VIEW.createChatContainer(iNchatId);
+        	getChatDataByChatId(iNchatId);
+        }
+        VIEW.hideChatContainers();
+        VIEW.showChatContainerByChatId(iNchatId);
+		// M_APP.view.effScrollToButtom('#leftBlockInViewWindow',0);
     }
     function getChatDataByChatId (iNchatId) {
         var messagesRef = FIREBASE.database().ref('messages/'+iNchatId);
@@ -114,7 +136,7 @@ define(['v_app-chat', 'm_app','m_firebase','m_user'],function( V_APP_CHAT, M_APP
         	console.log('getChatDataByChatId messagesData.val()',objectForCreateMessage);
         	objectForCreateMessage['msgId'] = messagesData.key;
         	console.log('getChatDataByChatId objectForCreateMessage',objectForCreateMessage);
-            V_APP_CHAT.addMessageToChatPage( objectForCreateMessage, USER.getMyId(), iNchatId  );
+            VIEW.addMessageToChatPage( objectForCreateMessage, USER.getMyId(), iNchatId  );
         });
     }
 
@@ -193,17 +215,5 @@ define(['v_app-chat', 'm_app','m_firebase','m_user'],function( V_APP_CHAT, M_APP
 	    return new Date(iNtime).getHours() + ':' + new Date(iNtime).getMinutes();
 	} 
 
-	return {
-		// vars
-		'name' 			: name,
-		'pages' 		: pages,
-
-		// app functions
-		'onInit' 		: onInit,
-		'onIn' 			: onIn,
-		'onAppear' 		: onAppear,
-		'onDisappear' 	: onDisappear,
-		'onOut' 		: onOut,
-		'onDeinit' 		: onDeinit,
-	}
+	return _;
 });

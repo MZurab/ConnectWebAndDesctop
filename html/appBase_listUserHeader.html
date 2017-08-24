@@ -1,0 +1,90 @@
+<div class="appBase_userListHeaderContainer">
+   <div class="appBase_backButton"></div>
+   <div class="appBase_userIcon"><a href="#"><img src="https://cdn.ramman.net/images/icons/users/noPhoto.png"></a></div>
+   <div class="UserNameInMenusBlock">
+      <div class="appBase_ListHeader_dName">
+         <a href="/sign" class="CML" cmlk="[system-signIn]/[system-signUp]">Zurab</a>
+      </div>
+      <div class="appBase_ListHeader_login">@zurab</div>
+   </div>
+</div>
+<div class="appBase_listHeaderButtonsBlock">
+   <div class="appBase_buttonOptions"><img src="https://cdn.ramman.net/web/res/images/buttons/options.png"></div>
+   <div class="appBase_buttonSignOut"><img src="https://cdn.ramman.net/web/res/images/buttons/signOut.png"></div>
+</div>
+<div class="ChoosePlaceInMenusBlock"></div>
+
+
+<style type="text/css">
+    /*< app base */
+    .appBase_userListHeaderContainer { 
+        height: 60px;
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        cursor: pointer;
+        overflow: hidden;
+    }
+        .appBase_backButton {
+            background-image: url(https://cdn.ramman.net/web/res/images/buttons/back.png);
+            background-size: 100%;
+            width: 2rem;
+            height: 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: inline-block;
+            vertical-align: top;
+        }
+        .appBase_userIcon {
+            width: 3.5rem;
+            display: inline-block;
+            background: rgba(0,0,0,0.47);
+            border-radius: 100%;
+            height: 100%;
+            vertical-align: top;
+        }
+            .appBase_userListHeaderContainer img, .appBase_userListHeaderContainer a {
+                width: inherit;
+                height: inherit;
+                border-radius: inherit;
+            }
+        .UserNameInMenusBlock {
+            font-size: 1rem;
+            font-weight: 900;
+            cursor: pointer;
+            display: inline-block;
+            height: 100%;
+            vertical-align: top;
+        }
+        .appBase_ListHeader_dName {
+            margin-top: 0.25rem;
+        }
+        .appBase_ListHeader_login {
+            color: gray;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+    .appBase_listHeaderButtonsBlock {
+        position: absolute;
+        top: 10px;
+        right: 5px;
+        height: 1.25rem;
+        display: block;
+    }
+        .appBase_buttonOptions, .appBase_buttonSignOut {
+            height: 100%;
+            display: inline-block;
+        }
+        .appBase_listHeaderButtonsBlock img {
+            height: 100%;
+            cursor: pointer;
+        }
+    .topBlockInMenusBlock .ChoosePlaceInMenusBlock {
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+/*> app base */
+</style>
