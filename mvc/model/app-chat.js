@@ -1,4 +1,4 @@
-define(['v_app-chat', 'm_app','m_firebase','m_user','m_view'],function( VIEW, M_APP, FIREBASE, USER, M_VIEW ) {
+define(['v_app-chat', 'm_app','m_firebase','m_user','m_view','m_moment'],function( VIEW, M_APP, FIREBASE, USER, M_VIEW, MOMENT) {
 	//@< init
 		// init from app view templates
 	  const _ = {};
@@ -144,11 +144,25 @@ define(['v_app-chat', 'm_app','m_firebase','m_user','m_view'],function( VIEW, M_
     }
     function getChatDataByChatId (iNchatId) {
         var messagesRef = FIREBASE.database().ref('messages/'+iNchatId);
-        messagesRef.on('child_added', function(messagesData) { 
+        messagesRef.orderByChild("time").limitToLast(100).on('child_added', function(messagesData) { 
         	var objectForCreateMessage = messagesData.val();
         	console.log('getChatDataByChatId messagesData.val()',objectForCreateMessage);
         	objectForCreateMessage['msgId'] = messagesData.key;
         	console.log('getChatDataByChatId objectForCreateMessage',objectForCreateMessage);
+
+
+
+    		if ( typeof objectForCreateMessage.state == 'object' ) {
+    			var states = objectForCreateMessage.state;
+    			if(objectForCreateMessage.time > '0') {
+    				objectForCreateMessage.timeSentText = MOMENT().getTimeMiniText(objectForCreateMessage.time);
+    				safeCreateCenterDateText ( iNchatId, objectForCreateMessage.time );
+    			}
+    			if(states.read > '0')
+    				objectForCreateMessage.timeReadText = MOMENT().getTimeMiniText(states.read);
+    			if(states.delivered > '0')
+    				objectForCreateMessage.timeDeliveredText = MOMENT().getTimeMiniText(states.delivered);
+    		}
 
         	for(var i = 0; i < 15; i++){
         		VIEW.addMessageToChatPage( objectForCreateMessage, USER.getMyId(), iNchatId  );
@@ -206,30 +220,56 @@ define(['v_app-chat', 'm_app','m_firebase','m_user','m_view'],function( VIEW, M_
       return FIREBASE.database().ref().update(updates);
 	}
 
-	function setCurrentChatId (iNchatId) {
-            return M_APP.get('connectThisOpenChatId');
+	function safeCreateCenterDateText (iNchatId,iNtime) {
+		var lastMsgTimeText = getLastMsgTimeByChatId(iNchatId);
+		var lastMsgTime 	= parseInt(lastMsgTimeText);
+		var isThisDay		= MOMENT().isThisDay(iNtime);
+		var nowTime		= MOMENT().getNowTime();
+		if( (!lastMsgTimeText && !isThisDay) || ( MOMENT().getDayNumberByTime(lastMsgTime) != MOMENT().getDayNumberByTime(iNtime) && !isThisDay ) ) {
+			// if first && if is not this day || or new date && if is not this day 
+			var objForChat = {};
+			if ( MOMENT().isThisWeek(iNtime) ) {
+				console.log('safeCreateCenterDateText week isThisDay',isThisDay,lastMsgTime,iNtime,nowTime);
+				console.log('safeCreateCenterDateText week isThisDay',MOMENT().getDayNumberByTime(lastMsgTime) , MOMENT().getDayNumberByTime(nowTime)  );
+				objForChat['content'] = MOMENT().getWeekDayText(iNtime);
+			}else {
+				console.log('safeCreateCenterDateText fulltext isThisDay',isThisDay,lastMsgTime,iNtime);
+				objForChat['content'] = MOMENT().getFullText(iNtime);
+			}
+			VIEW.addCenterSimpleTextToChatPage(objForChat, iNchatId);
+			setLastMsgTimeByChatId(iNchatId,iNtime);
+		}
+	}
+	function setLastMsgTimeByChatId (iNchatId,iNtime) {
+            return M_APP.save('connectLastMsgChatId_'+iNchatId,iNtime);
     }
-    function getCurrentChatId (iNchatId) {
+    function getLastMsgTimeByChatId (iNchatId) {
+        return M_APP.get('connectLastMsgChatId_'+iNchatId);
+    }
+
+	function setCurrentChatId (iNchatId) {
+            return M_APP.save('connectThisOpenChatId',iNchatId);
+    }
+    function getCurrentChatId () {
         return M_APP.get('connectThisOpenChatId');
     }
 
     function setCurrentChatType (iNchatId) {
-            return M_APP.get('connectThisOpenChatType');
+            return M_APP.save('connectThisOpenChatType',iNchatId);
     }
-    function getCurrentChatType (iNchatId) {
+    function getCurrentChatType () {
         return M_APP.get('connectThisOpenChatType');
     }
 
     function setCurrentChatUserId (iNchatId) {
-            return M_APP.get('connectThisOpenChatUserId');
+            return M_APP.save('connectThisOpenChatUserId',iNchatId);
     }
-    function getCurrentChatUserId (iNchatId) {
+    function getCurrentChatUserId () {
         return M_APP.get('connectThisOpenChatUserId');
     }
 
-    function getTodayTime (iNtime) {
-	    return new Date(iNtime).getHours() + ':' + new Date(iNtime).getMinutes();
-	} 
+    
+	
 
 	return _;
 });

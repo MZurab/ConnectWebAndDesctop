@@ -30,7 +30,9 @@ define([ 'jquery', 'template7','v_app'],function( $, Template7,V_APP){
 		   </div>
 		</div>
 	`;
-
+	templates['msgCenterSimpleText'] = `
+		<div class="centerMsgInChatView">{{content}}</div>
+	`;
 	templates['msgFrom'] = `
 		<div class="fromMeMessageInChatView" connect_msg="{{msgId}}">
 		   <div class="lineInFromMeMessage">
@@ -122,6 +124,25 @@ define([ 'jquery', 'template7','v_app'],function( $, Template7,V_APP){
 	`;
 	_['templates'] = templates;
 
+	function addCenterSimpleTextToChatPage ( iNdata, iNchatId ) {
+        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+        $( iNneedView ).append( getCenterSimleTextBlock ( iNdata ) );
+	}
+	_['addCenterSimpleTextToChatPage'] = addCenterSimpleTextToChatPage;
+
+		function getCenterSimleTextBlock (iNdata) {
+			/*
+				@inputs
+					@required
+						iNdata
+							@required
+								content
+							@optional
+			*/
+			var temp = Template7.compile(templates['msgCenterSimpleText']);
+			return temp(iNdata);
+		}
+		_['getCenterSimleTextBlock'] = getCenterSimleTextBlock;
 	function getChatSenderBlock (iNdata) {
 		/*
 			@inputs
@@ -179,7 +200,7 @@ define([ 'jquery', 'template7','v_app'],function( $, Template7,V_APP){
 		if( typeof iNtype != 'string' ) iNtype = 'end';
 		var objForAddHeader = {'app':CONST['name'],page: CONST['pageIndex']};
 			objForAddHeader['content'] = getAppHeaderForIndexPage (iNdata);
-		V_APP.safeViewAppHeaderWithContent(objForAddHeader,'change');
+		V_APP.safeViewAppHeaderWithContent(objForAddHeader,iNtype);
 	}
 	_['addUserHeaderInChief'] = addUserHeaderInChief;
 
@@ -196,7 +217,10 @@ define([ 'jquery', 'template7','v_app'],function( $, Template7,V_APP){
 			@inputs
 				iNdata -> object
 					msgId 		-> string
-					timeSent 	-> string
+					state 	    -> object
+						sent      -> timestamp
+						delivered -> timestamp
+						time      -> timestamp
 					timeRead 	-> string
 					content 	-> string
 

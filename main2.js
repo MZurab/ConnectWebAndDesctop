@@ -1,5 +1,12 @@
 require2.config({
     // baseUrl: 'https://cdn.ramman.net/web/',
+    // packages: [{
+    //     name: 'moment',
+    //     // This location is relative to baseUrl. Choose bower_components
+    //     // or node_modules, depending on how moment was installed.
+    //     location: 'res/js/moment',
+    //     main: 'moment'
+    // }],
     paths: {
     	'firebase'             : ['https://www.gstatic.com/firebasejs/4.2.0/firebase','res/js/firebase/firebase'],
         'template7'            : 'res/js/template7/template7',
@@ -14,6 +21,7 @@ require2.config({
         'lazyload'             : 'res/js/lazyload/lazyload',
         'rx'                   : 'res/js/rxjs/rx.min',
         'dictionary'           : 'mvc/model/dictionary',
+        'moment'               : 'res/js/moment/moment',
 
         /*<? views */
             'v_view'           : 'mvc/view/view',
@@ -36,6 +44,7 @@ require2.config({
             'm_firebase'       : 'mvc/model/firebase',
             'm_user'           : 'mvc/model/user',
             'm_routing'        : 'mvc/model/routing',
+            'm_moment'         : 'mvc/model/moment',
 
 
         /*>! models */
@@ -58,8 +67,8 @@ require2.config({
 
 
         /* <? onesignal modules for push */
-            'onesignal': {
-                exports: 'OneSignal',
+            'moment': {
+                exports: 'moment',
             },
         /* >! onesignal modules for push */
 
