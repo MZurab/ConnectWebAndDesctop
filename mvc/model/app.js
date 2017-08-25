@@ -223,6 +223,10 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 					// safe add attributes if it exists 
 					var appAttr = getAppAttr(iNapp);
 					if( appAttr != false) objectForCreateApp['attr'] = appAttr;
+
+					console.log('getTemplate check',typeof iNapp.getTemplate, iNapp);
+					if( typeof iNapp.getTemplate == 'function' ) 
+						iNapp.getTemplate(objectForCreateApp);
 					V_APP.d_createChiefApp(objectForCreateApp);
 				} else
 					iNapp.onCreate(iNdataForApp,objectForCreateApp);
@@ -382,6 +386,8 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 			var pageAttr = getPageAttr(iNapp,iNdata['page']);
 			if( pageAttr != false) objectForCreatePage['attr'] = pageAttr;
 
+			if( typeof pageFunctions.getTemplate == 'function' ) 
+				pageFunctions.getTemplate(objectForCreatePage);
 			// 
 			if(typeof pageFunctions['onCreate'] == 'function')
 				pageFunctions['onCreate']();

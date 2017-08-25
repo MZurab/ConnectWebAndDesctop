@@ -100,11 +100,49 @@ define([ 'jquery', 'template7','v_app'],function( $, Template7,V_APP){
 			</div>
 			<div class="appBase_pIndexRightBlockInChiefHeader"></div>
 		`;
+
+	templates['chatSenderBlock'] = `
+		<div class="chatBlockInViewBlock">
+		   <div class="viewesFooterUnderWindow">
+		      <div id="senderBlockInViewBlock">
+		         <div id="bottomViewInMsgBlock">
+		            <ul class="rawBlockInBottomView">
+		               <li class="LineInBottomViewRawBlock">1</li>
+		               <li class="LineInBottomViewRawBlock">2</li>
+		            </ul>
+		         </div>
+		         <div id="forTextInputInSenderBlock">
+		            <textarea></textarea>
+		         </div>
+		         <div id="sendButtonInSenderBlock" class="sendTextMsgButton"></div>
+		         <img src="https://cdn.ramman.net/images/icons/miniConnectWebIcon.png" id="ConnectButtonInFuncButtons">
+		      </div>
+		   </div>
+		</div>
+	`;
 	_['templates'] = templates;
 
+	function getChatSenderBlock (iNdata) {
+		/*
+			@inputs
+				@required
+					iNdata
+						@required
+							name
+							icon
+							id
+						@optional
+							online -> bool
+							back -а-> bool
+							offlineTime -> int
+							watchNow -> bool
+		*/
+		var temp = Template7.compile(templates['chatSenderBlock']);
+		return temp(iNdata);
+	}
+	_['getChatSenderBlock'] = getChatSenderBlock;
 
-
-	function getListHeaderForIndexPage (iNdata) {
+	function getAppHeaderForIndexPage (iNdata) {
 		/*
 			@inputs
 				@required
@@ -122,7 +160,7 @@ define([ 'jquery', 'template7','v_app'],function( $, Template7,V_APP){
 		var temp = Template7.compile(templates['chiefHeader_user']);
 		return temp(iNdata);
 	}
-	function addUserHeaderInChief (iNdata) {
+	function addUserHeaderInChief (iNdata,iNtype) {
 		/*
 			@inputs
 				@required
@@ -134,10 +172,14 @@ define([ 'jquery', 'template7','v_app'],function( $, Template7,V_APP){
 						@optional
 							nameDictionaryCode OR name
 							back -> bool
+				@optional
+					iNtype -> string 
+						in [end,begin, after, before, change]
 		*/
+		if( typeof iNtype != 'string' ) iNtype = 'end';
 		var objForAddHeader = {'app':CONST['name'],page: CONST['pageIndex']};
-			objForAddHeader['content'] = getListHeaderForIndexPage (iNdata);
-		V_APP.d_addAppHeaderByTemplate(objForAddHeader);
+			objForAddHeader['content'] = getAppHeaderForIndexPage (iNdata);
+		V_APP.safeViewAppHeaderWithContent(objForAddHeader,'change');
 	}
 	_['addUserHeaderInChief'] = addUserHeaderInChief;
 

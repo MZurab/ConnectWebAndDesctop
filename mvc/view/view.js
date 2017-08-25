@@ -37,9 +37,10 @@ define(['jquery','template7'], function ($,Template7) {
 				@optional
 					iNwhere -> string [default = begin] [begin, end, before, after]
 		*/
-		// if( typeof(iNwhere) != 'string')iNwhere='begin';
+		console.log('_d_addDataToViewEl iNwhere',iNwhere);
 		switch(iNwhere){
 			case "change":
+				console.log('_d_addDataToViewEl type = change');
 				$(iNdomElement).html(iNaddedData);
 			break;
 
@@ -56,6 +57,7 @@ define(['jquery','template7'], function ($,Template7) {
 			break;
 
 			default: // start
+				console.log('_d_addDataToViewEl type = start ');
 				$(iNdomElement).prepend(iNaddedData);
 			break;
 		}

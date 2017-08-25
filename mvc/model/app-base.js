@@ -182,7 +182,7 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
       'icon' : USER.getMyIcon(),
       'name' : USER.getMyDisplayName(),
       'login': USER.getMyLogin(),
-    })
+    },'change')
   }
 
 

@@ -1,4 +1,4 @@
-define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function ($,M_VIEW,V_APP_PAGE,M_APP,M_USER) {
+define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function ($,M_VIEW,VIEW,M_APP,M_USER) {
 
   // init result const
   const _ = {};
@@ -32,7 +32,7 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
             'onOut'  : function () {console.log('app-page fullWindow','onOut'); return true;},
             'onView'  : function () {
               addPageToFullWindow({'id':'sign','uid':'@system'});
-              // V_APP_PAGE.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
+              // VIEW.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
               // console.log('app private','onView');
               return true;
             },
@@ -243,20 +243,15 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
       var c = 'pageId' + iNdata['id'] + ' headerFromPage';
       if(typeof iNdata == 'object') {
         var obj = iNdata['header'];
-        console.log('processingData obj',obj);
-        console.log('processingData obj css',obj['css']);
         if ( typeof obj['css']  == 'object' && obj['css'].length > 0 ) {
           // add css
           for ( var i in obj['css'] ) {
-            console.log('processingData css i - '+i,obj['css'][i]);
             M_APP.d_loadCSS(obj['css'][i],c);
           }
         }
-        console.log('processingData obj js',obj['js']);
         if ( typeof obj['js']   == 'object' && obj['js'].length > 0 ) {
           // add js
           for ( var i in obj['js'] ) {
-            console.log('processingData js i - '+i,obj['js'][i]);
             M_APP.d_loadJS(obj['js'][i],c);
           }
         }
@@ -267,7 +262,7 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
           iNdata,
           function (iNresult){ 
             //add content
-            V_APP_PAGE.addFullWindowByTemplate( { 'content' : iNresult['content'] } );
+            VIEW.addFullWindowByTemplate( { 'content' : iNresult['content'] } );
             //add headers
             processingData(iNresult);
             //add events default pages
@@ -282,13 +277,11 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
           iNdata,
           function (iNresult){ 
             //add content
-            M_APP.view.d_addAppHeaderByTemplate ({
+            M_APP.view.safeViewAppHeaderWithContent ({
               app : 'page',
               page : 'miniPage',
-              content : V_APP_PAGE.getMiniPageHeader(iNresult['head'])
-            });
-            console.log("V_APP_PAGE.getMiniPageHeader(iNresult['head'])",V_APP_PAGE.getMiniPageHeader(iNresult['head']));
-            console.log("iNresult['head'])",iNresult['head']);
+              content : VIEW.getMiniPageHeader(iNresult['head'])
+            },'change');
             M_APP.view.d_createChiefApp({
               app : 'page',
               page : 'miniPage',
@@ -345,26 +338,21 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
 
       function addActionsForEventsPageSign () {
         $('.appPageCloseButton').click(function(){
-            M_APP.getGlobalVar('engine').prepareUrl({'app':'base','page':'index','user':'zurab','data':'data'});
-            M_APP.getGlobalVar('engine').startUrl();
+          M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index','user':'zurab','data':'data'});
         });
       }
 
       function addActionsForEventsPageSign () {
         $('.page-formSignIn').submit(function(e){
           e.preventDefault();
-          console.log('page-formSignIn submit');
-          console.log('M_USER',M_USER);
           return M_USER.sendForm('.page-formSignIn');
         });
         $('.page-formSmsCode').submit(function(e){
           e.preventDefault();
-          console.log('page-formSmsCode submit');
           return M_USER.checkSmsCode(this);
         });
         $('.page-formSignUp').submit(function(e){
           e.preventDefault();
-          console.log('page-formSignUp submit');
           return M_USER.signUpByUserAndPswd(this);
         });
         $('.page-reSendSms').click(function(){

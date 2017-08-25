@@ -18,6 +18,11 @@ define(['v_app-chat', 'm_app','m_firebase','m_user','m_view'],function( VIEW, M_
 		        pages[thisPageName]  = {'attr':{'id' : 'leftBlockInViewWindow'},'menus':{}};
 		          pages[thisPageName]['functions'] = {
 		            // 'isPage'  : function () {console.log('app-page fullWindow','isPage'); return true;},
+		            'getTemplate' : function (iNdata) {
+		            	console.log('getTemplate APP-CHAT PAGE INDEX iNdata start',iNdata);
+						console.log('getTemplate APP-CHAT PAGE INDEX iNdata end',iNdata);
+
+		            },
 		            'onOut'  : function () {console.log('app-page '+thisPageName,'onOut'); return true;},
 		            // 'onView'  : function () {
 		            //   addPageToFullWindow({'id':'sign','uid':'@system'});
@@ -44,6 +49,14 @@ define(['v_app-chat', 'm_app','m_firebase','m_user','m_view'],function( VIEW, M_
 	_['pages'] = pages; 
 
 	//@<<< APP BLOCK
+		//@override
+		function getTemplate (iNdata) {
+			console.log('getTemplate APP-CHAT iNdata start',iNdata);
+			iNdata['other'] = VIEW.getChatSenderBlock();
+			console.log('getTemplate APP-CHAT  iNdata end',iNdata);
+		}
+		_['getTemplate'] = getTemplate; 
+
 		//@required
 		function onInit () {
 			console.log('onInit');
@@ -136,7 +149,10 @@ define(['v_app-chat', 'm_app','m_firebase','m_user','m_view'],function( VIEW, M_
         	console.log('getChatDataByChatId messagesData.val()',objectForCreateMessage);
         	objectForCreateMessage['msgId'] = messagesData.key;
         	console.log('getChatDataByChatId objectForCreateMessage',objectForCreateMessage);
-            VIEW.addMessageToChatPage( objectForCreateMessage, USER.getMyId(), iNchatId  );
+
+        	for(var i = 0; i < 15; i++){
+        		VIEW.addMessageToChatPage( objectForCreateMessage, USER.getMyId(), iNchatId  );
+        	}
         });
     }
 

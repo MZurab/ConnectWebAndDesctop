@@ -43,7 +43,7 @@ define(['jquery','m_user','template7','v_view','v_app'],function($,USER,Template
 		return temp(iNdata);
 	}
 
-	function addUserHeaderInList (iNdata) {
+	function addUserHeaderInList (iNdata,iNtype) {
 		/*
 			@inputs
 				@required
@@ -55,15 +55,19 @@ define(['jquery','m_user','template7','v_view','v_app'],function($,USER,Template
 						@optional
 							nameDictionaryCode OR name
 							back -> bool
+				@optional
+					iNtype -> string 
+						in [end,begin, after, before, change]
 		*/
-		var objForAddHeader = {'app':CONST['name'],page: CONST['pageIndex']};
+		if( typeof iNtype != 'string' ) iNtype = 'end';
+		var objForAddHeader = {'app':CONST['name'],'page': CONST['pageIndex']};
 			objForAddHeader['content'] = getListHeaderForIndexPage (iNdata);
-		V_APP.d_addAppMenuHeaderByTemplate(objForAddHeader);
+		V_APP.safeViewMenuHeaderWithContent(objForAddHeader,iNtype);
 	}
 	_['addUserHeaderInList'] = addUserHeaderInList;
 	
 
-	
+
 
 
 	return _;

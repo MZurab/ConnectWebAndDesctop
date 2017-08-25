@@ -729,10 +729,12 @@ input,textarea {outline:none;}
 			    width: 100%;
 			}
 				#viewAndChatBlockInViewBlock .viewesInWindow.app {
-					overflow-y: auto;
 				    height: 100%;
 				    position: relative;
-				} 
+				}
+					#viewAndChatBlockInViewBlock .viewesInWindow.app .view {
+						overflow-y: auto;
+					} 
 				#subViewInViewAndChatBlock {
 					position: relative;
 					height: 100%;
@@ -777,6 +779,11 @@ input,textarea {outline:none;}
 							#viewWindow .ChatViewInAppWindow {
 								padding: 0.25rem 1rem;
 
+							}
+							.ChatViewInAppWindow {
+    							margin: 0.25rem;
+								margin-bottom: 5rem;
+    							display: table;
 							}
 
 								.centerMsgInChatView {
@@ -931,6 +938,7 @@ input,textarea {outline:none;}
 					    bottom: 0px;
 					    left: 0px;
 					    background: #d9d9d9;
+    					z-index: 10;
 					}
 				#senderBlockInViewBlock{
 					width: inherit;

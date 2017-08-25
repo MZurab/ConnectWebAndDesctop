@@ -519,6 +519,19 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
         			'[app-name="' + iNdata['app'] + '"]'
         		).hide();
 	        }
+	        function _d_hideAppHeaders (iNdata) {
+	        	/*
+	        		@discr
+	        			hide app page of header
+	        		@inputs
+	        			iNdata -> object
+	        				app  -> string
+	        	*/
+	        	$( 
+	        		CONST['pathAppHeader'] + ' ' 	+ 
+	        		'.'+CONST['nameInAppHeader']
+        		).hide();
+	        }
 	        function _d_removeAppHeader (iNdata) {
 	        	/*
 	        		@discr
@@ -589,7 +602,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 	        				page -> string
 	        	*/
 	        	// hide apps
-	        	_d_hideAppHeader(iNdata);
+	        	_d_hideAppHeaders(iNdata);
 
 	        	// show this app
 	        	_d_showAppHeader(iNdata); 
@@ -608,6 +621,21 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 	        			iNcontent -> string
 	        	*/
 	        	$( CONST['pathAppHeader'] + ' .topBlockInViewBlock' ).html(iNcontent);
+	        }
+	        function _d_getLengthAppHeader (iNdata) {
+	        	/*
+	        		@discr
+	        			set content for app into header block
+	        		@inputs
+	        			iNdata -> string
+	        				app
+        					@optional
+	        					page
+	        	*/
+	        	var selector = CONST['pathAppHeader'] + ' .topBlockInViewBlock .' + CONST['nameInAppHeader'] + '[app-name="'+iNdata['app']+'"]';
+	        	if ( typeof iNdata['page'] == 'string' )
+	        		selector += '.' + CONST['pageNameInAppHeader'] + '[page-name="'+ iNdata['page'] +'"]';
+	        	return $(selector).length;
 	        }
 	       	function _getAppHeader (iNdata) {
 	        	/*
@@ -640,7 +668,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
         		var temp = Template7.compile(templates['pageContentChiefHeader']);
         		return temp(iNdata)
         	}
-        function _d_addAppHeaderByTemplate (iNdata) {
+        function _d_addAppHeaderByTemplate (iNdata,iNtype) {
         	/*
         		@discr
         			add content for app into  header block by template
@@ -649,14 +677,56 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
         				app 
         				page
         				content
+    				iNtype -> string
+    					in [end,begin, after, before, change]
+
         	*/
+        	if( typeof iNtype != 'string' ) iNtype = 'end';
         	var selector = CONST['pathAppHeader'],
         		content = _getAppHeader(iNdata);
-			v_view.d_addDataToViewEl(selector, content ,'end');
-			console.log('_d_addAppHeaderByTemplate content',content);
-			console.log('_d_addAppHeaderByTemplate selector',selector);
+			v_view.d_addDataToViewEl(selector, content ,iNtype);
         }
-        function _d_addPageAppHeaderByTemplate (iNdata) {
+        function _d_safeViewAppHeaderWithContent (iNdata,iNtype) {
+			/*
+				@discr
+					add safe content to chief app header and view this
+				@inputs
+					iNdata -> object
+						app
+						page
+						content
+					@optional
+					iNtype -> string 
+						in [end,begin, after, before, change]
+			*/
+			if( typeof iNtype != 'string' ) iNtype = 'end';
+			_d_safeAddAppHeader(iNdata,iNtype);
+			//view this menu 
+			_d_viewAppPageHeader(iNdata);
+		}
+		function _d_safeAddAppHeader (iNdata,iNtype) {
+			/*
+				@discr
+					add safe content to chief app header
+				@inputs
+					iNdata -> object
+						app
+						page
+						content
+					@optional
+					iNtype -> string 
+						in [end,begin, after, before, change]
+			*/
+			if( typeof iNtype != 'string' ) iNtype = 'end';
+			if( _d_getLengthAppHeader ({'app':iNdata['app']}) < 1 ) {
+				// check app container
+				_d_addAppHeaderByTemplate(iNdata,iNtype);
+			} else if ( typeof iNdata['page'] == 'string' && _d_getLengthAppHeader(iNdata) < 1 ) {
+				_d_addPageAppHeaderByTemplate( iNdata,iNtype);
+			}
+
+		}
+        function _d_addPageAppHeaderByTemplate (iNdata,iNtype) {
         	/*
         		@discr
         			add content with page for app into  header block by template
@@ -665,10 +735,15 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
         				app
         				page
         				content
+    				@optional
+					iNtype -> string 
+						in [end,begin, after, before, change]
+
         	*/
+        	if( typeof iNtype != 'string') iNtype = 'end';
         	var selector = CONST['pathAppHeader'] + ' .' + CONST['nameInAppHeader']+'[app-name="'+iNdata['app']+'"]',
         		content = _getPageAppHeader(iNdata);
-			v_view.d_addDataToViewEl(selector, _getPageForListApp(content) ,'end');
+			v_view.d_addDataToViewEl(selector, _getPageForListApp(content) , iNtype);
         }
 
 
@@ -776,6 +851,49 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 				*/
 	        	$( CONST['pathMenuHeader']).html(iNcontent);
 	        }
+	        function _d_safeViewMenuHeaderWithContent (iNdata,iNtype) {
+				/*
+					@discr
+						add safe content to menu header and view this
+					@inputs
+						iNdata -> object
+							app
+							page
+							content
+						@optional
+						iNtype -> string 
+							in [end,begin, after, before, change]
+				*/
+				if( typeof iNtype != 'string' ) iNtype = 'end';
+				_d_safeAddAppMenuHeader(iNdata,iNtype);
+				//view this menu 
+				console.log('_d_viewMenuPageHeader iNdata',iNdata);
+				_d_viewMenuPageHeader(iNdata);
+			}
+			function _d_safeAddAppMenuHeader (iNdata,iNtype) {
+				/*
+					@discr
+						add safe content to menu app header
+					@inputs
+						iNdata -> object
+							app
+							page
+							content
+						@optional
+						iNtype -> string 
+							in [end,begin, after, before, change]
+				*/
+				console.log('_d_safeAddAppMenuHeader iNdata',iNdata);
+				if( typeof iNtype != 'string' ) iNtype = 'end';
+				if( _d_getLengthMenuHeader ({'app':iNdata['app']}) < 1 ) {
+					// check app container
+					console.log('_d_safeAddAppMenuHeader invokes _d_addAppMenuHeaderByTemplate');
+					_d_addAppMenuHeaderByTemplate(iNdata,iNtype);
+				} else if ( typeof iNdata['page'] == 'string' && _d_getLengthMenuHeader(iNdata) < 1 ) {
+					console.log('_d_safeAddAppMenuHeader invokes _d_addPageMenuHeaderByTemplate');
+					_d_addPageMenuHeaderByTemplate( iNdata,iNtype);
+				}
+			}
 	        	function _getAppMenuHeader (iNdata) {
 		        	/*
 		        		@discr
@@ -792,6 +910,22 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 	        		var temp = Template7.compile(templates['appContentMenuHeader']);
 	        		return temp(iNdata)
 	        	}
+	        	function _d_getLengthMenuHeader (iNdata) {
+	        	/*
+	        		@discr
+	        			get length of elements or 0
+	        		@inputs
+	        			iNdata -> string
+	        				app
+        					@optional
+	        					page
+	        	*/
+				console.log('_d_getLengthMenuHeader iNdata',iNdata);
+	        	var selector = CONST['pathMenuHeader'] + ' .' + CONST['nameInMenuHeader'] + '[app-name="'+iNdata['app']+'"]';
+	        	if ( typeof iNdata['page'] == 'string' )
+	        		selector += '.' + CONST['pageNameInMenuHeader'] + '[page-name="'+ iNdata['page'] +'"]';
+	        	return $(selector).length;
+	        }
 
 	        	function _getPageMenuHeader (iNdata) {
 		        	/*
@@ -807,7 +941,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 	        		var temp = Template7.compile(templates['pageContentMenuHeader']);
 	        		return temp(iNdata)
 	        	}
-	        function _d_addAppMenuHeaderByTemplate (iNdata) {
+	        function _d_addAppMenuHeaderByTemplate (iNdata,iNtype) {
 	        	/*
 	        		@discr
 	        			add content for app into menu header block by template
@@ -818,12 +952,20 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 	        				content
 	        				@optional
 	        					other
+	    				iNtype -> string
+	    					in [end,begin, after, before, change]
 	        	*/
+				console.log('_d_addAppMenuHeaderByTemplate iNdata',iNdata);
+				if( typeof iNtype != 'string' ) iNtype = 'end';
 	        	var selector = CONST['pathMenuHeader'],
 	        		content = _getAppMenuHeader(iNdata);
-				v_view.d_addDataToViewEl(selector, content ,'end');//_getPageForListApp(content)
+	        	// _d_addAppHeaderByTemplate(iNdata,iNtype);
+				v_view.d_addDataToViewEl(selector, content ,iNtype);//_getPageForListApp(content)
 	        }
-	        function _d_addPageMenuHeaderByTemplate (iNdata) {
+	        
+
+
+	        function _d_addPageMenuHeaderByTemplate (iNdata,iNtype) {
 	        	/*
 	        		@discr
 	        			add content with page for app into menu header block by template
@@ -834,10 +976,14 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 	        				content
 	        				@optional
 	        					other
+    					iNtype -> string
+    						in [end,begin, after, before, change]
 	        	*/
+	    		
+				if( typeof iNtype != 'string' ) iNtype = 'end';		
 	        	var selector = CONST['pathMenuHeader'] + ' .' + CONST['nameInMenuHeader']+'[app-name="'+iNdata['app']+'"]',
 	        		content = _getPageMenuHeader(iNdata);
-				v_view.d_addDataToViewEl(selector, _getPageForListApp(content) ,'end');
+				v_view.d_addDataToViewEl(selector, _getPageForListApp(content) ,iNtype);
 	        }
         //> app headers
 
@@ -1191,6 +1337,8 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		    	//app menu header
 				    'd_addPageMenuHeaderByTemplate'		: _d_addPageMenuHeaderByTemplate,
 				    'd_addAppMenuHeaderByTemplate'		: _d_addAppMenuHeaderByTemplate,
+				    'safeViewAppHeaderWithContent'		: _d_safeViewAppHeaderWithContent, // @new of 24 08 2017
+				    'safeAddAppHeader'					: _d_safeAddAppHeader, // @new of 24 08 2017
 				    'getPageMenuHeader'           		: _getPageMenuHeader,
 				    'getAppMenuHeader'           		: _getAppMenuHeader,
 				    'd_setMenuHeader'            		: _d_setMenuHeader,
@@ -1204,6 +1352,8 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		    	//app header
 				    'd_addPageAppHeaderByTemplate'		: _d_addPageAppHeaderByTemplate,
 				    'd_addAppHeaderByTemplate'			: _d_addAppHeaderByTemplate,
+				    'safeViewMenuHeaderWithContent'		: _d_safeViewMenuHeaderWithContent, // @new of 24 08 2017
+				    'safeAddAppMenuHeader'				: _d_safeAddAppMenuHeader, // @new of 24 08 2017
 				    'getPageAppHeader'           		: _getPageAppHeader,
 				    'getAppHeader'           			: _getAppHeader,
 				    'd_setAppHeader'            		: _d_setAppHeader,
