@@ -130,6 +130,7 @@ define(['v_app-chat', 'm_app','m_firebase','m_user','m_view','m_moment'],functio
         setCurrentChatType('private');
 
 
+    	sendMessageToDb({'content':'test'},iNchatId);
 
         VIEW.addUserHeaderInChief({'name':'SharePay','icon':'https://cdn.ramman.net/images/icons/apps/app_sharepay.png','login':'sharepay','online':true,'servise':true});
 
@@ -145,7 +146,8 @@ define(['v_app-chat', 'm_app','m_firebase','m_user','m_view','m_moment'],functio
     function getChatDataByChatId (iNchatId) {
         var messagesRef = FIREBASE.database().ref('messages/'+iNchatId);
         messagesRef.orderByChild("time").limitToLast(100).on('child_added', function(messagesData) { 
-        	var objectForCreateMessage = messagesData.val();
+        	var fullMessage 		   = messagesData.val()
+        	var objectForCreateMessage = fullMessage['info'];
         	console.log('getChatDataByChatId messagesData.val()',objectForCreateMessage);
         	objectForCreateMessage['msgId'] = messagesData.key;
         	console.log('getChatDataByChatId objectForCreateMessage',objectForCreateMessage);
@@ -154,9 +156,9 @@ define(['v_app-chat', 'm_app','m_firebase','m_user','m_view','m_moment'],functio
 
     		if ( typeof objectForCreateMessage.state == 'object' ) {
     			var states = objectForCreateMessage.state;
-    			if(objectForCreateMessage.time > '0') {
-    				objectForCreateMessage.timeSentText = MOMENT().getTimeMiniText(objectForCreateMessage.time);
-    				safeCreateCenterDateText ( iNchatId, objectForCreateMessage.time );
+    			if(fullMessage.time > '0') {
+    				objectForCreateMessage.timeSentText = MOMENT().getTimeMiniText(fullMessage.time);
+    				safeCreateCenterDateText ( iNchatId, fullMessage.time );
     			}
     			if(states.read > '0')
     				objectForCreateMessage.timeReadText = MOMENT().getTimeMiniText(states.read);
@@ -164,61 +166,106 @@ define(['v_app-chat', 'm_app','m_firebase','m_user','m_view','m_moment'],functio
     				objectForCreateMessage.timeDeliveredText = MOMENT().getTimeMiniText(states.delivered);
     		}
 
-        	for(var i = 0; i < 15; i++){
-        		VIEW.addMessageToChatPage( objectForCreateMessage, USER.getMyId(), iNchatId  );
-        	}
+    		VIEW.addMessageToChatPage( objectForCreateMessage, USER.getMyId(), iNchatId  );
         });
     }
-
-	function addMessageToDb (iNdata,iNchatId) {
+	function sendMessageToDb (iNdata,iNchatId) {
       /*
-        1 - iNdata
-            @required
-                data
-            @optional
-                type
-                block
-                fire
-                group
+		@discr
+			send msg to firebase realtime db
+      	@inputs
+	        @required
+		        1 - iNdata
+		            @required
+		                content
+		            @optional
+		                block
+		                fire
+		                group
+		                type
+		        2 - iNchatId
+        @return
+        	result form Firebse update
 
       */
-      // A post entry.
-      // if(typeof(firebase.auth().currentUser.uid)  == 'undefined') {
-      //    console.log('signOut');
-      //    Connect_signOut();
-      // }
-      var myUid         = FIREBASE.auth().currentUser.uid;
-      var timeStamp     = FIREBASE.database.ServerValue.TIMESTAMP;
-      
-
-      // Get a key for a new Post.
-      if( typeof(iNdata.type)   == 'undefined')     iNdata.type = 1;    // default text key
-      if( typeof(iNdata.block)  == 'undefined')     iNdata.block = 0;   // default block disable
-      if( typeof(iNdata.fire)   == 'undefined')     iNdata.fire = 0;    // default fire disable
-      if( typeof(iNdata.group)  == 'undefined')     iNdata.group = 0;   // default group dissable
-      if( typeof(iNdata.user)   == 'undefined')     iNdata.user = myUid;    // default group dissable
-      iNdata.time = timeStamp; 
-      if( typeof(iNchatId)      == 'undefined') 	iNchatId = FIREBASE.database().ref().child('chats').push().key;
-      
-      // if( typeof(iNuuid)         != 'undefined') Connect_joinUserToChatId(iNuuid,iNchatId); // add user to chat if its a new chat
-
-      var msgid = FIREBASE.database().ref().child('messages/'+iNchatId).push().key;
-      var updates = {}; 
-          updates['messages/' + iNchatId + '/' + msgid] = iNdata;
-
-          //add to last msg block
-      var lastMessage = {
-            content 	: iNdata.data,
-            time 		: timeStamp,
-            type 		: iNdata.type,
-            user 		: myUid
-        };
-      updates['/chats/' + iNchatId + '/msg'] = lastMessage;
-
-      
-
-      return FIREBASE.database().ref().update(updates);
+      // get my user id
+      iNdata.type = 1;
+      var myUid         	= FIREBASE.auth().currentUser.uid;
+      // get right object for add to msg db
+      var objForSentToDb 	= prepareObjectForSentToMsgBase(iNdata,myUid);
+      // get msg id for send
+      var msgId = FIREBASE.database().ref().child('messages/'+iNchatId).push().key;
+      // buidl update object for sent to msg
+      var keyForUpdateMsg = 'messages/' + iNchatId + '/' + msgId;
+      var updates = {};  updates[keyForUpdateMsg] = objForSentToDb;
+      // update last msg block in chat db for show in list menus for all users 
+ 	  // updateChatLastMsgObject(objForSentToDb,iNchatId); 
+ 	  // send to msg for add and return result of firebase
+ 	  console.log('sendMessageToDb updates',updates);
+	  return FIREBASE.database().ref().update(updates);
 	}
+		function prepareObjectForSentToMsgBase (iNdata,iNmyUid) {
+			/*
+				@discr
+					return object for base
+				@inputs
+			    @required
+			        1 - iNdata
+			            @required
+			                content
+			            @optional
+			                block
+			                fire
+			                group
+			                type
+			        2 - iNmyUid
+			*/
+			var timeStamp = FIREBASE.database.ServerValue.TIMESTAMP ;
+			var objForSentToDb = {
+				'info'	: { 
+					'options'	: {'base':{}},
+					'state'		: {'sent':timeStamp},
+					'content'	: iNdata['content'],
+				},
+				'time'  : timeStamp,
+				'status': 1,
+				'type'	: iNdata.type,
+				'uid'	: iNmyUid
+			};
+
+			if( typeof(iNdata.type)   != 'undefined')     objForSentToDb['info']['type'] = iNdata.type;    // default text key
+			if( typeof(iNdata.block)  == 'undefined')     objForSentToDb['info']['options']['base']['block'] = 0;   // default block disable
+			if( typeof(iNdata.fire)   == 'undefined')     objForSentToDb['info']['options']['base']['fire']  = 0;    // default fire disable
+			if( typeof(iNdata.group)  == 'undefined')     objForSentToDb['info']['options']['base']['group'] = 0;   // default group dissable
+			if( typeof(iNmyUid)    != 'undefined')     {
+				objForSentToDb['uid'] = iNmyUid;    // default group dissable
+				objForSentToDb['info']['uid'] = iNmyUid;
+			}
+			return objForSentToDb;
+		}
+		function updateChatLastMsgObject (iNobject,iNchatId) {
+			/*
+				@discr
+					update last msg block in chat db for show in list menus for all users 
+				@inputs
+					@required
+						iNobject
+							info
+								content
+								typw
+							uid
+			*/
+     		var timeStamp     = FIREBASE.database.ServerValue.TIMESTAMP;
+     		var updates = {};
+			var lastMessage = {
+			    content 	: iNobject['info']['content'],
+			    time 		: timeStamp,
+			    type 		: iNobject['info']['type'],
+			    uid 		: iNobject['uid']
+			};
+			updates['/chats/info/' + iNchatId + '/msg'] = lastMessage;
+	  		return FIREBASE.database().ref().update(updates);
+		}
 
 	function safeCreateCenterDateText (iNchatId,iNtime) {
 		var lastMsgTimeText = getLastMsgTimeByChatId(iNchatId);

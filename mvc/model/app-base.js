@@ -460,16 +460,15 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
       offAllLinkWithChatDbByChatId(iNchatId);
       //check chat list for exist
       var  chatId   = iNchatId,
-          chatsRef = FIREBASE.database().ref('chats/'+chatId);
-                console.log('attachLiveLinkToChatElement FIREBASE ref value','chats/'+chatId);
+           chatsRef = FIREBASE.database().ref('chats/' + chatId + '/info');
 
       chatsRef.once ( 'value', function (chatData) {
-            var chatId    = chatData.key,
+            var chatId    = chatData.ref.parent.key,
                 chatBlock = chatData.val(),
-                chatType  = chatBlock.type;
-                console.log('attachLiveLinkToChatElement value chatBlock',chatBlock);
-                console.log('attachLiveLinkToChatElement value chatId',chatId);
-                console.log('attachLiveLinkToChatElement value chatType',chatType);
+                chatType  = chatBlock.chat.type;
+                console.log('attachLiveLinkToChatElement value chatBlock' , chatBlock);
+                console.log('attachLiveLinkToChatElement value chatId'    , chatId);
+                console.log('attachLiveLinkToChatElement value chatType'  , chatType);
 
             var   changeObject = M_CATEGORY.getObjectForUpdateChatBlock ( chatBlock );
                   changeObject['chatType']       = chatType;

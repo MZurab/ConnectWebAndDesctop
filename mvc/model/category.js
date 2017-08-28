@@ -11,10 +11,10 @@ define(['jquery','v_category','m_view','m_app','m_user'], function ( $, V_CATEGO
                 if( typeof(chatBlock.msg.time) != 'undefined' )     changeObject.lmsgTime = chatBlock.msg.time;
             }
             if( typeof(chatBlock.live) != 'undefined' ) {
-                if( typeof(chatBlock.live.status) != 'undefined' )  changeObject.liveStatus = chatBlock.live.status;
-                if( typeof(chatBlock.live.type) != 'undefined' )    changeObject.liveType = chatBlock.live.type;
-                if( typeof(chatBlock.live.data) != 'undefined' )    changeObject.liveData = chatBlock.live.data;
-                if( typeof(chatBlock.live.user) != 'undefined' )    changeObject.liveUser = chatBlock.live.user;
+                if( typeof(chatBlock.live.status) 	!= 'undefined' )  changeObject.liveStatus = chatBlock.live.status;
+                if( typeof(chatBlock.live.type) 	!= 'undefined' )    changeObject.liveType = chatBlock.live.type;
+                if( typeof(chatBlock.live.data) 	!= 'undefined' )    changeObject.liveData = chatBlock.live.data;
+                if( typeof(chatBlock.live.uid) 		!= 'undefined' )     changeObject.liveUser = chatBlock.live.uid;
             }
         return changeObject;
     }

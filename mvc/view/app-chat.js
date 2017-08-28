@@ -43,7 +43,7 @@ define([ 'jquery', 'template7','v_app'],function( $, Template7,V_APP){
 		         <div class="timeBotInMessages">{{timeReadText}}</div>
 		      </div>
 		   </div>
-		   <div class="contentTextInFromMeMessage">{{data}}</div>
+		   <div class="contentTextInFromMeMessage">{{content}}</div>
 		</div>
 	`;
 
@@ -57,7 +57,7 @@ define([ 'jquery', 'template7','v_app'],function( $, Template7,V_APP){
 		         <div class="timeBotInMessages">{{timeReadText}}</div>
 		      </div>
 		   </div>
-		   <div class="contentTextInToMeMessage">{{data}}</div>
+		   <div class="contentTextInToMeMessage">{{content}}</div>
 
 		</div>
 	`;
@@ -229,7 +229,7 @@ define([ 'jquery', 'template7','v_app'],function( $, Template7,V_APP){
 
 		*/
 		var el;
-		if ( iNdata.user == iNmyUid )
+		if ( iNdata.uid == iNmyUid )
             el = getMsgFrom(iNdata);
         else 
             el = getMsgTo(iNdata);
