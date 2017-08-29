@@ -1,4 +1,4 @@
-define([ 'jquery', 'template7','v_app'],function( $, Template7,V_APP){
+define([ 'jquery', 'template7', 'v_app', 'jquery.appear'],function( $, Template7, V_APP ) {
 	const _ = {};
 	const CONST = {'name':'base','pageIndex':'index'};
 	const templates = {};
@@ -34,31 +34,45 @@ define([ 'jquery', 'template7','v_app'],function( $, Template7,V_APP){
 		<div class="centerMsgInChatView">{{content}}</div>
 	`;
 	templates['msgFrom'] = `
-		<div class="fromMeMessageInChatView" connect_msg="{{msgId}}">
+		<!--<div class="messagesInChatView fromMeMessageInChatView {{#if note}}noteMessage{{/if}}" connect_msg="{{msgId}}" appear-parent='#leftBlockInViewWindow'>-->
 		   <div class="lineInFromMeMessage">
 		      <div class="lineInBoxInLine">
-		         <div class="topCircleInMessages"></div>
-		         <div class="botCircleInMessages"></div>
-		         <div class="timeTopInMessages">{{timeSentText}}</div>
-		         <div class="timeBotInMessages">{{timeReadText}}</div>
+		         {{#if timeSentText}}
+			         <div class="topCircleInMessages"></div>
+			         <div class="timeTopInMessages">{{timeSentText}}</div>
+		         {{/if}}
+
+		         
+	         	<div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
+	         	<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
+
 		      </div>
 		   </div>
 		   <div class="contentTextInFromMeMessage">{{content}}</div>
-		</div>
+		<!--</div>-->
 	`;
 
 	templates['msgTo'] = `
-		<div class="toMeMessageInChatView" connect_msg="{{msgId}}">
+		<!--<div class="messagesInChatView toMeMessageInChatView {{#if note}}noteMessage{{/if}}" connect_msg="{{msgId}}" appear-parent='#leftBlockInViewWindow'>-->
 		   <div class="lineInToMeMessage">
 		      <div class="lineInBoxInLine">
-		         <div class="topCircleInMessages"></div>
-		         <div class="botCircleInMessages"></div>
-		         <div class="timeTopInMessages">{{timeSentText}}</div>
-		         <div class="timeBotInMessages">{{timeReadText}}</div>
+				 {{#if timeSentText}}
+			         <div class="topCircleInMessages"></div>
+			         <div class="timeTopInMessages">{{timeSentText}}</div>
+		         {{/if}}
+		         
+		         <div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
+	         	<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
+
 		      </div>
 		   </div>
 		   <div class="contentTextInToMeMessage">{{content}}</div>
 
+		<!--</div>-->
+	`;
+	templates['msgBox'] = `
+		<div class="messagesInChatView {{#if fromMe}}fromMeMessageInChatView{{/if}}{{#if toMe}}toMeMessageInChatView{{/if}} {{#if note}}noteMessage{{/if}}" connect_msg="{{msgId}}" appear-parent='#leftBlockInViewWindow'>
+			{{boxContent}}
 		</div>
 	`;
 
@@ -205,10 +219,51 @@ define([ 'jquery', 'template7','v_app'],function( $, Template7,V_APP){
 	_['addUserHeaderInChief'] = addUserHeaderInChief;
 
 	function addMessageToChatPage ( iNdata, iNmyUid, iNchatId ) {
+        var thisIssetLength = getLengthMessages(iNdata, iNmyUid, iNchatId);
+        if(thisIssetLength < 1) {
+        	// create message
+        	createMessageToChatPage ( iNdata, iNmyUid, iNchatId )
+        } else {
+        	replaceMessageToChatPage ( iNdata, iNmyUid, iNchatId );
+        }
+	}
+    _['addMessageToChatPage'] = addMessageToChatPage;
+
+    function getLengthMessages ( iNdata, iNmyUid, iNchatId ) {
+        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+        var fullPath = " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
+        return $( fullPath ).length;
+	}
+    _['getLengthMessages'] = getLengthMessages;
+
+    function createMessageToChatPage ( iNdata, iNmyUid, iNchatId ) {
         var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
         $( iNneedView ).append( getMessage ( iNdata, iNmyUid ) );
 	}
-    _['addMessageToChatPage'] = addMessageToChatPage;
+    _['createMessageToChatPage'] = createMessageToChatPage;
+
+    function replaceMessageToChatPage ( iNdata, iNmyUid, iNchatId ) {
+        console.log('replaceMessageToChatPage start');
+        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+        var fullPath = " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
+        $( fullPath ).replaceWith( getMessage ( iNdata, iNmyUid ) );
+	}
+    _['createMessageToChatPage'] = createMessageToChatPage;
+
+	    function setMessageDeliveryTime (iNchatId,iNmsgId,iNtime) {
+        	var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+        	var thisMessageView = iNneedView + ' .messagesInChatView[connect_msg="'+iNmsgId+'"] .lineInBoxInLine';
+        	$(thisMessageView + ' .botCircleInMessages').show().attr('title',iNtime);
+		}
+    	_['setMessageDeliveryTime'] = setMessageDeliveryTime;
+
+		function setMessageReadTime (iNchatId,iNmsgId,iNtime) {
+        	var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+        	var thisMessageView = iNneedView + ' .messagesInChatView[connect_msg="'+iNmsgId+'"] .lineInBoxInLine';
+        	$(thisMessageView + ' .botCircleInMessages').show();
+        	$(thisMessageView + ' .timeBotInMessages').show().text(iNtime);
+		}
+    	_['setMessageReadTime'] = setMessageReadTime;
 
 	function getMessage (iNdata,iNmyUid) {
 		/*
@@ -228,14 +283,25 @@ define([ 'jquery', 'template7','v_app'],function( $, Template7,V_APP){
 						type		-> string
 
 		*/
-		var el;
-		if ( iNdata.uid == iNmyUid )
-            el = getMsgFrom(iNdata);
-        else 
-            el = getMsgTo(iNdata);
-        return el;
+		var el = {}, result;
+		if ( iNdata.uid == iNmyUid ) {
+
+            iNdata['fromMe'] = 1;
+            iNdata['boxContent'] = getMsgFrom(iNdata);
+		}
+        else {
+            iNdata['toMe'] = 1;
+            iNdata['boxContent'] = getMsgTo(iNdata);
+        }
+        return getMsgBox(iNdata);
 	}
     _['getMessage'] = getMessage;
+
+    	function getMsgBox (iNdata) {
+			var temp = Template7.compile(templates['msgBox']);
+			return temp(iNdata);
+		}
+    	_['getMsgFrom'] = getMsgFrom;
 
 		function getMsgFrom (iNdata) {
 			var temp = Template7.compile(templates['msgFrom']);
@@ -249,6 +315,19 @@ define([ 'jquery', 'template7','v_app'],function( $, Template7,V_APP){
 		}
     	_['getMsgTo'] = getMsgTo;
 
+    		function setObserverForViewInVisualScroll (iNmsgId,iNfunctionSuccess) {
+				console.log('setObserverForViewInVisualScroll ' + iNmsgId);
+    			var selector = '.messagesInChatView[connect_msg="'+iNmsgId+'"]';
+    			$(selector).appear();
+    			$(selector).on('appear', iNfunctionSuccess);
+    		}
+			_['setObserverForViewInVisualScroll'] = setObserverForViewInVisualScroll;
+			function delObserverForViewInVisualScroll (iNmsgId) {
+				console.log('delObserverForViewInVisualScroll ' + iNmsgId);
+    			var selector = '.messagesInChatView[connect_msg="'+iNmsgId+'"]';
+    			$(selector).off('appear');
+    		}
+			_['delObserverForViewInVisualScroll'] = delObserverForViewInVisualScroll;
 	function getApp (iNdata) {
 		var temp = Template7.compile(templates['app']);
 		return temp(iNdata);
@@ -294,6 +373,7 @@ define([ 'jquery', 'template7','v_app'],function( $, Template7,V_APP){
 			var temp = Template7.compile(templates['chatContainer']);
 			return temp(iNdata);
     	}
+
 
 
 

@@ -912,15 +912,22 @@ input,textarea {outline:none;}
 											    top: -0.95rem;
 											    left: -0.75rem;
 											    font-size: 0.7rem;
-
-
+											    opacity: 0.35;
 											}
 											.timeBotInMessages {
 												position: absolute;
 											    bottom: -0.95rem;
 											    left: -0.75rem;
 											    font-size: 0.7rem;
+											    /*opacity: 0.35;*/
 											}
+												.lineInFromMeMessage .lineInBoxInLine .timeBotInMessages{
+    												color: #645889;
+												}
+												.lineInToMeMessage .lineInBoxInLine .timeBotInMessages{
+													color: #1cb5e1;
+												}
+
 									.contentTextInToMeMessage {
 										margin-top: 0.25rem;
 									    display: table;
@@ -942,7 +949,7 @@ input,textarea {outline:none;}
 					    left: 0px;
 					    background: #d9d9d9;
     					z-index: 10;
-    					overflow-x: hidden;
+    					overflow: hidden;
 					}
 				#senderBlockInViewBlock{
 					width: inherit;

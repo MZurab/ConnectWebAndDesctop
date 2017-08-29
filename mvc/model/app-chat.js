@@ -36,6 +36,7 @@ define(['v_app-chat', 'm_app','m_firebase','m_user','m_view','m_moment'],functio
 		            'onAppear' 		: function (d1,d2) {
 		            	console.log('d1,d2',d1,d2);
 		            	pageIndex_openChatByChatId(d1['chatId'],d1['userId']);
+
 		            	// M_APP.view.addContentToChiefApp({'app':name,'page':thisPageName},'<div>#1</div>');
 		            	// M_APP.view.addContentToChiefApp({'app':name,'page':thisPageName},'<div>#2</div>');
 		            	// M_APP.view.addContentToChiefApp({'app':name,'page':thisPageName},'<div>#3</div>');
@@ -59,7 +60,8 @@ define(['v_app-chat', 'm_app','m_firebase','m_user','m_view','m_moment'],functio
 
 		//@required
 		function onInit () {
-			console.log('onInit');
+			console.log('appBase onInit');
+
 		}
 		_['onInit'] = onInit; 
 		
@@ -72,7 +74,7 @@ define(['v_app-chat', 'm_app','m_firebase','m_user','m_view','m_moment'],functio
 				//@required
 				function onAppear () {
 					M_VIEW.closeLoader();
-					console.log('onAppear');
+					console.log('appBase onAppear');
 
 				}
 				_['onAppear'] = onAppear; 
@@ -141,34 +143,152 @@ define(['v_app-chat', 'm_app','m_firebase','m_user','m_view','m_moment'],functio
         }
         VIEW.hideChatContainers();
         VIEW.showChatContainerByChatId(iNchatId);
-		// M_APP.view.effScrollToButtom('#leftBlockInViewWindow',0);
     }
     function getChatDataByChatId (iNchatId) {
+    	var myUID = USER.getMyId();
         var messagesRef = FIREBASE.database().ref('messages/'+iNchatId);
         messagesRef.orderByChild("time").limitToLast(100).on('child_added', function(messagesData) { 
-        	var fullMessage 		   = messagesData.val()
-        	var objectForCreateMessage = fullMessage['info'];
-        	console.log('getChatDataByChatId messagesData.val()',objectForCreateMessage);
-        	objectForCreateMessage['msgId'] = messagesData.key;
+        	var fullData 		   = messagesData.val()
+        	console.log('getChatDataByChatId messagesData.val()',fullData);
+        	var objectForCreateMessage = fullData['info'];
         	console.log('getChatDataByChatId objectForCreateMessage',objectForCreateMessage);
+        	objectForCreateMessage['msgId'] = messagesData.key;
 
+        	
+        	getTimeTextForAllMessages(objectForCreateMessage,fullData,iNchatId,myUID);
 
+    		VIEW.addMessageToChatPage( objectForCreateMessage, myUID, iNchatId  );
+    		// ser observer for income non read message to me
 
-    		if ( typeof objectForCreateMessage.state == 'object' ) {
-    			var states = objectForCreateMessage.state;
-    			if(fullMessage.time > '0') {
-    				objectForCreateMessage.timeSentText = MOMENT().getTimeMiniText(fullMessage.time);
-    				safeCreateCenterDateText ( iNchatId, fullMessage.time );
-    			}
-    			if(states.read > '0')
-    				objectForCreateMessage.timeReadText = MOMENT().getTimeMiniText(states.read);
-    			if(states.delivered > '0')
-    				objectForCreateMessage.timeDeliveredText = MOMENT().getTimeMiniText(states.delivered);
+    		if( objectForCreateMessage['uid'] != myUID &&  objectForCreateMessage['type'] == 1 ) {
+    			// if message to me -> status only sent -> this text message
+    			var toMeMsgStatus = getMyStatusFromMsg(fullData,myUID);
+    			console.log('toMeMsgStatus',toMeMsgStatus);
+    			if( (toMeMsgStatus == 1 || toMeMsgStatus == 2) )
+    				VIEW.setObserverForViewInVisualScroll(objectForCreateMessage['msgId'],function (e) {
+    					console.log('setReadStateForMsg start');
+    					setReadStateForMsg(objectForCreateMessage['msgId'],iNchatId,myUID);
+    					VIEW.delObserverForViewInVisualScroll(objectForCreateMessage['msgId']);
+    				});
     		}
 
-    		VIEW.addMessageToChatPage( objectForCreateMessage, USER.getMyId(), iNchatId  );
+    		
         });
-    }
+        messagesRef.on('child_changed', function(messagesData) { 
+        	var fullData 		   = messagesData.val()
+        	console.log('getChatDataByChatId messagesData.val()',fullData);
+        	var objectForCreateMessage = fullData['info'];
+        	console.log('getChatDataByChatId objectForCreateMessage',objectForCreateMessage);
+        	objectForCreateMessage['msgId'] = messagesData.key;
+
+        	
+        	getTimeTextForAllMessages(objectForCreateMessage,fullData,iNchatId,myUID);
+
+    		VIEW.addMessageToChatPage( objectForCreateMessage, myUID, iNchatId  );
+    		// ser observer for income non read message to me
+
+    		if( objectForCreateMessage['uid'] != myUID &&  objectForCreateMessage['type'] == 1 ) {
+    			// if message to me -> status only sent -> this text message
+    			var toMeMsgStatus = getMyStatusFromMsg(fullData,myUID);
+    			console.log('toMeMsgStatus',toMeMsgStatus);
+    			if( (toMeMsgStatus == 1 || toMeMsgStatus == 2) )
+    				VIEW.setObserverForViewInVisualScroll(objectForCreateMessage['msgId'],function (e) {
+    					console.log('setReadStateForMsg start');
+    					setReadStateForMsg(objectForCreateMessage['msgId'],iNchatId,myUID);
+    					VIEW.delObserverForViewInVisualScroll(objectForCreateMessage['msgId']);
+    				});
+    		}
+
+    		
+        });
+        // if( objectForCreateMessage['uid'] == myUID && objectForCreateMessage['state']['status'] == ) {
+			// var refPath = 'messages/'+iNchatId;
+			// console.log('child_changed refPath',refPath);
+	  //       var messagesChangeMessageStateRef = FIREBASE.database().ref(refPath);
+	  //       messagesChangeMessageStateRef.on('child_changed', function(messagesData,prevChildKey) { 
+		 //    	var fullData 		= messagesData.val();
+		 //    	var thisKey 		= messagesData.key;
+		 //    	var parent 			= messagesData.ref.parent.key;
+		 //    	console.log('child_changed messagesData ',messagesData);
+		 //    	console.log('child_changed fullData ',fullData);
+		 //    	console.log('child_changed thisKey ',thisKey);
+		 //    	console.log('child_changed parent ',parent);
+		 //    	console.log('child_changed prevChildKey',prevChildKey);
+			// });
+    	// }
+        
+    }	
+
+    	function getTimeTextForAllMessages (iNobject,iNfullBlock,iNchatId,iNmyUid) {
+    		if(iNfullBlock.time > '0') {
+				iNobject.timeSentText = MOMENT().getTimeMiniText(iNfullBlock.time);
+				safeCreateCenterDateText ( iNchatId, iNfullBlock.time );
+			}
+    		if( iNobject['uid'] != iNmyUid ) {
+        		// this is message to me
+        		getTimeForToMeMessages(iNobject,iNfullBlock,iNmyUid)
+        	} else {
+        		// this is message from me
+        		getTimeForFromMeMessages (iNobject)
+        	}
+    	} 
+	    	function getTimeForToMeMessages (iNobject,iNfullBlock,iNmyUid) {
+	    		//get status by timestamp read,delivered,sent
+	    		var myState = getMyStateFromMessages(iNfullBlock,iNmyUid);
+	    		if ( typeof myState == 'object' ) {
+	    			var states = myState;
+	    			if(states.read > '0')
+	    				iNobject.timeReadText = MOMENT().getTimeMiniText(states.read);
+	    			if(states.delivered > '0')
+	    				iNobject.timeDeliveredText = MOMENT().getTimeMiniText(states.delivered);
+	    		}
+	    	}
+	    	function getTimeForFromMeMessages (iNobject) {
+	    		//get status by timestamp read,delivered,sent
+	    		if ( typeof iNobject.state == 'object' ) {
+	    			var states = iNobject.state;
+	    			if(states.read > '0')
+	    				iNobject.timeReadText = MOMENT().getTimeMiniText(states.read);
+	    			if(states.delivered > '0')
+	    				iNobject.timeDeliveredText = MOMENT().getTimeMiniText(states.delivered);
+	    		}
+	    	}
+
+
+    	function getFirebaseTimeStamp () {
+    		return FIREBASE.database.ServerValue.TIMESTAMP ;
+    	}
+    	function getMyStatusFromMsg (iNobject,myUID) {
+    		var thisStateObject = getMyStateFromMessages(iNobject,myUID);
+			if (typeof thisStateObject['status'] == 'number')
+				return thisStateObject['status'];
+			console.log('getMyStatusFromMsg false');
+			return 1;
+		}
+		function getMyStateFromMessages (iNobject,myUID) {
+    		if ( typeof iNobject == 'object' )
+    			if ( typeof iNobject['member'] == 'object')
+    				if (typeof iNobject['member'][myUID] == 'object')
+    					if (typeof iNobject['member'][myUID]['state'] == 'object')
+	    						return iNobject['member'][myUID]['state'];
+			return false;
+		}
+    	function setReadStateForMsg (iNmsgId,iNchatId,myUID) {
+    		var key = 'messages/'+iNchatId + '/' +iNmsgId + '/member/'+myUID + '/state';
+    		var updateArray = {};
+    			updateArray[key] = {'read':getFirebaseTimeStamp(),'status':3};
+    			console.log('setReadStateForMsg',updateArray);
+        	FIREBASE.database().ref().update(updateArray);
+		}
+    	function setDeliveredStateForMsg (iNmsgId,myUID) {
+    		var key = 'messages/'+iNchatId + '/' +iNmsgId + '/member/'+myUID + '/state';
+    		var updateArray = {};
+    			updateArray[key] = {'delivery':getFirebaseTimeStamp(),'status':2};
+    			console.log('setDeliveredStateForMsg',updateArray);
+        	FIREBASE.database().ref().update(updateArray);
+    		
+    	}
+
 	function sendMessageToDb (iNdata,iNchatId) {
       /*
 		@discr

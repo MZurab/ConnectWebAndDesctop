@@ -14,10 +14,13 @@ require2.config({
         "sweetalert2"          : "res/js/sweetalert2/sweetalert2",
         "onesignal"            : ["https://cdn.onesignal.com/sdks/OneSignalSDK","res/js/onesignal/OneSignalSDK"],
         "mixitup"              : 'res/js/mixitup/mixitup.min',
+        
         'jquery'               : 'res/js/jquery/jquery',
         "jquery.lettering"     : "res/js/jquery/jquery.lettering",
         "jquery.textillate"    : "res/js/jquery/jquery.textillate",
         'jquery.countdown'     : 'res/js/jquery/jquery.countdown',
+        'jquery.appear'        : 'res/js/jquery/jquery.appear',
+
         'lazyload'             : 'res/js/lazyload/lazyload',
         'rx'                   : 'res/js/rxjs/rx.min',
         'dictionary'           : 'mvc/model/dictionary',
@@ -62,6 +65,10 @@ require2.config({
             'jquery.textillate': {
                 deps: ['jquery'],
                 exports: 'jQuery.fn.textillate'
+            },
+            'jquery.appear' : {
+                deps: ['jquery'],
+                exports: 'jQuery.fn.appear'
             },
         /* >! jquery modules */
 
