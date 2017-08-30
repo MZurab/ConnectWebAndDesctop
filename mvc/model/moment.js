@@ -70,7 +70,7 @@ define(['moment'], function (MOMENT) {
 
 		function getDayNumberByTime (iNtime) {
     		var thisTime = new Date(iNtime);
-			 return Math.round(thisTime.getTime() / (1000*60*60*24));
+			 return Math.floor(thisTime.getTime() / (1000*60*60*24));
 		}
 		MOMENT.prototype['getDayNumberByTime'] = getDayNumberByTime;
 

@@ -785,6 +785,7 @@ input,textarea {outline:none;}
     							margin: 0.25rem;
 								margin-bottom: 5rem;
     							display: table;
+    							width: 99%;
 							}
 
 								.centerMsgInChatView {

@@ -917,7 +917,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 
 		//  audio functions
 		'playSound' : _playSound,
-		'addSource' : addSource,
+			'addSource' : addSource,
 
 
 		//  global resourse

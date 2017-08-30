@@ -218,20 +218,18 @@ define([ 'jquery', 'template7', 'v_app', 'jquery.appear'],function( $, Template7
 	}
 	_['addUserHeaderInChief'] = addUserHeaderInChief;
 
-	function addMessageToChatPage ( iNdata, iNmyUid, iNchatId ) {
+	function safeReplaceMessageToChatPage ( iNdata, iNmyUid, iNchatId ) {
         var thisIssetLength = getLengthMessages(iNdata, iNmyUid, iNchatId);
-        if(thisIssetLength < 1) {
+        if (thisIssetLength > 0) {
         	// create message
-        	createMessageToChatPage ( iNdata, iNmyUid, iNchatId )
-        } else {
         	replaceMessageToChatPage ( iNdata, iNmyUid, iNchatId );
         }
 	}
-    _['addMessageToChatPage'] = addMessageToChatPage;
+    _['safeReplaceMessageToChatPage'] = safeReplaceMessageToChatPage;
 
     function getLengthMessages ( iNdata, iNmyUid, iNchatId ) {
         var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
-        var fullPath = " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
+        var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
         return $( fullPath ).length;
 	}
     _['getLengthMessages'] = getLengthMessages;
@@ -243,27 +241,86 @@ define([ 'jquery', 'template7', 'v_app', 'jquery.appear'],function( $, Template7
     _['createMessageToChatPage'] = createMessageToChatPage;
 
     function replaceMessageToChatPage ( iNdata, iNmyUid, iNchatId ) {
-        console.log('replaceMessageToChatPage start');
         var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
-        var fullPath = " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
-        $( fullPath ).replaceWith( getMessage ( iNdata, iNmyUid ) );
+        var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
+        var content = getMessage ( iNdata, iNmyUid );
+        $( fullPath ).replaceWith( content );
 	}
-    _['createMessageToChatPage'] = createMessageToChatPage;
+    _['replaceMessageToChatPage'] = replaceMessageToChatPage;
 
-	    function setMessageDeliveryTime (iNchatId,iNmsgId,iNtime) {
-        	var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
-        	var thisMessageView = iNneedView + ' .messagesInChatView[connect_msg="'+iNmsgId+'"] .lineInBoxInLine';
-        	$(thisMessageView + ' .botCircleInMessages').show().attr('title',iNtime);
-		}
-    	_['setMessageDeliveryTime'] = setMessageDeliveryTime;
+	 //    function setMessageDeliveryTime (iNchatId,iNmsgId,iNtime) {//UNUSER
+  //       	var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+  //       	var thisMessageView = iNneedView + ' .messagesInChatView[connect_msg="'+iNmsgId+'"] .lineInBoxInLine';
+  //       	$(thisMessageView + ' .botCircleInMessages').show().attr('title',iNtime);
+		// }
+  //   	_['setMessageDeliveryTime'] = setMessageDeliveryTime;
 
-		function setMessageReadTime (iNchatId,iNmsgId,iNtime) {
-        	var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
-        	var thisMessageView = iNneedView + ' .messagesInChatView[connect_msg="'+iNmsgId+'"] .lineInBoxInLine';
-        	$(thisMessageView + ' .botCircleInMessages').show();
-        	$(thisMessageView + ' .timeBotInMessages').show().text(iNtime);
-		}
-    	_['setMessageReadTime'] = setMessageReadTime;
+		// function setMessageReadTime (iNchatId,iNmsgId,iNtime) {//UNUSER
+  //       	var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+  //       	var thisMessageView = iNneedView + ' .messagesInChatView[connect_msg="'+iNmsgId+'"] .lineInBoxInLine';
+  //       	$(thisMessageView + ' .botCircleInMessages').show();
+  //       	$(thisMessageView + ' .timeBotInMessages').show().text(iNtime);
+		// }
+  //   	_['setMessageReadTime'] = setMessageReadTime;
+
+  	function activeAppEvent (iNdata) {
+  		/*
+  			@disct
+  				active acrtions for click events (send button, keyup for flesh msg)
+			@inputs
+				@required
+					iNdata
+						onClickSendMesg -> function
+						onKeyDownPrintingMsg -> function
+
+  		*/
+  		console.log('activeAppEvent iNdata',iNdata);
+  		if ( typeof iNdata['onClickSendMesg'] == 'function') {
+  			// if value is empty
+  			$('#sendButtonInSenderBlock').off();
+
+  			$('#sendButtonInSenderBlock').click(function (e) {
+  				var value =  $('#forTextInputInSenderBlock textarea').val();
+  				if(value == '') return true;
+			    iNdata['onClickSendMesg'](e);
+			    $('#forTextInputInSenderBlock textarea').val('');
+			    effChatViewScrollToBot();
+  			});
+
+  			$("#forTextInputInSenderBlock textarea").keydown( function(e) { 
+			    var code = e.which; // recommended to use e.which, it's normalized across browsers
+			    if (code==13) {
+			    	e.preventDefault();
+			    	$('#sendButtonInSenderBlock').trigger('click');
+			    }
+	  		}).keyup(function (e) {
+	  			var code = e.which; // recommended to use e.which, it's normalized across browsers
+			    if (code==13) {
+			    	e.preventDefault();
+			    } else {
+			    	iNdata['onKeyDownPrintingMsg'](e);
+			    }
+	  		});
+  		}
+  	}
+    _['activeAppEvent'] = activeAppEvent;
+
+    	function effChatViewScrollToBot () {
+			V_APP.effScrollToButtom('#leftBlockInViewWindow',300);
+
+    	}
+    	_['effChatViewScrollToBot'] = effChatViewScrollToBot;
+
+    	function getContentFromMsgSenderBlock () {
+    		return $('#forTextInputInSenderBlock textarea').val()
+    	}
+    	_['getContentFromMsgSenderBlock'] = getContentFromMsgSenderBlock;
+
+    	function getContentLengthFromMsgSenderBlock () {
+    		return $('#forTextInputInSenderBlock textarea').val().length;
+    	}
+    	_['getContentLengthFromMsgSenderBlock'] = getContentLengthFromMsgSenderBlock;
+    
 
 	function getMessage (iNdata,iNmyUid) {
 		/*
