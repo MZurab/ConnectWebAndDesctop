@@ -544,6 +544,23 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
         }
 		_['domChangeChatNameInChatBlock'] = domChangeChatNameInChatBlock;
 
+
+        function domChangeLoginInChatBlock (iNchatId,userLogin) {
+            /*
+                change chatName in ChatBlock by ChatBlockId and chatName
+                1 - chatObject (String)
+                    defined chat object
+                2 - chatName (String)
+                    new user Name
+
+            */
+            var chatObject = getPathToDomElByChatId(iNchatId);
+            console.log('domChangeLoginInChatBlock chatObject',chatObject);
+            console.log('domChangeLoginInChatBlock chatName',userLogin);
+            $(chatObject).attr('cLogin',userLogin);
+        }
+		_['domChangeLoginInChatBlock'] = domChangeLoginInChatBlock;
+
         function domChangeLastMsgTextAndTimeInChatBlock(iNchatId,iNdata){
             /*
                 change last message data in Chat Block

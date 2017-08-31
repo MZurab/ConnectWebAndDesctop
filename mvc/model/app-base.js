@@ -21,12 +21,12 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
             };
             pages[thisPageName]['functions'] = {
               'isPage'  : function () { 
-                let i =  ( M_APP.view.d_checkPageInListApp({app:'base','page':thisPageName}) > 0 ) ? true : false; 
-                console.log('app base page '+thisPageName,'isPage',i);
+                let i =  ( M_APP.view.d_checkPageInListApp({app:'base','page':'index'}) > 0 ) ? true : false; 
+                console.log('app base page "index" '+thisPageName,'isPage',i);
                 return i;
               },
               'onView'  : function (d,d1) { 
-                console.log('app-base page '+thisPageName,'onView',d,d1);
+                console.log('app base page "index" '+thisPageName,'onView',d,d1);
                 M_APP.view.d_hideApps('all','list');
                 M_APP.view.d_showApps('base','list');
                 // V_APP_PAGE.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
@@ -42,14 +42,14 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
                 return true;
               },
               'onAppear'  : function () {
-                console.log('app-base '+thisPageName,'onAppear');
+                console.log('app base page "index" '+thisPageName,'onAppear');
                 M_VIEW.closeLoader(); 
               },
               'onHide'  : function () {console.log('app-base '+thisPageName,'onHide'); return true;},
               // 'setPage' : function () {console.log('app private','setPage'); return true;},
               'onCreate' : function (d,d1) { 
-                console.log('app-base page '+thisPageName,'onCreate',d,d1);
-                M_APP.view.d_createPageInListApp({app:'base','page':thisPageName,'content': '<div class="scrolBlockForChat" style="" id="MixItUp81681F"></div>'}); 
+                console.log('app base page "index" '+thisPageName,'onCreate',d,d1);
+                M_APP.view.d_createPageInListApp({app:'base','page':'index','content': '<div class="scrolBlockForChat" style="" id="MixItUp81681F"></div>'}); 
               },
             };
           //>page index
@@ -527,9 +527,11 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
           console.log('activeUserChangeInChatBlock user2id',user2id);
           var user2Object = usersData.val();
           console.log('activeUserChangeInChatBlock user2Object',user2Object);
-          var user2Phone  = user2Object.info.phone;
+          var chatName    = user2Object.info.data.name;
+          var login       = user2Object.info.data.login;
+          var user2Phone  = user2Object.info.data.phone;
           console.log('activeUserChangeInChatBlock user2Phone',user2Phone);
-          var user2Icon   = user2Object.info.icon;
+          var user2Icon   = user2Object.info.data.icon;
           console.log('activeUserChangeInChatBlock user2Icon',user2Icon);
 
           var chatId = M_CATEGORY.view.getChatIdByUid(user2id);
@@ -538,8 +540,10 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
               {
                   'uuid'      : user2id,
                   'chatId'    : chatId,
-                  'chatName'  : user2Phone,
+                  'chatName'  : chatName,
+                  'userPhone' : user2Phone,
                   'icon'      : user2Icon,
+                  'login'     : login,
               },1//CHANGE IT
           );
 
@@ -555,9 +559,10 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
           var contactBlock    = contactData.val();
           if(contactBlock != null && typeof contactBlock == 'object') {
             console.log('activeContactChangeInChatBlock contactBlock',contactBlock,typeof contactBlock);
-            if( typeof contactBlock != 'object' || contactBlock == null) return false;
             var chatName        = contactBlock.name;
+            var userPhone       = contactBlock.phone;
             var user2id         = contactBlock.uid;
+            if( typeof chatName != 'string' || chatName.length > 0) return false;
             console.log('activeContactChangeInChatBlock chatName',chatName);
             console.log('activeContactChangeInChatBlock user2id',user2id);
           var chatId = M_CATEGORY.view.getChatIdByUid(user2id);
@@ -566,7 +571,8 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
                 {
                     'uuid'      : user2id,
                     'chatId'    : chatId,
-                    'chatName'  : chatName
+                    'chatName'  : chatName,
+                    'userPhone' : userPhone
                 },1//CHANGE IT
             );
         }

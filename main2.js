@@ -33,6 +33,11 @@ require2.config({
             'v_app-page'       : 'mvc/view/app-page',
             'v_app-base'       : 'mvc/view/app-base',
             'v_category'       : 'mvc/view/category',
+
+            'v_call'           : 'mvc/view/call',
+            'v_message'        : 'mvc/view/message',
+            'v_contact'        : 'mvc/view/contact',
+
         /*>! views */
 
          /*<? models */
@@ -43,11 +48,15 @@ require2.config({
             'm_app-base'       : 'mvc/model/app-base',
 
             'm_engine'         : 'mvc/model/engine',
-            'm_category'         : 'mvc/model/category',
+            'm_category'       : 'mvc/model/category',
             'm_firebase'       : 'mvc/model/firebase',
             'm_user'           : 'mvc/model/user',
             'm_routing'        : 'mvc/model/routing',
             'm_moment'         : 'mvc/model/moment',
+
+            'm_call'           : 'mvc/model/call',
+            'm_message'        : 'mvc/model/message',
+            'm_contact'        : 'mvc/model/contact',
 
 
         /*>! models */

@@ -81,13 +81,23 @@ define(['jquery','v_category','m_view','m_app','m_user'], function ( $, V_CATEGO
 	        2 - iNdata
 	            new icon src
 	    */
-
+	    console.log('domChangeChatBlock iNdata',iNdata);
 	    // increase new msg count by $newMsgCount if it isset
 	        if(  typeof(iNdata.newMsgCount) != 'undefined' )	V_CATEGORY.domPlusCountMessages(iNchatId,iNdata.newMsgCount);
 	    // change userName if userName isset
-	        if(  typeof(iNdata.userName) != 'undefined' ) 		V_CATEGORY.domChangeUserNameInChatBlock(iNchatId,iNdata.userName);
+	        if(  typeof(iNdata.chatName) != 'undefined' ) 		
+        		V_CATEGORY.domChangeChatNameInChatBlock(iNchatId,iNdata.chatName); 
+	        else {
+		   		// change userPhone if userName isset
+		        if(  typeof(iNdata.userPhone) != 'undefined' ) 		V_CATEGORY.domChangeChatNameInChatBlock(iNchatId,iNdata.userPhone);
+
+	        }
+
 	    // chat last msg text and last msg time if isset lmsgText
 	        if(  typeof(iNdata.lmsgText) != 'undefined' ) 		V_CATEGORY.domChangeLastMsgTextAndTimeInChatBlock(iNchatId,iNdata);
+
+	    // chat last msg text and last msg time if isset lmsgText
+	        if(  typeof(iNdata.login) != 'undefined' ) 			V_CATEGORY.domChangeLoginInChatBlock(iNchatId,iNdata);
 	    // change icon if it isset
 	        if(  typeof(iNdata.icon) != 'undefined' ) 			V_CATEGORY.domChangeIconInChatBlock(iNchatId,iNdata.icon);
 	    //addVirificateStatusToBlock
