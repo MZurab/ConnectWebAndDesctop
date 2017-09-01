@@ -1,5 +1,5 @@
-define(['jquery','v_category','m_view','m_app','m_user'], function ( $, V_CATEGORY, M_VIEW, M_APP,USER) {
-	const _ = {'view':V_CATEGORY};
+define(['jquery','v_category','m_view','m_app','m_user'], function ( $, VIEW, M_VIEW, M_APP,USER) {
+	const _ = {'view':VIEW};
 
 
 
@@ -49,29 +49,53 @@ define(['jquery','v_category','m_view','m_app','m_user'], function ( $, V_CATEGO
 	                    findChatBlock - for find chatId object
         */
         console.log('safeUpdateChatBlock start');
+        console.log('safeUpdateChatBlock iNdata',iNdata);
         var uuid, chatId=iNdata.chatId,userName;
         var  DomBloc, lmsg_text, lmsg_time, countNewMessages, newMsgBlock, verificate;
 
-        var chatLength = V_CATEGORY.findChatBlock(chatId);
+        var chatLength = VIEW.findChatBlock(chatId);
         console.log('safeUpdateChatBlock chatObject',chatLength);
         if(  chatLength < 1 ) {
         		//CHANGE STATIC PARAMS
-                chatType = 'private';
+                // chatType = 'private';
                 uuid = userForPrivateChat(chatId);
-        		console.log('safeUpdateChatBlock uuid',uuid);
+        		var objForCreateChat = iNdata;
+        			objForCreateChat['userId'] 		= uuid;
+        			objForCreateChat['chatType'] 	= chatType;
 
-                V_CATEGORY.createChatList ( 
-                    {
-                        chatId   : iNdata.chatId,
-                        userId 	 : uuid,
-                        chatType : chatType
-                    } 
-                );
-                V_CATEGORY.setEffectsForChatList(chatId);
+        		console.log('safeUpdateChatBlock createChatList objForCreateChat',objForCreateChat);
+
+                VIEW.createChatList (objForCreateChat);
+                VIEW.setEffectsForChatList(chatId);
+                VIEW.onClickToChatList(objForCreateChat['chatId'],function (iNobj) {
+                	var hrefForOpenApp = 'chatName='+iNobj['chatName']+'&chatId='+iNobj['chatId']+'&chatIcon='+iNobj['chatIcon']+'&userLogin='+iNobj['login']+'&uid='+iNobj['uid'];
+                	console.log('onClickToChatList hrefForOpenApp',hrefForOpenApp);
+	        		M_APP.getGlobalVar('engine').passToApp({'app':'chat','page':'index','user':'Zurab','data': hrefForOpenApp});
+                });
 		} 
         domChangeChatBlock (chatId,iNdata);
     }
     _['safeUpdateChatBlock'] = safeUpdateChatBlock;
+
+    function createPrivateChat () {
+        /*
+           	@inputs
+	           	iNdata
+	                @required
+	                    chatId || uuid 
+	                    userName
+	                    lmsgText
+	                    lmsgTime
+	                @optional
+	                    uuid
+	                    newMsgCount
+	                    chatType (default 1 private)
+					@depends
+	                    findChatBlock - for find chatId object
+        */
+
+    }
+    _['createPrivateChat'] = createPrivateChat;
    
 	function domChangeChatBlock (iNchatId,iNdata) {
 	    /*
@@ -83,34 +107,34 @@ define(['jquery','v_category','m_view','m_app','m_user'], function ( $, V_CATEGO
 	    */
 	    console.log('domChangeChatBlock iNdata',iNdata);
 	    // increase new msg count by $newMsgCount if it isset
-	        if(  typeof(iNdata.newMsgCount) != 'undefined' )	V_CATEGORY.domPlusCountMessages(iNchatId,iNdata.newMsgCount);
+	        if(  typeof(iNdata.newMsgCount) != 'undefined' )	VIEW.domPlusCountMessages(iNchatId,iNdata.newMsgCount);
 	    // change userName if userName isset
 	        if(  typeof(iNdata.chatName) != 'undefined' ) 		
-        		V_CATEGORY.domChangeChatNameInChatBlock(iNchatId,iNdata.chatName); 
+        		VIEW.domChangeChatNameInChatBlock(iNchatId,iNdata.chatName); 
 	        else {
 		   		// change userPhone if userName isset
-		        if(  typeof(iNdata.userPhone) != 'undefined' ) 		V_CATEGORY.domChangeChatNameInChatBlock(iNchatId,iNdata.userPhone);
+		        if(  typeof(iNdata.userPhone) != 'undefined' ) 		VIEW.domChangeChatNameInChatBlock(iNchatId,iNdata.userPhone);
 
 	        }
 
 	    // chat last msg text and last msg time if isset lmsgText
-	        if(  typeof(iNdata.lmsgText) != 'undefined' ) 		V_CATEGORY.domChangeLastMsgTextAndTimeInChatBlock(iNchatId,iNdata);
+	        if(  typeof(iNdata.lmsgText) != 'undefined' ) 		VIEW.domChangeLastMsgTextAndTimeInChatBlock(iNchatId,iNdata);
 
 	    // chat last msg text and last msg time if isset lmsgText
-	        if(  typeof(iNdata.login) != 'undefined' ) 			V_CATEGORY.domChangeLoginInChatBlock(iNchatId,iNdata);
+	        if(  typeof(iNdata.login) != 'undefined' ) 			VIEW.domChangeLoginInChatBlock(iNchatId,iNdata);
 	    // change icon if it isset
-	        if(  typeof(iNdata.icon) != 'undefined' ) 			V_CATEGORY.domChangeIconInChatBlock(iNchatId,iNdata.icon);
+	        if(  typeof(iNdata.icon) != 'undefined' ) 			VIEW.domChangeIconInChatBlock(iNchatId,iNdata.icon);
 	    //addVirificateStatusToBlock
-	        if( typeof(iNdata.verificate) != 'undefined' && iNdata.verificate == 1) V_CATEGORY.domAddVerificateStatusToChatBlock(iNchatId);
+	        if( typeof(iNdata.verificate) != 'undefined' && iNdata.verificate == 1) VIEW.domAddVerificateStatusToChatBlock(iNchatId);
 
 	    if( typeof(iNdata.liveStatus) != 'undefined' &&  typeof(iNdata.liveData) != 'undefined' &&  typeof(iNdata.liveType) != 'undefined' &&  typeof(iNdata.liveUser) != 'undefined' && USER.getMyId() != iNdata.liveUser){
 	        switch(iNdata.liveType) {
 	            case 1: // simple text chat
-	                V_CATEGORY.domLiveSimpleTextAnimation(iNchatId,iNdata);
+	                VIEW.domLiveSimpleTextAnimation(iNchatId,iNdata);
 	            break;
 	        }
 
-	        V_CATEGORY.startEffHideLiveInChatsList(iNchatId);
+	        VIEW.startEffHideLiveInChatsList(iNchatId);
 	    }
 	}
     _['domChangeChatBlock'] = domChangeChatBlock;

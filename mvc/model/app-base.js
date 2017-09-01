@@ -373,17 +373,19 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
 
             M_CATEGORY.userForPrivateChat(objForCreatChat['chatId'],objForCreatChat['userId']);
 
-            M_CATEGORY.view.safeAddChatList(objForCreatChat);
+            // M_CATEGORY.view.safeAddChatList(objForCreatChat);
             // attach link with chat db
-            attachLiveLinkToChatElement(iNchat);
+            safeAttachLiveLinkToChatElement(iNchat, () => {
+              // add category
+              M_CATEGORY.view.addMenuByCategoryList (iNuserData,objForCreatChat['userId']);
+              // dictionary
+              DICTIONARY.start('.menuListForUsers');
+
+            });
             // hide all chat list
             M_CATEGORY.view.effHideChatLists();
             // show this chat list
             M_CATEGORY.view.effShowChatList(iNchat);
-            // add category
-            M_CATEGORY.view.addMenuByCategoryList (iNuserData,objForCreatChat['userId']);
-            // dictionary
-            DICTIONARY.start('.menuListForUsers');
         }
         function getByGetRequest_ChatDataBySafeCreate (iNdata,iNfunction) {
           /*
@@ -449,13 +451,13 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
           var user2     = M_APP.getJsonKey(memberBlock);
           M_CATEGORY.userForPrivateChat(chatId,user2);
                
-          attachLiveLinkToChatElement(chatId);
+          safeAttachLiveLinkToChatElement(chatId);
     });
   }
   _['getMyChats'] = getMyChats;
 
 
-  function attachLiveLinkToChatElement (iNchatId) {
+  function safeAttachLiveLinkToChatElement (iNchatId,iNfunction) {
       // of all link with chat db
       offAllLinkWithChatDbByChatId(iNchatId);
       //check chat list for exist
@@ -463,44 +465,46 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
            chatsRef = FIREBASE.database().ref('chats/' + chatId + '/info');
 
       chatsRef.once ( 'value', function (chatData) {
-            var chatId    = chatData.ref.parent.key,
-                chatBlock = chatData.val(),
-                chatType  = chatBlock.chat.type;
-                console.log('attachLiveLinkToChatElement value chatBlock' , chatBlock);
-                console.log('attachLiveLinkToChatElement value chatId'    , chatId);
-                console.log('attachLiveLinkToChatElement value chatType'  , chatType);
+        var chatId    = chatData.ref.parent.key,
+            chatBlock = chatData.val(),
+            chatType  = chatBlock.chat.type;
+            console.log('safeAttachLiveLinkToChatElement1 value chatBlock' , chatBlock );
+            console.log('safeAttachLiveLinkToChatElement1 value chatId' , chatId );
+            console.log('safeAttachLiveLinkToChatElement1 value chatData' , chatData );
+            console.log('safeAttachLiveLinkToChatElement1 value chatType' , chatType );
 
-            var   changeObject = M_CATEGORY.getObjectForUpdateChatBlock ( chatBlock );
-                  changeObject['chatType']       = chatType;
-                  changeObject['chatId']         = chatId;
-                  changeObject['chatName']       = '';
 
-                console.log('attachLiveLinkToChatElement value changeObject',changeObject);
-
-            // create chat
-              delete changeObject.liveData; // 
-              M_CATEGORY.safeUpdateChatBlock(changeObject);
-            //@< private chat
-              if (chatType == 1) {
-                    activeUserChangeInChatBlock(chatId,chatType);
-              }
-            //@>private chat
+            // var   changeObject = M_CATEGORY.getObjectForUpdateChatBlock ( chatBlock );
+            //       changeObject['chatType']       = chatType;
+            //       changeObject['chatId']         = chatId;
+            //       changeObject['chatName']       = chatName;
+            //       changeObject['login']          = chatLogin;
+            //       changeObject['icon']           = chatIcon;
+        //@< creating chat
+          if (chatType == 1) {
+              //create "private" chat
+              safeUpdatePrivateChatBlockFromUserDb( chatId,chatBlock, chatType ,iNfunction); // changeObject
+          } else if (chatType == 2) {
+              //create "common" chat
+              safeUpdateCommonChatBlockFromUserDb ( chatId, chatBlock, chatType ,iNfunction);
+          }
+        //@> creating chat
       });
-      console.log('attachLiveLinkToChatElement FIREBASE ref child_changed','chats/'+chatId);
+      console.log('safeAttachLiveLinkToChatElement FIREBASE ref child_changed','chats/'+chatId);
       chatsRef.on ( 'child_changed' , function (chatData) {
-          console.log('attachLiveLinkToChatElement child_changed chatData',chatData);
-          var chatId          = chatData.ref.parent.key;
-          var chatKey         = chatData.ref.key;
+          console.log('safeAttachLiveLinkToChatElement child_changed chatData',chatData);
+          var chatId           = chatData.ref.parent.parent.key;
+          var chatKey          = chatData.ref.key;
           var chatDataValue    = chatData.val();
-          console.log('attachLiveLinkToChatElement child_changed chatId',chatId);
-          console.log('attachLiveLinkToChatElement child_changed chatKey',chatKey);
-          console.log('attachLiveLinkToChatElement child_changed chatDataValue',chatDataValue);
+          console.log('safeAttachLiveLinkToChatElement child_changed chatId',chatId);
+          console.log('safeAttachLiveLinkToChatElement child_changed chatKey',chatKey);
+          console.log('safeAttachLiveLinkToChatElement child_changed chatDataValue',chatDataValue);
           var chatObject      = {}; 
             chatObject[chatKey] = chatDataValue;
             var chatBlock     = chatData.val();
             var chatType      = chatBlock.type;
             var changeObject  = M_CATEGORY.getObjectForUpdateChatBlock ( chatObject );
-                  console.log('attachLiveLinkToChatElement child_changed changeObject',changeObject);
+                  console.log('safeAttachLiveLinkToChatElement child_changed changeObject',changeObject);
                   changeObject['chatType'] = chatType;
                   changeObject['chatId']   = chatId;
             // change chat
@@ -509,48 +513,135 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
   }
 
   function offAllLinkWithChatDbByChatId (iNchatId) {
-     // var chatsRef = FIREBASE.database().ref('chats/'+iNchatId);
-     // chatsRef.off('value');
-     // chatsRef.off('child_changed');
-
   }
 
+  function safeUpdateCommonChatBlockFromUserDb (iNchatId,iNobject,iNchatType) {
+    /*
+        @discr
+          create common chat 
+        @inputs
+          iNdata
+              @required
+                  iNchatId
+                  iNobject
+                      chatId || uuid 
+                      userName
+                      lmsgText
+                      lmsgTime
+                    @optional
+                        uuid
+                        newMsgCount
+                        chatType (default 1 private)
+                  iNchatType
+          @depends
+            findChatBlock - for find chatId object
+    */
+    var changeObject = {};
+    var changeObject = M_CATEGORY.getObjectForUpdateChatBlock ( iNobject );
 
-  function activeUserChangeInChatBlock (chatId,iNchatType) {
-      console.log('activeUserChangeInChatBlock chatId', chatId);
-      var user2       = M_CATEGORY.userForPrivateChat(chatId);
+    changeObject['chatType'] = iNchatType;
+    changeObject['chatId']   = iNchatId;
+
+    if ( typeof iNobject != 'object' )          iNobject = {};
+    if ( typeof iNobject['chat'] != 'object' )  iNobject['chat'] = {};
+
+    if ( typeof iNobject['chat']['icon'] == 'string' ) 
+        changeObject['icon'] = iNobject['chat']['icon'] ;
+
+    if ( typeof iNobject['chat']['name'] == 'string' ) 
+        changeObject['chatName'] = iNobject['chat']['name'] ;
+    
+    M_CATEGORY.safeUpdateChatBlock(changeObject);
+  }
+
+  function safeUpdatePrivateChatBlockFromUserDb (iNchatId,iNobject,iNchatType,iNsuccessFunction) {
+      /*
+          @inputs
+            iNdata
+                @required
+                    iNchatId
+                    iNobject from chat firebase db
+                        chatId || uuid 
+                        userName
+                        lmsgText
+                        lmsgTime
+                      @optional
+                          uuid
+                          newMsgCount
+                          chatType (default 1 private)
+                    iNchatType
+            @depends
+              findChatBlock - for find chatId object
+      */
+
+      console.log('safeUpdatePrivateChatBlockFromUserDb iNchatId',iNchatId);
+      console.log('safeUpdatePrivateChatBlockFromUserDb iNchatType',iNchatType);
+      console.log('safeUpdatePrivateChatBlockFromUserDb iNobject',iNobject);
+      console.log('activeUserChangeInChatBlock iNchatId', iNchatId);
+
+      var user2       = M_CATEGORY.userForPrivateChat(iNchatId);
+
       console.log('activeUserChangeInChatBlock ref','users/'+user2);
+
       var usersRef    = firebase.database().ref('users/'+user2);
+
+
+      // objForCreate = {}; // M_CATEGORY.getObjectForUpdateChatBlock ( iNobject );
+      // console.log('safeUpdatePrivateChatBlockFromUserDb objForCreate', objForCreate );
+      // chatType  = iNchatType,
+      // chatLogin = iNobject.data.login,
+      // chatIcon  = iNobject.data.icon,
+      // chatName  = iNobject.data.name,
+          
+      
+      // objForCreate['chatType'] = chatType;
+      // objForCreate['chatId']   = iNchatId;
+      // objForCreate['chatName'] = chatName;
+      // objForCreate['login']    = chatLogin;
+      // objForCreate['icon']     = chatIcon;
+
+
       usersRef.on('value', function(usersData) { 
+          console.log('usersRef on objForCreate,iNchatId', objForCreate,iNchatId);
           // change date if change userDate
-          var user2id     = usersData.key;
-          console.log('activeUserChangeInChatBlock user2id',user2id);
-          var user2Object = usersData.val();
-          console.log('activeUserChangeInChatBlock user2Object',user2Object);
+          var objForCreate  = {};
+          var user2id       = usersData.key;
+          var user2Object   = usersData.val();
+
+          console.log('usersRef on user2id, user2Object, objForCreate', user2id, user2Object, objForCreate);
+          var chatId = iNchatId; // M_CATEGORY.view.getChatIdByUid(user2id);
+          console.log('safeUpdatePrivateChatBlockFromUserDb user2id',user2id);
+          console.log('safeUpdatePrivateChatBlockFromUserDb user2Object',user2Object);
+
           var chatName    = user2Object.info.data.name;
           var login       = user2Object.info.data.login;
           var user2Phone  = user2Object.info.data.phone;
-          console.log('activeUserChangeInChatBlock user2Phone',user2Phone);
           var user2Icon   = user2Object.info.data.icon;
-          console.log('activeUserChangeInChatBlock user2Icon',user2Icon);
+          var userType    = user2Object.info.data.type;
 
-          var chatId = M_CATEGORY.view.getChatIdByUid(user2id);
-          console.log('activeUserChangeInChatBlock chatId',chatId);
-          M_CATEGORY.safeUpdateChatBlock (
-              {
-                  'uuid'      : user2id,
-                  'chatId'    : chatId,
-                  'chatName'  : chatName,
-                  'userPhone' : user2Phone,
-                  'icon'      : user2Icon,
-                  'login'     : login,
-              },1//CHANGE IT
-          );
+          var objForCreateChat = {}; // objForCreate;
+              objForCreateChat['uuid']      = user2id,
+              objForCreateChat['chatId']    = chatId,
+              objForCreateChat['chatName']  = chatName,
+              objForCreateChat['userPhone'] = user2Phone,
+              objForCreateChat['icon']      = user2Icon,
+              objForCreateChat['login']     = login;
+              objForCreateChat['userType']  = userType;
+          console.log('safeUpdatePrivateChatBlockFromUserDb objForCreateChat',objForCreateChat);
 
-          // Ð¿Ñ€Ð¸Ð²ÑÐ·ÐºÐ° Ð½Ð¾Ð¼ÐµÑ€Ð° ÐºÐ¾Ð½Ñ‚Ð°ÐºÑ‚Ð°Ð¼
+
+          delete objForCreateChat.liveData;
+          M_CATEGORY.safeUpdateChatBlock (objForCreateChat,iNchatType);
           activeContactChangeInChatBlock(user2Phone);
+
+          // safe invoke once iNsuccessFunction just one
+          if (typeof iNsuccessFunction == 'function') {
+            iNsuccessFunction();
+            iNsuccessFunction = false;
+          }
       });
   }
+
   function activeContactChangeInChatBlock (user2Phone){
       var myUid       = firebase.auth().currentUser.uid;
       var contactsRef = firebase.database().ref('contacts/' + myUid + '/' + user2Phone);

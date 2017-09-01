@@ -39,10 +39,10 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
     `;
 
     templates['UserList'] = `
-		<div class="mix usersBlockInMenusBlock" connect_uid="{{userId}}" connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}">
+		<div class="mix usersBlockInMenusBlock" connect_uid="{{userId}}" connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" connect_userType='{{userType}}' connect_userLogin='{{login}}'>
 		   <div class="iconBlockInUserBlock">
 		      <div class="iconInUserBlock">
-		      	<img class="lazy" data-original="{{icon_big}}" src="{{icon_mini}}">
+		      	<img class="lazy" data-original="{{icon}}" src="{{icon}}">
 		      </div>
 		      <div class="typeInUserBlock"></div>
 		   </div>
@@ -90,6 +90,32 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
 	vars['pathForEffectsTestPrinting'] 	= '.valueInLiveBlocks .printingAmount';
 	vars['pathForEffectsLastMsg'] 		= '.lastMessageInThirdLine';
 	const output = {}; _['output'] = output;
+
+
+	function onClickToChatList (iNchatId,iNfunction) {
+		var pathToThisChat = getPathToDomElByChatId(iNchatId);
+		console.log('onClickToChatList pathToThisChat', pathToThisChat + ' .iconInUserBlock img, ' + pathToThisChat + ' .userNameInChatList');
+		$(pathToThisChat + ' .iconInUserBlock img, ' + pathToThisChat + ' .userNameInChatList').off();
+		$(pathToThisChat + ' .iconInUserBlock img, ' + pathToThisChat + ' .userNameInChatList').click(function(e) {
+			e.preventDefault();
+			var obj = {};
+			var chatId 		= iNchatId;//$(this).attr('connect_chatid');
+				console.log('onClickToChatList chatId',chatId);
+				obj['chatId'] = chatId;
+				obj['userType'] = $(this).closest('.mix.usersBlockInMenusBlock').attr('connect_userType');;
+				obj['login'] = $(this).closest('.mix.usersBlockInMenusBlock').attr('connect_userLogin');
+				obj['uid'] = $(this).closest('.mix.usersBlockInMenusBlock').attr('connect_uid');;
+				obj['chatIcon'] = getChatIcon(chatId);
+				obj['chatName'] = getChatName(chatId);
+				console.log('onClickToChatList obj',obj);
+				if(typeof iNfunction == 'function')iNfunction(obj);
+
+		});
+	}
+	_['onClickToChatList'] = onClickToChatList;
+
+
+
 
 	function addUserMenuChildN (iNmenu,iNdataBlockN) {
 		console.log('addUserMenuChildN iNmenu',iNmenu);
@@ -379,6 +405,30 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
 			$('.usersBlockInMenusBlock[connect_chatid="'+iNchatId+'"]').show();
 		}
 		_['effShowChatList'] = effShowChatList;
+
+			function getChatIcon (iNchatId) {
+				var pathToIcon = getPathToDomElByChatId(iNchatId) + ' .iconBlockInUserBlock img';
+				return $(pathToIcon).attr('src');
+			}
+			_['getChatIcon'] = getChatIcon;
+
+			function getChatName (iNchatId) {
+				var pathToIcon = getPathToDomElByChatId(iNchatId) + ' .userNameInChatList';
+				return $(pathToIcon).text();
+			}
+			_['getChatName'] = getChatName;
+
+			function getUserLoginFromPrivateChat (iNchatId) {
+				var pathTo = getPathToDomElByChatId(iNchatId);
+				return $(pathToIcon).attr('connect_userLogin');
+			}
+			_['getUserLoginFromPrivateChat'] = getUserLoginFromPrivateChat;
+
+			function getUserTypeFromPrivateChat (iNchatId) {
+				var pathTo = getPathToDomElByChatId(iNchatId);
+				return $(pathToIcon).attr('connect_userType');
+			}
+			_['getUserTypeFromPrivateChat'] = getUserTypeFromPrivateChat;
 
 	//effects
 		function startEffSortChats (iNdata) {
