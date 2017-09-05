@@ -126,18 +126,10 @@
           filterPathToThisClass = $window;
         }
 
-
-
-        
-
         if ( typeof iNoptions['my-filter-parent'] == 'string')
           filterPathToThisClass = $(selector).closest( iNoptions['my-filter-parent'] );
         else if ( typeof iNoptions['my-filter-window'] == 'string')
           filterPathToThisClass = $( iNoptions['my-filter-window'] );
-      }
-      
-      if( !$(filterPathToThisClass).is(":visible") || !$($window ).is(":visible") ) {
-        return false;
       }
 
       if ( $(selector).is(':appeared') ) {
