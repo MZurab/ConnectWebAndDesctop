@@ -7,7 +7,7 @@ define(['jquery', 'template7','v_app', 'jquery.appear'],function( $, Template7, 
 		<div class="centerMsgInChatView">{{content}}</div>
 	`;
 	templates['msgFrom'] = `
-		<!--<div class="messagesInChatView fromMeMessageInChatView {{#if note}}noteMessage{{/if}}" connect_msg="{{msgId}}" appear-parent='#leftBlockInViewWindow'>-->
+		<!--<div class="messagesInChatView fromMeMessageInChatView {{#if note}}noteMessage{{/if}}" connect_msg="{{msgId}}" connect-appear-parent='#leftBlockInViewWindow'>-->
 		   <div class="lineInFromMeMessage">
 		      <div class="lineInBoxInLine">
 		         {{#if timeSentText}}
@@ -26,7 +26,7 @@ define(['jquery', 'template7','v_app', 'jquery.appear'],function( $, Template7, 
 	`;
 
 	templates['msgTo'] = `
-		<!--<div class="messagesInChatView toMeMessageInChatView {{#if note}}noteMessage{{/if}}" connect_msg="{{msgId}}" appear-parent='#leftBlockInViewWindow'>-->
+		<!--<div class="messagesInChatView toMeMessageInChatView {{#if note}}noteMessage{{/if}}" connect_msg="{{msgId}}" connect-appear-scroll-parent='#leftBlockInViewWindow'  connect-appear-my-parent='.ChatViewInAppWindow'>-->
 		   <div class="lineInToMeMessage">
 		      <div class="lineInBoxInLine">
 				 {{#if timeSentText}}
@@ -43,11 +43,62 @@ define(['jquery', 'template7','v_app', 'jquery.appear'],function( $, Template7, 
 
 		<!--</div>-->
 	`;
+
+	//del appearClass
 	templates['msgBox'] = `
-		<div class="messagesInChatView {{#if fromMe}}fromMeMessageInChatView{{/if}}{{#if toMe}}toMeMessageInChatView{{/if}} {{#if note}}noteMessage{{/if}}" connect_msg="{{msgId}}" appear-parent='#leftBlockInViewWindow'>
+		<div id='msgId{{msgId}}' class="messagesInChatView {{#if timeRead}}{{else}}connect-appear{{else}}{{/if}} {{#if fromMe}}fromMeMessageInChatView{{/if}}{{#if toMe}}toMeMessageInChatView{{/if}} {{#if note}}noteMessage{{/if}}"  {{#if timeSent}}time-sent="{{timeSent}}"{{/if}}  {{#if timeRead}}time-read="{{timeRead}}"{{/if}} {{#if timeDelivered}}time-delivered="{{timeDelivered}}"{{/if}}  connect_msg="{{msgId}}" connect-appear-scroll-parent='#leftBlockInViewWindow'  connect-appear-my-parent='.ChatViewInAppWindow'>
 			{{boxContent}}
 		</div>
 	`;
+	//ChatViewInAppWindow connect_chatid
+
+	function getFromMessageAttrChatId (iNel) {
+        // var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+        // var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
+        var r = $(iNel).parent().attr('connect_chatid');
+        return r;
+	}
+	_['getFromMessageAttrChatId'] = getFromMessageAttrChatId;
+
+	function getFromMessageAttrMsgId (iNel) {
+        // var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+        // var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
+        var r = $(iNel).attr('connect_msg');
+        return r;
+	}
+	_['getFromMessageAttrMsgId'] = getFromMessageAttrMsgId;
+
+
+
+	function getFromMessageAttrTimeSent (iNel) {
+		//time-sent
+        // var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+        // var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
+        var r = parseInt($(iNel).attr('time-sent'));
+        if(typeof r != 'number') r = 0;
+        return r;
+	}
+	_['getFromMessageAttrTimeSent'] = getFromMessageAttrTimeSent;
+
+	function getFromMessageAttrTimeRead (iNel) {
+		//time-read
+        // var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+        // var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
+        var r = parseInt($(iNel).attr('time-read'));
+        if(typeof r != 'number') r = 0;
+        return r;
+	}
+	_['getFromMessageAttrTimeRead'] = getFromMessageAttrTimeRead;
+
+	function getFromMessageAttrTimeDelivered (iNel) {
+		//time-delivered
+        // var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+        // var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
+        var r = parseInt($(iNel).attr('time-delivered'));
+        if(typeof r != 'number') r = 0;
+        return r;
+	}
+	_['getFromMessageAttrTimeDelivered'] = getFromMessageAttrTimeDelivered;
 
 	function addCenterSimpleTextToChatPage ( iNdata, iNchatId ) {
         var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
@@ -79,6 +130,30 @@ define(['jquery', 'template7','v_app', 'jquery.appear'],function( $, Template7, 
     _['safeReplaceMessageToChatPage'] = safeReplaceMessageToChatPage;
 
 
+    function getMessagesDomPathByChatId (iNchatId) {
+        return getChatDomPathByChatId(iNchatId) + " .messagesInChatView";
+
+    }
+    _['getMessagesDomPathByChatId'] = getMessagesDomPathByChatId;
+
+    function getMessagesDomObjectByChatId (iNchatId,iNextra) {
+    	var msgPath = getMessagesDomPathByChatId(iNchatId);
+    	if (typeof iNextra == 'string')  msgPath = msgPath + iNextra;
+        return $( msgPath );
+	}
+    _['getMessagesDomObjectByChatId'] = getMessagesDomObjectByChatId;
+
+    function getChatDomPathByChatId (iNchatId) {
+        return "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+
+    }
+    _['getChatDomPathByChatId'] = getChatDomPathByChatId;
+
+    function getChatDomObjectByChatId (iNchatId) {
+        return $( getChatDomPathByChatId(iNchatId) );
+
+    }
+    _['getChatDomObjectByChatId'] = getChatDomObjectByChatId;
 
     function getLengthMessages ( iNdata, iNmyUid, iNchatId ) {
         var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
@@ -114,7 +189,6 @@ define(['jquery', 'template7','v_app', 'jquery.appear'],function( $, Template7, 
 						onKeyDownPrintingMsg -> function
 
   		*/
-  		console.log('activeAppEvent iNdata',iNdata);
   		if ( typeof iNdata['onClickSendMesg'] == 'function') {
   			// if value is empty
   			$('#sendButtonInSenderBlock').off();
@@ -190,42 +264,57 @@ define(['jquery', 'template7','v_app', 'jquery.appear'],function( $, Template7, 
     _['getMessage'] = getMessage;
 
     	function getMsgBox (iNdata) {
-			var temp = Template7.compile(templates['msgBox']);
+			let temp = Template7.compile(templates['msgBox']);
 			return temp(iNdata);
 		}
     	_['getMsgFrom'] = getMsgFrom;
 
 		function getMsgFrom (iNdata) {
-			var temp = Template7.compile(templates['msgFrom']);
+			let temp = Template7.compile(templates['msgFrom']);
 			return temp(iNdata);
 		}
     	_['getMsgFrom'] = getMsgFrom;
 
 		function getMsgTo (iNdata) {
-			var temp = Template7.compile(templates['msgTo']);
+			let temp = Template7.compile(templates['msgTo']);
 			return temp(iNdata);
 		}
     	_['getMsgTo'] = getMsgTo;
 
-    		function setObserverForViewInVisualScroll (iNmsgId,iNfunctionSuccess) {
-				console.log('setObserverForViewInVisualScroll ' + iNmsgId);
-    			var selector = '.messagesInChatView[connect_msg="'+iNmsgId+'"]';
-    			$(selector).appear();
-    			$(selector).on('appear', iNfunctionSuccess);
+
+
+
+
+    		function setObserverForViewInVisualScrollByChatId (iNchatId,iNfunctionSuccess) {
+				let object = getMessagesDomObjectByChatId(iNchatId,'.toMeMessageInChatView');
+
+				object.appearByEach(
+					iNfunctionSuccess,
+					{
+						'scroll-window'		:'#leftBlockInViewWindow',
+						'my-filter-window'	: getChatDomPathByChatId(iNchatId),
+						'checkForAddClass'	: (iNobject) => {
+							return !$(iNobject).attr('time-read');
+						},
+						'checkForRemoveClass'	: (iNobject) => {
+							return $(iNobject).attr('time-read');
+						}
+					}
+				);//'.ChatViewInAppWindow'
+
+
     		}
-			_['setObserverForViewInVisualScroll'] = setObserverForViewInVisualScroll;
-			function delObserverForViewInVisualScroll (iNmsgId) {
-				console.log('delObserverForViewInVisualScroll ' + iNmsgId);
-    			var selector = '.messagesInChatView[connect_msg="'+iNmsgId+'"]';
-    			$(selector).off('appear');
-    		}
-			_['delObserverForViewInVisualScroll'] = delObserverForViewInVisualScroll;
+			_['setObserverForViewInVisualScrollByChatId'] = setObserverForViewInVisualScrollByChatId;
 
 
 
 	//<CHAT VIEW DUPLICATE
 		function effChatViewScrollToBot () {
-			V_APP.effScrollToButtom('#leftBlockInViewWindow',300);
+			clearTimeout(window['connectVarScroll']);
+			window['connectVarScroll'] = setTimeout(function(){
+				V_APP.effScrollToButtom('#leftBlockInViewWindow',0);
+			},100);
+			
 
 		}
 		_['effChatViewScrollToBot'] = effChatViewScrollToBot;

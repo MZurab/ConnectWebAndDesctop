@@ -508,7 +508,7 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
                   changeObject['chatType'] = chatType;
                   changeObject['chatId']   = chatId;
             // change chat
-            M_CATEGORY.safeUpdateChatBlock(changeObject,0);
+            M_CATEGORY.safeUpdateChatBlock(changeObject,chatType);
       });
   }
 

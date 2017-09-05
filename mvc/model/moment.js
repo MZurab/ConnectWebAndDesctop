@@ -1,5 +1,4 @@
 define(['moment'], function (MOMENT) {
-	console.log('MOMENT',MOMENT);
 	MOMENT.locale(getLocale());
 
 	function getLocale () {
@@ -93,10 +92,5 @@ define(['moment'], function (MOMENT) {
 		return MOMENT.now();
 	}
 	MOMENT.prototype['getNowTime'] = getNowTime;
-
-	console.log('getLightTime()',getLightTime(getNowTime()) ) ;
-	console.log('getWeekDayText()',getWeekDayText(getNowTime()) ) ;
-	console.log('getFullText()',getFullText(getNowTime()) ) ;
-	console.log('getNowTime from moment',MOMENT().getNowTime());
 	return MOMENT;	
 });

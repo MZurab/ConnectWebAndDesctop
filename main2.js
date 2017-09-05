@@ -11,8 +11,9 @@ require2.config({
     	'firebase'             : ['https://www.gstatic.com/firebasejs/4.2.0/firebase','res/js/firebase/firebase'],
         'template7'            : 'res/js/template7/template7',
         "yametrika"            : ["//mc.yandex.ru/metrika/watch","res/js/analytics/yandex/metrika"],
+        // A BEAUTIFUL, RESPONSIVE, CUSTOMIZABLE, ACCESSIBLE (WAI-ARIA) REPLACEMENT FOR JAVASCRIPT'S POPUP BOXES
         "sweetalert2"          : "res/js/sweetalert2/sweetalert2",
-        "onesignal"            : ["https://cdn.onesignal.com/sdks/OneSignalSDK","res/js/onesignal/OneSignalSDK"],
+        // A high-performance, dependency-free library for animated filtering, sorting, insertion, removal and more
         "mixitup"              : 'res/js/mixitup/mixitup.min',
         
         'jquery'               : 'res/js/jquery/jquery',
@@ -23,8 +24,10 @@ require2.config({
 
         'lazyload'             : 'res/js/lazyload/lazyload',
         'rx'                   : 'res/js/rxjs/rx.min',
-        'dictionary'           : 'mvc/model/dictionary',
+        // Parse, validate, manipulate, and display dates and times in JavaScript.
         'moment'               : 'res/js/moment/moment',
+        // A platform detection library
+        'platform'             : 'res/js/platform/platform',
 
         /*<? views */
             'v_view'           : 'mvc/view/view',
@@ -37,6 +40,7 @@ require2.config({
             'v_call'           : 'mvc/view/call',
             'v_message'        : 'mvc/view/message',
             'v_contact'        : 'mvc/view/contact',
+            'v_push'           : 'mvc/view/push',
 
         /*>! views */
 
@@ -49,14 +53,16 @@ require2.config({
 
             'm_engine'         : 'mvc/model/engine',
             'm_category'       : 'mvc/model/category',
-            'm_firebase'       : 'mvc/model/firebase',
+            'm_firebase'       : 'mvc/model/firebase', // https://ramman.net/res/
             'm_user'           : 'mvc/model/user',
             'm_routing'        : 'mvc/model/routing',
             'm_moment'         : 'mvc/model/moment',
+            'dictionary'       : 'mvc/model/dictionary',
 
             'm_call'           : 'mvc/model/call',
             'm_message'        : 'mvc/model/message',
             'm_contact'        : 'mvc/model/contact',
+            'm_push'           : 'mvc/model/push',
 
 
         /*>! models */
@@ -116,13 +122,14 @@ require2.config({
 // window['ConnectDeviseType'] = '@browser';
 window['ConnectDeviseType'] = '@desktop';
 
-require2(['jquery','template7','m_view','dictionary','m_engine','m_routing','m_app'], function($, Template7,m_view,Dictionary,m_engine,ROUTING,M_APP) {
+require2(['jquery','template7','m_view','dictionary','m_engine','m_routing','m_app','m_push'], function($, Template7,m_view,Dictionary,m_engine,ROUTING,M_APP,PUSH) {
     $(function() {
         console.log('start!');
         m_engine.init();
+        PUSH.getPermission ( PUSH.getToken( ()=>console.log('PUSH.getToken') ) );
         Dictionary.autoChange(function () {
             // m_engine.prepareUrl({'app':'base','page':'index','user':'zurab','data':'data'});
-            m_engine.prepareUrl({'app':'page','page':'fullWindow','user':'zurab','data':'data'});
+            m_engine.prepareUrl({'app':'page','page':'fullWindow','user':'','data':'data'});
             // m_engine.prepareUrl({'app':'page','page':'miniPage','user':'zurab','data':'data'});
             
             m_engine.startUrl();

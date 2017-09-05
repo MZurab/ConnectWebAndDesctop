@@ -1,4 +1,4 @@
-define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.lettering'], function(M_APP,V_VIEW,$,mixitup) {//'m_view','m_app'
+define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.lettering'], function( M_APP, V_VIEW, $, mixitup ) {//'m_view','m_app'
 	const _ = {};
 	const templates = {}; _['templates'] = templates;
 	templates['UserMenuChildN'] = `
@@ -99,12 +99,12 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
 		$(pathToThisChat + ' .iconInUserBlock img, ' + pathToThisChat + ' .userNameInChatList').click(function(e) {
 			e.preventDefault();
 			var obj = {};
-			var chatId 		= iNchatId;//$(this).attr('connect_chatid');
+			let chatId 		= iNchatId;//$(this).attr('connect_chatid');
 				console.log('onClickToChatList chatId',chatId);
-				obj['chatId'] = chatId;
+				obj['chatId'] 	= chatId;
 				obj['userType'] = $(this).closest('.mix.usersBlockInMenusBlock').attr('connect_userType');;
-				obj['login'] = $(this).closest('.mix.usersBlockInMenusBlock').attr('connect_userLogin');
-				obj['uid'] = $(this).closest('.mix.usersBlockInMenusBlock').attr('connect_uid');;
+				obj['login'] 	= $(this).closest('.mix.usersBlockInMenusBlock').attr('connect_userLogin');
+				obj['uid'] 		= $(this).closest('.mix.usersBlockInMenusBlock').attr('connect_uid');;
 				obj['chatIcon'] = getChatIcon(chatId);
 				obj['chatName'] = getChatName(chatId);
 				console.log('onClickToChatList obj',obj);
@@ -653,9 +653,15 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
             */
             var chatObject = getPathToDomElByChatId(iNchatId);
             var currentValue = $(chatObject + ' .printingAmount .current').text();
+            console.log('domLiveSimpleTextAnimation currentValue',currentValue);
+            console.log('domLiveSimpleTextAnimation iNchatId',iNchatId);
+            console.log('domLiveSimpleTextAnimation iNdata',iNdata);
+            console.log('domLiveSimpleTextAnimation chatObject',chatObject);
             if(currentValue != iNdata.liveData){
-                if(iNdata.liveStatus == 1){
+                if(iNdata.liveType == 1){
                     // 
+
+            		console.log('domLiveSimpleTextAnimation chatObject',chatObject);
                     $(chatObject + ' .liveStatusTextBlock').show();
                     $(chatObject + ' .liveStatusTextWriting').show();
                 }else{

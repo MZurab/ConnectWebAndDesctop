@@ -39,6 +39,7 @@ define(['v_app-chat', 'm_app','m_view','m_message'],function( VIEW, M_APP, M_VIE
 		            },
 		            'onAppear' 		: function (d1,d2) {
 		            	console.log('d1,d2',d1,d2);
+		            	// M_MESSAGE.view.startAppearObserver();
 		            	pageIndex_openChatByChatId(d1);
 
 		            	// M_APP.view.addContentToChiefApp({'app':name,'page':thisPageName},'<div>#1</div>');
@@ -164,14 +165,20 @@ define(['v_app-chat', 'm_app','m_view','m_message'],function( VIEW, M_APP, M_VIE
         // chatId, userId, userName, userIcon, userLogin, online, servise
         VIEW.addUserHeaderInChief({'name': chatName,'icon': chatIcon,'login':login,'online':stateOnline,'servise':servise});
 
+        console.log('VIEW.getCountsOfChatContainers(chatId)', VIEW.getCountsOfChatContainers(chatId));
+
+
+		M_MESSAGE.setLastMsgTimeByChatId(chatId,0);
         if ( VIEW.getCountsOfChatContainers(chatId) == 0 ) {
             // need chat isset open it
+        	// console.log('M_MESSAGE.synchronizeWithMessageDb(chatId)', M_MESSAGE.synchronizeWithMessageDb(chatId));
             VIEW.createChatContainer(chatId);
         	M_MESSAGE.synchronizeWithMessageDb(chatId);
         }
         VIEW.hideChatContainers();
         VIEW.showChatContainerByChatId(chatId);
         VIEW.effChatViewScrollToBot();
+        // M_MESSAGE.setObserverForAppearMessageInVisualScrollByChatId(chatId);
     }
 
     

@@ -127,9 +127,16 @@ define(['jquery','v_category','m_view','m_app','m_user'], function ( $, VIEW, M_
 	    //addVirificateStatusToBlock
 	        if( typeof(iNdata.verificate) != 'undefined' && iNdata.verificate == 1) VIEW.domAddVerificateStatusToChatBlock(iNchatId);
 
-	    if( typeof(iNdata.liveStatus) != 'undefined' &&  typeof(iNdata.liveData) != 'undefined' &&  typeof(iNdata.liveType) != 'undefined' &&  typeof(iNdata.liveUser) != 'undefined' && USER.getMyId() != iNdata.liveUser){
+        console.log('domChangeChatBlock USER.getMyId()',USER.getMyId());
+        console.log('domChangeChatBlock iNdata.liveUser',  iNdata.liveUser );
+        console.log('domChangeChatBlock iNdata.liveType', iNdata.liveType );
+        console.log('domChangeChatBlock iNdata.liveData', iNdata.liveData );
+	    if( typeof(iNdata.liveData) != 'undefined' &&  typeof(iNdata.liveType) != 'undefined' &&  typeof(iNdata.liveUser) != 'undefined' && USER.getMyId() != iNdata.liveUser) {
+	        	console.log('domChangeChatBlock start switch');
 	        switch(iNdata.liveType) {
 	            case 1: // simple text chat
+
+	        	console.log('domChangeChatBlock start switch case 1');
 	                VIEW.domLiveSimpleTextAnimation(iNchatId,iNdata);
 	            break;
 	        }

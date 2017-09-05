@@ -2,17 +2,31 @@ define(['jquery','v_message','m_firebase','m_moment','m_user','m_app'],function(
 	const _ = {'view':VIEW};
 	const CONST = {};
 
+		// function getGlobalVarFirstChatOpen (iNchatId) {
+		// 	return M_APP.get('connectLoadedChat'+iNchatId);
 
+		// }
+		// function setGlobalVarFirstChatOpen (iNchatId,iNvalue) {
+		// 	M_APP.save('connectLoadedChat'+iNchatId,iNvalue);
+		// }
 
 	 	function synchronizeWithMessageDb (iNchatId) {
 			startChildFromMessages(iNchatId,'child_added');
-			setTimeout(function(){
-				startChildFromMessages(iNchatId,'child_changed');
-			},500); 
+
+			setTimeout (
+				() => {
+					let chatId = iNchatId;
+					startChildFromMessages(chatId,'child_changed');
+				},
+				5000
+			); 
 	    }
 	    _['synchronizeWithMessageDb'] = synchronizeWithMessageDb;
 
 		    function startChildFromMessages (iNchatId,iNtype) {
+
+		    	// setGlobalVarFirstChatOpen(iNchatId,'0');
+
 		        var messagesRef = FIREBASE.database().ref('messages/'+iNchatId);
 		        messagesRef.orderByChild("time").limitToLast(100).on(iNtype, function(messagesData) { 
 		        	callbackAddOrChangeMessageFromFirebase(messagesData,iNchatId,iNtype);
@@ -25,38 +39,58 @@ define(['jquery','v_message','m_firebase','m_moment','m_user','m_app'],function(
 			    	var objectForCreateMessage = fullData['info'];
 			    	objectForCreateMessage['msgId'] = messagesData.key;
 
+			    	// if(typeof())
 			    	
 			    	getTimeTextForAllMessages(objectForCreateMessage,fullData,iNchatId,myUID);
-
 			    	if(iNtype == 'child_changed') {
 			    		// replace message in chat container
 						VIEW.safeReplaceMessageToChatPage( objectForCreateMessage, myUID, iNchatId  );
 
 			    	} else {
+			    		safeCreateCenterMessageByPassedTime(objectForCreateMessage,fullData,iNchatId,myUID);
+			    		
+			    		if ( objectForCreateMessage['uid'] != myUID &&  objectForCreateMessage['type'] == 1 ) {
+			    			let myStateRead = getMyStateReadFromMsg(fullData,myUID);
+			    			if( myStateRead  == 0 ) {
+			    				objectForCreateMessage['appearClass'] = true;
+			    			}
+			    		}
+
 						VIEW.createMessageToChatPage( objectForCreateMessage, myUID, iNchatId  );
+
+						VIEW.effChatViewScrollToBot();
+						setObserverForAppearMessageInVisualScrollByChatId (iNchatId);
 					}
 					// ser observer for income non read message to me
-
-					if( iNtype != 'child_changed' && objectForCreateMessage['uid'] != myUID &&  objectForCreateMessage['type'] == 1 ) {
-						// if message to me -> status only sent -> this text message
-						var myStateRead = getMyStateReadFromMsg(fullData,myUID);
-						// var myStateDelivered = getMyStateDeliveredFromMsg(fullData,myUID);
-						console.log('myStateRead',myStateRead);
-						if( (myStateRead  == 0) ) {
-							VIEW.setObserverForViewInVisualScroll(objectForCreateMessage['msgId'],function (e) {
-								console.log('myStateRead setReadStateForMsg',objectForCreateMessage['msgId'],iNchatId,myUID);
-								setReadStateForMsg(objectForCreateMessage['msgId'],iNchatId,myUID);
-								VIEW.delObserverForViewInVisualScroll(objectForCreateMessage['msgId']);
-							});
-							$.force_appear();
-						}
-					}
 			    }
 
-    	function getTimeTextForAllMessages (iNobject,iNfullBlock,iNchatId,iNmyUid) {
+	    function setObserverForAppearMessageInVisualScrollByChatId (iNchatId) {
+	    	let thisSuccessFunction = (iNel) => {
+    			let element = iNel;
+    			const chatId 	= iNchatId;
+	    		//таймер что бы успело создаться в сообщении counter блок
+	    		setTimeout ( () => {
+	    			let thisElement = element;
+			    	var myUID = USER.getMyId();
+		    		let msgId = VIEW.getFromMessageAttrMsgId(thisElement);
+					setReadStateForMsg(msgId,chatId,myUID);
+	    		}, 1200 );
+			};
+			VIEW.setObserverForViewInVisualScrollByChatId(iNchatId,thisSuccessFunction)
+	    }
+	    _['setObserverForAppearMessageInVisualScrollByChatId'] = setObserverForAppearMessageInVisualScrollByChatId;
+
+	    function safeCreateCenterMessageByPassedTime (iNobject,iNfullBlock,iNchatId,iNmyUid) {
     		if(iNfullBlock.time > 0) {
-				iNobject.timeSentText = MOMENT().getTimeMiniText(iNfullBlock.time);
 				safeCreateCenterDateText ( iNchatId, iNfullBlock.time );
+			}
+
+	    }
+    	function getTimeTextForAllMessages (iNobject,iNfullBlock,iNchatId,iNmyUid) {
+
+    		if(iNfullBlock.time > 0) {
+				iNobject.timeSentText 	= MOMENT().getTimeMiniText(iNfullBlock.time);
+				iNobject.timeSent 		= iNfullBlock.time;
 			}
     		if( iNobject['uid'] != iNmyUid ) {
         		// this is message to me
@@ -71,12 +105,19 @@ define(['jquery','v_message','m_firebase','m_moment','m_user','m_app'],function(
 	    		var myState = getMyStateFromMessages(iNfullBlock,iNmyUid);
 	    		if ( typeof myState == 'object' ) {
 	    			var states = myState;
-	    			if(states.read > 0)
+	    			if(states.read > 0) {
 	    				iNobject.timeReadText = MOMENT().getTimeMiniText(states.read);
-	    			if(states.delivered > 0)
+	    				iNobject.timeRead 	  = states.read;
+	    			}
+	    			if(states.delivered > 0) {
 	    				iNobject.timeDeliveredText = MOMENT().getTimeMiniText(states.delivered);
-	    			else {
-	    				setDeliveredStateForMsg(iNobject['msgId'],iNchatId,iNmyUid);
+	    				iNobject.timeDelivered = states.delivered;
+	    			 } else {
+	    			 	setTimeout(  () =>  {
+	    			 		let thisObj = iNobject;
+	    			 		// delay for stock
+	    					setDeliveredStateForMsg(thisObj['msgId'],iNchatId,iNmyUid);
+						},1000);
 	    			}
 	    		}
 	    	}
@@ -84,10 +125,14 @@ define(['jquery','v_message','m_firebase','m_moment','m_user','m_app'],function(
 	    		//get status by timestamp read,delivered,sent
 	    		if ( typeof iNobject.state == 'object' ) {
 	    			var states = iNobject.state;
-	    			if(states.read > 0)
+	    			if(states.read > 0) {
 	    				iNobject.timeReadText = MOMENT().getTimeMiniText(states.read);
-	    			if(states.delivered > 0)
+	    				iNobject.timeRead 	  = states.read;
+	    			}
+	    			if(states.delivered > 0) {
 	    				iNobject.timeDeliveredText = MOMENT().getTimeMiniText(states.delivered);
+	    				iNobject.timeDelivered = states.delivered;
+	    			}
 	    		}
 	    	}
 
@@ -99,21 +144,18 @@ define(['jquery','v_message','m_firebase','m_moment','m_user','m_app'],function(
     		var thisStateObject = getMyStateFromMessages(iNobject,myUID);
 			if (typeof thisStateObject['status'] == 'number')
 				return thisStateObject['status'];
-			console.log('getMySateStatusFromMsg false');
 			return 0;
 		}
 		function getMyStateReadFromMsg (iNobject,myUID) {
     		var thisStateObject = getMyStateFromMessages(iNobject,myUID);
 			if (typeof thisStateObject['read'] == 'number')
 				return thisStateObject['read'];
-			console.log('getMyStateReadFromMsg false');
 			return 0;
 		}
 		function getMyStateDeliveredFromMsg (iNobject,myUID) {
     		var thisStateObject = getMyStateFromMessages(iNobject,myUID);
 			if (typeof thisStateObject['delivered'] == 'number')
 				return thisStateObject['delivered'];
-			console.log('getMyStateDeliveredFromMsg false');
 			return 0;
 		}
 		function getMyStateFromMessages (iNobject,myUID) {
@@ -143,7 +185,6 @@ define(['jquery','v_message','m_firebase','m_moment','m_user','m_app'],function(
 
     		var updateArray = {};
     			updateArray[baseKey] = objForSendToDb;
-    		console.log('startSendingFlashMsg updateArray',updateArray);
         	FIREBASE.database().ref().update(updateArray);
 		}
 		_['startSendingFlashMsg'] = startSendingFlashMsg;
@@ -155,8 +196,7 @@ define(['jquery','v_message','m_firebase','m_moment','m_user','m_app'],function(
 
     		var updateArray = {};
     			updateArray[keyRead] = getFirebaseTimeStamp();;
-    			console.log('setReadStateForMsg',updateArray);
-        	FIREBASE.database().ref().update(updateArray);
+        	var result = FIREBASE.database().ref().update(updateArray);
 		}
 
     	function setDeliveredStateForMsg (iNmsgId,iNchatId,myUID) {
@@ -166,8 +206,7 @@ define(['jquery','v_message','m_firebase','m_moment','m_user','m_app'],function(
 
     		var updateArray = {};
     			updateArray[keyDelivered] = getFirebaseTimeStamp();
-    			console.log('setDeliveredStateForMsg',updateArray);
-        	FIREBASE.database().ref().update(updateArray);
+        	var result = FIREBASE.database().ref().update(updateArray);
     	}
 
 	function sendMessageToDb (iNdata,iNchatId) {
@@ -274,14 +313,7 @@ define(['jquery','v_message','m_firebase','m_moment','m_user','m_app'],function(
 		var lastMsgTime 	= parseInt(lastMsgTimeText);
 		var isThisDay		= MOMENT().isThisDay(iNtime);
 		var nowTime			= MOMENT().getNowTime();
-		console.log('<<<<safeCreateCenterDateText START>>>>');
-		console.log('safeCreateCenterDateText input',iNchatId,iNtime);
-		console.log('safeCreateCenterDateText lastMsgTime',lastMsgTime);
-		console.log('safeCreateCenterDateText isThisDay',isThisDay);
-		console.log('safeCreateCenterDateText nowTime',nowTime);
-		console.log('safeCreateCenterDateText MOMENT().getDayNumberByTime(lastMsgTime)',MOMENT().getDayNumberByTime(lastMsgTime));
-		console.log('safeCreateCenterDateText MOMENT().getDayNumberByTime(iNtime)', MOMENT().getDayNumberByTime(iNtime));
-		if( !lastMsgTimeText || ( MOMENT().getDayNumberByTime(lastMsgTime) != MOMENT().getDayNumberByTime(iNtime)  ) ) {
+		if( (typeof lastMsgTime != 'number' || lastMsgTime < 1) || ( MOMENT().getDayNumberByTime(lastMsgTime) != MOMENT().getDayNumberByTime(iNtime)  ) ) {
 			// if first && if is not this day || or new date && if is not this day 
 			setLastMsgTimeByChatId(iNchatId,iNtime);
 			var objForChat = {};
@@ -300,16 +332,18 @@ define(['jquery','v_message','m_firebase','m_moment','m_user','m_app'],function(
 	function setLastMsgTimeByChatId (iNchatId,iNtime) {
             return M_APP.save('connectLastMsgChatId_'+iNchatId,iNtime);
     }
+    _['setLastMsgTimeByChatId'] = setLastMsgTimeByChatId;
+
+
     function getLastMsgTimeByChatId (iNchatId) {
         return M_APP.get('connectLastMsgChatId_'+iNchatId);
     }
+    // _['getLastMsgTimeByChatId'] = getLastMsgTimeByChatId;
 
 	//onClick events
 		onClickSendMesg = function (e) {
 			var chatId = getCurrentChatId();
 			var data = {'content':VIEW.getContentFromMsgSenderBlock()};
-			console.log('onClickSendMesg chatId',chatId);
-			console.log('onClickSendMesg data',data);
 			M_APP.playSound('https://cdn.ramman.net/audio/effects/sendMessage.mp3');//CHANGE do Const
 			sendMessageToDb (data,chatId);
 		}
