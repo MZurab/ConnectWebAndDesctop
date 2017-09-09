@@ -250,8 +250,6 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
     	var selector = '#viewAndChatBlockInViewBlock .viewesInWindow.app[app-name="'+iNdata['app']+'"] .view[view-name="'+ iNdata['page']+ '"]';
     	if (typeof iNdata['type'] != 'string') iNdata['type']='begin';
     	V_VIEW.d_addDataToViewEl(selector, iNcontent,iNdata['type']);
-    	console.log('addContentToChiefApp selector',selector);
-    	console.log('addContentToChiefApp type',iNdata['type']);
     }
 
     function _d_createListApp (iNdata) {
@@ -275,7 +273,6 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 			@return
 				int : 0 - false, 0< true
 		*/
-		console.log('createListApp start');
 		var selector = '.usersBlockContainerInMenusBlock'; 
 		if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
 		getAttrAndClassForAppAndPage(iNdata);
@@ -330,10 +327,8 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 					object: Template7
 			*/
 
-			console.log('createPageForChiefApp start');
 			getAttrAndClassForAppAndPage(iNdata);
 			var temp = Template7.compile(templates['pageForAppInView']);
-			console.log('attr _getPageForChiefApp temp(iNdata)',temp(iNdata));
 			return temp(iNdata);
 		}
 			function getAttrAndClassForAppAndPage (iNdata) {
@@ -356,7 +351,6 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 					@return 
 						void [result = to iNdata right date]
 				*/
-				console.log('attr getAttrAndClassForAppAndPage iNdata start',iNdata);
 				var attrString = '',classString = '', attrArray = iNdata['attr'],thisValue;
 				if( typeof(iNdata['attr']) == 'object' ) {
 					for (var iKey in attrArray ) {
@@ -372,7 +366,6 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 					}
 				}
 				iNdata['class'] = classString; iNdata['attr'] = attrString;
-				console.log('attr getAttrAndClassForAppAndPage iNdata finish',iNdata);
 			}
 		function _d_updatePageInChiefApp (iNdata) {
         	/*
@@ -498,7 +491,6 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 				@return
 					int : 0 - false, 0< true
 			*/
-			console.log('createChiefApp start');
 			var selector = CONST['pathAppView']; 
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
         	V_VIEW.d_addDataToViewEl(selector, _getChiefApp(iNdata) ,'change')
@@ -867,7 +859,6 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 				if( typeof iNtype != 'string' ) iNtype = 'end';
 				_d_safeAddAppMenuHeader(iNdata,iNtype);
 				//view this menu 
-				console.log('_d_viewMenuPageHeader iNdata',iNdata);
 				_d_viewMenuPageHeader(iNdata);
 			}
 			function _d_safeAddAppMenuHeader (iNdata,iNtype) {
@@ -883,14 +874,11 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 						iNtype -> string 
 							in [end,begin, after, before, change]
 				*/
-				console.log('_d_safeAddAppMenuHeader iNdata',iNdata);
 				if( typeof iNtype != 'string' ) iNtype = 'end';
 				if( _d_getLengthMenuHeader ({'app':iNdata['app']}) < 1 ) {
 					// check app container
-					console.log('_d_safeAddAppMenuHeader invokes _d_addAppMenuHeaderByTemplate');
 					_d_addAppMenuHeaderByTemplate(iNdata,iNtype);
 				} else if ( typeof iNdata['page'] == 'string' && _d_getLengthMenuHeader(iNdata) < 1 ) {
-					console.log('_d_safeAddAppMenuHeader invokes _d_addPageMenuHeaderByTemplate');
 					_d_addPageMenuHeaderByTemplate( iNdata,iNtype);
 				}
 			}
@@ -920,7 +908,6 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
         					@optional
 	        					page
 	        	*/
-				console.log('_d_getLengthMenuHeader iNdata',iNdata);
 	        	var selector = CONST['pathMenuHeader'] + ' .' + CONST['nameInMenuHeader'] + '[app-name="'+iNdata['app']+'"]';
 	        	if ( typeof iNdata['page'] == 'string' )
 	        		selector += '.' + CONST['pageNameInMenuHeader'] + '[page-name="'+ iNdata['page'] +'"]';
@@ -955,7 +942,6 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 	    				iNtype -> string
 	    					in [end,begin, after, before, change]
 	        	*/
-				console.log('_d_addAppMenuHeaderByTemplate iNdata',iNdata);
 				if( typeof iNtype != 'string' ) iNtype = 'end';
 	        	var selector = CONST['pathMenuHeader'],
 	        		content = _getAppMenuHeader(iNdata);

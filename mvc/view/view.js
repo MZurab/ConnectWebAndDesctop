@@ -3,16 +3,13 @@ define(['jquery','template7'], function ($,Template7) {
 	function _d_showLoader (iNid) {
 		if(typeof(iNid) != 'string') iNid = 'body';
 
-		console.log('_d_showLoader .rcontent_loader',iNid);
 		_d_closeLoader(iNid);
 		$(iNid).append(_v_html_loader);
 	}
 
 	function _d_closeLoader(iNid) {
 		if(typeof(iNid) != 'string') iNid = 'body';
-		console.log('_d_closeLoader .rcontent_loader',iNid);
 		$(iNid + ' .rcontent_loader').remove();
-		console.log(iNid + ' .rcontent_loader hide');
 	}
 
 	function _d_issetDomEl (iNdomElement) {
@@ -37,10 +34,8 @@ define(['jquery','template7'], function ($,Template7) {
 				@optional
 					iNwhere -> string [default = begin] [begin, end, before, after]
 		*/
-		console.log('_d_addDataToViewEl iNwhere',iNwhere);
 		switch(iNwhere){
 			case "change":
-				console.log('_d_addDataToViewEl type = change');
 				$(iNdomElement).html(iNaddedData);
 			break;
 
@@ -57,7 +52,6 @@ define(['jquery','template7'], function ($,Template7) {
 			break;
 
 			default: // start
-				console.log('_d_addDataToViewEl type = start ');
 				$(iNdomElement).prepend(iNaddedData);
 			break;
 		}

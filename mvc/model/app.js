@@ -78,7 +78,6 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 					iNapp -> string
 		*/
 		window.rammanNowOpenedApp = iNapp;
-		console.log('_setApp',iNapp.name);
 	}
 	function _setPage (iNapp,iNpage) {
 		/*
@@ -125,10 +124,8 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 				@optional
 					iNmethodName -> string
 		*/
-		console.log('_invokeOpenedApp _thisApp()',_thisApp());
 		if ( typeof iNmethodName == 'string' && _thisApp() != false && typeof _thisApp()[iNmethodName] == 'function') {
 			let thisFunc =  _thisApp()[iNmethodName];	
-			console.log('_invokeOpenedApp thisFunc',thisFunc);
 			thisFunc();
 		}
 		return _thisApp();
@@ -224,7 +221,6 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 					var appAttr = getAppAttr(iNapp);
 					if( appAttr != false) objectForCreateApp['attr'] = appAttr;
 
-					console.log('getTemplate check',typeof iNapp.getTemplate, iNapp);
 					if( typeof iNapp.getTemplate == 'function' ) 
 						iNapp.getTemplate(objectForCreateApp);
 					VIEW.d_createChiefApp(objectForCreateApp);
@@ -294,12 +290,10 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 		*/
 		// if we open this app from another this.appName != nowOpenedApp
 		if ( iNdata['app'] != _thisApp().name ) {
-			console.log("iNdata['app'] , _thisApp().name",iNdata['app'], _thisApp().name)
 			// did safe invoke onDisappear, onOut methods for app is opening now
 			var pagesFunctionsFromAnotherApp =  getPageFuncitons(_thisApp(),_thisPage( _thisApp().name ) );//  _invokeApp(_thisApp(),'pages');
 			// did safe invoke for pages from another app onDisappear, onOut
 			if ( pagesFunctionsFromAnotherApp != false) {
-				console.log('rightCloseLastAppOrAnotherPageFromThisApp pagesFunctionsFromAnotherApp',pagesFunctionsFromAnotherApp);
 				// invoke onDesappear for page 
 					if ( typeof(pagesFunctionsFromAnotherApp['onDisappear']) == 'function' )
 						pagesFunctionsFromAnotherApp['onDisappear']();
@@ -327,7 +321,6 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 				VIEW.d_hideApps( _thisApp().name );
 			}
 
-			console.log('iNapp rightCloseLastAppOrAnotherPageFromThisApp',iNapp);
 			// did safe invoke thisApp.onIn in
 			if ( typeof(iNapp.onIn) == 'function' ) iNapp.onIn(); 
 
@@ -450,7 +443,6 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 				#2 [did function] -> end
 		*/
 		if (typeof iNapp != 'object' ) {
-			console.log('typeof iNapp != object -> exit',typeof iNapp);
 			return false;
 		}
 
@@ -460,12 +452,9 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 			iNapp['onLoader'](iNdataForApp,objectForCreateApp);
 
 		if(iNapp['name'] != iNdata['app'] || typeof iNapp['pages'][ iNdata['page'] ] != 'object') {
-			console.log('_readyChiefApp app name wrong -> exit',iNapp['name'],iNdata['app']);
-			console.log('_readyChiefApp page != object -> exit',typeof iNdata['page'],iNapp['pages'][ iNdata['page'] ]);
 			return false;
 		}
 		if( typeof(iNapp['onAccess']) == 'function' && !iNapp['onAccess'](iNdataForApp,objectForCreateApp) ) {
-			console.log('_readyChiefApp onAccess -> exit',false);
 			return false;
 		}
 
@@ -640,14 +629,10 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 		}
 		function getPageAttr (iNapp,iName) {
 			var page = getPage(iNapp,iName);
-			console.log('getPageAttr page',page);
-			console.log('getPageAttr appName',iNapp.name);
-			console.log('getPageAttr pageName',iName);
 			if( 
 				page != false && 
 				typeof page['attr'] == 'object'  
 			) {
-				console.log('pageAttr getPageAttr attr',page['attr']);
 				return page['attr'];
 			}
 			return false;
@@ -670,7 +655,6 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 				options != false && 
 				typeof options['attr'] == 'object'  
 			) {
-				console.log('getAppAttr attr',options['attr']);
 				return options['attr'];
 			}
 			return false;
@@ -791,7 +775,6 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	// 	*/
 
 	// 	//get module name by app name
-	// 	console.log('_openApp from engine started');
 	// 	var page, objForOpenApp = iNdata, appName = objForOpenApp['app'], pageName = objForOpenApp['page'];
 	// 	// iNapp = getAppByName(appName);
 	// 	if ( typeof(iNapp.pages) != 'object' || typeof(iNapp.pages[pageName]) != 'object' ) return false;
@@ -800,7 +783,6 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 
 
 
-	// 	console.log('_openApp app from engine',iNapp);
 	// 	_openChiefApp ( objForOpenApp ,iNapp, function () {
 	// 		if( typeof(iNapp['onStart']) == 'function' ) iNapp.onStart();
 	// 		// iNapp.onInit();
@@ -851,7 +833,6 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 
 		if( typeof window[prefixForGlobalVar+iNapp.name] == 'undefined' && typeof iNapp == 'object' && typeof iNapp.name == 'string') {
 			window[prefixForGlobalApp_+iNapp.name] = iNapp;
-			console.log( 'setGlobalApp', prefixForGlobalApp_+iNapp.name+';', window[prefixForGlobalApp_+iNapp.name]);
 		}
 	}
 	function getGlobalVar (iNname) {
@@ -862,7 +843,6 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	function setGlobalVar(iNname,iNobject){
 		if( typeof window[prefixForGlobalVar+iNname] == 'undefined' && typeof iNobject == 'object' && typeof iNname == 'string') {
 			window[prefixForGlobalVar+iNname] = iNobject;
-			console.log( 'setGlobalVar', prefixForGlobalVar+iNname, window[prefixForGlobalVar+iNname]);
 		}
 	}
 

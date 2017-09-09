@@ -22,18 +22,13 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
             pages[thisPageName]['functions'] = {
               'isPage'  : function () { 
                 let i =  ( M_APP.view.d_checkPageInListApp({app:'base','page':'index'}) > 0 ) ? true : false; 
-                console.log('app base page "index" '+thisPageName,'isPage',i);
                 return i;
               },
               'onView'  : function (d,d1) { 
-                console.log('app base page "index" '+thisPageName,'onView',d,d1);
                 M_APP.view.d_hideApps('all','list');
                 M_APP.view.d_showApps('base','list');
                 // V_APP_PAGE.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
                 getMyChats();
-
-                  console.log('connectAppPath', window['connectAppPath']);
-                  console.log('connectAppPathNumber', window['connectAppPathNumber']);
                 // setTimeout(function () {
 
                 //   M_APP.getGlobalVar('engine').toBackApp();
@@ -42,13 +37,11 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
                 return true;
               },
               'onAppear'  : function () {
-                console.log('app base page "index" '+thisPageName,'onAppear');
                 M_VIEW.closeLoader(); 
               },
-              'onHide'  : function () {console.log('app-base '+thisPageName,'onHide'); return true;},
+              'onHide'  : function () { return true;},
               // 'setPage' : function () {console.log('app private','setPage'); return true;},
               'onCreate' : function (d,d1) { 
-                console.log('app base page "index" '+thisPageName,'onCreate',d,d1);
                 M_APP.view.d_createPageInListApp({app:'base','page':'index','content': '<div class="scrolBlockForChat" style="" id="MixItUp81681F"></div>'}); 
               },
             };
@@ -70,11 +63,9 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
               pages[thisPageName]['functions'] = {
                 'isPage'  : function () { 
                   let i =  ( M_APP.view.d_checkPageInListApp({app:'base','page':'index'}) > 0 ) ? true : false; 
-                  console.log('app base page '+thisPageName,'isPage',i);
                   return i;
                 },
                 'onView'  : function (d,d1) { 
-                  console.log('app-base page '+thisPageName,'onView',d,d1);
                   M_APP.view.d_hideApps('all','list');
                   M_APP.view.d_showApps('base','list');
 
@@ -83,13 +74,11 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
                   return true;
                 },
                 'onAppear'  : function () {
-                  console.log('app-base '+thisPageName,'onAppear');
                   M_VIEW.closeLoader(); 
                 },
-                'onHide'  : function () {console.log('app-base '+thisPageName,'onHide'); return true;},
-                // 'setPage' : function () {console.log('app private','setPage'); return true;},
+                'onHide'  : function () { return true;},
+                // 'setPage' : function () {    return true;},
                 'onCreate' : function (d,d1) { 
-                  console.log('app-base page '+thisPageName,'onCreate',d,d1);
                   M_APP.view.d_createPageInListApp({app:'base','page':'index','content': '<div class="scrolBlockForChat" style="" id="MixItUp81681F"></div>'}); 
                 },
               };
@@ -105,7 +94,6 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
 
   // function onCreate
   function onCreate (iNstring,iNobject) {
-    console.log('app-base','onCreate');
     M_APP.view.d_createListApp({app:'base'}); 
     d_addMyHeader();
 
@@ -114,7 +102,6 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
 
   // function isApp
   function isApp (iNstring,iNobject) {
-    console.log('app-base','isApp');
     
     return (M_APP.view.d_checkListApp({app:'base'}) > 0) ? true : false;
   }
@@ -123,8 +110,6 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
 
   // function onInit
   function onInit (iNstring,iNobject) {
-
-    console.log('app-base','onInit');
     runController_MyOnlineStatus();
     
     //
@@ -134,7 +119,6 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
 
     // function onIn
     function onIn (iNstring,iNobject) {
-    console.log('app-base','onIn');
       
     }
     _['onIn'] = onIn;
@@ -142,28 +126,24 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
       //@overide
       function onAppear (iNstring,iNobject) {
 
-        console.log('app-base','onAppear');
 
       }
       _['onAppear'] = onAppear;
 
       //@overide
       function onDisappear (iNstring,iNobject) {
-        console.log('app-base','onDisappear');
 
       }
       _['onDisappear'] = onDisappear;
 
     //@overide
     function onOut (iNstring,iNobject) {
-      console.log('app-base','onOut');
 
     }
     _['onOut'] = onOut;
 
   //@overide
   function onDeinit (iNstring,iNobject) {
-    console.log('app-base','onDeinit');
 
   }
   _['onDeinit'] = onDeinit;
@@ -273,7 +253,6 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
   }
 
   function getMessagesByChatId () {
-    console.log('start getMyChats');
     M_CATEGORY.view.startEffSortChats();
     var myUid       = M_APP.get('uid'),
         chatsRef = FIREBASE.database().ref('chats/'+chatId);
@@ -301,7 +280,6 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
 
     /*< USER INFO */
       function getUserInfo (iNuid) {
-        console.log('getUserInfo',iNuid);
         const objectForAjax = {};
               objectForAjax['userId']     = USER.getMyId();
               objectForAjax['token']      = USER.getMyToken();
@@ -310,10 +288,8 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
           function (resultOfAjax) {
             if(resultOfAjax['chat'] == false){
               // create chat
-              console.log('getUserInfo chat isFalse',resultOfAjax['chat']);
               createChat(iNuid,resultOfAjax);
             }else{
-              console.log('getUserInfo chat isTrue',resultOfAjax['chat']);
               viewThisChat(resultOfAjax['chat'],resultOfAjax);
             }
           }
@@ -444,7 +420,6 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
         @depends
             domSortChatsBlock() - for create sort or check
     */
-    console.log('start getMyChats');
     M_CATEGORY.view.startEffSortChats();
     var myUid       = M_APP.get('uid'),
     membersRef      = FIREBASE.database().ref('members/'+myUid);
@@ -495,20 +470,10 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
            chatsRef         = FIREBASE.database().ref('chats/' + chatId + '/info');
 
        
-      console.log('safeAttachLiveLinkToChatElement chatsRef path -','chats/' + chatId + '/info');
-      console.log('safeAttachLiveLinkToChatElement chatsRef - ',chatsRef);
       chatsRef.once ( 'value', (chatData) => {
         var chatId    = chatData.ref.parent.key,
             chatBlock = chatData.val(),
             chatType  = chatBlock.chat.type;
-            console.log('safeAttachLiveLinkToChatElement onValue chatBlock',chatBlock);
-
-            // var   changeObject = M_CATEGORY.getObjectForUpdateChatBlock ( chatBlock );
-            //       changeObject['chatType']       = chatType;
-            //       changeObject['chatId']         = chatId;
-            //       changeObject['chatName']       = chatName;
-            //       changeObject['login']          = chatLogin;
-            //       changeObject['icon']           = chatIcon;
         //@< creating chat
           if (chatType == 1) {
               //create "private" chat
@@ -521,21 +486,15 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
 
         startNewMsgCounter(chatId,myUid);
       });
-      console.log('safeAttachLiveLinkToChatElement FIREBASE ref child_changed','chats/'+chatId);
       chatsRef.on ( 'child_changed' , function (chatData) {
-          console.log('safeAttachLiveLinkToChatElement child_changed chatData',chatData);
           var chatId           = chatData.ref.parent.parent.key;
           var chatKey          = chatData.ref.key;
           var chatDataValue    = chatData.val();
-          console.log('safeAttachLiveLinkToChatElement child_changed chatId',chatId);
-          console.log('safeAttachLiveLinkToChatElement child_changed chatKey',chatKey);
-          console.log('safeAttachLiveLinkToChatElement child_changed chatDataValue',chatDataValue);
           var chatObject      = {}; 
             chatObject[chatKey] = chatDataValue;
             var chatBlock     = chatData.val();
             var chatType      = chatBlock.type;
             var changeObject  = M_CATEGORY.getObjectForUpdateChatBlock ( chatObject );
-                  console.log('safeAttachLiveLinkToChatElement child_changed changeObject',changeObject);
                   changeObject['chatType'] = chatType;
                   changeObject['chatId']   = chatId;
             // change chat
@@ -653,18 +612,13 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
       var myUid       = firebase.auth().currentUser.uid;
       var contactsRef = firebase.database().ref('contacts/' + myUid + '/' + user2Phone);
       contactsRef.on('value', function(contactData) {
-          console.log('activeContactChangeInChatBlock contactData',contactData);
           var contactBlock    = contactData.val();
           if(contactBlock != null && typeof contactBlock == 'object') {
-            console.log('activeContactChangeInChatBlock contactBlock',contactBlock,typeof contactBlock);
             var chatName        = contactBlock.name;
             var userPhone       = contactBlock.phone;
             var user2id         = contactBlock.uid;
             if( typeof chatName != 'string' || chatName.length > 0) return false;
-            console.log('activeContactChangeInChatBlock chatName',chatName);
-            console.log('activeContactChangeInChatBlock user2id',user2id);
           var chatId = M_CATEGORY.view.getChatIdByUid(user2id);
-            console.log('activeContactChangeInChatBlock chatId',chatId);
             M_CATEGORY.safeUpdateChatBlock(
                 {
                     'uuid'      : user2id,
@@ -707,7 +661,6 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
         setMyOnlineStatusState(1);
     }
     function setStatusIOffline () {
-        console.log('setStatusIOffline');
         setOnlineOfflineStatus(FIREBASE.database.ServerValue.TIMESTAMP);
         setMyOnlineStatusState(0);
     }

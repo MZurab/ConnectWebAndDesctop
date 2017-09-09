@@ -28,18 +28,17 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
             }
           };
           pages['fullWindow']['functions'] = {
-            'isPage'  : function () {console.log('app-page fullWindow','isPage'); return true;},
-            'onOut'  : function () {console.log('app-page fullWindow','onOut'); return true;},
+            'isPage'  : function () {return true;},
+            'onOut'  : function () { return true;},
             'onView'  : function () {
               addPageToFullWindow({'id':'sign','uid':'@system'});
               // VIEW.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
-              // console.log('app private','onView');
               return true;
             },
-            'onHide'  : function () {console.log('app-page fullWindow','onHide'); return true;},
-            // 'setPage' : function () {console.log('app-page fullWindow','setPage'); return true;},
-            'onCreate' : function () {console.log('app-page fullWindow','onCreate'); return true;},
-            'onDisappear' : function () {console.log('app-page fullWindow','onDisappear'); return true;},
+            'onHide'  : function () {  return true;},
+            // 'setPage' : function () { return true;},
+            'onCreate' : function () {  return true;},
+            'onDisappear' : function () {return true;},
           };
     //> page fullWindow
 
@@ -50,11 +49,9 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
           pages[thisPageName]['menus'] = {};
           pages[thisPageName]['functions'] = {
             'isPage'  : function () {
-              console.log('app-page '+thisPageName,'isPage'); 
               return true;
             },
             'onOut'  : function () {
-              console.log('app-page '+thisPageName,'onOut'); 
               return true;
             },
             'onView'  : function (iNdata, iNobject) {
@@ -67,21 +64,18 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
               return true;
             },
             'onHide'  : function () {
-              console.log('app-page '+thisPageName,'onHide'); 
               return true;
             },
             'onOut'  : function () {
-              console.log('app-page '+thisPageName,'onOut'); 
               // dell app header
               // dell app view
               return true;
             },
             'onCreate' : function () {
-              console.log('app-page '+thisPageName,'onCreate'); 
 
               return true;
             },
-            'onDisappear' : function () {console.log('app-page '+thisPageName,'onDisappear'); return true;},
+            'onDisappear' : function () { return true;},
           };
     //> page miniPage
   
@@ -106,7 +100,6 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
 
   // function setApp
   // function setApp (iNstring,iNobject) {
-  //   console.log('app-page','setApp',iNstring);
 
   // }
   // _['setApp'] = setApp;
@@ -114,7 +107,6 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
   //@overide
   function onHide (iNstring,iNobject) {
     clearFullWindow();
-    console.log('app-page','onHide',iNstring);
 
   }
   _['onHide'] = onHide;
@@ -122,7 +114,6 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
 
     //@overide
   function onView (iNstring,iNobject) {
-    console.log('app-page','onView',iNstring);
 
   }
   _['onView'] = onView;
@@ -130,14 +121,12 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
 
   // function onCreate
   function onCreate (iNstring,iNobject) {
-    console.log('app-page','onCreate',iNstring);
 
   }
   _['onCreate'] = onCreate;
 
   // function isApp
   function isApp (iNstring,iNobject) {
-    console.log('app-page','isApp');
     return true;
   }
   _['isApp'] = isApp;
@@ -145,39 +134,33 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
 
   // function onInit
   function onInit (iNstring,iNobject) {
-    console.log('app-page','onInit');
 
   }
   _['onInit'] = onInit;
 
     // function onIn
     function onIn (iNstring,iNobject) {
-      console.log('app-page','onIn');
     }
     _['onIn'] = onIn;
 
       // function onAppear
       function onAppear (iNstring,iNobject) {
-        console.log('app-page','onAppear');
 
       }
       _['onAppear'] = onAppear;
 
       // function onDisappear
       function onDisappear (iNstring,iNobject) {
-        console.log('app-page','onDisappear');
       }
       _['onDisappear'] = onDisappear;
 
     // function onOut
     function onOut (iNstring,iNobject) {
-      console.log('app-page','onOut');
     }
     _['onOut'] = onOut;
 
   // function onDeinit
   function onDeinit (iNstring,iNobject) {
-    console.log('app-page','onDeinit');
 
   }
   _['onDeinit'] = onDeinit;
@@ -320,18 +303,14 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
     $('.appModalFullWindow').remove();
   }
 
-  console.log('this.name',this.name)
   
   _['init'] = function () {
-    console.log('appPage init',this.name);
-    console.log('init this',this);
     M_APP.setGlobalApp(this);
     return this;
   }
 
   // ever
     function addActionForEvents (iNid) {
-      console.log('addActionForEvents iNid - ',iNid);
       if(iNid == 'sign')
         addActionsForEventsPageSign();
     }

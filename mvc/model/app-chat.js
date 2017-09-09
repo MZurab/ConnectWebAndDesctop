@@ -18,35 +18,28 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase'],functi
 		    	thisPageName = 'index';
 		        pages[thisPageName]  = {'attr':{'id' : 'leftBlockInViewWindow'},'menus':{}};
 		          pages[thisPageName]['functions'] = {
-		            // 'isPage'  : function () {console.log('app-page fullWindow','isPage'); return true;},
+		            // 'isPage'  : function () {    return true;},
 		            'getTemplate' : function (iNdata) {
 
 		            },
-		            'onOut'  : function () {console.log('app-page '+thisPageName,'onOut'); return true;},
+		            'onOut'  : function () {   return true;},
 		            // 'onView'  : function () {
 		            //   addPageToFullWindow({'id':'sign','uid':'@system'});
 		            //   // V_APP_PAGE.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
-		            //   // console.log('app private','onView');
 		            //   return true;
 		            // },
-		            // 'onHide'  : function () {console.log('app-page fullWindow','onHide'); return true;},
-		            // 'setPage' : function () {console.log('app-page fullWindow','setPage'); return true;},
+		            // 'onHide'  : function () { return true;},
+		            // 'setPage' : function () {return true;},
 		            'onInit' 		: function () {
-		            	console.log('app-page '+thisPageName,'onInit'); 
 		            	M_MESSAGE.view.activeAppEvent({'onClickSendMesg':M_MESSAGE.onClickSendMesg,'onKeyDownPrintingMsg':M_MESSAGE.startSendingFlashMsg});
 		            	return true;
 		            },
 		            'onAppear' 		: function (d1,d2) {
-		            	console.log('d1,d2',d1,d2);
 		            	// M_MESSAGE.view.startAppearObserver();
 		            	pageIndex_openChatByChatId(d1);
-
-		            	// M_APP.view.addContentToChiefApp({'app':name,'page':thisPageName},'<div>#1</div>');
-		            	// M_APP.view.addContentToChiefApp({'app':name,'page':thisPageName},'<div>#2</div>');
-		            	// M_APP.view.addContentToChiefApp({'app':name,'page':thisPageName},'<div>#3</div>');
-
-		            	console.log('app-page '+thisPageName,'onAppear'); return true;},
-		            'onDisappear' 	: function () {console.log('app-page '+thisPageName,'onDisappear'); return true;},
+ 						return true;
+ 					},
+		            'onDisappear' 	: function () { return true;},
 		          };
 		    //> page fullWindow
 
@@ -56,29 +49,24 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase'],functi
 	//@<<< APP BLOCK
 		//@override
 		function getTemplate (iNdata) {
-			console.log('getTemplate APP-CHAT iNdata start',iNdata);
 			iNdata['other'] = VIEW.getChatSenderBlock();
-			console.log('getTemplate APP-CHAT  iNdata end',iNdata);
 		}
 		_['getTemplate'] = getTemplate; 
 
 		//@required
 		function onInit () {
-			console.log('appBase onInit');
 
 		}
 		_['onInit'] = onInit; 
 		
 			//@optional	
 			function onIn () {
-				console.log('onIn');
 
 			}
 			_['onIn'] = onIn; 
 				//@required
 				function onAppear () {
 					M_VIEW.closeLoader();
-					console.log('appBase onAppear');
 
 				}
 				_['onAppear'] = onAppear; 
@@ -91,7 +79,6 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase'],functi
 						безопасно вызываем pages[openedPageName][onDisapear] функцию
 
 					*/
-					console.log('onDisappear');
 
 				}
 			_['onDisappear'] = onDisappear; 
@@ -99,13 +86,11 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase'],functi
 			//@optional	
 			function onOut () {
 				// here must be page onOut functions
-				console.log('onOut');
 
 			}
 			_['onOut'] = onOut; 
 		//@required
 		function onDeinit () {
-			console.log('onDeinit');
 
 		}
 		_['onDeinit'] = onDeinit; 
@@ -267,7 +252,6 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase'],functi
 		M_MESSAGE.setLastMsgTimeByChatId(chatId,0);
         if ( VIEW.getCountsOfChatContainers(chatId) == 0 ) {
             // need chat isset open it
-        	// console.log('M_MESSAGE.synchronizeWithMessageDb(chatId)', M_MESSAGE.synchronizeWithMessageDb(chatId));
             VIEW.createChatContainer(chatId);
         	M_MESSAGE.synchronizeWithMessageDb(chatId
         		, 
