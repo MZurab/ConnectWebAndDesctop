@@ -109,7 +109,7 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
 				obj['uid'] 		= $(this).closest('.mix.usersBlockInMenusBlock').attr('connect_uid');;
 				obj['chatIcon'] = getChatIcon(chatId);
 				obj['chatName'] = getChatName(chatId);
-				if(typeof iNfunction == 'function')iNfunction(obj);
+				if(typeof iNfunction == 'function')iNfunction(obj,this);
 
 		});
 	}
@@ -367,7 +367,12 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
        
     }
 	_['safeAddChatList'] = safeAddChatList;
-
+	//chat
+		function getPathToDomChatHeader (iNchatId) {
+			return '.appBase_pIndexLeftBlockInChiefHeader[connect_chatid="'+iNchatId+'"]';
+		}
+		_['getPathToDomElByChatId'] = getPathToDomElByChatId;
+	//chat
 		function findChatBlock (iNchatId) {
 			return $( getPathToDomElByChatId(iNchatId) ).length;
 		}
@@ -376,6 +381,8 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
 				return '.usersBlockInMenusBlock[connect_chatid="'+iNchatId+'"]';
 			}
 			_['getPathToDomElByChatId'] = getPathToDomElByChatId;
+		
+
 		function getChatIdByUid (iNuid) {
 			return $('.usersBlockInMenusBlock[connect_uid="'+iNuid+'"]').attr('connect_chatid');;
 		}
@@ -530,7 +537,6 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
                     1 - chatObject (String)
                         defined chat object
                 */
-                console.log('domSafeShowNewMsgCountInChatBlock iNchatId,iNnumber',iNchatId,iNnumber);
 				domChangeNewMsgCountInChatBlock(iNchatId,iNnumber);
 				domShowNewMsgCountInChatBlock(iNchatId);
 			}
@@ -544,7 +550,6 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
                 */
                 var chatObject = getPathToDomElByChatId(iNchatId);
                 $(chatObject + ' .newMsgInSecondLine').html(iNnumber);
-                console.log("domChangeNewMsgCountInChatBlock",chatObject + ' .newMsgInSecondLine',$(chatObject + ' .newMsgInSecondLine'),iNnumber)
             }
 			_['domChangeNewMsgCountInChatBlock'] = domChangeNewMsgCountInChatBlock;
 
@@ -572,6 +577,55 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
             }
 			_['domHideNewMsgCountInChatBlock'] = domHideNewMsgCountInChatBlock;
 
+		function domChangeDidOnlineChatHeader (iNchatId) {
+            /*
+            	@discr
+                	change chat-header did show
+            	@inputs
+	                iNchatId -> stirng
+            */
+            var chatObject = getPathToDomChatHeader(iNchatId);
+            $(chatObject + ' .appBase_userStateOnline').fadeIn(500);
+        }
+		_['domChangeDidOnlineChatHeader'] = domChangeDidOnlineChatHeader;
+
+		function domChangeDidOfflineChatHeader (iNchatId) {
+            /*
+            	@discr
+                	change chat-header did show
+            	@inputs
+	                iNchatId -> stirng
+            */
+            var chatObject = getPathToDomChatHeader(iNchatId);
+            $(chatObject + ' .appBase_userStateOnline').hide(500);
+        }
+		_['domChangeDidOfflineChatHeader'] = domChangeDidOfflineChatHeader;
+
+		function domChangeAddUserOnlineFlag (iNchatId) {
+            /*
+            	@discr
+                	add css .flagUserOnline class 
+            	@inputs
+	                iNchatId -> stirng
+            */
+            var chatObject = getPathToDomElByChatId(iNchatId);
+            $(chatObject).addClass('flagUserOnline');
+            $(chatObject).attr('connect_online',1);
+        }
+		_['domChangeAddUserOnlineFlag'] = domChangeAddUserOnlineFlag;
+
+		function domChangeRemoveUserOnlineFlag (iNchatId) {
+            /*
+            	@discr
+                	add css .flagUserOnline class 
+            	@inputs
+	                iNchatId -> stirng
+            */
+            var chatObject = getPathToDomElByChatId(iNchatId);
+            $(chatObject).removeClass('flagUserOnline');
+            $(chatObject).attr('connect_online','');
+        }
+		_['domChangeRemoveUserOnlineFlag'] = domChangeRemoveUserOnlineFlag;
 
         function domChangeIconInChatBlock (iNchatId,icon) {
             /*

@@ -64,8 +64,15 @@ define(['jquery','v_category','m_view','m_app','m_user'], function ( $, VIEW, M_
 
                 VIEW.createChatList (objForCreateChat);
                 VIEW.setEffectsForChatList(chatId);
-                VIEW.onClickToChatList(objForCreateChat['chatId'],function (iNobj) {
+                VIEW.onClickToChatList(objForCreateChat['chatId'],function (iNobj,iNthis) {
                 	var hrefForOpenApp = 'chatName='+iNobj['chatName']+'&chatId='+iNobj['chatId']+'&chatIcon='+iNobj['chatIcon']+'&userLogin='+iNobj['login']+'&uid='+iNobj['uid'];
+
+                	//< safe add online
+	                	let thisOnline = $(iNthis).closest('.mix.usersBlockInMenusBlock').attr('connect_online');
+	                	if(typeof thisOnline == 'string' && thisOnline.length > 0) {
+	            			hrefForOpenApp += '&online='+thisOnline
+	                	}
+                	//> safe add online
                 	M_APP.getGlobalVar('engine').passToApp({'app':'chat','page':'index','user':'Zurab','data': hrefForOpenApp});
                 });
 		} 
@@ -122,6 +129,20 @@ define(['jquery','v_category','m_view','m_app','m_user'], function ( $, VIEW, M_
 	    //addVirificateStatusToBlock
 	        if( typeof(iNdata.verificate) != 'undefined' && iNdata.verificate == 1) VIEW.domAddVerificateStatusToChatBlock(iNchatId);
 
+        // change user state 
+    		if(  typeof(iNdata.userOnline) != 'undefined' ) {
+    			if( iNdata.userOnline == 1) {
+    				// set user online
+    				VIEW.domChangeAddUserOnlineFlag(iNchatId);
+    				VIEW.domChangeDidOnlineChatHeader(iNchatId);
+
+    			} else {
+    				// set user offline
+    				VIEW.domChangeRemoveUserOnlineFlag(iNchatId);
+    				VIEW.domChangeDidOfflineChatHeader(iNchatId);
+
+    			}
+    		}
         
 	    if( typeof(iNdata.liveData) != 'undefined' &&  typeof(iNdata.liveType) != 'undefined' &&  typeof(iNdata.liveUser) != 'undefined' && USER.getMyId() != iNdata.liveUser) {
 	        

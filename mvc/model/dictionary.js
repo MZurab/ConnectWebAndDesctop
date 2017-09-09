@@ -28,7 +28,8 @@ define(['jquery'],function($) {
 			    fieldKey = 'val';
 			  
 			  field = header[fieldKey];
-			  result = body[key][field];
+			  if( typeof body == 'object' && typeof body[key] != 'undefined')
+			  	result = body[key][field];
 			  if(!result) result = '';
 
 			  return result;

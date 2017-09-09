@@ -1,10 +1,10 @@
-define(['jquery','template7'], function ($,Template7) {
+define(['jquery','template7','dictionary'], function ($,Template7, DICTIONARY) {
 
 	function _d_showLoader (iNid) {
 		if(typeof(iNid) != 'string') iNid = 'body';
 
 		_d_closeLoader(iNid);
-		$(iNid).append(_v_html_loader);
+		$(iNid).append(DICTIONARY.withString(_v_html_loader));
 	}
 
 	function _d_closeLoader(iNid) {

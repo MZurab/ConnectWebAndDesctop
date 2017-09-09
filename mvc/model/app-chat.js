@@ -217,7 +217,7 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase'],functi
 		var uid 	= iNobject['uid'];
 		var login 	= iNobject['login'];
 		var servise = iNobject['servise'];
-		var stateOnline 	= iNobject['stateOnline'];
+		var stateOnline 	= iNobject['online'];
 		var chatIcon  = iNobject['chatIcon'];
 		var chatName  = iNobject['chatName'];
 
@@ -245,7 +245,7 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase'],functi
 
         // 'https://cdn.ramman.net/images/icons/apps/app_sharepay.png'
         // chatId, userId, userName, userIcon, userLogin, online, servise
-        VIEW.addUserHeaderInChief({'name': chatName,'icon': chatIcon,'login':login,'online':stateOnline,'servise':servise});
+        VIEW.addUserHeaderInChief({'chatId':chatId, 'uid':uid, 'name': chatName,'icon': chatIcon,'login':login,'online':stateOnline,'servise':servise});
 
 
 

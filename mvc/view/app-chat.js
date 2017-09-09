@@ -1,4 +1,4 @@
-define([ 'jquery', 'template7', 'v_app', 'jquery.appear'],function( $, Template7, V_APP ) {
+define([ 'jquery', 'template7', 'v_app','dictionary', 'jquery.appear'],function( $, Template7,V_APP ,DICTIONARY) {
 	const _ = {};
 	const CONST = {'name':'base','pageIndex':'index'};
 	const templates = {};
@@ -39,14 +39,14 @@ define([ 'jquery', 'template7', 'v_app', 'jquery.appear'],function( $, Template7
 	`;
 
 	templates['chiefHeader_user'] = `
-		    <div class="appBase_pIndexLeftBlockInChiefHeader">
+		    <div class="appBase_pIndexLeftBlockInChiefHeader" connect_chatid="{{chatId}}"  connect_uid="{{uid}}">
 		       {{#if back}}
 			   <div class="appBase_backButton"></div>
 			   {{/if}}
 			   <div class="appBase_iconChief">
 			      <a href="#"><img src="{{icon}}" class="appBase_pIndexUserImg"></a>
 			      {{#if servise}}
-			      <div class="appBase_userTypeBlock"><a href="#" class="CML" cmlk="[dictionary-servise]">Сервис</a></div>
+			      <div class="appBase_userTypeBlock"><a href="#" class="CML" cmlk="[dictionary-servise]">[dictionary-service]</a></div>
 			      {{/if}}
 			   </div>
 			   <div class="appBase_infoBlock">
@@ -57,18 +57,16 @@ define([ 'jquery', 'template7', 'v_app', 'jquery.appear'],function( $, Template7
 			         {{/if}}
 			      </div>
 			      <div class="appBase_userStateBlock">
-					{{#if online}}
-			        	<span class="appBase_userStateOnline">онлайн</span>
-			        {{/if}}
+		        	<span class="appBase_userStateOnline CML" cmlk="[dictionary-servise]" {{#if online}}{{else}}style='display:none'{{/if}}>[dictionary-online]</span>
 
 					{{#if offlineTime}}
 			        <span class="appBase_userStateOffline">был(-а) {{offlineTime}}</span>
 			        {{/if}}
 			      </div>
 			      <div class="appBase_chiefHeaderThirdLine">
-					{{#if watchNow}}
-			         <div class="appBase_onlineEyeIcon"></div>
-			        {{/if}}
+					
+			        <div class="appBase_onlineEyeIcon"></div>
+			        {{#if watchNow}}{{/if}}
 			      </div>
 			   </div>
 			</div>
@@ -138,7 +136,7 @@ define([ 'jquery', 'template7', 'v_app', 'jquery.appear'],function( $, Template7
 							watchNow -> bool
 		*/
 		var temp = Template7.compile(templates['chiefHeader_user']);
-		return temp(iNdata);
+		return DICTIONARY.withString(temp(iNdata));
 	}
 	function addUserHeaderInChief (iNdata,iNtype) {
 		/*
