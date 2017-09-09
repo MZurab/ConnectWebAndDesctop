@@ -125,6 +125,9 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
   function onInit (iNstring,iNobject) {
 
     console.log('app-base','onInit');
+    runController_MyOnlineStatus();
+    
+    //
 
   }
   _['onInit'] = onInit;
@@ -608,22 +611,19 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
 
 
       usersRef.on('value', function(usersData) { 
-          console.log('usersRef on objForCreate,iNchatId', objForCreate,iNchatId);
           // change date if change userDate
           var objForCreate  = {};
           var user2id       = usersData.key;
           var user2Object   = usersData.val();
 
-          console.log('usersRef on user2id, user2Object, objForCreate', user2id, user2Object, objForCreate);
           var chatId = iNchatId; // M_CATEGORY.view.getChatIdByUid(user2id);
-          console.log('safeUpdatePrivateChatBlockFromUserDb user2id',user2id);
-          console.log('safeUpdatePrivateChatBlockFromUserDb user2Object',user2Object);
 
           var chatName    = user2Object.info.data.name;
           var login       = user2Object.info.data.login;
           var user2Phone  = user2Object.info.data.phone;
           var user2Icon   = user2Object.info.data.icon;
           var userType    = user2Object.info.data.type;
+          var userOnline  = user2Object.info.live.online;
 
           var objForCreateChat = {}; // objForCreate;
               objForCreateChat['uuid']      = user2id,
@@ -633,7 +633,8 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
               objForCreateChat['icon']      = user2Icon,
               objForCreateChat['login']     = login;
               objForCreateChat['userType']  = userType;
-          console.log('safeUpdatePrivateChatBlockFromUserDb objForCreateChat',objForCreateChat);
+              objForCreateChat['userOnline']  = userOnline;
+
 
 
           delete objForCreateChat.liveData;
@@ -675,6 +676,95 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
         }
       });
   }
+
+
+//@<CONTROLLER MY ONLINE STATUS
+  CONST['myOnlineStatusSpy'] = 'connectTimeoutId-spyMyOnlineStatus';
+  CONST['myOnlineStatusState'] = 'connectMyOnlineStatusState';
+
+  function runController_MyOnlineStatus () {
+    onDisconectControllerOnlineStatus();
+    // set mousemove event for control my online status
+    $( "html" ).off('mousemove');
+    $( "html" ).mousemove( function( event ) {
+      onEvent_MousemoveMyStatusController();
+    });
+  } 
+  function getFromFBDmyStatusPath () {
+      let uid = USER.getMyId();
+      let path = "users/"+uid+"/info/live/online";
+      return path;
+  }
+
+  function safeSetStatusIOnline () {
+    let myOnlineState = getMyOnlineStatusState();
+    if(myOnlineState != 1) {
+      setStatusIOnline();
+    }
+  }
+    function setStatusIOnline () {
+        setOnlineOfflineStatus(1);
+        setMyOnlineStatusState(1);
+    }
+    function setStatusIOffline () {
+        console.log('setStatusIOffline');
+        setOnlineOfflineStatus(FIREBASE.database.ServerValue.TIMESTAMP);
+        setMyOnlineStatusState(0);
+    }
+      function setOnlineOfflineStatus (iNnumber) {
+        let path = getFromFBDmyStatusPath();
+
+        let updateArray = {};
+          updateArray[path] = iNnumber;//FIREBASE.database.ServerValue.TIMESTAMP;
+          FIREBASE.database().ref().update(updateArray);
+      }
+      function setMyOnlineStatusState (iNstate) {
+        M_APP.save(CONST['myOnlineStatusState'],iNstate);
+      }
+    function getMyOnlineStatusState () {
+      return parseInt(M_APP.get(CONST['myOnlineStatusState']))||0;
+    }
+    
+
+
+  function onDisconectControllerOnlineStatus () {
+      var timeStamp = FIREBASE.database.ServerValue.TIMESTAMP;
+      let ref = FIREBASE.database().ref(getFromFBDmyStatusPath());
+      ref.on(
+        'value',
+        (iNdata) => {
+          // if i am not in online and my othere device change my state
+          if(iNdata.val() != 1 && getMyOnlineStatusState() == 1) {
+            setStatusIOnline ();
+          }
+          ref.onDisconnect().set(timeStamp);
+        }
+      );
+  }
+
+  function onEvent_MousemoveMyStatusController () {
+    // set my status online safe (with check it already isset)
+    safeSetStatusIOnline();
+    // clear previous timeout id
+    clearTimeout(getMyStatusTimeoutId());
+    // save time out and passed there function
+    let timeOutId = setTimeout(
+      () => {
+        setStatusIOffline();
+      },
+      300000 // 5 m (300 sc)
+    );
+    // sace timeout id
+    setMyStatusTimeoutId(timeOutId);
+  }
+    function getMyStatusTimeoutId () {
+      return M_APP.get(CONST['myOnlineStatusSpy']);
+    }
+    function setMyStatusTimeoutId (iNtimeOutId) {
+      M_APP.save(CONST['myOnlineStatusSpy'],iNtimeOutId);
+    }
+
+//@>CONTROLLER MY ONLINE STATUS
 
   return _;
 
