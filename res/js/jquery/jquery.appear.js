@@ -97,7 +97,7 @@
     },
     appear_once: function (iNfunction,iNoptions) {
       var selector = this.selector || this;
-      var filterPathToThisClass = $window;//$('body');
+      var filterPathToThisClass = $window;
       var blockForScroll = false;
 
       
@@ -106,7 +106,7 @@
       }
       if(filterPathToThisClass.length > 0 ) {
         //get scroll parent from  filter patch 
-        $window =  $(selector).closest(filterPathToThisClass) .attr('connect-appear-scroll-parent')
+        $window =  $(selector).closest(filterPathToThisClass) .attr('connect-appear-scroll-parent');
       }
 
       if( $(selector).attr('connect-appear-scroll-parent') ) {
@@ -145,30 +145,62 @@
         }
       }
 
-      var on_check = function () {
-        var $fullPathToChild = $(filterPathToThisClass).children('.connect-appear') ;
-        var allLengh = $fullPathToChild.length - 1;
+      var on_check = () => {
+
+
+        var $fullPathToChild  = $(filterPathToThisClass).children('.connect-appear') ;
+        var allLengh          = $fullPathToChild.length - 1;
+        
+        if ( typeof iNoptions['onScrollParent'] == 'function' ) {
+          iNoptions['onScrollParent']($window);
+        }
+        
         if( allLengh < 0 || blockForScroll) return false;
         blockForScroll = true;
-        $fullPathToChild.each ( 
+
+        $fullPathToChild.each (
           function (index) {
-            if( $(this).is(':appeared') ) {
+            if ( $(this).is(':appeared') ) {
               if ( typeof iNoptions['checkForRemoveClass'] != 'function' || iNoptions['checkForRemoveClass'](selector) ) {
               $(selector).removeClass('connect-appear');
               }
               iNfunction(this);
             }
-            if(allLengh==index){
+            if (allLengh==index) {
               // if it is last element
               blockForScroll = false;
             }
           }
         );
+        
       }
       $($window).unbind('scroll').off('resize').scroll( on_check ).resize( on_check );//unbind('scroll').off('resize').
 
       return $(selector);
     },
+
+    scrollRight :  function (iNoffset) {
+      var selector  = this.selector || this;
+      if(typeof iNoffset != 'number') {
+        return $(selector)[0].scrollWidth - $(selector)[0].clientWidth - $(selector).scrollLeft();
+      } else {
+        let scrollWidth = $('#leftBlockInViewWindow')[0].scrollWidth - $('#leftBlockInViewWindow')[0].clientWidth;
+        $(selector).scrollLeft(scrollWidth - iNoffset);
+        return selector;
+      }
+    },
+
+    scrollBot :    function (iNoffset) {
+      var selector  = this.selector || this;
+      if(typeof iNoffset != 'number') {
+        return $(selector)[0].scrollHeight - $(selector)[0].clientHeight - $(selector).scrollTop();
+      } else {
+        let scrollHeight = $('#leftBlockInViewWindow')[0].scrollHeight - $('#leftBlockInViewWindow')[0].clientHeight;
+         $(selector).scrollTop(scrollHeight - iNoffset);
+         return selector;
+      }
+    },
+
     appear: function(options) {
       
 

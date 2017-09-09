@@ -1,4 +1,4 @@
-define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
+define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	//@<<< TIME FUNCTIONS
 		function _getSec () {
 		    return new Date().getTime()/1000;
@@ -177,7 +177,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 			V_VIEW.d_hideApps (iNarray,iNtypeApp)
 		}
 		function _td_openPage (iNapp,iNpage,iNtype) {
-			V_APP.d_openPage (iNapp,iNpage,iNtype);
+			VIEW.d_openPage (iNapp,iNpage,iNtype);
 		}
 	//>! transactors
 
@@ -204,8 +204,8 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 					iNdataForApp -> string
 				@optional
 			@deps
-				funciton : V_APP.d_checkChiefApp,
-				funciton : V_APP.d_createChiefApp,
+				funciton : VIEW.d_checkChiefApp,
+				funciton : VIEW.d_createChiefApp,
 				funciton : _thisPage
 			@return
 			@algorithm
@@ -227,7 +227,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 					console.log('getTemplate check',typeof iNapp.getTemplate, iNapp);
 					if( typeof iNapp.getTemplate == 'function' ) 
 						iNapp.getTemplate(objectForCreateApp);
-					V_APP.d_createChiefApp(objectForCreateApp);
+					VIEW.d_createChiefApp(objectForCreateApp);
 				} else
 					iNapp.onCreate(iNdataForApp,objectForCreateApp);
 				//then invoke app init method
@@ -248,7 +248,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 		 		@return BOOL
 			*/
 			if( typeof iNapp['isApp'] != 'function' )
-				 return (V_APP.d_checkChiefApp ( {'app': iNapp.name } ) > 0) ? true : false;
+				 return (VIEW.d_checkChiefApp ( {'app': iNapp.name } ) > 0) ? true : false;
 			else 
 				return iNapp['isApp']();
 		}
@@ -265,7 +265,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 			var thisPage = getPageFuncitons(iNapp,iNpage);
 			var objectForGetPage = {'app': iNapp.name, 'page' : iNpage };
 			if( typeof thisPage['isPage'] != 'function' ) 
-				 return (V_APP.d_checkPageInChiefApp ( objectForGetPage ) > 0) ? true : false;
+				 return (VIEW.d_checkPageInChiefApp ( objectForGetPage ) > 0) ? true : false;
 			else
 				return thisPage['isPage']();
 			
@@ -312,7 +312,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 					if ( typeof(pagesFunctionsFromAnotherApp['onHide']) == 'function' )
 						pagesFunctionsFromAnotherApp['onHide']();
 					else 
-						V_APP.d_hidePages(_thisApp().name, _thisPage( _thisApp().name ));
+						VIEW.d_hidePages(_thisApp().name, _thisPage( _thisApp().name ));
 			}
 
 
@@ -324,7 +324,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 			if( typeof _thisApp()['onHide'] == 'function' ) {
 				_thisApp()['onHide']();
 			} else {
-				V_APP.d_hideApps( _thisApp().name );
+				VIEW.d_hideApps( _thisApp().name );
 			}
 
 			console.log('iNapp rightCloseLastAppOrAnotherPageFromThisApp',iNapp);
@@ -348,7 +348,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 				if ( typeof(pagesFunctionsFromThisApp['onHide']) == 'function' )
 					pagesFunctionsFromThisApp['onHide']();
 				else 
-					V_APP.d_hidePages( iNdata['app'], _thisPage( iNdata['app'] ));		
+					VIEW.d_hidePages( iNdata['app'], _thisPage( iNdata['app'] ));		
 		}
 	}
 	function rightInvokePageFunctions (iNapp,iNdata,objectForCreatePage,iNdataForApp) {
@@ -392,7 +392,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 			if(typeof pageFunctions['onCreate'] == 'function')
 				pageFunctions['onCreate']();
 			else
-				V_APP.d_createPageInChiefApp(objectForCreatePage);
+				VIEW.d_createPageInChiefApp(objectForCreatePage);
 
 			if( typeof pageFunctions.onInit == 'function') 
 				pageFunctions.onInit(iNdataForApp,objectForCreatePage);
@@ -403,7 +403,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 			if( typeof (pageFunctions.onUpdate) == 'function') 
 				pageFunctions.onUpdate(iNdataForApp,objectForCreatePage);
 			else
-				V_APP.d_updatePageInChiefApp(objectForCreatePage)
+				VIEW.d_updatePageInChiefApp(objectForCreatePage)
 		}
 
 		// set this page as openinig
@@ -419,7 +419,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 
 		// if we have not onView functions for pages we need invoke default viewPage functions
 		if( typeof(pageFunctions['onView']) != 'function')
-			V_APP.d_viewPage(objectForCreatePage);
+			VIEW.d_viewPage(objectForCreatePage);
 		else // if we have override function onView for page we invoke it
 			pageFunctions['onView'](iNdataForApp,objectForCreatePage);
 	}
@@ -455,7 +455,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 		}
 
 		if( typeof(iNapp['onLoader']) != 'function')
-			V_VIEW.d_showLoader();
+			VIEW.createLoader();
 		else
 			iNapp['onLoader'](iNdataForApp,objectForCreateApp);
 
@@ -491,7 +491,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 		
 		// if we have not onViewApp functions we need invoke default viewApp functions
 		if( typeof(iNapp['onView']) != 'function')
-			V_APP.d_viewApp(objectForCreateApp);
+			VIEW.d_viewApp(objectForCreateApp);
 		else // if we have override function we invoke it
 			iNapp['onView'](iNdataForApp,objectForCreateApp);
 
@@ -512,7 +512,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 		// safe did appear function for page
 		// if(typeof(iNapp.pages[objectForCreateApp['page']].onAppear) == 'function') iNapp.pages[objectForCreateApp['page']].onAppear();
 		// did show this app + show if need and invoke onEnter if need ADD
-		// V_APP._d_viewPage(objectForCreateApp);
+		// VIEW._d_viewPage(objectForCreateApp);
 
 		// safe invoke passed function
 		if (typeof(iNfunction) == 'function')iNfunction();
@@ -551,7 +551,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 		// dataForCheckApp = {'app':iNdata['app']};
 		if(typeof(iNdata['extra']) == 'string') dataForCheckApp['extra'] = iNdata['extra'];
 		// get count this apps
-		issetApps = V_APP.d_checkListApp(dataForCheckApp);
+		issetApps = VIEW.d_checkListApp(dataForCheckApp);
 		// create app if it is not isset
 
 		// prepare obj
@@ -562,7 +562,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 		if(typeof(iNdata['page']) == 'string') 		objectForCreateApp['page'] 		= iNdata['page'];
 
 		if (issetApps < 1) {
-			V_APP.d_createPageInListApp(objectForCreateApp);
+			VIEW.d_createPageInListApp(objectForCreateApp);
 		} 
 
 		if( typeof(iNdata['page'] ) == 'string' ) {
@@ -574,13 +574,13 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 
 			if( typeof(iNdata['content']) == 'string') 	objectForCreatePage['content'] 	= iNdata['content'];
 
-			intIssetPages = V_APP.d_checkPageInListApp(objectForCreatePage);
+			intIssetPages = VIEW.d_checkPageInListApp(objectForCreatePage);
 			if(intIssetPages < 1) {
 				//if page is not isset
-				V_APP.d_createPageInListApp(objectForCreatePage);
+				VIEW.d_createPageInListApp(objectForCreatePage);
 			} else {
 				// page isset - change content if isset
-				// V_APP.d_updatePageInListApp(objectForCreatePage)
+				// VIEW.d_updatePageInListApp(objectForCreatePage)
 			}
 		}
 		if (typeof(iNfunction) == 'function')iNfunction();
@@ -728,7 +728,7 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 		
 		_readyChiefApp (iNdata,iNapp,iNstring,function () {
 			if(typeof(iNfunction) == 'function') iNfunction();
-			// V_VIEW.d_showLoader();
+			// VIEW.createLoader();
 		});
 	}
 
@@ -755,10 +755,10 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 				#2 invoke func ready app
 				#3 close loader
 		*/
-		V_VIEW.d_showLoader();
+		VIEW.createLoader();
 		_readyListApp (iNdata,function () {
 			if(typeof(iNfunction) == 'function') iNfunction();
-			V_VIEW.d_showLoader();
+			VIEW.createLoader();
 		});
 	}
 	
@@ -868,9 +868,9 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 
 
 	//@< work with header
-		var _td_loadCSS  		= V_APP.d_loadCSS;
-		var _td_removeByClass  	= V_APP.d_removeByClass;
-		var _td_loadJS  		= V_APP.d_loadJS;
+		var _td_loadCSS  		= VIEW.d_loadCSS;
+		var _td_removeByClass  	= VIEW.d_removeByClass;
+		var _td_loadJS  		= VIEW.d_loadJS;
 	//@< work with header
 
 
@@ -926,6 +926,6 @@ define(['v_app','jquery','v_view'],function(V_APP,$,V_VIEW) {
 		'getGlobalVar' : getGlobalVar,
 		'getGlobalApp' : getGlobalApp,
 
-		'view' : V_APP
+		'view' : VIEW
 	}
 });

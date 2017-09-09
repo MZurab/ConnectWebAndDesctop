@@ -3,54 +3,134 @@ define(['jquery', 'template7','v_app', 'jquery.appear'],function( $, Template7, 
 	const CONST = {};
 	const templates = {};
 
+
+
+
+
+
 	templates['msgCenterSimpleText'] = `
 		<div class="centerMsgInChatView">{{content}}</div>
 	`;
+
 	templates['msgFrom'] = `
-		<!--<div class="messagesInChatView fromMeMessageInChatView {{#if note}}noteMessage{{/if}}" connect_msg="{{msgId}}" connect-appear-parent='#leftBlockInViewWindow'>-->
-		   <div class="lineInFromMeMessage">
-		      <div class="lineInBoxInLine">
-		         {{#if timeSentText}}
-			         <div class="topCircleInMessages"></div>
-			         <div class="timeTopInMessages">{{timeSentText}}</div>
-		         {{/if}}
+	   <div class="lineInFromMeMessage">
+	      <div class="lineInBoxInLine">
+	         {{#if timeSentText}}
+		         <div class="topCircleInMessages"></div>
+		         <div class="timeTopInMessages">{{timeSentText}}</div>
+	         {{/if}}
 
-		         
-	         	<div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
-	         	<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
+	         
+         	<div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
+         	<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
 
-		      </div>
-		   </div>
-		   <div class="contentTextInFromMeMessage">{{content}}</div>
-		<!--</div>-->
+	      </div>
+	   </div>
+	   <div class="contentTextInFromMeMessage">{{content}}</div>
 	`;
 
 	templates['msgTo'] = `
-		<!--<div class="messagesInChatView toMeMessageInChatView {{#if note}}noteMessage{{/if}}" connect_msg="{{msgId}}" connect-appear-scroll-parent='#leftBlockInViewWindow'  connect-appear-my-parent='.ChatViewInAppWindow'>-->
-		   <div class="lineInToMeMessage">
-		      <div class="lineInBoxInLine">
-				 {{#if timeSentText}}
-			         <div class="topCircleInMessages"></div>
-			         <div class="timeTopInMessages">{{timeSentText}}</div>
-		         {{/if}}
-		         
-		         <div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
-	         	<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
+	   <div class="lineInToMeMessage">
+	      <div class="lineInBoxInLine">
+			 {{#if timeSentText}}
+		         <div class="topCircleInMessages"></div>
+		         <div class="timeTopInMessages">{{timeSentText}}</div>
+	         {{/if}}
+	         
+	         <div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
+         	<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
 
-		      </div>
-		   </div>
-		   <div class="contentTextInToMeMessage">{{content}}</div>
-
-		<!--</div>-->
+	      </div>
+	   </div>
+	   <div class="contentTextInToMeMessage">{{content}}</div>
 	`;
 
 	//del appearClass
 	templates['msgBox'] = `
-		<div id='msgId{{msgId}}' class="messagesInChatView {{#if timeRead}}{{else}}connect-appear{{else}}{{/if}} {{#if fromMe}}fromMeMessageInChatView{{/if}}{{#if toMe}}toMeMessageInChatView{{/if}} {{#if note}}noteMessage{{/if}}"  {{#if timeSent}}time-sent="{{timeSent}}"{{/if}}  {{#if timeRead}}time-read="{{timeRead}}"{{/if}} {{#if timeDelivered}}time-delivered="{{timeDelivered}}"{{/if}}  connect_msg="{{msgId}}" connect-appear-scroll-parent='#leftBlockInViewWindow'  connect-appear-my-parent='.ChatViewInAppWindow'>
+		<div id='msgId{{msgId}}' class="messagesInChatView {{#if appearClass}}connect-appear{{/if}} {{#if fromMe}}fromMeMessageInChatView{{/if}}{{#if toMe}}toMeMessageInChatView{{/if}} {{#if note}}noteMessage{{/if}}"  {{#if timeSent}}time-sent="{{timeSent}}"{{/if}}  {{#if timeRead}}time-read="{{timeRead}}"{{/if}} {{#if timeDelivered}}time-delivered="{{timeDelivered}}"{{/if}}  connect_msg="{{msgId}}" connect-appear-scroll-parent='#leftBlockInViewWindow'  connect-appear-my-parent='.ChatViewInAppWindow'>
 			{{boxContent}}
 		</div>
 	`;
 	//ChatViewInAppWindow connect_chatid
+
+
+	CONST['domPathToMsgCounter'] = '#senderBlockInViewBlock .counterInChatId';
+
+
+	function plusNewMsgCounter (iNchatId,iNnumber) {
+		/*
+			@discr
+				plus number (by default 1) from new msg counter block
+			@inputs
+				@required
+					iNchatId -> string
+
+		*/
+		if(typeof iNnumber != 'number') iNnumber = 1;
+		let msgCountNumber = getNewMsgCounter(iNchatId) + iNnumber;
+		changeNewMsgCounter (iNchatId,msgCountNumber);
+		return msgCountNumber;
+	}
+	_['plusNewMsgCounter'] = plusNewMsgCounter;
+
+	function getNewMsgCounter (iNchatId) {
+		/*
+			@discr
+				get number from new msg counter block
+			@inputs
+				@required
+					iNchatId -> string
+
+		*/
+		let path = CONST['domPathToMsgCounter'];
+		let intFrom = parseInt($(path).html())||0
+		return intFrom;
+	}
+	_['getNewMsgCounter'] = getNewMsgCounter;
+
+	function changeNewMsgCounter (iNchatId,iNnumber) {
+		/*
+			@discr
+				change content in new msg counter block
+			@inputs
+				@required
+					iNchatId -> string
+					iNnumber -> int
+
+		*/
+		let path = CONST['domPathToMsgCounter'];
+		$(path).attr('connect_chatid',iNchatId);
+		$(path).html(iNnumber)
+	}
+	_['changeNewMsgCounter'] = changeNewMsgCounter;
+
+	function showNewMsgCounter () {
+		/*
+			@discr
+				show new msg counter block
+			@inputs
+				@required
+
+		*/
+		let path = CONST['domPathToMsgCounter'];
+		$(path).fadeIn (500);
+	}
+	_['showNewMsgCounter'] 	= showNewMsgCounter;
+
+	function hideNewMsgCounter () {
+		/*
+			@discr
+				hide nem msg counter block
+			@inputs
+				@required
+
+		*/
+		let path = CONST['domPathToMsgCounter'];
+		$(path).hide();
+	}
+	_['hideNewMsgCounter'] 	= hideNewMsgCounter;
+
+
 
 	function getFromMessageAttrChatId (iNel) {
         // var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
@@ -198,8 +278,14 @@ define(['jquery', 'template7','v_app', 'jquery.appear'],function( $, Template7, 
   				if(value == '') return true;
 			    iNdata['onClickSendMesg'](e);
 			    $('#forTextInputInSenderBlock textarea').val('');
-			    effChatViewScrollToBot();
+			    effChatViewScrollToBotSafe();
   			});
+
+  			$('.buttonChatToBottom').click( 
+  				function () {
+  					$('#leftBlockInViewWindow').scrollBot(0);
+  				} 
+  			);
 
   			$("#forTextInputInSenderBlock textarea").keydown( function(e) { 
 			    var code = e.which; // recommended to use e.which, it's normalized across browsers
@@ -285,11 +371,11 @@ define(['jquery', 'template7','v_app', 'jquery.appear'],function( $, Template7, 
 
 
 
-    		function setObserverForViewInVisualScrollByChatId (iNchatId,iNfunctionSuccess) {
+    		function setObserverForViewInVisualScrollByChatId (iNchatId, iNdata ) {
 				let object = getMessagesDomObjectByChatId(iNchatId,'.toMeMessageInChatView');
 
 				object.appearByEach(
-					iNfunctionSuccess,
+					iNdata['success'],
 					{
 						'scroll-window'		:'#leftBlockInViewWindow',
 						'my-filter-window'	: getChatDomPathByChatId(iNchatId),
@@ -298,6 +384,17 @@ define(['jquery', 'template7','v_app', 'jquery.appear'],function( $, Template7, 
 						},
 						'checkForRemoveClass'	: (iNobject) => {
 							return $(iNobject).attr('time-read');
+						},
+						'onScrollParent'	: (iNobject) => {
+							if( $(iNobject).scrollBot() > $(iNobject).height() / 2 ) {
+							 	// show button if not button
+								$('.buttonChatToBottom').show();
+								if(typeof iNdata['onScrollParentTrue'] == 'function')  iNdata['onScrollParentTrue']();
+							} else {
+								// show button if not button
+								$('.buttonChatToBottom').hide();
+								if(typeof iNdata['onScrollParentFalse'] == 'function') iNdata['onScrollParentFalse'](iNchatId);
+							}
 						}
 					}
 				);//'.ChatViewInAppWindow'
@@ -309,15 +406,31 @@ define(['jquery', 'template7','v_app', 'jquery.appear'],function( $, Template7, 
 
 
 	//<CHAT VIEW DUPLICATE
-		function effChatViewScrollToBot () {
-			clearTimeout(window['connectVarScroll']);
-			window['connectVarScroll'] = setTimeout(function(){
-				V_APP.effScrollToButtom('#leftBlockInViewWindow',0);
-			},100);
-			
-
+		function effChatViewScrollToBotWithTimeOut (iNfunctionSuccess, iNfunctionError) {
+			clearTimeout(window['connectVarMenuScrollInMenuView']);
+			window['connectVarMenuScrollInMenuView'] = setTimeout(  () => {
+			 	effChatViewScrollToBotSafe (iNfunctionSuccess,iNfunctionError);
+			},10);
 		}
-		_['effChatViewScrollToBot'] = effChatViewScrollToBot;
+		_['effChatViewScrollToBotWithTimeOut'] = effChatViewScrollToBotWithTimeOut;
+
+
+		function effChatViewScrollToBotSafe (iNfunctionSuccess,iNfunctionError) {
+			// if we don'see this chat block
+			if( $('.ChatViewInAppWindow:visible').length < 1 ) return false;
+			if (  
+				!( $('#leftBlockInViewWindow').scrollBot() >  ( $('#leftBlockInViewWindow').height() / 2 )  ) ||
+				$('#leftBlockInViewWindow').scrollTop() == 0
+			) {
+				V_APP.delLoaderInAppView()
+			 	// show button if not button
+			 	V_APP.effScrollToButtom ('#leftBlockInViewWindow',0);
+			 	if ( typeof iNfunctionSuccess == 'function' ) 	iNfunctionSuccess ();
+			} else {
+				if ( typeof iNfunctionError == 'function' ) 	iNfunctionError ();
+			}
+		}
+		_['effChatViewScrollToBotSafe'] = effChatViewScrollToBotSafe;
 	//<CHAT VIEW DUPLICATE
 
 	return _;

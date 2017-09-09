@@ -457,22 +457,48 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
   _['getMyChats'] = getMyChats;
 
 
+
+
+  //@< copy funcitons from message.js model
+    CONST['var_prefixNewMessageCount'] = 'connectNewMsgCountInChat-';
+
+    function setMyNewMessagesCountByChatId (iNchatId,iNnumber) {
+      let path = CONST['var_prefixNewMessageCount']+iNchatId;
+      M_APP.save(path,iNnumber);
+    }
+    _['setMyNewMessagesCountByChatId'] = setMyNewMessagesCountByChatId;
+  //@> copy funcitons from message.js model
+
+  function startNewMsgCounter (iNchatId,iNmyUid) {
+    let chatsMyNewMsgRef = FIREBASE.database().ref('chats/' + iNchatId + '/member/' + iNmyUid + '/newMsg');
+    chatsMyNewMsgRef.on('value', 
+      (iNdata) => {
+        let number = iNdata.val()||0;
+        // save in local storage in db
+        if(number == 0) return false; 
+        setMyNewMessagesCountByChatId(iNchatId,number);
+        M_CATEGORY.view.domSafeShowNewMsgCountInChatBlock( iNchatId, number );
+      }
+    );
+  }
+
+
   function safeAttachLiveLinkToChatElement (iNchatId,iNfunction) {
       // of all link with chat db
       offAllLinkWithChatDbByChatId(iNchatId);
       //check chat list for exist
-      var  chatId   = iNchatId,
-           chatsRef = FIREBASE.database().ref('chats/' + chatId + '/info');
+      var  chatId           = iNchatId,
+           myUid            = USER.getMyId(),
+           chatsRef         = FIREBASE.database().ref('chats/' + chatId + '/info');
 
-      chatsRef.once ( 'value', function (chatData) {
+       
+      console.log('safeAttachLiveLinkToChatElement chatsRef path -','chats/' + chatId + '/info');
+      console.log('safeAttachLiveLinkToChatElement chatsRef - ',chatsRef);
+      chatsRef.once ( 'value', (chatData) => {
         var chatId    = chatData.ref.parent.key,
             chatBlock = chatData.val(),
             chatType  = chatBlock.chat.type;
-            console.log('safeAttachLiveLinkToChatElement1 value chatBlock' , chatBlock );
-            console.log('safeAttachLiveLinkToChatElement1 value chatId' , chatId );
-            console.log('safeAttachLiveLinkToChatElement1 value chatData' , chatData );
-            console.log('safeAttachLiveLinkToChatElement1 value chatType' , chatType );
-
+            console.log('safeAttachLiveLinkToChatElement onValue chatBlock',chatBlock);
 
             // var   changeObject = M_CATEGORY.getObjectForUpdateChatBlock ( chatBlock );
             //       changeObject['chatType']       = chatType;
@@ -489,6 +515,8 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
               safeUpdateCommonChatBlockFromUserDb ( chatId, chatBlock, chatType ,iNfunction);
           }
         //@> creating chat
+
+        startNewMsgCounter(chatId,myUid);
       });
       console.log('safeAttachLiveLinkToChatElement FIREBASE ref child_changed','chats/'+chatId);
       chatsRef.on ( 'child_changed' , function (chatData) {
@@ -574,31 +602,9 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
               findChatBlock - for find chatId object
       */
 
-      console.log('safeUpdatePrivateChatBlockFromUserDb iNchatId',iNchatId);
-      console.log('safeUpdatePrivateChatBlockFromUserDb iNchatType',iNchatType);
-      console.log('safeUpdatePrivateChatBlockFromUserDb iNobject',iNobject);
-      console.log('activeUserChangeInChatBlock iNchatId', iNchatId);
-
       var user2       = M_CATEGORY.userForPrivateChat(iNchatId);
 
-      console.log('activeUserChangeInChatBlock ref','users/'+user2);
-
       var usersRef    = firebase.database().ref('users/'+user2);
-
-
-      // objForCreate = {}; // M_CATEGORY.getObjectForUpdateChatBlock ( iNobject );
-      // console.log('safeUpdatePrivateChatBlockFromUserDb objForCreate', objForCreate );
-      // chatType  = iNchatType,
-      // chatLogin = iNobject.data.login,
-      // chatIcon  = iNobject.data.icon,
-      // chatName  = iNobject.data.name,
-          
-      
-      // objForCreate['chatType'] = chatType;
-      // objForCreate['chatId']   = iNchatId;
-      // objForCreate['chatName'] = chatName;
-      // objForCreate['login']    = chatLogin;
-      // objForCreate['icon']     = chatIcon;
 
 
       usersRef.on('value', function(usersData) { 

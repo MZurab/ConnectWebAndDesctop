@@ -14,6 +14,9 @@ define([ 'jquery', 'template7', 'v_app', 'jquery.appear'],function( $, Template7
 		   <div class="chatBlockInViewBlock">
 		      <div class="viewesFooterUnderWindow">
 		         <div id="senderBlockInViewBlock">
+		         	<div class="boxInMessageSenderBlock">
+		         		<div class="buttonChatToBottom"></div>
+		         	</div>
 		            <div id="bottomViewInMsgBlock">
 		               <ul class="rawBlockInBottomView">
 		                  <li class="LineInBottomViewRawBlock">1</li>
@@ -76,6 +79,10 @@ define([ 'jquery', 'template7', 'v_app', 'jquery.appear'],function( $, Template7
 		<div class="chatBlockInViewBlock">
 		   <div class="viewesFooterUnderWindow">
 		      <div id="senderBlockInViewBlock">
+	      	  	 <div class="boxInMessageSenderBlock">
+	         		<div class="counterInChatId"></div>
+	         		<div class="buttonChatToBottom"></div>
+	         	</div>
 		         <div id="bottomViewInMsgBlock">
 		            <ul class="rawBlockInBottomView">
 		               <li class="LineInBottomViewRawBlock">1</li>
@@ -123,6 +130,7 @@ define([ 'jquery', 'template7', 'v_app', 'jquery.appear'],function( $, Template7
 							name
 							icon
 							id
+							chatId
 						@optional
 							online -> bool
 							back -а-> bool

@@ -1,4 +1,4 @@
-define(['jquery','template7','v_view'],function($,Template7,v_view){
+define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 	let CONST = {
 		'pathAppHeader' 	  : '#block #viewBlock .topBlockInViewBlock',
 		'pathAppView' 	  	  : '#block #viewBlock #viewAndChatBlockInViewBlock.appChiefWindow',
@@ -229,7 +229,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		
 		var selector = '.usersBlockContainerInMenusBlock .app[app-name="'+iNdata['app']+'"] ';
 		if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
-    	v_view.d_addDataToViewEl(selector, _getPageForListApp(iNdata) ,'change');
+    	V_VIEW.d_addDataToViewEl(selector, _getPageForListApp(iNdata) ,'change');
     }
     
     function addContentToChiefApp (iNdata,iNcontent) {
@@ -249,7 +249,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		*/
     	var selector = '#viewAndChatBlockInViewBlock .viewesInWindow.app[app-name="'+iNdata['app']+'"] .view[view-name="'+ iNdata['page']+ '"]';
     	if (typeof iNdata['type'] != 'string') iNdata['type']='begin';
-    	v_view.d_addDataToViewEl(selector, iNcontent,iNdata['type']);
+    	V_VIEW.d_addDataToViewEl(selector, iNcontent,iNdata['type']);
     	console.log('addContentToChiefApp selector',selector);
     	console.log('addContentToChiefApp type',iNdata['type']);
     }
@@ -279,7 +279,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 		var selector = '.usersBlockContainerInMenusBlock'; 
 		if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
 		getAttrAndClassForAppAndPage(iNdata);
-    	v_view.d_addDataToViewEl(selector, _getListApp(iNdata) ,'end');
+    	V_VIEW.d_addDataToViewEl(selector, _getListApp(iNdata) ,'end');
     }
 
 
@@ -475,7 +475,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 			*/
 			var selector = CONST['pathAppView'] + ' .app[app-name="'+iNdata['app']+'"] ';
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
-        	v_view.d_addDataToViewEl(selector, _getPageForChiefApp(iNdata) ,'end')
+        	V_VIEW.d_addDataToViewEl(selector, _getPageForChiefApp(iNdata) ,'end')
         }
         
         function _d_createChiefApp (iNdata) {
@@ -501,7 +501,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 			console.log('createChiefApp start');
 			var selector = CONST['pathAppView']; 
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
-        	v_view.d_addDataToViewEl(selector, _getChiefApp(iNdata) ,'change')
+        	V_VIEW.d_addDataToViewEl(selector, _getChiefApp(iNdata) ,'change')
         }
         //< app headers
 	        
@@ -684,7 +684,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
         	if( typeof iNtype != 'string' ) iNtype = 'end';
         	var selector = CONST['pathAppHeader'],
         		content = _getAppHeader(iNdata);
-			v_view.d_addDataToViewEl(selector, content ,iNtype);
+			V_VIEW.d_addDataToViewEl(selector, content ,iNtype);
         }
         function _d_safeViewAppHeaderWithContent (iNdata,iNtype) {
 			/*
@@ -743,7 +743,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
         	if( typeof iNtype != 'string') iNtype = 'end';
         	var selector = CONST['pathAppHeader'] + ' .' + CONST['nameInAppHeader']+'[app-name="'+iNdata['app']+'"]',
         		content = _getPageAppHeader(iNdata);
-			v_view.d_addDataToViewEl(selector, _getPageForListApp(content) , iNtype);
+			V_VIEW.d_addDataToViewEl(selector, _getPageForListApp(content) , iNtype);
         }
 
 
@@ -960,7 +960,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 	        	var selector = CONST['pathMenuHeader'],
 	        		content = _getAppMenuHeader(iNdata);
 	        	// _d_addAppHeaderByTemplate(iNdata,iNtype);
-				v_view.d_addDataToViewEl(selector, content ,iNtype);//_getPageForListApp(content)
+				V_VIEW.d_addDataToViewEl(selector, content ,iNtype);//_getPageForListApp(content)
 	        }
 	        
 
@@ -983,7 +983,7 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 				if( typeof iNtype != 'string' ) iNtype = 'end';		
 	        	var selector = CONST['pathMenuHeader'] + ' .' + CONST['nameInMenuHeader']+'[app-name="'+iNdata['app']+'"]',
 	        		content = _getPageMenuHeader(iNdata);
-				v_view.d_addDataToViewEl(selector, _getPageForListApp(content) ,iNtype);
+				V_VIEW.d_addDataToViewEl(selector, _getPageForListApp(content) ,iNtype);
 	        }
         //> app headers
 
@@ -1296,7 +1296,35 @@ define(['jquery','template7','v_view'],function($,Template7,v_view){
 	    }
 		//@> effects animation
 
+
+		//@< LODADER
+			function _createLoaderInAppView () {
+				V_VIEW.d_showLoader('#viewBlock');
+			}
+
+			function _delLoaderInAppView () {
+				V_VIEW.d_closeLoader('#viewBlock');
+			}
+
+			function _createLoaderInMenuView () {
+				V_VIEW.d_showLoader('#menusBlock');
+			}
+			
+			function _delLoaderInMenuView () {
+				V_VIEW.d_closeLoader('#menusBlock');
+			}
+
+		//@> LODADER
+
         return {
+		  // loader
+		  	delLoaderInMenuView 	: _delLoaderInMenuView,
+		  	createLoaderInMenuView 	: _createLoaderInMenuView,
+		  	delLoaderInAppView 		: _delLoaderInAppView,
+		  	createLoaderInAppView 	: _createLoaderInAppView,
+		  	delLoader 				: V_VIEW.d_closeLoader,
+		  	createLoader 			: V_VIEW.d_showLoader,
+
     	  // functions for work with template
     	  	'getAppTemplate'		: _getAppTemplate,
     	  	'getPageViewTemplate'	: _getPageViewTemplate,

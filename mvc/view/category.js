@@ -92,22 +92,23 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
 	const output = {}; _['output'] = output;
 
 
+
+
+
+
 	function onClickToChatList (iNchatId,iNfunction) {
 		var pathToThisChat = getPathToDomElByChatId(iNchatId);
-		console.log('onClickToChatList pathToThisChat', pathToThisChat + ' .iconInUserBlock img, ' + pathToThisChat + ' .userNameInChatList');
 		$(pathToThisChat + ' .iconInUserBlock img, ' + pathToThisChat + ' .userNameInChatList').off();
 		$(pathToThisChat + ' .iconInUserBlock img, ' + pathToThisChat + ' .userNameInChatList').click(function(e) {
 			e.preventDefault();
 			var obj = {};
 			let chatId 		= iNchatId;//$(this).attr('connect_chatid');
-				console.log('onClickToChatList chatId',chatId);
 				obj['chatId'] 	= chatId;
 				obj['userType'] = $(this).closest('.mix.usersBlockInMenusBlock').attr('connect_userType');;
 				obj['login'] 	= $(this).closest('.mix.usersBlockInMenusBlock').attr('connect_userLogin');
 				obj['uid'] 		= $(this).closest('.mix.usersBlockInMenusBlock').attr('connect_uid');;
 				obj['chatIcon'] = getChatIcon(chatId);
 				obj['chatName'] = getChatName(chatId);
-				console.log('onClickToChatList obj',obj);
 				if(typeof iNfunction == 'function')iNfunction(obj);
 
 		});
@@ -118,8 +119,6 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
 
 
 	function addUserMenuChildN (iNmenu,iNdataBlockN) {
-		console.log('addUserMenuChildN iNmenu',iNmenu);
-		console.log('addUserMenuChildN iNdataBlock2',iNdataBlockN);
 	   	var newData = getUserMenuChildN(iNmenu);
      	iNdataBlockN.push(newData);
 	  	if(typeof iNmenu.children == 'object' && Array.isArray(iNmenu.children) && iNmenu.children.length > 0) {
@@ -146,8 +145,6 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
 		}
 
 	function addUserMenuChildOne (iNmenu,iNdataBlock2) {
-		console.log('addUserMenuChildOne iNmenu',iNmenu);
-		console.log('addUserMenuChildOne iNdataBlock2',iNdataBlock2);
   		var dataBlockN = [];
 	  	if(typeof iNmenu.children == 'object' && Array.isArray(iNmenu.children) &&  iNmenu.children.length > 0) {
 	  		var childrenMenu2 = iNmenu.children;
@@ -169,9 +166,7 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
 	
 
 	function addMenuByCategoryList (iNcategory,iNuid) {
-		console.log('addMenuByCategoryList iNcategory',iNcategory);
 		var content = getUserMenuContainerByCats(iNcategory);
-		console.log('addMenuByCategoryList content',content);
 		addMenuByContentAndUid(content,iNuid);
 		// active actiond for click events by href
 		activeActionsForMenuEvents();
@@ -205,9 +200,6 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
 					// open app
 					const appName = $(this).parent().attr('appName');
 					const pageName = $(this).parent().attr('pageName');
-					console.log('clickToMenuFirstLevel openApp appName' , appName );
-					console.log('clickToMenuFirstLevel openApp pageName', pageName);
-					console.log('clickToMenuFirstLevel openApp hrefData', hrefData);
 	        		M_APP.getGlobalVar('engine').passToApp({'app':appName,'page':pageName,'data':hrefData});
 				}
 			}
@@ -297,7 +289,6 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
     			var thisMenu =  data[appKey][mKey];
 				addUserMenuChildOne(thisMenu,dataBlock2);
 			}
-	    	console.log('getUserMenuContainerByCats dataBlock2',dataBlock2);
    			data[appKey]['sub'] = dataBlock2.join(' ');
 	    }
 	  	return getUserMenuContainerFromTemplate(iNmenu).replace(/[  \n\t\r]+/g,' ');
@@ -326,11 +317,8 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
 						lastMsgTimeText
 						lastMsgTime
 		*/
-		console.log('createChatList iNdata',iNdata);
 		var content = getUserListTemplate ( iNdata );
 		$(vars['pathToChatList']).prepend( content );
-		console.log('createChatList pathToChatList',vars['pathToChatList']);
-		console.log('createChatList content',content);
 	}
 	_['createChatList'] = createChatList;
 
@@ -370,11 +358,8 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
             @return 
             	string: coung of chat list element
         */
-        console.log('safeAddChatList iNdata',iNdata);
         var lengthChatList = findChatBlock(iNdata['chatId']);
-        console.log('safeAddChatList lengthChatList',lengthChatList);
         if(lengthChatList < 1) {
-        		console.log('safeAddChatList lengthChatList isTrue');
         	createChatList(iNdata);
         	// add effect for last msg and live flash messages
         	setEffectsForChatList(iNdata['chatId']);
@@ -502,31 +487,66 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
 		    if( typeof(output['objectTimeoutForHideLiveInChatsList']) != 'undefined') clearTimeout(output['objectTimeoutForHideLiveInChatsList'])
 		    output['objectTimeoutForHideLiveInChatsList'] = setTimeout(function () {
             	var chatObject = getPathToDomElByChatId(iNchatId);
-            	console.log('startEffHideLiveInChatsList chatObject',chatObject);
-            	console.log('startEffHideLiveInChatsList path',chatObject + ' .liveBlocks');
 		        $(chatObject + ' .liveBlocks').hide();
 		    }, iNtime);
 		}
 		_['startEffHideLiveInChatsList'] = startEffHideLiveInChatsList;
 
 
-
-		function domPlusCountMessages ( iNchatId, newMsg ) {
+		function domChangeCountMessages (iNchatId,iNnumber) {
             /*
-                increase new msg count by $newMsg variable
-                1 - chatObject (String)
+                change new msg count by $newMsg variable
+                1 - iNchatId (String)
                     defined chat object
-                2 - newMsg (int)
+                2 - iNnumber (int)
                 @depends
-                    domShowNewMsgCountInChatBlock
+                    getPathToDomElByChatId
             */
             var chatObject = getPathToDomElByChatId(iNchatId);
-            if(typeof(newMsg) == 'undefined') newMsg = 1;
-            var count_msg = parseInt($(chatObject + ' .newMsgInSecondLine').text()) + newMsg;
-            $(chatObject + ' .newMsgInSecondLine').change(count_msg);
-            domShowNewMsgCountInChatBlock(chatObject);
-        }
-		_['domPlusCountMessages'] = domPlusCountMessages;
+            $(chatObject + ' .newMsgInSecondLine').html(iNnumber);
+		}
+		_['domChangeCountMessages'] = domChangeCountMessages;
+
+		// function domPlusCountMessages ( iNchatId, newMsg ) {
+  //           /*
+  //               increase new msg count by $newMsg variable
+  //               1 - chatObject (String)
+  //                   defined chat object
+  //               2 - newMsg (int)
+  //               @depends
+  //                   domShowNewMsgCountInChatBlock
+  //           */
+  //           var chatObject = getPathToDomElByChatId(iNchatId);
+  //           if(typeof(newMsg) == 'undefined') newMsg = 1;
+  //           var count_msg = parseInt($(chatObject + ' .newMsgInSecondLine').text()) + newMsg;
+  //           $(chatObject + ' .newMsgInSecondLine').change(count_msg);
+  //           domShowNewMsgCountInChatBlock(chatObject);
+  //       }
+		// _['domPlusCountMessages'] = domPlusCountMessages;
+
+			function domSafeShowNewMsgCountInChatBlock (iNchatId,iNnumber) {
+                /*
+                    show block what show new msg count in chatBLock
+                    1 - chatObject (String)
+                        defined chat object
+                */
+                console.log('domSafeShowNewMsgCountInChatBlock iNchatId,iNnumber',iNchatId,iNnumber);
+				domChangeNewMsgCountInChatBlock(iNchatId,iNnumber);
+				domShowNewMsgCountInChatBlock(iNchatId);
+			}
+			_['domSafeShowNewMsgCountInChatBlock'] = domSafeShowNewMsgCountInChatBlock;
+
+			function domChangeNewMsgCountInChatBlock (iNchatId,iNnumber) {
+                /*
+                    show block what show new msg count in chatBLock
+                    1 - chatObject (String)
+                        defined chat object
+                */
+                var chatObject = getPathToDomElByChatId(iNchatId);
+                $(chatObject + ' .newMsgInSecondLine').html(iNnumber);
+                console.log("domChangeNewMsgCountInChatBlock",chatObject + ' .newMsgInSecondLine',$(chatObject + ' .newMsgInSecondLine'),iNnumber)
+            }
+			_['domChangeNewMsgCountInChatBlock'] = domChangeNewMsgCountInChatBlock;
 
             function domShowNewMsgCountInChatBlock (iNchatId) {
                 /*
@@ -535,7 +555,7 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
                         defined chat object
                 */
                 var chatObject = getPathToDomElByChatId(iNchatId);
-                $(chatObject + ' .newMsgInSecondLine').show();
+                $(chatObject + ' .newMsgInSecondLine').css('display','inline-block');
             }
 			_['domShowNewMsgCountInChatBlock'] = domShowNewMsgCountInChatBlock;
 
@@ -552,16 +572,6 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
             }
 			_['domHideNewMsgCountInChatBlock'] = domHideNewMsgCountInChatBlock;
 
-                function domClearNewMsgCountInChatBloc (iNchatId) {
-                    /*
-                        set to zero block what show new msg count in chatBLock
-                        1 - chatObject (String)
-                            defined chat object
-                    */
-            		var chatObject = getPathToDomElByChatId(iNchatId);
-                    $(chatObject + ' .newMsgInSecondLine').text('');
-                }
-				_['domClearNewMsgCountInChatBloc'] = domClearNewMsgCountInChatBloc;
 
         function domChangeIconInChatBlock (iNchatId,icon) {
             /*
@@ -572,8 +582,6 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
                     new icon src
             */
             var chatObject = getPathToDomElByChatId(iNchatId);
-            console.log('domChangeIconInChatBlock chatObject',chatObject);
-            console.log('domChangeIconInChatBlock icon',icon);
             $(chatObject+" .iconInUserBlock img").attr('src',icon);
         }
 		_['domChangeIconInChatBlock'] = domChangeIconInChatBlock;
@@ -588,8 +596,6 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
 
             */
             var chatObject = getPathToDomElByChatId(iNchatId);
-            console.log('domChangeChatNameInChatBlock chatObject',chatObject);
-            console.log('domChangeChatNameInChatBlock chatName',chatName);
             $(chatObject+" .userNameInChatList").text(chatName);
         }
 		_['domChangeChatNameInChatBlock'] = domChangeChatNameInChatBlock;
@@ -605,8 +611,6 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
 
             */
             var chatObject = getPathToDomElByChatId(iNchatId);
-            console.log('domChangeLoginInChatBlock chatObject',chatObject);
-            console.log('domChangeLoginInChatBlock chatName',userLogin);
             $(chatObject).attr('cLogin',userLogin);
         }
 		_['domChangeLoginInChatBlock'] = domChangeLoginInChatBlock;
@@ -621,17 +625,12 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
                     lmsgTime (String)
             */
             var chatObject = getPathToDomElByChatId(iNchatId);
-            console.log('domChangeLastMsgTextAndTimeInChatBlock', chatObject + ' .lastMessageInThirdLine');
             if($(chatObject + ' .lastMessageInThirdLine .current').text() != iNdata.lmsgText) {
-                console.log('domChangeLastMsgTextAndTimeInChatBlock', 'start');
                 var NowTime = getTodayTime( iNdata.lmsgTime );
                 $(chatObject + ' .lastMessageInThirdLine').find('.texts li:first').text(iNdata.lmsgText);
-                console.log('domChangeLastMsgTextAndTimeInChatBlock', 'iNdata.lmsgText',iNdata.lmsgText);
                 $(chatObject + ' .lastMessageInThirdLine').textillate('out');
                 $(chatObject+ " .timelastMsgInThirdLine").text( NowTime );
-                console.log('domChangeLastMsgTextAndTimeInChatBlock', 'NowTime',NowTime);
                 $(chatObject).attr('data-lastmsgtime', iNdata.lmsgTime );
-                console.log('domChangeLastMsgTextAndTimeInChatBlock', 'iNdata.lmsgTime',iNdata.lmsgTime);
                 startEffSortChats();
             }
         }
@@ -653,15 +652,9 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
             */
             var chatObject = getPathToDomElByChatId(iNchatId);
             var currentValue = $(chatObject + ' .printingAmount .current').text();
-            console.log('domLiveSimpleTextAnimation currentValue',currentValue);
-            console.log('domLiveSimpleTextAnimation iNchatId',iNchatId);
-            console.log('domLiveSimpleTextAnimation iNdata',iNdata);
-            console.log('domLiveSimpleTextAnimation chatObject',chatObject);
             if(currentValue != iNdata.liveData){
                 if(iNdata.liveType == 1){
                     // 
-
-            		console.log('domLiveSimpleTextAnimation chatObject',chatObject);
                     $(chatObject + ' .liveStatusTextBlock').show();
                     $(chatObject + ' .liveStatusTextWriting').show();
                 }else{

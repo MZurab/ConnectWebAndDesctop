@@ -1,38 +1,131 @@
-define(['jquery','v_message','m_firebase','m_moment','m_user','m_app'],function($,VIEW,FIREBASE,MOMENT,USER,M_APP) {
+define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_category'],function($, VIEW, FIREBASE, MOMENT, USER, M_APP, M_CATEGORY) {
 	const _ = {'view':VIEW};
-	const CONST = {};
+	const CONST = {
+		'var_prefixNewMessageCount' : 'connectNewMsgCountInChat-'
+	};
+	//@< copied functions from app-chat module
+		function getCurrentChatId () {
+	        return M_APP.get('connectThisOpenChatId');
+	    }
+    //@> copied functions from app-chat module
+		function annihilateNewMsgCounterFDB (iNchatId) {
+			var chatId = iNchatId;//getCurrentChatId();
+			var myUID  = USER.getMyId();
+    		var baseKey = 'chats/' + chatId + '/member/' + myUID + '/newMsg';
+			var updateArray = {};
+    			updateArray[baseKey] = 0;
+        	FIREBASE.database().ref().update(updateArray);
+		}
 
-		// function getGlobalVarFirstChatOpen (iNchatId) {
-		// 	return M_APP.get('connectLoadedChat'+iNchatId);
+		function safeHideMessagesCountByChatId (iNchatId) {
+			var msgCountFromLocaleStorage = getMyNewMessagesCountByChatId(iNchatId);
+			if ( msgCountFromLocaleStorage > 0 ) {
+				// send query for firebase db for annihilate newMsgCount in chats/$chatId/member/#myUid/newMsgCount
+				setMyNewMessagesCountByChatId ( iNchatId, 0 );
+				annihilateNewMsgCounterFDB(iNchatId);
+			}
+			VIEW.changeNewMsgCounter(iNchatId,0);
+			VIEW.hideNewMsgCounter ();
+			M_CATEGORY.view.domHideNewMsgCountInChatBlock(iNchatId);
+		}
+		
 
-		// }
-		// function setGlobalVarFirstChatOpen (iNchatId,iNvalue) {
-		// 	M_APP.save('connectLoadedChat'+iNchatId,iNvalue);
-		// }
+		function safeViewMessagesCountByChatId (iNchatId) {
+			VIEW.plusNewMsgCounter ( iNchatId, 1 );
 
-	 	function synchronizeWithMessageDb (iNchatId) {
-			startChildFromMessages(iNchatId,'child_added');
+			let numberNewMsgFromDom = VIEW.getNewMsgCounter(iNchatId);
+			M_CATEGORY.view.domChangeNewMsgCountInChatBlock (iNchatId,numberNewMsgFromDom);
+
+
+			M_CATEGORY.view.domShowNewMsgCountInChatBlock (iNchatId);
+			VIEW.showNewMsgCounter();
+		}
+
+			// function getMyNewMessagesCountByChatIdFromAll (iNchatId) {
+			// 	var msgCountFromLocaleStorage = getMyNewMessagesCountByChatId(iNchatId);
+			// 	var msgCountFromDom 		  = getNewMsgCounter(iNchatId);
+			// 	var commonCounter 			  = msgCountFromLocaleStorage + msgCountFromDom;
+			// 	return commonCounter;
+			// }
+
+			function getMyNewMessagesCountByChatId (iNchatId) {
+				return parseInt(M_APP.get(CONST['var_prefixNewMessageCount']+iNchatId))||0;
+			}
+			_['getMyNewMessagesCountByChatId'] = getMyNewMessagesCountByChatId;
+
+			function plusMyNewMessagesCountByChatId (iNchatId) {
+				let number = getMyNewMessagesCountByChatId(iNchatId) + 1;
+				setMyNewMessagesCountByChatId(iNchatId,number);
+			}
+			_['plusMyNewMessagesCountByChatId'] = plusMyNewMessagesCountByChatId;
+
+			function setMyNewMessagesCountByChatId (iNchatId,iNnumber) {
+				let path = CONST['var_prefixNewMessageCount']+iNchatId;
+				M_APP.save(path,iNnumber);
+			}
+			_['setMyNewMessagesCountByChatId'] = setMyNewMessagesCountByChatId;
+
+
+
+	 	function synchronizeWithMessageDb (iNchatId,iNobject) {
+		    	/*
+		    		@inputs
+		    			@required
+		    				iNchatId -> string
+    					@optional
+    						iNobject -> object
+								functionOnChildChanged
+								functionOnChildAdded
+								functionOnChild
+		    	*/
+    		if(typeof iNobject != 'object') iNobject = {};
+			M_APP.view.createLoaderInAppView();
+
+			startChildFromMessages(iNchatId,'child_added',iNobject);
 
 			setTimeout (
 				() => {
 					let chatId = iNchatId;
-					startChildFromMessages(chatId,'child_changed');
+					startChildFromMessages(chatId,'child_changed',iNobject);
 				},
 				5000
 			); 
 	    }
 	    _['synchronizeWithMessageDb'] = synchronizeWithMessageDb;
 
-		    function startChildFromMessages (iNchatId,iNtype) {
+		    function startChildFromMessages (iNchatId, iNtype, iNobject) {
+		    	/*
+		    		@inputs
+		    			@required
+		    				iNchatId -> string
+		    				iNtype -> string
+		    					child_changed || child_added
+    					@optional
+    						iNobject -> object
+								functionOnChildChanged
+								functionOnChildAdded
+								functionOnChild
+		    	*/
 
-		    	// setGlobalVarFirstChatOpen(iNchatId,'0');
+	    		if(typeof iNobject != 'object') iNobject = {};
 
 		        var messagesRef = FIREBASE.database().ref('messages/'+iNchatId);
-		        messagesRef.orderByChild("time").limitToLast(100).on(iNtype, function(messagesData) { 
-		        	callbackAddOrChangeMessageFromFirebase(messagesData,iNchatId,iNtype);
+		        messagesRef.orderByChild("time").limitToLast(100).on(iNtype, (messagesData) =>  { 
+		        	callbackAddOrChangeMessageFromFirebase( messagesData, iNchatId, iNtype, iNobject);
 				});
 		    }	
-			    function callbackAddOrChangeMessageFromFirebase (iNdataFromFB, iNchatId, iNtype) {
+			    function callbackAddOrChangeMessageFromFirebase (iNdataFromFB, iNchatId, iNtype,iNobject) {
+			    	/*
+			    		@inputs
+			    			@required
+			    				iNdataFromFB (result from firebase db)
+			    				iNchatId -> string
+			    				iNtype -> number
+	    						iNobject -> object
+	    							@optional
+										functionOnChildChanged
+										functionOnChildAdded
+			    	*/
 			    	var messagesData = iNdataFromFB;
 			    	var myUID = USER.getMyId();
 			    	var fullData 		   = messagesData.val()
@@ -40,25 +133,44 @@ define(['jquery','v_message','m_firebase','m_moment','m_user','m_app'],function(
 			    	objectForCreateMessage['msgId'] = messagesData.key;
 
 			    	// if(typeof())
+			    	if ( objectForCreateMessage['uid'] != myUID &&  objectForCreateMessage['type'] == 1 ) {
+		    			let myStateRead = getMyStateReadFromMsg(fullData,myUID);
+		    			if( myStateRead  == 0 ) {
+		    				objectForCreateMessage['appearClass'] = true;
+		    			}
+		    		}
+
+			    	if(typeof iNobject['functionOnChild'] == 'function') iNobject['functionOnChild'](iNchatId);
 			    	
 			    	getTimeTextForAllMessages(objectForCreateMessage,fullData,iNchatId,myUID);
+
+
 			    	if(iNtype == 'child_changed') {
 			    		// replace message in chat container
+
+			    		if(typeof iNobject['functionOnChildChanged'] == 'function') iNobject['functionOnChildAdded'](iNchatId);
+
 						VIEW.safeReplaceMessageToChatPage( objectForCreateMessage, myUID, iNchatId  );
 
 			    	} else {
+			    		if(typeof iNobject['functionOnChildAdded'] == 'function') iNobject['functionOnChildAdded'](iNchatId);
 			    		safeCreateCenterMessageByPassedTime(objectForCreateMessage,fullData,iNchatId,myUID);
+
 			    		
-			    		if ( objectForCreateMessage['uid'] != myUID &&  objectForCreateMessage['type'] == 1 ) {
-			    			let myStateRead = getMyStateReadFromMsg(fullData,myUID);
-			    			if( myStateRead  == 0 ) {
-			    				objectForCreateMessage['appearClass'] = true;
-			    			}
-			    		}
 
 						VIEW.createMessageToChatPage( objectForCreateMessage, myUID, iNchatId  );
 
-						VIEW.effChatViewScrollToBot();
+						VIEW.effChatViewScrollToBotWithTimeOut (
+							() => {
+								if(getCurrentChatId() == iNchatId)
+									safeHideMessagesCountByChatId ( iNchatId);
+							},
+							() => {
+								if(getCurrentChatId() == iNchatId)
+									if ( objectForCreateMessage['uid'] != myUID) 
+										safeViewMessagesCountByChatId ( iNchatId);
+							}
+						);
 						setObserverForAppearMessageInVisualScrollByChatId (iNchatId);
 					}
 					// ser observer for income non read message to me
@@ -76,7 +188,12 @@ define(['jquery','v_message','m_firebase','m_moment','m_user','m_app'],function(
 					setReadStateForMsg(msgId,chatId,myUID);
 	    		}, 1200 );
 			};
-			VIEW.setObserverForViewInVisualScrollByChatId(iNchatId,thisSuccessFunction)
+			VIEW.setObserverForViewInVisualScrollByChatId(iNchatId, 
+				{
+					'success' : thisSuccessFunction,
+					'onScrollParentFalse': safeHideMessagesCountByChatId
+				}
+			);
 	    }
 	    _['setObserverForAppearMessageInVisualScrollByChatId'] = setObserverForAppearMessageInVisualScrollByChatId;
 

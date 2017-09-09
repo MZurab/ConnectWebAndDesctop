@@ -1,16 +1,16 @@
 define(['jquery','template7'], function ($,Template7) {
 
 	function _d_showLoader (iNid) {
-		if(typeof(iNid) == 'undefined')
-			iNid = 'body';
+		if(typeof(iNid) != 'string') iNid = 'body';
+
+		console.log('_d_showLoader .rcontent_loader',iNid);
 		_d_closeLoader(iNid);
 		$(iNid).append(_v_html_loader);
-		console.log(iNid + ' .rcontent_loader view');
 	}
 
 	function _d_closeLoader(iNid) {
-		if(typeof(iNid) == 'undefined') 
-			iNid = 'body';
+		if(typeof(iNid) != 'string') iNid = 'body';
+		console.log('_d_closeLoader .rcontent_loader',iNid);
 		$(iNid + ' .rcontent_loader').remove();
 		console.log(iNid + ' .rcontent_loader hide');
 	}

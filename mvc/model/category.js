@@ -1,6 +1,7 @@
 define(['jquery','v_category','m_view','m_app','m_user'], function ( $, VIEW, M_VIEW, M_APP,USER) {
 	const _ = {'view':VIEW};
-
+	const CONST = {
+	};
 
 
 
@@ -48,13 +49,10 @@ define(['jquery','v_category','m_view','m_app','m_user'], function ( $, VIEW, M_
 					@depends
 	                    findChatBlock - for find chatId object
         */
-        console.log('safeUpdateChatBlock start');
-        console.log('safeUpdateChatBlock iNdata',iNdata);
         var uuid, chatId=iNdata.chatId,userName;
         var  DomBloc, lmsg_text, lmsg_time, countNewMessages, newMsgBlock, verificate;
 
         var chatLength = VIEW.findChatBlock(chatId);
-        console.log('safeUpdateChatBlock chatObject',chatLength);
         if(  chatLength < 1 ) {
         		//CHANGE STATIC PARAMS
                 // chatType = 'private';
@@ -63,14 +61,12 @@ define(['jquery','v_category','m_view','m_app','m_user'], function ( $, VIEW, M_
         			objForCreateChat['userId'] 		= uuid;
         			objForCreateChat['chatType'] 	= chatType;
 
-        		console.log('safeUpdateChatBlock createChatList objForCreateChat',objForCreateChat);
 
                 VIEW.createChatList (objForCreateChat);
                 VIEW.setEffectsForChatList(chatId);
                 VIEW.onClickToChatList(objForCreateChat['chatId'],function (iNobj) {
                 	var hrefForOpenApp = 'chatName='+iNobj['chatName']+'&chatId='+iNobj['chatId']+'&chatIcon='+iNobj['chatIcon']+'&userLogin='+iNobj['login']+'&uid='+iNobj['uid'];
-                	console.log('onClickToChatList hrefForOpenApp',hrefForOpenApp);
-	        		M_APP.getGlobalVar('engine').passToApp({'app':'chat','page':'index','user':'Zurab','data': hrefForOpenApp});
+                	M_APP.getGlobalVar('engine').passToApp({'app':'chat','page':'index','user':'Zurab','data': hrefForOpenApp});
                 });
 		} 
         domChangeChatBlock (chatId,iNdata);
@@ -105,7 +101,6 @@ define(['jquery','v_category','m_view','m_app','m_user'], function ( $, VIEW, M_
 	        2 - iNdata
 	            new icon src
 	    */
-	    console.log('domChangeChatBlock iNdata',iNdata);
 	    // increase new msg count by $newMsgCount if it isset
 	        if(  typeof(iNdata.newMsgCount) != 'undefined' )	VIEW.domPlusCountMessages(iNchatId,iNdata.newMsgCount);
 	    // change userName if userName isset
@@ -127,16 +122,12 @@ define(['jquery','v_category','m_view','m_app','m_user'], function ( $, VIEW, M_
 	    //addVirificateStatusToBlock
 	        if( typeof(iNdata.verificate) != 'undefined' && iNdata.verificate == 1) VIEW.domAddVerificateStatusToChatBlock(iNchatId);
 
-        console.log('domChangeChatBlock USER.getMyId()',USER.getMyId());
-        console.log('domChangeChatBlock iNdata.liveUser',  iNdata.liveUser );
-        console.log('domChangeChatBlock iNdata.liveType', iNdata.liveType );
-        console.log('domChangeChatBlock iNdata.liveData', iNdata.liveData );
+        
 	    if( typeof(iNdata.liveData) != 'undefined' &&  typeof(iNdata.liveType) != 'undefined' &&  typeof(iNdata.liveUser) != 'undefined' && USER.getMyId() != iNdata.liveUser) {
-	        	console.log('domChangeChatBlock start switch');
+	        
 	        switch(iNdata.liveType) {
 	            case 1: // simple text chat
 
-	        	console.log('domChangeChatBlock start switch case 1');
 	                VIEW.domLiveSimpleTextAnimation(iNchatId,iNdata);
 	            break;
 	        }

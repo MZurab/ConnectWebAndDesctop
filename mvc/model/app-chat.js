@@ -1,7 +1,8 @@
-define(['v_app-chat', 'm_app','m_view','m_message'],function( VIEW, M_APP, M_VIEW, M_MESSAGE) {
+define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase'],function( VIEW, M_APP, M_VIEW, M_MESSAGE, USER, FIREBASE) {
 	//@< init
 		// init from app view templates
 	  const _ = {};
+	  const CONST = {};
 	  const name = 'chat'; _['name'] = name;
 	  const pages = {};
 	    
@@ -19,8 +20,6 @@ define(['v_app-chat', 'm_app','m_view','m_message'],function( VIEW, M_APP, M_VIE
 		          pages[thisPageName]['functions'] = {
 		            // 'isPage'  : function () {console.log('app-page fullWindow','isPage'); return true;},
 		            'getTemplate' : function (iNdata) {
-		            	console.log('getTemplate APP-CHAT PAGE INDEX iNdata start',iNdata);
-						console.log('getTemplate APP-CHAT PAGE INDEX iNdata end',iNdata);
 
 		            },
 		            'onOut'  : function () {console.log('app-page '+thisPageName,'onOut'); return true;},
@@ -121,9 +120,84 @@ define(['v_app-chat', 'm_app','m_view','m_message'],function( VIEW, M_APP, M_VIE
 	function pageIndex_sendMsg () {
 
 	}
-	function pageIndex_createChatByUid () {
+	
 
-	}
+	//@<  chat view now status
+		CONST['chatViewPrefix'] = 'connectPrefixChatViewStatus-';
+
+		function safeSetChatViewOnline (iNchatId) {
+			let chatStatus = getChatViewStatus(iNchatId);
+			console.log('safeSetChatViewOnline chatStatus,iNchatId',chatStatus,iNchatId);
+			if(chatStatus != 1) {
+				setChatViewOnline(iNchatId);
+				return true;
+			}
+			return false;
+		}
+			function setChatViewOnline (iNchatId) {
+				setChatViewStatus(iNchatId,1);
+
+				let uid = USER.getMyId();
+				let path = "chats/"+iNchatId+"/member/"+uid+"/online";
+				let updateArray = {};
+					updateArray[path] = 1
+
+		    	FIREBASE.database().ref().update(updateArray);
+
+			}
+
+		function safeSetChatViewOffline (iNchatId) {
+			let chatStatus = getChatViewStatus(iNchatId);
+			if(chatStatus != 0) {
+				setChatViewOffline(iNchatId);
+				return true;
+			}
+			return false;
+		}
+			function setChatViewOffline (iNchatId) {
+				setChatViewStatus(iNchatId,0);
+
+				let uid = USER.getMyId();
+				let path = "chats/"+iNchatId+"/member/"+uid+"/online";
+				let updateArray = {};
+					updateArray[path] = FIREBASE.database.ServerValue.TIMESTAMP;
+		    	FIREBASE.database().ref().update(updateArray);
+			}
+				function setChatViewStatus (iNchatId,iNstatus) {
+					let varPath = CONST['chatViewPrefix'] + iNchatId;
+					console.log('setChatViewStatus iNchatId,iNstatus,varPath',iNchatId,iNstatus,varPath);
+					M_APP.save(varPath,iNstatus);
+				}
+				function getChatViewStatus (iNchatId) {
+					let varPath = CONST['chatViewPrefix'] + iNchatId;
+					return parseInt(M_APP.get(varPath))||0;
+				}
+
+		function onDisconectSetChatOffline (iNchatId) {
+			let uid = USER.getMyId();
+			let path = "chats/"+iNchatId+"/member/"+uid+"/online";
+			let chatTime = FIREBASE.database.ServerValue.TIMESTAMP;
+			let ref = FIREBASE.database().ref(path);
+			ref.on(
+				'value',
+				(iNdata) => {
+					console.log('onDisconectSetChatOffline iNdata.val()',iNdata.val());
+					if(iNdata.val() != 1 && getCurrentChatId() == iNchatId) {
+						setChatViewOnline (iNchatId);
+					}
+					ref.onDisconnect().set(chatTime);
+				}
+			);
+			
+			// ref.onDisconnect().cancel();
+		}
+	//@>  chat view now status
+
+
+
+
+
+
 
 
 
@@ -143,6 +217,9 @@ define(['v_app-chat', 'm_app','m_view','m_message'],function( VIEW, M_APP, M_VIE
 						servise
 
 		*/
+
+
+
 		iNobject['chatIcon'] 	= iNobject['chatIcon'];//https://cdn.ramman.net/images/icons/apps/app_sharepay.png';
 		iNobject['chatName']	= iNobject['chatName'];//'SharePay';
 		iNobject['login']	 	= iNobject['userLogin'];// 'sharepay';
@@ -157,7 +234,24 @@ define(['v_app-chat', 'm_app','m_view','m_message'],function( VIEW, M_APP, M_VIE
 		var chatIcon  = iNobject['chatIcon'];
 		var chatName  = iNobject['chatName'];
 
+
+		// setPreviusChat 
+			let previusChat = getCurrentChatId();
+			if ( previusChat != chatId ) {
+				// if last chat != this chat
+				// we close this chat
+				safeSetChatViewOffline(previusChat);
+
+			}
+
+		// set actions when connection will be disconected
         setCurrentChatId(iNobject['chatId']);
+
+		onDisconectSetChatOffline(iNobject['chatId']);
+		safeSetChatViewOnline(chatId);
+
+
+
         setCurrentChatUserId(iNobject['uid']);
         setCurrentChatType('private');
 
@@ -165,7 +259,6 @@ define(['v_app-chat', 'm_app','m_view','m_message'],function( VIEW, M_APP, M_VIE
         // chatId, userId, userName, userIcon, userLogin, online, servise
         VIEW.addUserHeaderInChief({'name': chatName,'icon': chatIcon,'login':login,'online':stateOnline,'servise':servise});
 
-        console.log('VIEW.getCountsOfChatContainers(chatId)', VIEW.getCountsOfChatContainers(chatId));
 
 
 		M_MESSAGE.setLastMsgTimeByChatId(chatId,0);
@@ -173,7 +266,14 @@ define(['v_app-chat', 'm_app','m_view','m_message'],function( VIEW, M_APP, M_VIE
             // need chat isset open it
         	// console.log('M_MESSAGE.synchronizeWithMessageDb(chatId)', M_MESSAGE.synchronizeWithMessageDb(chatId));
             VIEW.createChatContainer(chatId);
-        	M_MESSAGE.synchronizeWithMessageDb(chatId);
+        	M_MESSAGE.synchronizeWithMessageDb(chatId
+        		, 
+        		{
+	        		'functionOnChild' : (iN2ChatId) => {
+	        			safeSetChatViewOnline(iN2ChatId);
+	        		}
+        		}
+        	);
         }
         VIEW.hideChatContainers();
         VIEW.showChatContainerByChatId(chatId);
