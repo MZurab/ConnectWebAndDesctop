@@ -139,7 +139,7 @@ define(['jquery','m_user'],function($,USER){
 		function getUser () {
 			var r = false;
 			if( window['ConnectDeviseType'] == '@browser') {
-				var r = getUserDomain(), numberPath=1;
+				var firstD = getUserDomain(), numberPath=1;
 				if(firstD == false) 
 					r = urlGetPath(r);
 				else

@@ -1,4 +1,4 @@
-define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.lettering'], function( M_APP, V_VIEW, $, mixitup ) {//'m_view','m_app'
+define(['m_app','v_view','jquery','mixitup','dictionary','m_moment','jquery.textillate','jquery.lettering'], function( M_APP, V_VIEW, $, mixitup, DICTIONARY , MOMENT ) {//'m_view','m_app'
 	const _ = {};
 	const templates = {}; _['templates'] = templates;
 	templates['UserMenuChildN'] = `
@@ -585,11 +585,12 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
 	                iNchatId -> stirng
             */
             var chatObject = getPathToDomChatHeader(iNchatId);
+            $(chatObject + ' .appBase_userStateOffline').hide();
             $(chatObject + ' .appBase_userStateOnline').fadeIn(500);
         }
 		_['domChangeDidOnlineChatHeader'] = domChangeDidOnlineChatHeader;
 
-		function domChangeDidOfflineChatHeader (iNchatId) {
+		function domChangeDidOfflineChatHeader (iNchatId,iNtime) {
             /*
             	@discr
                 	change chat-header did show
@@ -597,6 +598,7 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
 	                iNchatId -> stirng
             */
             var chatObject = getPathToDomChatHeader(iNchatId);
+            $(chatObject + ' .appBase_userStateOffline').fadeIn().html( DICTIONARY.withString('[dictionary-was] ' + MOMENT(iNtime).calendar()) );
             $(chatObject + ' .appBase_userStateOnline').hide(500);
         }
 		_['domChangeDidOfflineChatHeader'] = domChangeDidOfflineChatHeader;
@@ -614,7 +616,7 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
         }
 		_['domChangeAddUserOnlineFlag'] = domChangeAddUserOnlineFlag;
 
-		function domChangeRemoveUserOnlineFlag (iNchatId) {
+		function domChangeRemoveUserOnlineFlag (iNchatId,iNtime) {
             /*
             	@discr
                 	add css .flagUserOnline class 
@@ -623,7 +625,7 @@ define(['m_app','v_view','jquery','mixitup','jquery.textillate','jquery.letterin
             */
             var chatObject = getPathToDomElByChatId(iNchatId);
             $(chatObject).removeClass('flagUserOnline');
-            $(chatObject).attr('connect_online','');
+            $(chatObject).attr('connect_online',iNtime);
         }
 		_['domChangeRemoveUserOnlineFlag'] = domChangeRemoveUserOnlineFlag;
 

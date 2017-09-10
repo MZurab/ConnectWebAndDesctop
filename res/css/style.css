@@ -275,7 +275,7 @@ input,textarea {outline:none;}
 				                    font-size: 0.8rem;
 				                    font-style: italic;
 				                    color: #828384;
-				                    display: none;
+				                    /*display: none;*/
 				                }
 				            .appBase_chiefHeaderThirdLine {
 				                margin-top: 0.25rem;

@@ -138,8 +138,8 @@ define(['jquery','v_category','m_view','m_app','m_user'], function ( $, VIEW, M_
 
     			} else {
     				// set user offline
-    				VIEW.domChangeRemoveUserOnlineFlag(iNchatId);
-    				VIEW.domChangeDidOfflineChatHeader(iNchatId);
+    				VIEW.domChangeRemoveUserOnlineFlag(iNchatId,iNdata.userOnline);
+    				VIEW.domChangeDidOfflineChatHeader(iNchatId,iNdata.userOnline);
 
     			}
     		}

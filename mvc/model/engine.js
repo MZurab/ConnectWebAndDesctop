@@ -1,8 +1,6 @@
 define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAGE'], function ($,ROUTING,V_VIEW,M_APP,APP_CHAT,APP_BASE,APP_PAGE) {
 
 	function _startUrl () {
-		console.log('_startUrl this',this);
-        console.log('init!');
 		ROUTING.startUrl(this);
 	}
 
@@ -94,8 +92,6 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 			*/
 			// M_APP.openChiefApp (iNdata,iNapp,iNfunction); 
 			// get module name by app name
-			console.log('_openApp from engine started iNdata',iNdata);
-			console.log('_openApp from engine started iNstring',iNstring)
 			var app, page, objForOpenApp = iNdata, appName = objForOpenApp['app'], pageName = objForOpenApp['page'];
 			app = getAppByName(appName);
 			M_APP.openChiefApp (iNdata,app,iNstring,iNfunction);

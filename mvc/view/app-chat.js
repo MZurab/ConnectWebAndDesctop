@@ -1,4 +1,4 @@
-define([ 'jquery', 'template7', 'v_app','dictionary', 'jquery.appear'],function( $, Template7,V_APP ,DICTIONARY) {
+define([ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'jquery.appear'],function( $, Template7,V_APP ,DICTIONARY,MOMENT) {
 	const _ = {};
 	const CONST = {'name':'base','pageIndex':'index'};
 	const templates = {};
@@ -59,9 +59,9 @@ define([ 'jquery', 'template7', 'v_app','dictionary', 'jquery.appear'],function(
 			      <div class="appBase_userStateBlock">
 		        	<span class="appBase_userStateOnline CML" cmlk="[dictionary-servise]" {{#if online}}{{else}}style='display:none'{{/if}}>[dictionary-online]</span>
 
-					{{#if offlineTime}}
-			        <span class="appBase_userStateOffline">был(-а) {{offlineTime}}</span>
-			        {{/if}}
+					
+			        <span class="appBase_userStateOffline CML" {{#if online}}style='display:none'{{/if}}>{{offlineTime}}</span>
+			        {{#if offlineTime}}{{/if}}
 			      </div>
 			      <div class="appBase_chiefHeaderThirdLine">
 					
@@ -150,11 +150,24 @@ define([ 'jquery', 'template7', 'v_app','dictionary', 'jquery.appear'],function(
 						@optional
 							nameDictionaryCode OR name
 							back -> bool
+							online -> number
 				@optional
 					iNtype -> string 
 						in [end,begin, after, before, change]
 		*/
 		if( typeof iNtype != 'string' ) iNtype = 'end';
+		//add online/ofline status
+		if( typeof iNdata['online'] != 'undefined' ) {
+			var onlineTime = parseInt(iNdata['online'])||0;
+			if( onlineTime == 0) {
+				// de
+				delete iNdata['online'];
+			} else if ( onlineTime > 1 ){
+				// set online status
+				delete iNdata['online'];
+				iNdata['offlineTime'] = DICTIONARY.withString('[dictionary-was] ' + MOMENT(onlineTime).calendar());
+			}
+		}
 		var objForAddHeader = {'app':CONST['name'],page: CONST['pageIndex']};
 			objForAddHeader['content'] = getAppHeaderForIndexPage (iNdata);
 		V_APP.safeViewAppHeaderWithContent(objForAddHeader,iNtype);

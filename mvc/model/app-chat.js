@@ -210,7 +210,6 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase'],functi
 		iNobject['chatIcon'] 	= iNobject['chatIcon'];//https://cdn.ramman.net/images/icons/apps/app_sharepay.png';
 		iNobject['chatName']	= iNobject['chatName'];//'SharePay';
 		iNobject['login']	 	= iNobject['userLogin'];// 'sharepay';
-		iNobject['stateOnline'] = true;
 		iNobject['servise'] = (iNobject['userType'] == 2)?true:false;//true;
 
 		var chatId  = iNobject['chatId'];
