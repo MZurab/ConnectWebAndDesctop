@@ -73,7 +73,7 @@ define(['jquery','v_category','m_view','m_app','m_user'], function ( $, VIEW, M_
 	            			hrefForOpenApp += '&online='+thisOnline
 	                	}
                 	//> safe add online
-                	M_APP.getGlobalVar('engine').passToApp({'app':'chat','page':'index','user':'Zurab','data': hrefForOpenApp});
+                	M_APP.getGlobalVar('engine').passToApp({'app':'chat','page':'index','data': hrefForOpenApp});
                 });
 		} 
         domChangeChatBlock (chatId,iNdata);

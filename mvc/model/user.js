@@ -43,36 +43,53 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	        	console.log("M_APP.getGlobalVar('engine')",M_APP.getGlobalVar('engine'));
 
 	        	M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index','user':'','data':''});
-	        	// M_APP.getGlobalVar('engine').prepareUrl({'app':'base','page':'one','user':'Zurab','data':'uid=769b72df-6e67-465c-9334-b1a8bfb95a1a2'});
-          //   	M_APP.getGlobalVar('engine').startUrl();
-	        	console.log('signIn getGlobalVar');
 	        }
 		}).catch(function(error) {
 	      var errorCode = error.code;
 	      var errorMessage = error.message;
-	      console.log('signIn errorMessage',errorMessage);
-	      console.log('signIn errorCode',errorCode);
 	    });
 	}
     _['signIn'] = signIn;
 
 	function getMyId () {
-    	var uidType = M_APP.get('uidType');
+    	var uidType = M_APP.get('uidType'), r;
     	if(uidType != null) {
     		if (uidType == '?' ) {
-    			return M_APP.get('aUid');
+    			r = M_APP.get('aUid');
     		} else {
-    			return M_APP.get('uid');
+    			r = M_APP.get('uid');
 			}
     	}
-		//old CHANGE
-    	var result = checkSignIn();
+    	if (r != getMyFirebaseUid() ) {
+			return false;
+    	}
+    	return r;
+    }
+    _['getMyId'] = getMyId;
+
+    function getMyIdFromObj (iNdata) {
+    	var r = false;
+    	if ( typeof iNdata == 'string' ) iNdata = JSON.parse(iNdata);
+    	if ( typeof iNdata == 'object' ) {
+    		var uidType = iNdata['uidType'];
+    		if( typeof uidType == 'string'  && uidType == '?') {
+    			r = iNdata['aUid'];
+    		} else {
+				r = iNdata['uid'];
+			}
+    	}
+    	return r;
+    }
+    _['getMyIdFromObj'] = getMyIdFromObj;
+
+    function getMyFirebaseUid () {
+		var result = checkSignIn();
     	if(result){
     		result = FIREBASE.auth().currentUser.uid;
     	}
+    	console.log(' getMyFirebaseUid result',result);
         return result;
     }
-    _['getMyId'] = getMyId;
 
     function getMyToken () {
     	return M_APP.get('token');
@@ -83,17 +100,13 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
     	var uidType = M_APP.get('uidType');
     	if(uidType != null) {
     		if (uidType == '?' ) {
-    			return '@anonym';
-    		} else {
+    			console.log('getMyLogin anonym');
+    			return 'anonym';
+    		} else if( getMyId() ){
+    			console.log("getMyLogin M_APP.get('user')",M_APP.get('user'));
     			return M_APP.get('user');
 			}
     	}
-		//old CHANGE
-    	var result = checkSignIn();
-    	if(result){
-    		result = FIREBASE.auth().currentUser.uid;
-    	}
-        return result;
     }
     _['getMyLogin'] = getMyLogin;
 
@@ -289,10 +302,10 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
     function setMyLogin (iNlogin) {
 	    M_APP.save('user',iNlogin);
 	}
-    function getMyLogin () {
-	    return M_APP.get('user');
-	}
-    _['getMyLogin'] = getMyLogin;
+ //    function getMyLogin () {
+	//     return M_APP.get('user');
+	// }
+ //    _['getMyLogin'] = getMyLogin;
 
 	function setMyToken (iNtoken) {
 	    M_APP.save('token',iNtoken);

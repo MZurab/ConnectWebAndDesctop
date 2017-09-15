@@ -31,6 +31,8 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase'],functi
 		            // 'onHide'  : function () { return true;},
 		            // 'setPage' : function () {return true;},
 		            'onInit' 		: function () {
+
+	        			M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index'});
 		            	M_MESSAGE.view.activeAppEvent({'onClickSendMesg':M_MESSAGE.onClickSendMesg,'onKeyDownPrintingMsg':M_MESSAGE.startSendingFlashMsg});
 		            	return true;
 		            },

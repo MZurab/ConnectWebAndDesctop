@@ -1,0 +1,134 @@
+
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <base href="https://ramman.net/files/">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+
+    <meta name="robots" content="none"/>
+
+    <script src="res/js/jquery/jquery.js"></script>
+  </head>
+  <body>
+    <script type="text/javascript">
+      // window.lastCopyLocalStorage = '';
+
+      // prepare intervalIds
+      if ( typeof window.intervalIds != 'object' ) window.intervalIds = {};
+
+      function listener (event) {
+        if (event.origin != '{{subDomain}}') {
+          console.log("event.origin != '{{subDomain}}'",event.origin,'{{subDomain}}');
+          return;
+        }
+        var inputObj = event.data;
+        if(typeof inputObj != 'object') return false;
+
+        if(inputObj['command'] == 'getLocalStorage') {
+          //
+          let lStorage = getLocalStorage();
+          // save last copy
+          setLastSentLocalStorage(lStorage);
+          // send message to subdomain
+          event.source.postMessage({'command':'saveLocalStorage','content':lStorage}, event.origin);
+          // start interval spy for changing funciton
+          run(event);
+        } else if  (inputObj['command'] == 'saveLocalStorage' && inputObj['content']) {
+          // save change in local storage
+          setLastSentLocalStorage(inputObj['content']);
+          writeLocalStorage(inputObj['content']);
+        }
+      }
+
+      if (window.addEventListener) {
+        window.addEventListener("message", listener);
+      } else {
+        // IE8
+        window.attachEvent("onmessage", listener);
+      }
+
+
+      function setIntervalId (iNdata) {
+         window.intervalIds['synchronizeWithSubDomain'] = iNdata;
+      }
+
+      function getIntervalId () {
+        var r = window.intervalIds;
+        return r['synchronizeWithSubDomain']||false;
+      }
+
+      function run (event) {
+        clearInterval ( getIntervalId() );
+        let intervalId = setInterval (
+          () => {
+            // spy for changing local storage -> for send to subDomain
+            let lStorage    = getLastSentLocalStorage();
+            let realStorage = getLocalStorage();
+            if(lStorage != realStorage) {
+              //send
+              setLastSentLocalStorage(realStorage);
+              event.source.postMessage(
+                {
+                  'command':'saveLocalStorage', 'content':realStorage
+                }, 
+                event.origin
+              );
+            }
+          }
+          ,
+          250
+        );
+        setIntervalId(intervalId);
+      }
+
+      function getLastSentLocalStorage () {
+        return window.lastCopyLocalStorage||'';
+      }
+      
+      function setLastSentLocalStorage (iNstring) {
+        window.lastCopyLocalStorage = iNstring;
+      }
+
+      function getLocalStorage() {
+          var a = {};
+          for (var i = 0; i < localStorage.length; i++) {
+              var k = localStorage.key(i);
+              var v = localStorage.getItem(k);
+              a[k] = v;
+          }
+          var s = JSON.stringify(a);
+          return s;
+      }
+
+      function writeLocalStorage(data) {
+          if(typeof data == 'string')
+            var o = JSON.parse(data);
+          else
+            var o = data;
+
+          for (var property in o) {
+              if (o.hasOwnProperty(property)) {
+                  localStorage.setItem(property, o[property]);
+              }
+          }
+      }
+
+      function isEquilWithLocalStorage (data) {
+        if(typeof data == 'string')
+            var o = JSON.parse(data);
+          else
+            var o = data;
+          for (var property in o) {
+              if (o.hasOwnProperty(property)) {
+                  if( localStorage.getItem(property) != o[property] ) {
+                    return false;
+                  }
+              }
+          }
+          return true;
+      }
+
+    </script>
+  </body>
+</html>

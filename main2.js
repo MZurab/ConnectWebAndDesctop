@@ -1,5 +1,5 @@
 require2.config({
-    // baseUrl: 'https://cdn.ramman.net/web/',
+    baseUrl: 'https://ramman.net/files/',//https://cdn.ramman.net/web/',
     // packages: [{
     //     name: 'moment',
     //     // This location is relative to baseUrl. Choose bower_components
@@ -63,6 +63,7 @@ require2.config({
             'm_message'        : 'mvc/model/message',
             'm_contact'        : 'mvc/model/contact',
             'm_push'           : 'mvc/model/push',
+            'm_synchronize'    : 'mvc/model/synchronize',
 
 
         /*>! models */
@@ -119,23 +120,40 @@ require2.config({
     }
 });
 
-// window['ConnectDeviseType'] = '@browser';
-window['ConnectDeviseType'] = '@desktop';
-
-require2(['jquery','template7','m_view','dictionary','m_engine','m_routing','m_app','m_push'], function($, Template7,m_view,Dictionary,m_engine,ROUTING,M_APP,PUSH) {
+require2(['jquery','dictionary','m_engine','m_routing','m_app','m_push','m_synchronize'], function( $, DICTIONARY, ENGINE, ROUTING, M_APP, PUSH, SYNCHRONIZE) {
     $(function() {
         console.log('start!');
-        m_engine.init();
+        // set browser || desktop
+        ROUTING.setBrowser();
+
+        ENGINE.init();
         PUSH.getPermission ( PUSH.getToken( ()=>console.log('PUSH.getToken') ) );
-        Dictionary.autoChange(function () {
-            // m_engine.prepareUrl({'app':'base','page':'index','user':'zurab','data':'data'});
-            m_engine.prepareUrl({'app':'page','page':'fullWindow','user':'','data':'data'});
-            // m_engine.prepareUrl({'app':'page','page':'miniPage','user':'zurab','data':'data'});
+
+        console.log('main ROUTING.isBrowser()',ROUTING.isBrowser());
+        console.log('main ROUTING.getUserDomain()',ROUTING.getUserDomain());
+        if( ROUTING.isBrowser() && ROUTING.getUserDomain() ) {
+            // if it is subdomain && it is browser -> y
+            // SYNCHRONIZE.view.safeAddFrameSynchronize(ROUTING.getUserDomain());
+            SYNCHRONIZE.run();
+        }
+
+        DICTIONARY.autoChange(function () {
+            // ENGINE.prepareUrl({'app':'base','page':'index','user':'zurab','data':'data'});
+            if(ROUTING.getUrlLength() > 0) {
+                // 
+                console.log('ROUTING.getUrlLength 1',ROUTING.getUrlLength() );
+                ENGINE.startUrl();
+            } else {
+                console.log('ROUTING.getUrlLength 2', ROUTING.getUrlLength() );
+                ENGINE.passToApp({'app':'page','page':'fullWindow', 'data':'data'});
+            }
             
-            m_engine.startUrl();
+            // ENGINE.prepareUrl({'app':'page','page':'miniPage','user':'zurab','data':'data'});
+            
+            // ENGINE.startUrl();
         });
 
-        M_APP.setGlobalVar('engine',m_engine);
+        M_APP.setGlobalVar('engine',ENGINE);
     });
 });
 

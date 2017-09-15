@@ -1,0 +1,100 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>{{head_title}}</title>
+    <base href="https://ramman.net/files/">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+    <meta name="description" content="{{head_metaDiscr}}"> 
+    <meta name="Keywords" content="{{head_metaKey}}">
+
+    <script src="res/js/jquery/jquery.js"></script>
+    
+    <link href="res/fonts/fonts.css" rel="stylesheet">
+    <link href="res/fonts/fontawesome/font-awesome.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="res/css/base.css">
+    <link rel="stylesheet" href="res/css/style.css">
+    <link href="res/fonts/fonts.css" rel="stylesheet">
+    <link rel="stylesheet" href='res/css/animate.css'>
+    <link rel="stylesheet" href='res/css/sweetalert2/sweetalert2.min.css'>
+  </head>
+  <body>
+    {{#if subDomain}}
+      <iframe id="frameSynchronize" class="frameSynchronize frames" src="https://ramman.net/api/service/synchronize/subdomain/{{subDomain}}"></iframe>
+    {{/if}}
+
+
+    <div class="rcontent_loader" style="width: 100%; height: 100%;"> 
+      <div class="connect_centerPosition">
+        <img id="rcontent_loader_image" src="https://cdn.ramman.net/images/gif/loader.min.gif">
+        <div class ="CML operationName" style=" font-size: 1.5rem;" CMLK="[system-load]"></div>
+      </div> 
+    </div>
+
+    <div id='container'>
+      <div class='backTopLineInContainer'></div>
+      <div id='block'>
+        <div id='appsBlock'>
+            <div class='bTopInAppsBlock'>
+              <img src='https://cdn.ramman.net/images/buttons/bTopInAppsBlock.png'>
+            </div>
+
+            <div class='AppsContainerInAppBlock'>
+              <div class="appsInAppBlock">
+                <img src="https://cdn.ramman.net/images/icons/apps/app_chat.png">
+                <div class="appsNameInAppsBlock CML" cmlk="[app-chat]"></div>
+              </div>
+
+              <div class="appsInAppBlock">
+                <img src="https://cdn.ramman.net/images/icons/apps/app_market.png">
+                <div class="appsNameInAppsBlock CML" cmlk="[app-market]"></div>
+              </div>
+
+              <div class="appsInAppBlock">
+                <img src="https://cdn.ramman.net/images/icons/apps/app_onepay.png">
+                <div class="appsNameInAppsBlock CML" cmlk="[app-onepay]"></div>
+              </div>
+
+              <div class="appsInAppBlock">
+                <img src="https://cdn.ramman.net/images/icons/apps/app_sharepay.png">
+                <div class="appsNameInAppsBlock CML" cmlk="[app-sharepay]"></div>
+              </div>
+            </div>
+
+            <div class='bBottomInAppsBlock'>
+              <img src='https://cdn.ramman.net/images/buttons/bBottomInAppsBlock.png'>
+            </div>
+        </div>
+
+        <div id='menusBlock'>
+            <div class='topBlockInMenusBlock'>
+            </div>
+            <div class='searchBlockInMenusBlock'>
+                <form class='searchContainerInSearchBlock' class='CML'>
+                  <input type="text" class='searchInputInSearchBlock' placeholder="">
+                  <input type="submit" class='submitInputInSearchBlock' value="">
+                </form>
+            </div>
+            <div class='usersBlockContainerInMenusBlock appLeftMenuWindow'>
+                 <div class='app' app-name='chat'>
+                  <div class='view' view-name='index'>
+                    <div class="scrolBlockForChat" id="MixItUpFC43CB"></div>
+                  </div>
+                </div>
+                {{body_appMenu}}
+            </div>
+        </div>
+
+
+        <div id='viewBlock'>
+            <div class='topBlockInViewBlock'></div>
+            <div id='viewAndChatBlockInViewBlock' class="appChiefWindow">{{body_appChief}}</div>
+        </div>
+
+
+      </div>
+    </div>
+    <script data-main="main2" type="text/javascript" src="require.js"></script>
+  </body>
+</html>

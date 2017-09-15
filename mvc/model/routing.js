@@ -1,6 +1,12 @@
 define(['jquery','m_user'],function($,USER){
 	//@<<< URL FUNCTIONS
 		const _ = {};
+		const USER_DOMAIN = [ // CHANGE
+			'sharepay',
+			'onepay',
+			'market',
+			'eskrow'
+		];
 		if( typeof window['ConnectUrlObject'] != 'object' )
 			window['ConnectUrlObject'] = {
 				'userDomain' 	: false,
@@ -9,7 +15,7 @@ define(['jquery','m_user'],function($,USER){
 				'page' 			: false,
 				'data' 			: false
 			}
-		const chiefDomain = 'ramman.net/';
+		const chiefDomain = 'ramman.net';
 		const protocol = 'https://';
 
 
@@ -37,40 +43,70 @@ define(['jquery','m_user'],function($,USER){
 
 		function prepareUrl (iNobj) {
 			var r, userDomain  = getUserDomain();
+			console.log('prepareUrl iNobj 1',iNobj);
+			console.log('prepareUrl userDomain',userDomain);
+
+			// if( typeof iNobj == 'object' &&  ( iNobj['user'] == USER.getMyLogin() || iNobj['user'].length < 1 ) ) {
+			// 	// delete user if it isset && it's user me
+			// 	delete iNobj['user'];
+			// }
+			console.log('prepareUrl iNobj 2',iNobj);
+			if(typeof iNobj != 'object') iNobj= {}; 
 
 
-
-			if( window['ConnectDeviseType'] == '@browser') {
+			if( isBrowser()) {
 				// ser url if browser
-				var newUrl;
-				if(userDomain != false && iNobj['user'] != userDomain) { 
-					// we is in user account by subdomain
-					// we want to pass to another user, open by full reloading
-					newUrl = protocol + chiefDomain + '/' + iNobj['user'];
-					if( typeof iNobj['app'] == 'string' ) 	newUrl += '/' + iNobj['app'];
-					if( typeof iNobj['page'] == 'string') 	newUrl += '/' + iNobj['page'];
-					if( typeof iNobj['data'] == 'string') 	newUrl += '/?' + iNobj['data'];
-					goToUrl(newUrl);
-					return false;
-				}
-				// we want to pass in this user field
-				newUrl = '/' + iNobj['user'];
-				if( typeof iNobj['app'] == 'string' ) 	newUrl += '/' + iNobj['app'];
-				if( typeof iNobj['page'] == 'string') 	newUrl += '/' + iNobj['page'];
-				if( typeof iNobj['data'] == 'string') 	newUrl += '/?' + iNobj['data'];
-				urlSet(newUrl);				
-			} else {
+				var newUrl = '';
+				iNobj['user'] = iNobj['user']||getUser();
+
 				setUser(iNobj['user']);
 				setApp(iNobj['app']);
 				setPage(iNobj['page']);
 				setData(iNobj['data']);
+				if(userDomain != false && iNobj['user'] && iNobj['user'] != userDomain) { 
+					// we is in user account by subdomain
+					// we want to pass to another user, open by full reloading
+					newUrl = protocol + chiefDomain;
+					newUrl += getUrl(iNobj);
+					goToUrl(newUrl);
+					return false;
+				}
+				// we want to pass in this user field
+				newUrl = getUrl(iNobj);
+
+				console.log('prepareUrl newUrl',newUrl);
+				urlSet(newUrl);				
+			} else {
 				console.log('desktop prepareUrl');
 			}
 			return true;
 		} _['prepareUrl'] = prepareUrl;
 
+			function getUrl (iNobject) {
+				if ( typeof iNobject != 'object') iNobject ={};
+				var user 	= iNobject['user']||getUser(),
+					app 	= iNobject['app']||getApp(),
+					page 	= iNobject['page']||getPage(),
+					data 	= iNobject['data']||getData(),
+					newUrl  = '';
+
+				if ( typeof user == 'string' && !getUserDomain() || iNobject['user'] &&  getUserDomain() != iNobject['user'] ) {
+					//   && !getUserDomain() || getUserDomain() != user
+					newUrl += '/' + user;
+				}
+				if( typeof app == 'string') {
+					newUrl += '/' + app;
+				}
+				if( typeof page == 'string' ) {
+					newUrl += '/' + page;
+				}
+				if( typeof data == 'string') {
+					newUrl += '/?' + data;
+				}
+				return newUrl;
+			}
+
 		function startUrl (iNengine,iNpathType) {
-			console.log('startUrl iNengine',iNengine);
 			var objectForEngine = {};
 			objectForEngine['user'] = getUser();
 			objectForEngine['app'] 	= getApp();
@@ -82,8 +118,11 @@ define(['jquery','m_user'],function($,USER){
 				// if we dont back or top in app path
 				addAppToPath(objectForEngine);
 			}
+			console.log('openApp objectForEngine,dataForApp',objectForEngine,dataForApp);
             iNengine.openApp(objectForEngine,dataForApp);
 		} _['startUrl'] = startUrl;
+
+
 
 		function goToUrl (iNurl) {
 			/*
@@ -102,24 +141,39 @@ define(['jquery','m_user'],function($,USER){
 				@example
 					urlSet('/zurab')
 			*/
+			console.log('urlSet iNurl0',iNurl);
+			var urlDomain = getUserDomain();
+			if(urlDomain) {
+				iNurl = protocol + urlDomain + '.' + chiefDomain  + iNurl;
+			} else {
+				iNurl = protocol + chiefDomain  + iNurl;
+			}
+			console.log('urlSet iNurl2',iNurl);
+			
+
 		    try {
 		      history.pushState(null, null, iNurl);
 		      return;
-		    } catch(e) {}
-		    location.hash = '#' + iNurl;
+		    } catch(e) {
+		    	console.log('urlSet e, iNurl',e , iNurl);
+		    }
+		    // location.hash = '#' + iNurl;
 		} _['setUrl'] = urlSet;
 
 		function getUserDomain () {
 			var r = false;
-			if( window['ConnectDeviseType'] == '@browser') {
+			if( isBrowser() ) {
 				var firstD = urlGetDomain(1);
 				if(firstD != false && firstD != 'ramman' && firstD != 'www')
 					r = firstD;
 			} else if ( typeof window['ConnectUrlObject']['userDomain'] != 'undefined')
 				r = window['ConnectUrlObject']['userDomain'];
-
 			return r;
 		} _['getUserDomain'] = getUserDomain;
+
+			function setUserDomain (iNuserDomain) {
+				window['ConnectUrlObject']['userDomain'] = iNuserDomain;
+			}  _['setUserDomain'] = setUserDomain;
 
 			function urlGetDomain (iNnumber) {
 				/*
@@ -138,61 +192,96 @@ define(['jquery','m_user'],function($,USER){
 			}  _['getDomain'] = urlGetDomain;
 		function getUser () {
 			var r = false;
-			if( window['ConnectDeviseType'] == '@browser') {
-				var firstD = getUserDomain(), numberPath=1;
-				if(firstD == false) 
-					r = urlGetPath(r);
-				else
+			if ( isBrowser() ) {
+				var firstD = getUserDomain();
+				var length = getUrlLength();
+				if(firstD) 
 					r = firstD;
+				else if (length >= 1)
+					r = urlGetPath(1);
 			} else if (typeof(window['ConnectUrlObject']['user']) == 'string')
 				r = window['ConnectUrlObject']['user'];
-
-			return r;
+			console.log('getUser r,USER.getMyLogin() 1 -', r,USER.getMyLogin());
+			console.log('getUser r||USER.getMyLogin() 1 -', r||USER.getMyLogin() );
+			if( typeof r == 'string' && r.length < 2 )	r = false;
+			console.log('getUser r,USER.getMyLogin() 2 -', r,USER.getMyLogin());
+			console.log('getUser r||USER.getMyLogin() 2 -', r||USER.getMyLogin() );
+			return r||USER.getMyLogin();
 		} _['getUser'] = getUser;
+
 			function setUser (iNuser) {
-				window['ConnectUrlObject']['user'] = iNuser;
+				if( typeof iNuser == 'string' )
+					window['ConnectUrlObject']['user'] = iNuser;
+				else
+					window['ConnectUrlObject']['user'] = false;
 			}  _['setUser'] = setUser;
+
 		function getApp () {
-			var r = false;
+			var r = 'base'; // default value
 			if( window['ConnectDeviseType'] == '@browser') {
-				var firstD = getUserDomain(), numberPath=2;
-				if(firstD != false) numberPath--;
-				r = urlGetPath(r);
+				var firstD = getUserDomain();
+				var length = getUrlLength();
+				if(firstD) {
+					// if isset user domain by 
+					if(length > 0)
+						r =  urlGetPath(1);
+				} else if(length >= 2) {
+					r =  urlGetPath(2);
+				}
 			} else if (typeof(window['ConnectUrlObject']['app']) != 'undefined')
-				r = window['ConnectUrlObject']['app'];
+			r = window['ConnectUrlObject']['app']||r;
 			return r;
 		}  _['getApp'] = getApp;
 
 			function setApp (iNapp) {
-				window['ConnectUrlObject']['app'] = iNapp;
+				if( typeof iNapp == 'string' )
+					window['ConnectUrlObject']['app'] = iNapp;
+				else
+					window['ConnectUrlObject']['app'] = false;
 			}   _['setApp'] = setApp;
 
 		function getPage () {
-			var r = false;
+			var r = 'index'; // default value
 			if( window['ConnectDeviseType'] == '@browser') {
-				var firstD = getUserDomain(), r=3;
-				if(firstD != false) r--;
-				r = urlGetPath(r);
+				var firstD = getUserDomain();
+				var length = getUrlLength();
+				if(firstD) {
+					if( length >= 2) 
+						r =  urlGetPath(2);
+				} else if(length >= 3) {
+					r = urlGetPath(3);
+				}
 			} else if (typeof window['ConnectUrlObject']['page'] != 'undefined')
-				r = window['ConnectUrlObject']['page'];
+				r = window['ConnectUrlObject']['page']||r ;
 			return r;
 		}   _['getPage'] = getPage;
 
 			function setPage (iNpage) {
-				window['ConnectUrlObject']['page'] = iNpage;
+				if( typeof iNpage == 'string' )
+					window['ConnectUrlObject']['page'] = iNpage;
+				else
+					window['ConnectUrlObject']['page'] = false;
 			}   _['setPage'] = setPage;
 
 		function getData () {
-			var r = false;
+			var r = false, data = false;
 			if( window['ConnectDeviseType'] == '@browser') {
-				var url = location.href.split('?');
-				r = url[1];
-			} else if (typeof(window['ConnectUrlObject']['data']) != 'undefined')
-				r = window['ConnectUrlObject']['data'];
+				data = location.search; //location.href.split('?');
+				if ( typeof data == 'string' ) {
+					data = data.split('?');
+					data = data[data.length-1]; // last elem
+				}
+			}
+			r = window['ConnectUrlObject']['data']||data;
 			return r;
 		}  _['getData'] = getData;
+
 			function setData (iNdata) {
-				window['ConnectUrlObject']['data'] = iNdata;
+				if( typeof iNdata == 'string' && iNdata.length > 2 )
+					window['ConnectUrlObject']['data'] = iNdata;
+				else 
+					window['ConnectUrlObject']['data'] = false;
+				
 			}  _['setData'] = setData;
 
 			function urlGetPath (iNnumber) {
@@ -211,20 +300,21 @@ define(['jquery','m_user'],function($,USER){
 				return false;
 			}  _['getUrlPath'] = urlGetPath;
 
-		function urlGetLength () {
+		function getUrlLength () {
 			/*
 				@inputs
 				@example
-					urlGetLength(1)
+					getUrlLength(1)
 			*/
-			var loc 	= location.pathname;
-			var locArr 	= loc.split('/').splice(1),
+			var loc 	= location.pathname,
+			 	locArr 	= loc.split('/').splice(1),
 				count   = 0;
+			// if ( location.search.length < 1) count--;  
 			for(var iKey in locArr) {
 				if(locArr[iKey].length > 0 )count ++
 			}
 			return count;
-		}  _['getUrlLength'] = urlGetLength;
+		}  _['getUrlLength'] = getUrlLength;
 
 		function getObjectFromString (iNstr) {
 			/*
@@ -236,6 +326,8 @@ define(['jquery','m_user'],function($,USER){
 					getObjectFromString('key=value&key2=value2')
 						@return -> { key : 'value', key2 : value2 }
 			*/
+		  if ( typeof iNstr != 'string' ) iNstr ='';
+		  console.log('getObjectFromString iNstr', iNstr);
 		  var result = {};
 		  let res = iNstr.split('&');
 		  if(res.length > 0 ) {
@@ -249,6 +341,29 @@ define(['jquery','m_user'],function($,USER){
 		  }
 		  return result;
 		}  _['getObjectFromString'] = getObjectFromString;
+
+		function isBrowser () {
+			if ( window['ConnectDeviseType'] == '@browser' ) {
+				return true;
+			}
+			return false;
+		}  _['isBrowser'] = isBrowser;
+
+			function setBrowser () {
+				window['ConnectDeviseType'] = '@browser';
+			} _['setBrowser'] = setBrowser;
+
+		function isDesktop () {
+			if ( window['ConnectDeviseType'] == '@desktop' ) {
+				return true;
+			}
+			return false;
+		}  _['isDesktop'] = isDesktop;
+
+			function setDesktop () {
+				window['ConnectDeviseType'] = '@desktop';
+			} _['setDesktop'] = setDesktop;
+
 
 		return _;
 	//@>>> URL FUNCTIONS
