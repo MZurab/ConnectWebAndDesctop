@@ -193,14 +193,28 @@ input,textarea {outline:none;}
 				        height: 1.25rem;
 				        display: block;
 				    }
-				        .appBase_buttonOptions, .appBase_buttonSignOut {
-				            height: 100%;
-				            display: inline-block;
-				        }
-			            .appBase_listHeaderButtonsBlock img {
+				        .appBase_listHeaderButtonsBlock > div {
 			                height: 100%;
+						    display: inline-block;
+						    background-size: 100%;
+						    background-repeat: no-repeat;
+						    width: 20px;
 			                cursor: pointer;
-			            }
+				        }
+				        	.appBase_buttonSignOut {
+				        		background-image: url(https://cdn.ramman.net/web/res/images/buttons/signOut.png);
+				        	}
+				        	.appBase_buttonOptions {
+				        		background-image: url(https://cdn.ramman.net/web/res/images/buttons/options.png);
+				        	}
+				        	.appBase_buttonSignIn {
+				        		background-image: url(https://cdn.ramman.net/web/res/images/buttons/signIn.png);
+				        	}
+				        	.appBase_buttonToHome {
+				        		background-image: url(https://cdn.ramman.net/web/res/images/buttons/toHome.png);
+				        	}
+
+
 				    .topBlockInMenusBlock .ChoosePlaceInMenusBlock {
 				        position: absolute;
 				        right: 5px;

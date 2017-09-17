@@ -52,17 +52,17 @@ define(['jquery','m_user'],function($,USER){
 			// }
 			console.log('prepareUrl iNobj 2',iNobj);
 			if(typeof iNobj != 'object') iNobj= {}; 
-
+			
+			setUser(iNobj['user']);
+			setApp(iNobj['app']);
+			setPage(iNobj['page']);
+			setData(iNobj['data']);
 
 			if( isBrowser()) {
 				// ser url if browser
 				var newUrl = '';
 				iNobj['user'] = iNobj['user']||getUser();
 
-				setUser(iNobj['user']);
-				setApp(iNobj['app']);
-				setPage(iNobj['page']);
-				setData(iNobj['data']);
 				if(userDomain != false && iNobj['user'] && iNobj['user'] != userDomain) { 
 					// we is in user account by subdomain
 					// we want to pass to another user, open by full reloading

@@ -1,11 +1,12 @@
-define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAGE'], function ($,ROUTING,V_VIEW,M_APP,APP_CHAT,APP_BASE,APP_PAGE) {
+define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAGE','m_user'], function ($,ROUTING,V_VIEW,M_APP,APP_CHAT,APP_BASE,APP_PAGE, USER) {
 
 	function _startUrl () {
 		ROUTING.startUrl(this);
 	}
-
+	var THIS = this;
 	function setInitEvents () {
-		$('.connect_href').on( "click", "body", function() {
+		console.log('connect_system_href setInitEvents start ');
+		$('body').on( "click", ".connect_href", function() {
 			if ( $(this).hasClass('appHref') == true ) {
 				var app 	= $(this).attr('app-name'),
 					page 	= $(this).attr('page-name'),
@@ -14,7 +15,54 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 	            startUrl();
 			} 
 		});
+
+		$('body').on( "click", ".connect_system_href", function (event)  {
+			var thisDom = event.currentTarget;
+			var code_href = $(thisDom).attr('code_href');
+			console.log('connect_system_href click thisDom ', thisDom );
+			console.log('connect_system_href click code_href - ', code_href );
+			switch (code_href) {
+				case "signOut":
+					systemHrefSignOut();
+				break;
+
+				case "signIn":
+					systemHrefSignIn();
+				break;
+
+				case "toHome":
+					systemHrefToHome();
+				break;
+			}
+		});
 	}
+		function systemHrefSignIn () {
+			console.log('systemHrefSignIn start');
+			let user = USER.getMyLogin();
+			
+          	M_APP.getGlobalVar('engine').passToApp ( 
+				{ 
+					'app'	: 'page', 
+					'page'	: 'fullWindow', 
+					'user'	: user, 
+					'data'	: 'id=sign&uid=@system' 
+				} 
+			);
+		}
+
+		function systemHrefSignOut () {
+			console.log('systemHrefSignOut start');
+			USER.signOut(systemHrefSignIn());
+			;
+		}
+
+		function systemHrefToHome () {
+			let user = USER.getMyLogin();
+			let obj = {'app':'base', 'page':'index', 'user': user, 'data': '' } ;
+			// _passToApp({'app':'base', 'page':'index', 'user': user, 'data': '' } );
+
+			M_APP.getGlobalVar('engine').passToApp(obj);
+		}
 
 	function init () {
 		setInitEvents();
@@ -50,7 +98,7 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 
 
 	/*?<<< APP */
-		function _passToApp (iNdata) {
+		function _passToApp (iNdata, iNthis) {
 			/*
 				@inputs
 				@required
@@ -62,8 +110,10 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 							data
 							user
 			*/
+			let thisObject = this;
+			if (typeof iNthis != 'undefined') thisObject = iNthis;
 			ROUTING.prepareUrl(iNdata);
-        	ROUTING.startUrl(this);
+        	ROUTING.startUrl(thisObject);
 		}
 		function _openApp ( iNdata, iNstring,iNfunction) {
 			/*

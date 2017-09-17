@@ -27,9 +27,10 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
               'onView'  : function (d,d1) { 
                 M_APP.view.d_hideApps('all','list');
                 M_APP.view.d_showApps('base','list');
+                console.log('app-bae index onView',d,d1);
 
                 getMyChats();
-                
+
                 return true;
               },
               'onAppear'  : function () {
@@ -65,8 +66,10 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
                   M_APP.view.d_hideApps('all','list');
                   M_APP.view.d_showApps('base','list');
 
+                  console.log('app-bae one onView',d,d1);
+
                   var uid = d['uid'];
-                  getUserInfo(uid);
+                  createChatByGetUrlUserInfo(uid);
                   return true;
                 },
                 'onAppear'  : function () {
@@ -263,7 +266,7 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
           objectForAjax['userId'] = USER.getMyId();
           objectForAjax['token']  = USER.getMyToken();
           objectForAjax['uid']    = iNuid;
-    getUserInfo(objectForAjax,
+    createChatByGetUrlUserInfo(objectForAjax,
       function (resultOfAjax) {
 
       }
@@ -275,18 +278,24 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
 
 
     /*< USER INFO */
-      function getUserInfo (iNuid) {
+      function createChatByGetUrlUserInfo (iNlogin) {
         const objectForAjax = {};
               objectForAjax['userId']     = USER.getMyId();
               objectForAjax['token']      = USER.getMyToken();
-              objectForAjax['uid']        = iNuid;
+              objectForAjax['uid']        = iNlogin;
         getByGetRequest_userInfo(objectForAjax,
           function (resultOfAjax) {
-            if(resultOfAjax['chat'] == false){
+            console.log('app-base.js createChatByGetUrlUserInfo',USER.getMyLogin() );
+            if(resultOfAjax['chat'] == false && USER.getMyLogin() ){
               // create chat
-              createChat(iNuid,resultOfAjax);
+              createChat( iNlogin , resultOfAjax );
             }else{
-              viewThisChat(resultOfAjax['chat'],resultOfAjax);
+              // create chat static
+              var objForCreateChat = {};
+                  objForCreateChat['chatId'] = objectForAjax['user']['login'];
+                  objForCreateChat['userId'] = objectForAjax['user']['uid'];
+              M_CATEGORY.view.createChatList();
+              viewThisChatFromFDB (resultOfAjax['chat'],resultOfAjax);
             }
           }
         );
@@ -294,7 +303,7 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
         function getByGetRequest_userInfo (iNdata,iNfunction) {
           /*
             @example
-              getUserInfo({'uid': '769b72df-6e67-465c-9334-b1a8bfb95a1a2' ,'userId': 'bac255e1-6a59-4181-bfb9-61139e38630e' , 'token' : '1bf92fd8-fe97-44bc-a223-9b7af3019392'},(result) => {console.log(result);})
+              createChatByGetUrlUserInfo({'uid': '769b72df-6e67-465c-9334-b1a8bfb95a1a2' ,'userId': 'bac255e1-6a59-4181-bfb9-61139e38630e' , 'token' : '1bf92fd8-fe97-44bc-a223-9b7af3019392'},(result) => {console.log(result);})
             @discr
               get categories, chatId of UID
             @inputs
@@ -331,41 +340,48 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
               objectForAjax['userUrl'] = iNuid;
         getByGetRequest_ChatDataBySafeCreate(objectForAjax,
           function (resultOfAjax) {
-            if(resultOfAjax['status']==1) {
+            if(typeof resultOfAjax == 'object' && resultOfAjax['status'] == 1 ) {
               // create chat if it did not exist
-              viewThisChat(resultOfAjax['chat'],iNuserData);
+              viewThisChatFromFDB(resultOfAjax['chat'],iNuserData);
             }
           }
         );
       }
        
-        function viewThisChat (iNchat,iNuserData) {
+        function viewThisChatFromFDB (iNchat,iNuserData) {
             const objForCreatChat = {};
-            objForCreatChat['chatId']   = iNchat;
+            objForCreatChat['chatId']   = iNchat || ('noneChat_'+iNuserData['user']['uid']);
             objForCreatChat['userId']   = iNuserData['user']['uid'];
             objForCreatChat['chatName'] = iNuserData['user']['name'];
             objForCreatChat['icon_min'] = iNuserData['user']['icon'];
+            // if(iNchat) {
+              M_CATEGORY.userForPrivateChat(objForCreatChat['chatId'],objForCreatChat['userId']);
 
-            M_CATEGORY.userForPrivateChat(objForCreatChat['chatId'],objForCreatChat['userId']);
+              // M_CATEGORY.view.safeAddChatList(objForCreatChat);
+              // attach link with chat db
+              safeAttachLiveLinkToChatElement(objForCreatChat['chatId'], () => {
+                // add category
+               viewServiceMenu (objForCreatChat,iNuserData);
 
-            // M_CATEGORY.view.safeAddChatList(objForCreatChat);
-            // attach link with chat db
-            safeAttachLiveLinkToChatElement(iNchat, () => {
-              // add category
-              M_CATEGORY.view.addMenuByCategoryList (iNuserData,objForCreatChat['userId']);
-              // dictionary
-              DICTIONARY.start('.menuListForUsers');
+              });
 
-            });
+            // }
             // hide all chat list
             M_CATEGORY.view.effHideChatLists();
             // show this chat list
-            M_CATEGORY.view.effShowChatList(iNchat);
+            M_CATEGORY.view.effShowChatList(objForCreatChat['chatId']);
         }
+          function viewServiceMenu (objForCreatChat,iNuserData) {
+                console.log('viewServiceMenu',iNuserData,objForCreatChat['userId']);
+                M_CATEGORY.view.addMenuByCategoryList (iNuserData,objForCreatChat['userId']);
+                // dictionary
+                DICTIONARY.start('.menuListForUsers');
+          }
+
         function getByGetRequest_ChatDataBySafeCreate (iNdata,iNfunction) {
           /*
             @example
-              getUserInfo({'uid': '769b72df-6e67-465c-9334-b1a8bfb95a1a2' ,'userId': 'bac255e1-6a59-4181-bfb9-61139e38630e' , 'token' : '1bf92fd8-fe97-44bc-a223-9b7af3019392'},(result) => {console.log(result);})
+              createChatByGetUrlUserInfo({'uid': '769b72df-6e67-465c-9334-b1a8bfb95a1a2' ,'userId': 'bac255e1-6a59-4181-bfb9-61139e38630e' , 'token' : '1bf92fd8-fe97-44bc-a223-9b7af3019392'},(result) => {console.log(result);})
             @discr
               get categories, chatId of UID
             @inputs

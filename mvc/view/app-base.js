@@ -16,8 +16,13 @@ define(['jquery','m_user','template7','v_view','v_app'],function($,USER,Template
 			   </div>
 			</div>
 			<div class="appBase_listHeaderButtonsBlock">
-				<div class="appBase_buttonOptions"><img src="https://cdn.ramman.net/web/res/images/buttons/options.png"></div>
-				<div class="appBase_buttonSignOut"><img src="https://cdn.ramman.net/web/res/images/buttons/signOut.png"></div>
+				<div class="appBase_buttonOptions"></div>
+				<div class="appBase_buttonToHome connect_system_href" 		code_href="toHome"></div>
+				{{#if login}}
+					<div class="appBase_buttonSignOut connect_system_href" 	code_href="signOut"></div>
+				{{else}}
+					<div class="appBase_buttonSignIn connect_system_href" 	code_href="signIn"></div>
+				{{/if}}
 			</div>
 			<div class="ChoosePlaceInMenusBlock"></div>
 		`;
@@ -61,6 +66,9 @@ define(['jquery','m_user','template7','v_view','v_app'],function($,USER,Template
 		*/
 		if( typeof iNtype != 'string' ) iNtype = 'end';
 		var objForAddHeader = {'app':CONST['name'],'page': CONST['pageIndex']};
+		// add user flag
+
+
 			objForAddHeader['content'] = getListHeaderForIndexPage (iNdata);
 		V_APP.safeViewMenuHeaderWithContent(objForAddHeader,iNtype);
 	}

@@ -120,33 +120,60 @@ require2.config({
     }
 });
 
-require2(['jquery','dictionary','m_engine','m_routing','m_app','m_push','m_synchronize'], function( $, DICTIONARY, ENGINE, ROUTING, M_APP, PUSH, SYNCHRONIZE) {
+require2(['jquery','dictionary','m_engine','m_routing','m_app','m_push','m_synchronize','m_user'], function( $, DICTIONARY, ENGINE, ROUTING, M_APP, PUSH, SYNCHRONIZE,USER) {
     $(function() {
         console.log('start!');
         // set browser || desktop
         ROUTING.setBrowser();
-
+        console.log('ROUTING.isBrowser()',ROUTING.isBrowser());
+        console.log('ROUTING.isDesktop()',ROUTING.isDesktop());
+        // exit();
         ENGINE.init();
         PUSH.getPermission ( PUSH.getToken( ()=>console.log('PUSH.getToken') ) );
 
-        console.log('main ROUTING.isBrowser()',ROUTING.isBrowser());
-        console.log('main ROUTING.getUserDomain()',ROUTING.getUserDomain());
         if( ROUTING.isBrowser() && ROUTING.getUserDomain() ) {
             // if it is subdomain && it is browser -> y
-            // SYNCHRONIZE.view.safeAddFrameSynchronize(ROUTING.getUserDomain());
             SYNCHRONIZE.run();
         }
 
         DICTIONARY.autoChange(function () {
             // ENGINE.prepareUrl({'app':'base','page':'index','user':'zurab','data':'data'});
-            if(ROUTING.getUrlLength() > 0) {
-                // 
-                console.log('ROUTING.getUrlLength 1',ROUTING.getUrlLength() );
-                ENGINE.startUrl();
-            } else {
-                console.log('ROUTING.getUrlLength 2', ROUTING.getUrlLength() );
-                ENGINE.passToApp({'app':'page','page':'fullWindow', 'data':'data'});
+            if(ROUTING.isBrowser()) {
+                if( ROUTING.getUrlLength() > 0 ) {
+                    console.log('ROUTING.getUrlLength isBrowser 1', ROUTING.getUrlLength() );
+                    ENGINE.startUrl();
+
+                } else {
+                    var userDomain  = ROUTING.getUserDomain();
+                    var userLogin   = USER.getMyLogin()||'anonym';
+                    var user        = userDomain||userLogin;
+                    var data        = [];
+                    console.log('ROUTING.getUrlLength isBrowser 2', ROUTING.getUrlLength() , userDomain );
+                    if( userDomain ) {
+                        if ( userDomain )   data.push ('uid='+userDomain);
+                                            data.push ('login='+userLogin);
+
+                        var dataString = data.join('&');
+                        console.log( 'ROUTING.getUrlLength isBrowser dataString, userDomain 3', dataString , userDomain );
+                        ENGINE.passToApp({'app':'base','page':'one','user':userDomain, 'data': dataString});
+                    } else 
+                        ENGINE.passToApp({'app':'page','page':'fullWindow', 'data':'id=sign&uid=@system'});
+                }
+                
+            } else if(ROUTING.isDesktop()) {
+                var user = USER.getMyLogin()||'anonym';
+                console.log('ROUTING.getUrlLength isDesktop,user 0', ROUTING.getUrlLength(), user );
+                if( user != 'anonym' ) {
+                    console.log('ROUTING.getUrlLength isDesktop,user 1',  user );
+                    ENGINE.passToApp({'app':'base','page':'index', 'user':user,'data':''});
+                }
+                else{
+                    console.log('ROUTING.getUrlLength isDesktop,user 2',  user );
+                    ENGINE.passToApp({'app':'page','page':'fullWindow','data':'id=sign&uid=@system'});
+                }
+
             }
+            
             
             // ENGINE.prepareUrl({'app':'page','page':'miniPage','user':'zurab','data':'data'});
             

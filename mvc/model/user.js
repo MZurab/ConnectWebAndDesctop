@@ -21,10 +21,14 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 		}
     	_['saveUserLang'] = saveUserLang;
 	//@@@>>> USER
-	function signOut (){
+	function signOut (inSuccess,iNerror){
+		console.log('signOut localStorage 1 ',localStorage );
 	    M_APP.clear();
-	    FIREBASE.auth().signOut().then(function() {
-	    }, function(error) {
+		console.log('signOut localStorage 2 ',localStorage );
+	    FIREBASE.auth().signOut().then( () =>  {
+	    	if (typeof (inSuccess) == 'function') inSuccess();
+	    }, (error) => {
+	    	if (typeof (iNerror) == 'function') iNerror(error);
 	    });
 	}
     _['signOut'] = signOut;
@@ -42,7 +46,9 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	        else {
 	        	console.log("M_APP.getGlobalVar('engine')",M_APP.getGlobalVar('engine'));
 
-	        	M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index','user':'','data':''});
+	        	M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index','user': getMyLogin(),'data':''});
+	        	console.log('user passToApp',{'app':'base','page':'one','user': getMyLogin(),'data':''});
+	        	// M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'one','user':'sharepay','data':'uid=sharepay'});
 	        }
 		}).catch(function(error) {
 	      var errorCode = error.code;

@@ -21,7 +21,7 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
             'id2' : '2',
             'id3' : '3',
           };
-          pages['fullWindow']['menus'] ={
+          pages['fullWindow']['menus'] = {
             'attr' : {
               'id1' : 'id2',
               'id3' : 'id4'
@@ -30,8 +30,9 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
           pages['fullWindow']['functions'] = {
             'isPage'  : function () {return true;},
             'onOut'  : function () { return true;},
-            'onView'  : function () {
-              addPageToFullWindow({'id':'sign','uid':'@system'});
+            'onView'  : function (inputData,inputApp) {
+              console.log('app-page  fullWindow onView', inputData, inputApp);
+              addPageToFullWindow(inputData);
               // VIEW.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
               return true;
             },
@@ -317,7 +318,7 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
 
       function addActionsForEventsPageSign () {
         $('.appPageCloseButton').click(function(){
-          M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index','user':'zurab','data':'data'});
+          M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index','data':''}); // 'user':'',
         });
       }
 
