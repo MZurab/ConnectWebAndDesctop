@@ -2647,8 +2647,51 @@
     }), r.fn.extend({
         hover: function(a, b) {
             return this.mouseenter(a).mouseleave(b || a)
-        }
-        
+        },
+        /* EXTENCION */
+		'specialClick': function (iNdata) {
+			  /*
+			  	@inputs
+			  		@optional
+			  		iNdata -> object
+			  			@optional
+			  				enter -> function
+		  					out -> function
+		  					down -> function
+		  					up -> function
+	
+			  */
+		      var selector = this.selector || this;
+		      var state = false;
+		      var funcs = iNdata;
+		      var initFuntions = () => {
+		      	$(window).unbind('mouseup').mouseup( ()=>{
+		            if ( typeof funcs.up == 'function')funcs.up(state);
+		            $(window).unbind('mouseup');
+		            $(this).unbind('mouseout');
+		            $(this).unbind('mouseenter');
+
+		        });
+		        $(selector).mouseout( ()=>{
+		          state = false;
+		          if ( typeof funcs.out == 'function')funcs.out(state);
+		        });
+		        $(selector).mouseenter( ()=>{
+		          state = true;
+		          if ( typeof funcs.enter == 'function')funcs.enter(state);
+
+		        });
+		      }
+		      
+		      $(selector).get(0).mousedown( ()=>{
+		      	state = true;
+		        if ( typeof funcs.down == 'function')funcs.down(state);
+		        initFuntions();
+		      
+		      }
+            );
+		}
+        /* EXTENCION */
     }), o.focusin = "onfocusin" in a, o.focusin || r.each({
         focus: "focusin",
         blur: "focusout"

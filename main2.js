@@ -1,5 +1,5 @@
 require2.config({
-    baseUrl: 'https://ramman.net/files/',//https://cdn.ramman.net/web/',
+    // baseUrl: 'https://ramman.net/files/',//https://cdn.ramman.net/web/',
     // packages: [{
     //     name: 'moment',
     //     // This location is relative to baseUrl. Choose bower_components
@@ -19,7 +19,10 @@ require2.config({
         'jquery'               : 'res/js/jquery/jquery',
         "jquery.lettering"     : "res/js/jquery/jquery.lettering",
         "jquery.textillate"    : "res/js/jquery/jquery.textillate",
-        'jquery.countdown'     : 'res/js/jquery/jquery.countdown',
+
+        'jquery.countdown'     : 'res/js/jquery/countdown/jquery.countdown.min',
+        'jquery.plugin'        : 'res/js/jquery/countdown/jquery.plugin.min',
+
         'jquery.appear'        : 'res/js/jquery/jquery.appear',
 
         'lazyload'             : 'res/js/lazyload/lazyload',
@@ -28,6 +31,7 @@ require2.config({
         'moment'               : 'res/js/moment/moment',
         // A platform detection library
         'platform'             : 'res/js/platform/platform',
+        'mediaStreamRecorder'  : 'res/js/recorder/mediaStreamRecorder/MediaStreamRecorder.min',
 
         /*<? views */
             'v_view'           : 'mvc/view/view',
@@ -71,8 +75,12 @@ require2.config({
     shim: {
         /* <? jquery modules */
             'jquery.countdown': {
-                deps: ['jquery'],
+                deps: ['jquery','jquery.plugin'],
                 exports: 'jQuery.fn.countdown'
+            },
+            'jquery.plugin': {
+                deps: ['jquery'],
+                exports: 'JQClass'
             },
             'jquery.lettering': {
                 deps: ['jquery'],
@@ -88,12 +96,17 @@ require2.config({
             },
         /* >! jquery modules */
 
-
         /* <? onesignal modules for push */
             'moment': {
                 exports: 'moment',
             },
         /* >! onesignal modules for push */
+
+        /* <? mediaStreamRecorder modules for push */
+            'mediaStreamRecorder': {
+                exports: 'mediaStreamRecorder',
+            },
+        /* >! mediaStreamRecorder modules for push */
 
         /* <? mixitup modules*/
             'mixitup': {
@@ -124,7 +137,8 @@ require2(['jquery','dictionary','m_engine','m_routing','m_app','m_push','m_synch
     $(function() {
         console.log('start!');
         // set browser || desktop
-        ROUTING.setBrowser();
+        // ROUTING.setBrowser();
+        ROUTING.setDesktop();
         console.log('ROUTING.isBrowser()',ROUTING.isBrowser());
         console.log('ROUTING.isDesktop()',ROUTING.isDesktop());
         // exit();

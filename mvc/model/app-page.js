@@ -1,4 +1,4 @@
-define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function ($,M_VIEW,VIEW,M_APP,M_USER) {
+define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user','mediaStreamRecorder'] , function ($,M_VIEW,VIEW,M_APP,M_USER,MEDIA) {
 
   // init result const
   const _ = {};
@@ -33,6 +33,7 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user'] , function 
             'onView'  : function (inputData,inputApp) {
               console.log('app-page  fullWindow onView', inputData, inputApp);
               addPageToFullWindow(inputData);
+              console.log('MEDIA',MEDIA);
               // VIEW.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
               return true;
             },

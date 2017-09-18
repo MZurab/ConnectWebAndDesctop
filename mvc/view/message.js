@@ -1,9 +1,55 @@
-define(['jquery', 'template7','v_app', 'jquery.appear'],function( $, Template7, V_APP){
+define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.countdown'],function(  Template7, V_APP, MOMENT, $){
 	const _ = {};
 	const CONST = {};
 	const templates = {};
 
+  $.fn.extend({
+		/* EXTENCION */
+			'specialClick': function (iNdata) {
+				  /*
+				  	@inputs
+				  		@optional
+				  		iNdata -> object
+				  			@optional
+				  				enter -> function
+			  					out -> function
+			  					down -> function
+			  					up -> function
 
+				  */
+			      var selector = this.selector || this;
+			      var state = false;
+			      var funcs = iNdata;
+			      var initFuntions = () => {
+			      	$(window).unbind('mouseup').mouseup( ()=>{
+			            if ( typeof funcs.up == 'function')funcs.up(state);
+			            $(window).unbind('mouseup');
+			            $(this).unbind('mouseout');
+			            $(this).unbind('mouseenter');
+
+			        });
+			        $(selector).mouseout( ()=>{
+			          state = false;
+			          if ( typeof funcs.out == 'function')funcs.out(state);
+			        });
+			        $(selector).mouseenter( ()=>{
+			          state = true;
+			          if ( typeof funcs.enter == 'function')funcs.enter(state);
+
+			        });
+			      }
+			      console.log('selector',selector);
+			      console.log('$(selector)',$(selector));
+			      $(selector).mousedown( ()=>{
+			      	state = true;
+			        if ( typeof funcs.down == 'function')funcs.down(state);
+			        initFuntions();
+			      
+			      }
+		        );
+			}
+	    /* EXTENCION */
+	});
 
 
 
@@ -271,9 +317,9 @@ define(['jquery', 'template7','v_app', 'jquery.appear'],function( $, Template7, 
   		*/
   		if ( typeof iNdata['onClickSendMesg'] == 'function') {
   			// if value is empty
-  			$('#sendButtonInSenderBlock').off();
+  			$('#sendTextButtonInSenderBlock').off();
 
-  			$('#sendButtonInSenderBlock').click(function (e) {
+  			$('#sendTextButtonInSenderBlock').click(function (e) {
   				var value =  $('#forTextInputInSenderBlock textarea').val();
   				if(value == '') return true;
 			    iNdata['onClickSendMesg'](e);
@@ -291,7 +337,7 @@ define(['jquery', 'template7','v_app', 'jquery.appear'],function( $, Template7, 
 			    var code = e.which; // recommended to use e.which, it's normalized across browsers
 			    if (code==13) {
 			    	e.preventDefault();
-			    	$('#sendButtonInSenderBlock').trigger('click');
+			    	$('#sendTextButtonInSenderBlock').trigger('click');
 			    }
 	  		}).keyup(function (e) {
 	  			var code = e.which; // recommended to use e.which, it's normalized across browsers
@@ -301,9 +347,143 @@ define(['jquery', 'template7','v_app', 'jquery.appear'],function( $, Template7, 
 			    	iNdata['onKeyDownPrintingMsg'](e);
 			    }
 	  		});
+
+	  		onEventsForLiveAudioMsgButton();
   		}
   	}
     _['activeAppEvent'] = activeAppEvent;
+
+
+
+    //@< msg send buttons
+    	function onEventsForLiveAudioMsgButton () {
+    		var objForSpecialClick = {};
+    			// click
+    			var startMsgRecoding = false;
+    			var intervalId = null;
+    			var timerFromStartRecordingMessage = 0;
+    			objForSpecialClick['down']= () => {
+					console.log('onEventsForLiveAudioMsgButton down');
+    				startMsgRecoding = false;
+    				intervalId = setTimeout(()=>{
+    					startMsgRecoding = true;
+    					// show timer
+    					smartStartAudioRecodingTimeAtMsgButton();
+    					timerFromStartRecordingMessage = MOMENT().getNowTime(); //
+    				},150);
+    			}
+    			objForSpecialClick['up'] = (state) => {
+					console.log('onEventsForLiveAudioMsgButton up startMsgRecoding',startMsgRecoding);
+					clearTimeout(intervalId);
+    				if(startMsgRecoding !== true) {
+    					// if does not 150 ms since first click
+    					// we swiftch buttons 
+    					smartSwitchLiveAudioVideoMsgButtons();
+    				} else {
+    					var timeWhenMouseUp = MOMENT().getNowTime(); //
+    					var passedTimeFromStartRecordToMouseUp = timeWhenMouseUp - timerFromStartRecordingMessage; //
+    					// we send msg if 
+    					if (timerFromStartRecordingMessage != 0 && passedTimeFromStartRecordToMouseUp > 500 ) {
+    						// we send message
+    						console.log('onEventsForLiveAudioMsgButton send message');
+    					}else {
+    						// we delete message
+    						console.log('onEventsForLiveAudioMsgButton delete message');
+    					}
+    					hideTimerBlockAtMsgSendButton();
+					}
+    				
+    			}
+    		$('#sendAudioButtonInSenderBlock').specialClick(objForSpecialClick);
+    	}
+    		
+
+
+
+    	function smartSwitchLiveAudioVideoMsgButtons () {
+    		if($('#sendVideoButtonLiveInSenderBlock').hasClass('hideHalfSendMsgButton')) {
+    			console.log('!smartSwitchLiveAudioVideoMsgButtons start showOnlyHalfLiveAudioMsgButton');
+    			showOnlyHalfLiveAudioMsgButton();
+    		}else {
+    			console.log('smartSwitchLiveAudioVideoMsgButtons start showOnlyHalfLiveVideoMsgButton');
+    			showOnlyHalfLiveVideoMsgButton();
+    		}
+    	}
+    	function smartShowLiveAudioVideoMsgButtons () {
+    		hideLiveTextMsgButton();
+    		showLiveVideoMsgButton();
+    		showLiveAudioMsgButton();
+    	}
+	    	function showLiveVideoMsgButton () {
+	    		$('#sendVideoButtonLiveInSenderBlock').show();
+	    	}
+	    	function hideLiveVideoMsgButton () {
+	    		$('#sendVideoButtonLiveInSenderBlock').hide();
+	    	}
+	    	function showOnlyHalfLiveVideoMsgButton () {
+	    		removeClass_hideHalf();
+	    		$('#sendVideoButtonLiveInSenderBlock').addClass('hideHalfSendMsgButton');
+	    	}
+
+	    	function showLiveAudioMsgButton () {
+	    		$('#sendAudioButtonInSenderBlock').show();
+	    	}
+	    	function hideLiveAudioMsgButton () {
+	    		$('#sendAudioButtonInSenderBlock').hide();
+	    	}
+	    	function showOnlyHalfLiveAudioMsgButton () {
+	    		removeClass_hideHalf();
+	    		$('#sendAudioButtonInSenderBlock').addClass('hideHalfSendMsgButton');
+	    	}
+	    		function removeClass_hideHalf () {
+		    		$('.sendMsgButtons').removeClass('hideHalfSendMsgButton');
+		    	}
+	    	
+    	function smartShowLiveTextMsgButton () {
+    		hideLiveVideoMsgButton();
+    		hideLiveAudioMsgButton();
+    		showLiveTextMsgButton();
+    	}
+	    	function showLiveTextMsgButton () {
+	    		$('#sendTextButtonInSenderBlock').show();
+	    	}
+	    	function hideLiveTextMsgButton () {
+	    		$('#sendTextButtonInSenderBlock').hide();
+	    	}
+    //@> msg send buttons
+
+    //@< msg timer in sender buttons 
+    	function smartStartAudioRecodingTimeAtMsgButton () {
+    		showTimerBlockAtMsgSendButton();
+    		hideVideoLiveIconAtMsgSenderBlock();
+    		showAudioLiveIconAtMsgSenderBlock();
+    		$('.timerInMsgSenderBlock span').countdown('destroy');
+    		$('.timerInMsgSenderBlock span').countdown({since: 0, compact: true, format: 'MS', description: ''});
+    	}
+
+    	function showTimerBlockAtMsgSendButton () {
+    		$('.timerInMsgSenderBlock').show();
+    	}
+    	function hideTimerBlockAtMsgSendButton () {
+    		$('.timerInMsgSenderBlock').hide();
+    	}
+
+	    	function showAudioLiveIconAtMsgSenderBlock  () {
+	    		$('.audioTimerInMsgSenderBlock').show();
+	    	}
+	    	function hideAudioLiveIconAtMsgSenderBlock  () {
+	    		$('.audioTimerInMsgSenderBlock').hide();
+	    	}
+
+	    	function showVideoLiveIconAtMsgSenderBlock  () {
+	    		$('.videoTimerInMsgSenderBlock').show();
+	    	}
+	    	function hideVideoLiveIconAtMsgSenderBlock  () {
+	    		$('.videoTimerInMsgSenderBlock').hide();
+	    	}
+    //@>
+
+
 
     function getContentFromMsgSenderBlock () {
 		return $('#forTextInputInSenderBlock textarea').val()

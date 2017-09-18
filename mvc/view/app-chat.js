@@ -11,6 +11,32 @@ define([ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'jquery.appear'
 		         <div id="leftBlockInViewWindow"></div>
 		      </div>
 		   </div>
+
+		   <div class="chatBlockInViewBlock">
+			   <div class="viewesFooterUnderWindow">
+			      <div id="senderBlockInViewBlock">
+			         <div class="boxInMessageSenderBlock">
+			            <div class="counterInChatId"></div>
+			            <div class="buttonChatToBottom"></div>
+			         </div>
+			         <div class="timerInMsgSenderBlock audioTimerInMsgSenderBlock"><span></span></div>
+			         <div id="bottomViewInMsgBlock">
+			            <ul class="rawBlockInBottomView">
+			               <li class="LineInBottomViewRawBlock">1</li>
+			               <li class="LineInBottomViewRawBlock">2</li>
+			            </ul>
+			         </div>
+			         <div id="sendTextButtonInSenderBlock" class="sendMsgButtons"></div>
+			         <div id="sendAudioButtonInSenderBlock" class="sendMsgButtons"></div>
+			         <div id="sendVideoButtonLiveInSenderBlock" class="sendMsgButtons hideHalfSendMsgButton"></div>
+			         <div id="forTextInputInSenderBlock">
+			            <textarea ></textarea>
+			         </div>
+			         <div class="connectButtonInMsgSenderBlock"></div>
+			      </div>
+			   </div>
+			</div>
+
 		   <div class="chatBlockInViewBlock">
 		      <div class="viewesFooterUnderWindow">
 		         <div id="senderBlockInViewBlock">
@@ -77,21 +103,24 @@ define([ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'jquery.appear'
 		<div class="chatBlockInViewBlock">
 		   <div class="viewesFooterUnderWindow">
 		      <div id="senderBlockInViewBlock">
-	      	  	 <div class="boxInMessageSenderBlock">
-	         		<div class="counterInChatId"></div>
-	         		<div class="buttonChatToBottom"></div>
-	         	</div>
+		         <div class="boxInMessageSenderBlock">
+		            <div class="counterInChatId"></div>
+		            <div class="buttonChatToBottom"></div>
+		         </div>
+		         <div class="timerInMsgSenderBlock audioTimerInMsgSenderBlock"><span></span></div>
 		         <div id="bottomViewInMsgBlock">
 		            <ul class="rawBlockInBottomView">
 		               <li class="LineInBottomViewRawBlock">1</li>
 		               <li class="LineInBottomViewRawBlock">2</li>
 		            </ul>
 		         </div>
+		         <div id="sendTextButtonInSenderBlock" class="sendMsgButtons"></div>
+		         <div id="sendAudioButtonInSenderBlock" class="sendMsgButtons"></div>
+		         <div id="sendVideoButtonLiveInSenderBlock" class="sendMsgButtons hideHalfSendMsgButton"></div>
 		         <div id="forTextInputInSenderBlock">
-		            <textarea></textarea>
+		            <textarea ></textarea>
 		         </div>
-		         <div id="sendButtonInSenderBlock" class="sendTextMsgButton"></div>
-		         <img src="https://cdn.ramman.net/images/icons/miniConnectWebIcon.png" id="ConnectButtonInFuncButtons">
+		         <div class="connectButtonInMsgSenderBlock"></div>
 		      </div>
 		   </div>
 		</div>
