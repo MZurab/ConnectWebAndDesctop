@@ -327,36 +327,51 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 			    effChatViewScrollToBotSafe();
   			});
 
-  			$('.buttonChatToBottom').click( 
-  				function () {
-  					$('#leftBlockInViewWindow').scrollBot(0);
-  				} 
-  			);
+  			
 
-  			$("#forTextInputInSenderBlock textarea").keydown( function(e) { 
-			    var code = e.which; // recommended to use e.which, it's normalized across browsers
-			    if (code==13) {
-			    	e.preventDefault();
-			    	$('#sendTextButtonInSenderBlock').trigger('click');
-			    }
-	  		}).keyup(function (e) {
-	  			var code = e.which; // recommended to use e.which, it's normalized across browsers
-			    if (code==13) {
-			    	e.preventDefault();
-			    } else {
-			    	iNdata['onKeyDownPrintingMsg'](e);
-			    }
-	  		});
-
-	  		onSpecialClickForLiveMessages('audio');
-	  		onSpecialClickForLiveMessages('video');
   		}
+  		$('.buttonChatToBottom').click( 
+			function () {
+				$('#leftBlockInViewWindow').scrollBot(0);
+			} 
+		);
+
+		$("#forTextInputInSenderBlock textarea").keydown( function(e) { 
+	    var code = e.which; // recommended to use e.which, it's normalized across browsers
+	    if (code==13) {
+	    	e.preventDefault();
+	    	$('#sendTextButtonInSenderBlock').trigger('click');
+	    }
+		}).keyup(function (e) {
+			var code = e.which; // recommended to use e.which, it's normalized across browsers
+		    if (code==13) {
+		    	e.preventDefault();
+		    } else {
+		    	iNdata['onKeyDownPrintingMsg'](e);
+		    }
+		});
+
+  		setJsHoverEffectsForCancelBtnAtMsgSendBlock();
+
+  		onSpecialClickForLiveMessages('audio');
+  		onSpecialClickForLiveMessages('video');
   	}
     _['activeAppEvent'] = activeAppEvent;
 
 
 
     //@< msg canceling buttons & effects
+    	function setJsHoverEffectsForCancelBtnAtMsgSendBlock () {
+    		$('.cancelBtnInMsgSenderButton').hover(
+    			function () {
+    				$(this).addClass('hover');
+    			},
+    			function () {
+    				$(this).removeClass('hover');
+				}
+			);
+    	}
+
     	function smartShowCancelBlockAudioSendingAtMsgSenderBlock () {
     		hideEffCancelingAllAnimationsSendingAtMsgSenderBlock();
 
@@ -448,10 +463,12 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     			// click
     			var startMsgRecoding = false;
     			var intervalId = null;
+    			var deleteThisMsg = true;
     			var timerFromStartRecordingMessage = 0;
     			objForSpecialClick['down']= () => {
 					console.log('onSpecialClickForLiveMessages down');
     				startMsgRecoding = false;
+    				deleteThisMsg = true;
     				intervalId = setTimeout(()=>{
     					startMsgRecoding = true;
     					// show timer
@@ -463,6 +480,11 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     					timerFromStartRecordingMessage = MOMENT().getNowTime(); //
     				},150);
     			}
+
+    			$('.cancelBtnInMsgSenderButton').mouseup(()=>{
+    				deleteThisMsg = false;
+    			});
+
     			objForSpecialClick['up'] = (state) => {
 					console.log('onSpecialClickForLiveMessages up startMsgRecoding',startMsgRecoding);
 					clearTimeout(intervalId);
@@ -474,7 +496,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     					var timeWhenMouseUp = MOMENT().getNowTime(); //
     					var passedTimeFromStartRecordToMouseUp = timeWhenMouseUp - timerFromStartRecordingMessage; //
     					// we send msg if 
-    					if (timerFromStartRecordingMessage != 0 && passedTimeFromStartRecordToMouseUp > 500 ) {
+    					if (timerFromStartRecordingMessage != 0 && passedTimeFromStartRecordToMouseUp > 500 && deleteThisMsg) {
     						// we send message
     						console.log('onSpecialClickForLiveMessages send message');
     					}else {

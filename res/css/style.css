@@ -1034,6 +1034,12 @@ input,textarea {outline:none;}
 							    cursor: pointer;
 							    display: none;
 							}
+								.cancelBtnInMsgSenderButton:hover {
+							    	background-image: url(https://cdn.ramman.net/web/res/images/buttons/messages/bool/noActive.png);
+								}
+								.cancelBtnInMsgSenderButton.hover {
+							    	background-image: url(https://cdn.ramman.net/web/res/images/buttons/messages/bool/noActive.png) !important;
+								}
 							.effectsForCancelling {
 							    position: absolute;
 							    width: 2.5rem;
