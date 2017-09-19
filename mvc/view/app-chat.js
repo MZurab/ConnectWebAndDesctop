@@ -27,8 +27,8 @@ define([ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'jquery.appear'
 			            </ul>
 			         </div>
 			         <div id="sendTextButtonInSenderBlock" class="sendMsgButtons"></div>
-			         <div id="sendAudioButtonInSenderBlock" class="sendMsgButtons"></div>
-			         <div id="sendVideoButtonLiveInSenderBlock" class="sendMsgButtons hideHalfSendMsgButton"></div>
+			         <div id="sendLiveAudioButtonInSenderBlock" class="sendMsgButtons"></div>
+			         <div id="sendLiveVideoButtonInSenderBlock" class="sendMsgButtons hideHalfSendMsgButton"></div>
 			         <div id="forTextInputInSenderBlock">
 			            <textarea ></textarea>
 			         </div>
@@ -107,6 +107,12 @@ define([ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'jquery.appear'
 		            <div class="counterInChatId"></div>
 		            <div class="buttonChatToBottom"></div>
 		         </div>
+		         
+		         <div class="effectsForCancelling _noneSelect"><div class="cancellingAudio effectsFlag"></div></div>
+
+		         <div class="cancelBtnInMsgSenderButton"></div>
+
+
 		         <div class="timerInMsgSenderBlock audioTimerInMsgSenderBlock"><span></span></div>
 		         <div id="bottomViewInMsgBlock">
 		            <ul class="rawBlockInBottomView">
@@ -114,9 +120,9 @@ define([ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'jquery.appear'
 		               <li class="LineInBottomViewRawBlock">2</li>
 		            </ul>
 		         </div>
-		         <div id="sendTextButtonInSenderBlock" class="sendMsgButtons"></div>
-		         <div id="sendAudioButtonInSenderBlock" class="sendMsgButtons"></div>
-		         <div id="sendVideoButtonLiveInSenderBlock" class="sendMsgButtons hideHalfSendMsgButton"></div>
+		         <div id="sendTextButtonInSenderBlock" class="sendMsgButtons _noneSelect"></div>
+		         <div id="sendLiveAudioButtonInSenderBlock" class="sendMsgButtons _noneSelect"></div>
+		         <div id="sendLiveVideoButtonInSenderBlock" class="sendMsgButtons hideHalfSendMsgButton _noneSelect"></div>
 		         <div id="forTextInputInSenderBlock">
 		            <textarea ></textarea>
 		         </div>

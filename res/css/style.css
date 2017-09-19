@@ -7,6 +7,14 @@ a {
 	color: inherit;
 }
 input,textarea {outline:none;}
+._noneSelect {
+	-webkit-user-select: none;  /* Chrome all / Safari all */
+	-moz-user-select: none;     /* Firefox all */
+	-ms-user-select: none;      /* IE 10+ */
+	user-select: none;          /* Likely future */    
+}
+
+
 #frameSynchronize {
 	display: none;
 }
@@ -1011,6 +1019,51 @@ input,textarea {outline:none;}
 								    display: inline-block;
 								}
 						/*> timer msg block */
+
+
+						/*< canceling effect in msg sender block */
+							.cancelBtnInMsgSenderButton {
+							    position: absolute;
+							    right: 3rem;
+							    width: 1.75rem;
+							    height: 1.75rem;
+							    z-index: 1;
+							    top: 0.7rem;
+							    background-image: url(https://cdn.ramman.net/web/res/images/buttons/messages/bool/no.png);
+							    background-size: 100%;
+							    cursor: pointer;
+							    display: none;
+							}
+							.effectsForCancelling {
+							    position: absolute;
+							    width: 2.5rem;
+							    height: 2.5rem;
+							    background-size: auto 100%;
+							    top: 0.25rem;
+							    background-position: center;
+							    left: 3.3rem;
+							    z-index: 1;
+							    background-repeat: no-repeat;
+							    display: none;
+							}
+								.effectsForCancelling div {
+								    background-position: center;
+								    background-size: auto 100%;
+								    background-repeat: no-repeat;
+								    width: inherit;
+								    height: inherit;
+								    position: absolute;
+								    top: 0px;
+								    left: 0px;
+								}
+								.effectsForCancelling .cancellingAudio {
+								    background-image: url(https://cdn.ramman.net/web/res/images/gif/messages/live/audioDeleting.gif);
+								}
+								.effectsFlag {
+									display: none;
+								}
+						/*> canceling effect in msg sender block */
+
 						.boxInMessageSenderBlock {
 						    position: absolute;
 						    top: -3rem;
@@ -1135,12 +1188,12 @@ input,textarea {outline:none;}
 						    top: 0.4rem !important;
 						    opacity: 0.5 !important;
 						}
-						#sendVideoButtonLiveInSenderBlock {
+						#sendLiveVideoButtonInSenderBlock {
 						    background-image: url(http://cdn.ramman.net/web/res/images/buttons/video/liveVideoMsgButton.png);
 						     right: 0.75rem; 
 						     top: 0.4rem; 
 						}
-						#sendAudioButtonInSenderBlock {
+						#sendLiveAudioButtonInSenderBlock {
 						    background-image: url(http://cdn.ramman.net/web/res/images/buttons/audio/liveAudioMsgButton.png);
 						    right: 0.75rem;
 						    top: 0.4rem !important;

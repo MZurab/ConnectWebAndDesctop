@@ -348,32 +348,123 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 			    }
 	  		});
 
-	  		onEventsForLiveAudioMsgButton();
+	  		onSpecialClickForLiveMessages('audio');
+	  		onSpecialClickForLiveMessages('video');
   		}
   	}
     _['activeAppEvent'] = activeAppEvent;
 
 
 
+    //@< msg canceling buttons & effects
+    	function smartShowCancelBlockAudioSendingAtMsgSenderBlock () {
+    		hideEffCancelingAllAnimationsSendingAtMsgSenderBlock();
+
+    		showEffCancelingBlockSendingAtMsgSenderBlock();
+    		showEffCancelingAudioAnimationSendingAtMsgSenderBlock();
+    		// hide after view
+    		setTimeout(
+			()=>{
+    			hideEffCancelingAudioAnimationSendingAtMsgSenderBlock();
+    		},750);
+    	}
+
+    	function showEffCancelingBlockSendingAtMsgSenderBlock () {
+    		$('.chatBlockInViewBlock .effectsForCancelling').show();
+    	}
+    	function hideEffCancelingBlockSendingAtMsgSenderBlock () {
+    		$('.chatBlockInViewBlock .effectsForCancelling').hide();
+    	}
+	    	function hideEffCancelingAllAnimationsSendingAtMsgSenderBlock () {
+	    		$('.effectsForCancelling .effectsFlag').hide();
+	    	}
+	    	function showEffCancelingAudioAnimationSendingAtMsgSenderBlock () {
+	    		$('.effectsForCancelling .cancellingAudio').show();
+	    	}
+	    	function hideEffCancelingAudioAnimationSendingAtMsgSenderBlock () {
+	    		$('.effectsForCancelling .cancellingAudio').hide();
+	    	}
+
+    	function showEffCancelSendingAtMsgSenderBlock () {
+    		$('.chatBlockInViewBlock .cancelBtnInMsgSenderButton').show();
+    	}
+    	function hideEffCancelSendingAtMsgSenderBlock () {
+    		$('.chatBlockInViewBlock .cancelBtnInMsgSenderButton').hide();
+    	}
+    //@> msg canceling buttons  & effects
+
     //@< msg send buttons
-    	function onEventsForLiveAudioMsgButton () {
+    	// function onEventsForLiveAudioMsgButton () {
+    	// 	var objForSpecialClick = {};
+    	// 		// click
+    	// 		var startMsgRecoding = false;
+    	// 		var intervalId = null;
+    	// 		var timerFromStartRecordingMessage = 0;
+    	// 		objForSpecialClick['down']= () => {
+					// console.log('onEventsForLiveAudioMsgButton down');
+    	// 			startMsgRecoding = false;
+    	// 			intervalId = setTimeout(()=>{
+    	// 				startMsgRecoding = true;
+    	// 				// show timer
+    	// 				smartStartAudioRecodingTimeAtMsgButton();
+    	// 				timerFromStartRecordingMessage = MOMENT().getNowTime(); //
+    	// 			},150);
+    	// 		}
+    	// 		objForSpecialClick['up'] = (state) => {
+					// console.log('onEventsForLiveAudioMsgButton up startMsgRecoding',startMsgRecoding);
+					// clearTimeout(intervalId);
+    	// 			if(startMsgRecoding !== true) {
+    	// 				// if does not 150 ms since first click
+    	// 				// we swiftch buttons 
+    	// 				smartSwitchLiveAudioVideoMsgButtons();
+    	// 			} else {
+    	// 				var timeWhenMouseUp = MOMENT().getNowTime(); //
+    	// 				var passedTimeFromStartRecordToMouseUp = timeWhenMouseUp - timerFromStartRecordingMessage; //
+    	// 				// we send msg if 
+    	// 				if (timerFromStartRecordingMessage != 0 && passedTimeFromStartRecordToMouseUp > 500 ) {
+    	// 					// we send message
+    	// 					console.log('onEventsForLiveAudioMsgButton send message');
+    	// 				}else {
+    	// 					// we delete message
+    	// 					console.log('onEventsForLiveAudioMsgButton delete message');
+    	// 					// show caceling audion effects
+    	// 					smartShowCancelBlockAudioSendingAtMsgSenderBlock();
+    	// 				}
+    	// 				smartHideTimerBlockAtMsgSendButton();
+					// }
+    				
+    	// 		}
+    	// 	$('#sendLiveAudioButtonInSenderBlock').specialClick(objForSpecialClick);
+    	// }
+
+    	function onSpecialClickForLiveMessages (iNeffectType) {
+    		/*
+    			@inputs
+    				iNeffectType -> string 
+
+    		*/
+    		var effType = iNeffectType;
     		var objForSpecialClick = {};
     			// click
     			var startMsgRecoding = false;
     			var intervalId = null;
     			var timerFromStartRecordingMessage = 0;
     			objForSpecialClick['down']= () => {
-					console.log('onEventsForLiveAudioMsgButton down');
+					console.log('onSpecialClickForLiveMessages down');
     				startMsgRecoding = false;
     				intervalId = setTimeout(()=>{
     					startMsgRecoding = true;
     					// show timer
-    					smartStartAudioRecodingTimeAtMsgButton();
+    					if(effType == 'audio') {
+    						smartStartAudioRecodingTimeAtMsgButton();
+    					} else if (effType == 'video') {
+
+    					}
     					timerFromStartRecordingMessage = MOMENT().getNowTime(); //
     				},150);
     			}
     			objForSpecialClick['up'] = (state) => {
-					console.log('onEventsForLiveAudioMsgButton up startMsgRecoding',startMsgRecoding);
+					console.log('onSpecialClickForLiveMessages up startMsgRecoding',startMsgRecoding);
 					clearTimeout(intervalId);
     				if(startMsgRecoding !== true) {
     					// if does not 150 ms since first click
@@ -385,23 +476,33 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     					// we send msg if 
     					if (timerFromStartRecordingMessage != 0 && passedTimeFromStartRecordToMouseUp > 500 ) {
     						// we send message
-    						console.log('onEventsForLiveAudioMsgButton send message');
+    						console.log('onSpecialClickForLiveMessages send message');
     					}else {
     						// we delete message
-    						console.log('onEventsForLiveAudioMsgButton delete message');
+    						console.log('onSpecialClickForLiveMessages delete message');
+    						// show caceling audion effects
+    						if(effType == 'audio') {
+	    						smartShowCancelBlockAudioSendingAtMsgSenderBlock();
+	    					} else if (effType == 'video') {
+
+	    					}
     					}
-    					hideTimerBlockAtMsgSendButton();
+    					smartHideTimerBlockAtMsgSendButton();
 					}
     				
     			}
-    		$('#sendAudioButtonInSenderBlock').specialClick(objForSpecialClick);
+			if(effType == 'audio') {
+    			$('#sendLiveAudioButtonInSenderBlock').specialClick(objForSpecialClick);
+			} else if (effType == 'video') {
+    			$('#sendLiveVideoButtonInSenderBlock').specialClick(objForSpecialClick);
+			}
     	}
     		
 
 
 
     	function smartSwitchLiveAudioVideoMsgButtons () {
-    		if($('#sendVideoButtonLiveInSenderBlock').hasClass('hideHalfSendMsgButton')) {
+    		if($('#sendLiveVideoButtonInSenderBlock').hasClass('hideHalfSendMsgButton')) {
     			console.log('!smartSwitchLiveAudioVideoMsgButtons start showOnlyHalfLiveAudioMsgButton');
     			showOnlyHalfLiveAudioMsgButton();
     		}else {
@@ -415,25 +516,25 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     		showLiveAudioMsgButton();
     	}
 	    	function showLiveVideoMsgButton () {
-	    		$('#sendVideoButtonLiveInSenderBlock').show();
+	    		$('#sendLiveVideoButtonInSenderBlock').show();
 	    	}
 	    	function hideLiveVideoMsgButton () {
-	    		$('#sendVideoButtonLiveInSenderBlock').hide();
+	    		$('#sendLiveVideoButtonInSenderBlock').hide();
 	    	}
 	    	function showOnlyHalfLiveVideoMsgButton () {
 	    		removeClass_hideHalf();
-	    		$('#sendVideoButtonLiveInSenderBlock').addClass('hideHalfSendMsgButton');
+	    		$('#sendLiveVideoButtonInSenderBlock').addClass('hideHalfSendMsgButton');
 	    	}
 
 	    	function showLiveAudioMsgButton () {
-	    		$('#sendAudioButtonInSenderBlock').show();
+	    		$('#sendLiveAudioButtonInSenderBlock').show();
 	    	}
 	    	function hideLiveAudioMsgButton () {
-	    		$('#sendAudioButtonInSenderBlock').hide();
+	    		$('#sendLiveAudioButtonInSenderBlock').hide();
 	    	}
 	    	function showOnlyHalfLiveAudioMsgButton () {
 	    		removeClass_hideHalf();
-	    		$('#sendAudioButtonInSenderBlock').addClass('hideHalfSendMsgButton');
+	    		$('#sendLiveAudioButtonInSenderBlock').addClass('hideHalfSendMsgButton');
 	    	}
 	    		function removeClass_hideHalf () {
 		    		$('.sendMsgButtons').removeClass('hideHalfSendMsgButton');
@@ -457,15 +558,27 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     		showTimerBlockAtMsgSendButton();
     		hideVideoLiveIconAtMsgSenderBlock();
     		showAudioLiveIconAtMsgSenderBlock();
+    		//cancel buttons&effect
+    		showEffCancelSendingAtMsgSenderBlock();
+
     		$('.timerInMsgSenderBlock span').countdown('destroy');
     		$('.timerInMsgSenderBlock span').countdown({since: 0, compact: true, format: 'MS', description: ''});
+    	}
+    	function smartHideTimerBlockAtMsgSendButton () {
+    		//hide timer block
+    		hideTimerBlockAtMsgSendButton();
+    		// hide cacell button
+    		hideEffCancelSendingAtMsgSenderBlock();
     	}
 
     	function showTimerBlockAtMsgSendButton () {
     		$('.timerInMsgSenderBlock').show();
     	}
     	function hideTimerBlockAtMsgSendButton () {
+    		// hide time
     		$('.timerInMsgSenderBlock').hide();
+    		// hide cance btn
+    		hideEffCancelSendingAtMsgSenderBlock();
     	}
 
 	    	function showAudioLiveIconAtMsgSenderBlock  () {

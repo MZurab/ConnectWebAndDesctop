@@ -5,6 +5,12 @@
             <div class="counterInChatId"></div>
             <div class="buttonChatToBottom"></div>
          </div>
+         
+         <div class="effectsForCancelling _noneSelect"><div class="cancellingAudio effectsFlag"></div></div>
+
+         <div class="cancelBtnInMsgSenderButton"></div>
+
+
          <div class="timerInMsgSenderBlock audioTimerInMsgSenderBlock"><span></span></div>
          <div id="bottomViewInMsgBlock">
             <ul class="rawBlockInBottomView">
@@ -12,9 +18,9 @@
                <li class="LineInBottomViewRawBlock">2</li>
             </ul>
          </div>
-         <div id="sendTextButtonInSenderBlock" class="sendMsgButtons"></div>
-         <div id="sendAudioButtonInSenderBlock" class="sendMsgButtons"></div>
-         <div id="sendVideoButtonLiveInSenderBlock" class="sendMsgButtons hideHalfSendMsgButton"></div>
+         <div id="sendTextButtonInSenderBlock" class="sendMsgButtons _noneSelect"></div>
+         <div id="sendAudioButtonInSenderBlock" class="sendMsgButtons _noneSelect"></div>
+         <div id="sendLiveVideoButtonInSenderBlock" class="sendMsgButtons hideHalfSendMsgButton _noneSelect"></div>
          <div id="forTextInputInSenderBlock">
             <textarea ></textarea>
          </div>
@@ -24,6 +30,47 @@
 </div>
 
 <style type="text/css">
+	.cancelBtnInMsgSenderButton {
+	    position: absolute;
+	    right: 3rem;
+	    width: 1.75rem;
+	    height: 1.75rem;
+	    z-index: 1;
+	    top: 0.7rem;
+	    background-image: url(https://cdn.ramman.net/web/res/images/buttons/messages/bool/no.png);
+	    background-size: 100%;
+	    cursor: pointer;
+	    display: none;
+	}
+	.effectsForCancelling {
+	    position: absolute;
+	    width: 2.5rem;
+	    height: 2.5rem;
+	    background-size: auto 100%;
+	    top: 0.25rem;
+	    background-position: center;
+	    left: 3.3rem;
+	    z-index: 1;
+	    background-repeat: no-repeat;
+	    display: none;
+	}
+		.effectsForCancelling div {
+		    background-position: center;
+		    background-size: auto 100%;
+		    background-repeat: no-repeat;
+		    width: inherit;
+		    height: inherit;
+		    position: absolute;
+		    top: 0px;
+		    left: 0px;
+		}
+		.effectsForCancelling .cancellingAudio {
+		    background-image: url(https://cdn.ramman.net/web/res/images/gif/messages/live/audioDeleting.gif);
+		}
+		.effectsFlag {
+			display: none;
+		}
+
 	.timerInMsgSenderBlock {
 	    position: absolute;
 	    left: 3.5rem;
@@ -49,6 +96,12 @@
 		    margin-top: 0.1rem;
 		    display: inline-block;
 		}
+	._noneSelect {
+		-webkit-user-select: none;  /* Chrome all / Safari all */
+		-moz-user-select: none;     /* Firefox all */
+		-ms-user-select: none;      /* IE 10+ */
+		user-select: none;          /* Likely future */    
+	}
 	#sendTextButtonInSenderBlock {
 	    height: 1.8rem;
 	    width: 1.8rem;
@@ -80,7 +133,7 @@
 	    top: 0.4rem !important;
 	    opacity: 0.5 !important;
 	}
-	#sendVideoButtonLiveInSenderBlock {
+	#sendLiveVideoButtonInSenderBlock {
 	    background-image: url(http://cdn.ramman.net/web/res/images/buttons/video/liveVideoMsgButton.png);
 	     right: 0.75rem; 
 	     top: 0.4rem; 
@@ -112,3 +165,42 @@
 	    background-position: center;
 	}
 </style>
+
+<script type="text/javascript">
+    //@< msg canceling buttons
+    	function smartShowCancelBlockAudioSendingAtMsgSenderBlock () {
+    		hideEffCancelingAllAnimationsSendingAtMsgSenderBlock();
+
+    		showEffCancelingBlockSendingAtMsgSenderBlock();
+    		showEffCancelingAudioAnimationSendingAtMsgSenderBlock();
+    		// hide after view
+    		setTimeout(
+			()=>{
+    			hideEffCancelingAudioAnimationSendingAtMsgSenderBlock();
+    		},250)
+    	}
+
+    	function showEffCancelingBlockSendingAtMsgSenderBlock () {
+    		$('.chatBlockInViewBlock .effectsForCancelling').show();
+    	}
+    	function hideEffCancelingBlockSendingAtMsgSenderBlock () {
+    		$('.chatBlockInViewBlock .effectsForCancelling').hide();
+    	}
+	    	function hideEffCancelingAllAnimationsSendingAtMsgSenderBlock () {
+	    		$('.effectsForCancelling .effectsFlag').hide();
+	    	}
+	    	function showEffCancelingAudioAnimationSendingAtMsgSenderBlock () {
+	    		$('.effectsForCancelling .cancellingAudio').show();
+	    	}
+	    	function hideEffCancelingAudioAnimationSendingAtMsgSenderBlock () {
+	    		$('.effectsForCancelling .cancellingAudio').hide();
+	    	}
+
+    	function showEffCancelSendingAtMsgSenderBlock () {
+    		$('.chatBlockInViewBlock .cancelBtnInMsgSenderButton').show();
+    	}
+    	function hideEffCancelSendingAtMsgSenderBlock () {
+    		$('.chatBlockInViewBlock .cancelBtnInMsgSenderButton').hide();
+    	}
+    //@> msg canceling buttons
+</script>
