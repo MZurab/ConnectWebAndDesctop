@@ -1,4 +1,4 @@
-define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase'],function( VIEW, M_APP, M_VIEW, M_MESSAGE, USER, FIREBASE) {
+define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_record','Howl'],function( VIEW, M_APP, M_VIEW, M_MESSAGE, USER, FIREBASE, M_RECORD,Howl) {
 	//@< init
 		// init from app view templates
 	  const _ = {};
@@ -11,6 +11,11 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase'],functi
 	  	// 	'id' : 'leftBlockInViewWindow'
 	  	// }
 	  }
+
+
+
+	   var STORAGE = FIREBASE.storage().ref();
+
 	  var thisPageName; 
 
 	  //< init pages const
@@ -34,6 +39,137 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase'],functi
 
 	        			M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index'});
 		            	M_MESSAGE.view.activeAppEvent({'onClickSendMesg':M_MESSAGE.onClickSendMesg,'onKeyDownPrintingMsg':M_MESSAGE.startSendingFlashMsg});
+
+
+
+		            	//set on
+		            	M_MESSAGE.view.onceMouseDownForAudioLiveRecord(
+		            		() => {
+		            			M_RECORD.audio( 
+			            			{
+			            				'onSuccess': (stream,recorderObject,dataInner) => {
+									        console.log('M_RECORD onSuccess',stream,recorderObject,dataInner);
+									        var sendThisFile = false;
+			            					
+			            					var getGlob = (error, blob) => {
+
+										        console.log('mediaRecorder .onGetBlob start ',sendThisFile);
+			           							// var file = new File([blob], 'msr-' + (new Date).toISOString().replace(/:|\./g, '-') + '.webm', {
+											    //     type: 'audio/webm'
+											    // });
+
+	    										// blob.name = file.name;
+
+										        console.log('mediaRecorder .onGetBlob blob ', blob);
+										        // console.log('mediaRecorder .onGetBlob file ',file);
+								        		var blobURL = URL.createObjectURL(blob);
+
+										        console.log('mediaRecorder .onGetBlob blobURL ', blobURL);
+
+
+										        var nM = {
+
+												  customMetadata: {
+												    'duration': 10000,
+												    'activity': 'Hiking'
+												  },
+												  contentType: 'audio/webm'
+										        }
+
+												var uploadTask = STORAGE.child('public/7.webm').put( blob , nM );//metadata
+												uploadTask.on(
+													firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+													function(snapshot) {
+														// Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+														var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+														console.log('Upload is ' + progress + '% done');
+													}, 
+													function(error) {
+													  console.log('uploadTask error',error);
+													  // A full list of error codes is available at
+													  // https://firebase.google.com/docs/storage/web/handle-errors
+													  switch (error.code) {
+													    case 'storage/unauthorized':
+													      // User doesn't have permission to access the object
+													    break;
+
+													    case 'storage/canceled':
+													      // User canceled the upload
+													    break;
+
+
+													    case 'storage/unknown':
+													      // Unknown error occurred, inspect error.serverResponse
+													    break;
+													  }
+													}, 
+													function() {
+													  	// Upload completed successfully, now we can get the download URL
+													  	var downloadURL = uploadTask.snapshot.downloadURL;
+													  	console.log('downloadURL',downloadURL);
+														console.log('Howl',Howl.Howl);
+														var sound = new Howl.Howl({
+														  src: [ downloadURL ],
+														  format: ['audio/webm'],
+														});
+														sound.play()
+													}
+												);
+
+										   //      var reader = new window.FileReader();
+													// reader.readAsDataURL(blob); 
+													// reader.onloadend = function() {
+													//                base64data = reader.result;                
+													//                console.log(base64data );
+										   //      		// STORAGE.child('public').
+													// }
+
+
+
+										  //       console.log('Howl',Howl.Howl);
+												// var sound = new Howl.Howl({
+												//   src: [ blobURL ],
+												//   format: ['audio/webm'],
+												// });
+												// sound.play();
+
+												// var data = { x: 42, s: "hello, world", d: new Date() },
+	    							// 			fileName = "my-download.json";
+												// saveData(data,fileName,blob);
+
+
+
+
+
+												// window.ddd = sound;
+											}
+
+			            					M_MESSAGE.view.onSpecialClickForSendLiveAudioOrVideo(
+			            						'audio',
+			            						{
+			            							'onStart': () => {
+
+			            								// recorderObject.setFileType('audio/webm');
+			            								recorderObject.start(5000);
+			            							},
+			            							'onDelete': () => {
+			            								sendThisFile = true;
+			            								recorderObject.stop();
+			            							},
+			            							'onSend' : () => {
+			            								recorderObject.save();//.get(getGlob);
+			            								recorderObject.stop();
+			            								// recorderObject.save();
+													},
+													
+			            						}
+		            						);
+			            				}
+			            			}
+		            			)
+		            		}
+	            		);
+
 		            	return true;
 		            },
 		            'onAppear' 		: function (d1,d2) {

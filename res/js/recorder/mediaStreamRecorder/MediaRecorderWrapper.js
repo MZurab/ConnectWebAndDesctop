@@ -20,14 +20,13 @@ function MediaRecorderWrapper(mediaStream) {
      * @method
      * @memberof MediaStreamRecorder
      * @example
-     * recorder.start(500);
+     * recorder.start(5000);
      */
     this.start = function(timeSlice, __disableLogs) {
-        this.timeSlice = timeSlice || 500;
+        this.timeSlice = timeSlice || 5000;
 
-        console.log('eeeee s28 self.mimeType',self.mimeType);
         if (!self.mimeType) {
-            self.mimeType = 'video/webm1';
+            self.mimeType = 'video/webm';
         }
 
         if (self.mimeType.indexOf('audio') !== -1) {
@@ -100,16 +99,14 @@ function MediaRecorderWrapper(mediaStream) {
         mediaRecorder.ondataavailable = function(e) {
             // how to fix FF-corrupt-webm issues?
             // should we leave this?          e.data.size < 26800
-            console.log('eeeee ondataavailable e',e);
             if (!e.data || !e.data.size || e.data.size < 26800 || firedOnDataAvailableOnce) {
                 return;
             }
-            console.log('eeeee ondataavailable e FINISH 1',e);
 
             firedOnDataAvailableOnce = true;
 
             var blob = self.getNativeBlob ? e.data : new Blob([e.data], {
-                type: self.mimeType || 'video/webm2'
+                type: self.mimeType || 'video/webm'
             });
 
             self.ondataavailable(blob);
@@ -261,7 +258,7 @@ function MediaRecorderWrapper(mediaStream) {
 
             var disableLogs = self.disableLogs;
             self.disableLogs = true;
-            this.start(this.timeslice || 500);
+            this.start(this.timeslice || 5000);
             self.disableLogs = disableLogs;
             return;
         }

@@ -40,7 +40,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 			      }
 			      console.log('selector',selector);
 			      console.log('$(selector)',$(selector));
-			      $(selector).mousedown( ()=>{
+			      $(selector).unbind('mousedown').mousedown( ()=>{
 			      	state = true;
 			        if ( typeof funcs.down == 'function')funcs.down(state);
 			        initFuntions();
@@ -353,8 +353,8 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
   		setJsHoverEffectsForCancelBtnAtMsgSendBlock();
 
-  		onSpecialClickForLiveMessages('audio');
-  		onSpecialClickForLiveMessages('video');
+  		// onSpecialClickForSendLiveAudioOrVideo('audio');
+  		// onSpecialClickForSendLiveAudioOrVideo('video');
   	}
     _['activeAppEvent'] = activeAppEvent;
 
@@ -409,55 +409,17 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     //@> msg canceling buttons  & effects
 
     //@< msg send buttons
-    	// function onEventsForLiveAudioMsgButton () {
-    	// 	var objForSpecialClick = {};
-    	// 		// click
-    	// 		var startMsgRecoding = false;
-    	// 		var intervalId = null;
-    	// 		var timerFromStartRecordingMessage = 0;
-    	// 		objForSpecialClick['down']= () => {
-					// console.log('onEventsForLiveAudioMsgButton down');
-    	// 			startMsgRecoding = false;
-    	// 			intervalId = setTimeout(()=>{
-    	// 				startMsgRecoding = true;
-    	// 				// show timer
-    	// 				smartStartAudioRecodingTimeAtMsgButton();
-    	// 				timerFromStartRecordingMessage = MOMENT().getNowTime(); //
-    	// 			},150);
-    	// 		}
-    	// 		objForSpecialClick['up'] = (state) => {
-					// console.log('onEventsForLiveAudioMsgButton up startMsgRecoding',startMsgRecoding);
-					// clearTimeout(intervalId);
-    	// 			if(startMsgRecoding !== true) {
-    	// 				// if does not 150 ms since first click
-    	// 				// we swiftch buttons 
-    	// 				smartSwitchLiveAudioVideoMsgButtons();
-    	// 			} else {
-    	// 				var timeWhenMouseUp = MOMENT().getNowTime(); //
-    	// 				var passedTimeFromStartRecordToMouseUp = timeWhenMouseUp - timerFromStartRecordingMessage; //
-    	// 				// we send msg if 
-    	// 				if (timerFromStartRecordingMessage != 0 && passedTimeFromStartRecordToMouseUp > 500 ) {
-    	// 					// we send message
-    	// 					console.log('onEventsForLiveAudioMsgButton send message');
-    	// 				}else {
-    	// 					// we delete message
-    	// 					console.log('onEventsForLiveAudioMsgButton delete message');
-    	// 					// show caceling audion effects
-    	// 					smartShowCancelBlockAudioSendingAtMsgSenderBlock();
-    	// 				}
-    	// 				smartHideTimerBlockAtMsgSendButton();
-					// }
-    				
-    	// 		}
-    	// 	$('#sendLiveAudioButtonInSenderBlock').specialClick(objForSpecialClick);
-    	// }
-
-    	function onSpecialClickForLiveMessages (iNeffectType) {
+    	function onSpecialClickForSendLiveAudioOrVideo (iNeffectType,iNdata) {
     		/*
+    			@discr
+    				for send live audio and video effects
     			@inputs
-    				iNeffectType -> string 
-
-    		*/
+    				iNeffectType -> string (audio|video)
+    				iNdata -> object
+    					onStart 	-> function
+    					onDelete 	-> function
+    					onSend 		-> function
+			*/
     		var effType = iNeffectType;
     		var objForSpecialClick = {};
     			// click
@@ -466,7 +428,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     			var deleteThisMsg = true;
     			var timerFromStartRecordingMessage = 0;
     			objForSpecialClick['down']= () => {
-					console.log('onSpecialClickForLiveMessages down');
+					console.log('onSpecialClickForSendLiveAudioOrVideo down');
     				startMsgRecoding = false;
     				deleteThisMsg = true;
     				intervalId = setTimeout(()=>{
@@ -478,6 +440,8 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
     					}
     					timerFromStartRecordingMessage = MOMENT().getNowTime(); //
+
+	    					if(typeof iNdata['onStart'] == 'function') iNdata['onStart']();
     				},150);
     			}
 
@@ -486,7 +450,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     			});
 
     			objForSpecialClick['up'] = (state) => {
-					console.log('onSpecialClickForLiveMessages up startMsgRecoding',startMsgRecoding);
+					console.log('onSpecialClickForSendLiveAudioOrVideo up startMsgRecoding',startMsgRecoding);
 					clearTimeout(intervalId);
     				if(startMsgRecoding !== true) {
     					// if does not 150 ms since first click
@@ -498,16 +462,18 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     					// we send msg if 
     					if (timerFromStartRecordingMessage != 0 && passedTimeFromStartRecordToMouseUp > 500 && deleteThisMsg) {
     						// we send message
-    						console.log('onSpecialClickForLiveMessages send message');
+    						console.log('onSpecialClickForSendLiveAudioOrVideo send message');
+	    					if(typeof iNdata['onSend'] == 'function') iNdata['onSend']();
     					}else {
     						// we delete message
-    						console.log('onSpecialClickForLiveMessages delete message');
+    						console.log('onSpecialClickForSendLiveAudioOrVideo delete message');
     						// show caceling audion effects
     						if(effType == 'audio') {
 	    						smartShowCancelBlockAudioSendingAtMsgSenderBlock();
 	    					} else if (effType == 'video') {
 
 	    					}
+	    					if(typeof iNdata['onDelete'] == 'function') iNdata['onDelete']();
     					}
     					smartHideTimerBlockAtMsgSendButton();
 					}
@@ -519,8 +485,17 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     			$('#sendLiveVideoButtonInSenderBlock').specialClick(objForSpecialClick);
 			}
     	}
+    	_['onSpecialClickForSendLiveAudioOrVideo'] = onSpecialClickForSendLiveAudioOrVideo;
     		
-
+    	function onceMouseDownForAudioLiveRecord (iNfunction) {
+    		$('#sendLiveAudioButtonInSenderBlock').mousedown(iNfunction);
+    	}
+    	_['onceMouseDownForAudioLiveRecord'] = onceMouseDownForAudioLiveRecord;
+    	
+    	function onceMouseDownForVideoLiveRecord (iNfunction) {
+    		$('#sendLiveVideoButtonInSenderBlock').mousedown(iNfunction);
+    	}
+    	_['onceMouseDownForVideoLiveRecord'] = onceMouseDownForVideoLiveRecord;
 
 
     	function smartSwitchLiveAudioVideoMsgButtons () {

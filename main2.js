@@ -31,7 +31,13 @@ require2.config({
         'moment'               : 'res/js/moment/moment',
         // A platform detection library
         'platform'             : 'res/js/platform/platform',
-        'mediaStreamRecorder'  : 'res/js/recorder/mediaStreamRecorder/MediaStreamRecorder.min',
+        // A audio player
+        'Howl'                  : 'res/js/players/audio/howler/howler.min',
+
+
+        // Audio and Video recorder
+        'mediaStreamRecorder'  : 'res/js/recorder/mediaStreamRecorder/MediaStreamRecorder',
+        // 'MediaRecorderWrapper' : 'res/js/recorder/mediaStreamRecorder/MediaRecorderWrapper',
 
         /*<? views */
             'v_view'           : 'mvc/view/view',
@@ -68,6 +74,7 @@ require2.config({
             'm_contact'        : 'mvc/model/contact',
             'm_push'           : 'mvc/model/push',
             'm_synchronize'    : 'mvc/model/synchronize',
+            'm_record'         : 'mvc/model/record',
 
 
         /*>! models */
@@ -102,10 +109,24 @@ require2.config({
             },
         /* >! onesignal modules for push */
 
+        /* <? audio player modules */
+            // 'audioPlayerHowler': {
+            //     exports: 'audioPlayerHowler',
+            // },
+        /* >! audio player modules */
+        
+
+
         /* <? mediaStreamRecorder modules for push */
             'mediaStreamRecorder': {
-                exports: 'mediaStreamRecorder',
+                // deps: 'MediaRecorderWrapper',
+                exports: 'mediaStreamRecorder'
             },
+
+            // 'MediaRecorderWrapper': {
+            //     // deps: 'MediaRecorderWrapper',
+            //     exports: 'MediaRecorderWrapper'
+            // },
         /* >! mediaStreamRecorder modules for push */
 
         /* <? mixitup modules*/

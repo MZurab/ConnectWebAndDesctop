@@ -46,6 +46,10 @@ function MediaStreamRecorder(mediaStream) {
             Recorder = StereoAudioRecorder;
         }
 
+        if (this.mimeType === 'audio/webm' || this.mimeType === 'audio/ogg') {
+            Recorder = MediaRecorderWrapper;
+        }
+
         // allows forcing StereoAudioRecorder.js on Edge/Firefox
         if (this.recorderType) {
             Recorder = this.recorderType;
@@ -56,6 +60,9 @@ function MediaStreamRecorder(mediaStream) {
 
         var self = this;
         mediaRecorder.ondataavailable = function(data) {
+            console.log('eeeee CHIEF11 mediaRecorder ondataavailable self',self);
+            console.log('eeeee CHIEF20 mediaRecorder ondataavailable mediaRecorder.ondataavailable',mediaRecorder.ondataavailable);
+            console.log('eeeee CHIEF21 mediaRecorder ondataavailable self.ondataavailable',self.ondataavailable);
             mediaRecorder.blobs.push(data);
             self.ondataavailable(data);
         };
@@ -92,48 +99,65 @@ function MediaStreamRecorder(mediaStream) {
         console.warn('stopped..', error);
     };
 
-    this.save = function(file, fileName) {
+    var fileType = false;
+    this.setFileType = function(iNfileType) {
+        fileType = iNfileType;
+    };
+
+    this.save = function(file, fileName, iNsuccessFunction) {
+        console.log('mmmmmm fileType',fileType);
         if (!file) {
             if (!mediaRecorder) {
                 return;
             }
-
-            ConcatenateBlobs(mediaRecorder.blobs, mediaRecorder.blobs[0].type, function(concatenatedBlob) {
+            console.log('mmmmmm mediaRecorder',mediaRecorder);
+            console.log('mmmmmm mediaRecorder.blobs',mediaRecorder.blobs);
+            console.log('mmmmmm JSON.stringify(mediaRecorder.blobs)',JSON.stringify(mediaRecorder.blobs));
+            var thisType;
+            try {
+                console.log('mmmmmm mediaRecorder.blobs[0]',mediaRecorder.blobs[0]);
+                thisType = mediaRecorder.blobs[0].type;
+                console.log('mmmmmm mediaRecorder try ',thisType);
+            }catch (e) {
+                console.log('mmmmmm mediaRecorder catch e',e);
+                thisType = fileType;
+            }
+            console.log('mmmmmm mediaRecorder.blobs',mediaRecorder.blobs);
+            console.log('mmmmmm mediaRecorder. thisType',thisType);
+            ConcatenateBlobs(mediaRecorder.blobs, thisType, function(concatenatedBlob) {
+                if( typeof (iNsuccessFunction) == 'function' ) iNsuccessFunction(concatenatedBlob);
                 invokeSaveAsDialog(concatenatedBlob);
             });
             return;
         }
         invokeSaveAsDialog(file, fileName);
     };
+
     this.get = function( iNfunction ) {
         // console.log('mmmmmm fileType',fileType);
         // if (!file) {
+        console.log('mmmmmm mediaRecorder iNfunction ',iNfunction);
         setTimeout(
-            () => {
-                 console.log('mmmmmm mediaRecorder iNfunction ',iNfunction);
-                if (!mediaRecorder) {
-                    return;
-                }
-                var thisType = 'audio/webm';//mediaRecorder.blobs[0].type;
-                // try {
-                //     thisType = mediaRecorder.blobs[0].type;
-                //     console.log('mmmmmm mediaRecorder try ',thisType);
-                // }catch (e) {
-                //     console.log('mmmmmm mediaRecorder catch e',e);
-                //     thisType = fileType;
-                // }
-                console.log('mmmmmm mediaRecorder.blobs',mediaRecorder.blobs);
-                console.log('mmmmmm mediaRecorder. thisType',thisType);
-                ConcatenateBlobs(mediaRecorder.blobs, thisType, (concatenatedBlob) => {
-                    console.log('this.get concatenatedBlob', concatenatedBlob );
-                    if( typeof (iNfunction) == 'function' ) iNfunction(false, concatenatedBlob);
-                });
+        () => {
+            if (!mediaRecorder) {
                 return;
-            return;
-            },
-            1000
-         );
-       
+            }
+            var thisType;
+            try {
+                thisType = mediaRecorder.blobs[0].type;
+                console.log('mmmmmm mediaRecorder try ',thisType);
+            }catch (e) {
+                console.log('mmmmmm mediaRecorder catch e',e);
+                thisType = fileType;
+            }
+            console.log('mmmmmm mediaRecorder.blobs',mediaRecorder.blobs);
+            console.log('mmmmmm mediaRecorder. thisType',thisType);
+            ConcatenateBlobs(mediaRecorder.blobs, thisType, (concatenatedBlob) => {
+                console.log('this.get concatenatedBlob', concatenatedBlob );
+                if( typeof (iNfunction) == 'function' ) iNfunction(false, concatenatedBlob);
+            });
+        return;
+        },1000);
         // }
         // invokeSaveAsDialog(file, fileName);
     };
@@ -1084,6 +1108,19 @@ function isMediaRecorderCompatible() {
  * When the recorder starts, it creates a "Media Encoder" thread to read data from MediaEncoder object and store buffer in EncodedBufferCache object.
  * Also extract the encoded data and create blobs on every timeslice passed from start function or RequestData function called by UA.
  */
+// ==================
+// MediaRecorder.js
+
+/**
+ * Implementation of https://dvcs.w3.org/hg/dap/raw-file/default/media-stream-capture/MediaRecorder.html
+ * The MediaRecorder accepts a mediaStream as input source passed from UA. When recorder starts,
+ * a MediaEncoder will be created and accept the mediaStream as input source.
+ * Encoder will get the raw data by track data changes, encode it by selected MIME Type, then store the encoded in EncodedBufferCache object.
+ * The encoded data will be extracted on every timeslice passed from Start function call or by RequestData function.
+ * Thread model:
+ * When the recorder starts, it creates a "Media Encoder" thread to read data from MediaEncoder object and store buffer in EncodedBufferCache object.
+ * Also extract the encoded data and create blobs on every timeslice passed from start function or RequestData function called by UA.
+ */
 
 function MediaRecorderWrapper(mediaStream) {
     var self = this;
@@ -1097,6 +1134,7 @@ function MediaRecorderWrapper(mediaStream) {
      */
     this.start = function(timeSlice, __disableLogs) {
         this.timeSlice = timeSlice || 5000;
+        console.log('eeeee MediaRecorderWrapper start',this.timeSlice);
 
         if (!self.mimeType) {
             self.mimeType = 'video/webm';
@@ -1119,6 +1157,7 @@ function MediaRecorderWrapper(mediaStream) {
         if (self.mimeType.indexOf('audio') !== -1) {
             self.mimeType = IsChrome ? 'audio/webm' : 'audio/ogg';
         }
+        console.log('eeeee MediaRecorderWrapper self.mimeType',self.mimeType);
 
         self.dontFireOnDataAvailableEvent = false;
 
@@ -1127,7 +1166,7 @@ function MediaRecorderWrapper(mediaStream) {
         };
 
         if (!self.disableLogs && !__disableLogs) {
-            console.log('MediaRecorderWrapper1 Passing following params over MediaRecorder API.', recorderHints);
+            console.log('Passing following params over MediaRecorder API from MediaRecorderWrapper class.', recorderHints);
         }
 
         if (mediaRecorder) {
@@ -1156,7 +1195,7 @@ function MediaRecorderWrapper(mediaStream) {
 
         if ('canRecordMimeType' in mediaRecorder && mediaRecorder.canRecordMimeType(self.mimeType) === false) {
             if (!self.disableLogs) {
-                console.warn('MediaRecorderWrapper2 API seems unable to record mimeType:', self.mimeType);
+                console.warn('MediaRecorder API seems unable to record mimeType:', self.mimeType);
             }
         }
 
@@ -1169,10 +1208,13 @@ function MediaRecorderWrapper(mediaStream) {
         var firedOnDataAvailableOnce = false;
 
         // Dispatching OnDataAvailable Handler
+
+        console.log('eeeee MediaRecorderWrapper befor ondataavailable');
         mediaRecorder.ondataavailable = function(e) {
             // how to fix FF-corrupt-webm issues?
             // should we leave this?          e.data.size < 26800
-            if (!e.data || !e.data.size || e.data.size < 8888 || firedOnDataAvailableOnce) {
+            console.log('eeeee ondataavailable e',e);
+            if (!e.data || !e.data.size || e.data.size < 500 || firedOnDataAvailableOnce) {
                 return;
             }
 
@@ -1182,6 +1224,7 @@ function MediaRecorderWrapper(mediaStream) {
                 type: self.mimeType || 'video/webm'
             });
 
+            console.log('eeeee self',self);
             self.ondataavailable(blob);
 
             // self.dontFireOnDataAvailableEvent = true;
@@ -1409,6 +1452,7 @@ function StereoAudioRecorder(mediaStream) {
     // timestamp to fire "ondataavailable"
     this.start = function(timeSlice) {
         timeSlice = timeSlice || 1000;
+        console.log('eeeee 1397 this.start timeSlice',timeSlice);
 
         mediaRecorder = new StereoAudioRecorderHelper(mediaStream, this);
 
@@ -1888,7 +1932,7 @@ function WhammyRecorderHelper(mediaStream, root) {
     function drawFrames() {
         if (isPaused) {
             lastTime = new Date().getTime();
-            setTimeout(drawFrames, 500);
+            setTimeout(drawFrames, 5000);
             return;
         }
 
@@ -2142,7 +2186,7 @@ function GifRecorder(mediaStream) {
 
         function drawVideoFrame(time) {
             if (isPaused) {
-                setTimeout(drawVideoFrame, 500, time);
+                setTimeout(drawVideoFrame, 5000, time);
                 return;
             }
 
@@ -2673,6 +2717,10 @@ if (typeof MediaStreamRecorder !== 'undefined') {
     MediaStreamRecorder.Whammy = Whammy;
 }
 
+
+
+
+
 // Last time updated at Nov 18, 2014, 08:32:23
 
 // Latest file can be found here: https://cdn.webrtc-experiment.com/ConcatenateBlobs.js
@@ -2713,6 +2761,7 @@ if (typeof MediaStreamRecorder !== 'undefined') {
             var byteLength = 0;
             buffers.forEach(function(buffer) {
                 byteLength += buffer.byteLength;
+                console.log('xxxxx 1 byteLength',byteLength);
             });
 
             var tmp = new Uint16Array(byteLength);
@@ -2720,16 +2769,21 @@ if (typeof MediaStreamRecorder !== 'undefined') {
             buffers.forEach(function(buffer) {
                 // BYTES_PER_ELEMENT == 2 for Uint16Array
                 var reusableByteLength = buffer.byteLength;
+                console.log('xxxxx 1 reusableByteLength',reusableByteLength, buffer);
                 if (reusableByteLength % 2 != 0) {
                     buffer = buffer.slice(0, reusableByteLength - 1)
                 }
+                console.log('xxxxx 2 reusableByteLength',reusableByteLength, buffer);
                 tmp.set(new Uint16Array(buffer), lastOffset);
                 lastOffset += reusableByteLength;
+                console.log('xxxxx lastOffset',lastOffset);
             });
+                console.log('xxxxx finish lastOffset',lastOffset);
 
             var blob = new Blob([tmp.buffer], {
                 type: type
             });
+            console.log('xxxxx finish blob',blob);
 
             callback(blob);
         }
