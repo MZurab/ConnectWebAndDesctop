@@ -114,14 +114,15 @@ function MediaStreamRecorder(mediaStream) {
                 if (!mediaRecorder) {
                     return;
                 }
-                var thisType = 'audio/webm';//mediaRecorder.blobs[0].type;
-                // try {
-                //     thisType = mediaRecorder.blobs[0].type;
-                //     console.log('mmmmmm mediaRecorder try ',thisType);
-                // }catch (e) {
-                //     console.log('mmmmmm mediaRecorder catch e',e);
-                //     thisType = fileType;
-                // }
+                var fileType = 'audio/ogg';//mediaRecorder.blobs[0].type;
+
+                try {
+                    var thisType = mediaRecorder.blobs[0].type;
+                    console.log('mmmmmm mediaRecorder try ',thisType);
+                }catch (e) {
+                    console.log('mmmmmm mediaRecorder catch e',e);
+                    var thisType = fileType;
+                }
                 console.log('mmmmmm mediaRecorder.blobs',mediaRecorder.blobs);
                 console.log('mmmmmm mediaRecorder. thisType',thisType);
                 ConcatenateBlobs(mediaRecorder.blobs, thisType, (concatenatedBlob) => {
@@ -1117,7 +1118,7 @@ function MediaRecorderWrapper(mediaStream) {
         }
 
         if (self.mimeType.indexOf('audio') !== -1) {
-            self.mimeType = IsChrome ? 'audio/webm' : 'audio/ogg';
+            self.mimeType = IsChrome ? 'audio/ogg' : 'audio/ogg';//? 'audio/webm'
         }
 
         self.dontFireOnDataAvailableEvent = false;
@@ -1172,7 +1173,7 @@ function MediaRecorderWrapper(mediaStream) {
         mediaRecorder.ondataavailable = function(e) {
             // how to fix FF-corrupt-webm issues?
             // should we leave this?          e.data.size < 26800
-            if (!e.data || !e.data.size || e.data.size < 8888 || firedOnDataAvailableOnce) {
+            if (!e.data || !e.data.size || e.data.size < 26800 || firedOnDataAvailableOnce) {
                 return;
             }
 
