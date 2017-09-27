@@ -158,7 +158,7 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 
 			    		
 
-						VIEW.createMessageToChatPage( objectForCreateMessage, myUID, iNchatId  );
+						VIEW.createMsgSimpleTextToChatPage( objectForCreateMessage, myUID, iNchatId  );
 
 						VIEW.effChatViewScrollToBotWithTimeOut (
 							() => {

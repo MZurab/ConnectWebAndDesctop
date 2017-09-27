@@ -47,10 +47,8 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
 		            			M_RECORD.video( 
 			            			{
 			            				'onSuccess': (stream,recorderObject,dataInner) => {
-									        // console.log('M_RECORD onSuccess',stream,recorderObject,dataInner);
 									        var sendThisFile = false;
 			            					
-											console.log("videoRecorder dataInner['onGetBlob'] 1",dataInner);
 			            					dataInner['getGlob'] = (error, blob) => {
 
 										        console.log('videoRecorder .onGetBlob start ',sendThisFile);
