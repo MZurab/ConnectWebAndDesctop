@@ -113,7 +113,8 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 		        messagesRef.orderByChild("time").limitToLast(40).on(iNtype, (messagesData) =>  { 
 		        	callbackAddOrChangeMessageFromFirebase( messagesData, iNchatId, iNtype, iNobject);
 				});
-		    }	
+		    }
+		    
 			    function callbackAddOrChangeMessageFromFirebase (iNdataFromFB, iNchatId, iNtype,iNobject) {
 			    	/*
 			    		@inputs
@@ -150,7 +151,7 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 
 			    		if(typeof iNobject['functionOnChildChanged'] == 'function') iNobject['functionOnChildAdded'](iNchatId);
 
-						VIEW.safeReplaceMessageToChatPage( objectForCreateMessage, myUID, iNchatId  );
+						VIEW.safeReplaceMsgSimpleTextToChatPage( objectForCreateMessage, myUID, iNchatId  );
 
 			    	} else {
 			    		if(typeof iNobject['functionOnChildAdded'] == 'function') iNobject['functionOnChildAdded'](iNchatId);
@@ -378,7 +379,7 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 			                type
 			        2 - iNmyUid
 			*/
-			var timeStamp = FIREBASE.database.ServerValue.TIMESTAMP ;
+			var timeStamp = getFirebaseTimeStamp();
 			var objForSentToDb = {
 				'info'	: { 
 					'options'	: {'base':{}},
@@ -413,7 +414,7 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 								typw
 							uid
 			*/
-     		var timeStamp     = FIREBASE.database.ServerValue.TIMESTAMP;
+     		var timeStamp     = getFirebaseTimeStamp();
      		var updates = {};
 			var lastMessage = {
 			    content 	: iNobject['info']['content'],

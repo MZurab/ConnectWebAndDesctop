@@ -184,6 +184,7 @@ define([ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'jquery.appear'
 		var temp = Template7.compile(templates['chiefHeader_user']);
 		return DICTIONARY.withString(temp(iNdata));
 	}
+
 	function addUserHeaderInChief (iNdata,iNtype) {
 		/*
 			@inputs
@@ -218,11 +219,10 @@ define([ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'jquery.appear'
 			objForAddHeader['content'] = getAppHeaderForIndexPage (iNdata);
 		V_APP.safeViewAppHeaderWithContent(objForAddHeader,iNtype);
 	}
+
 	_['addUserHeaderInChief'] = addUserHeaderInChief;
 
-
-
-    	function effChatViewScrollToBot () {
+		function effChatViewScrollToBot () {
 			V_APP.effScrollToButtom('#leftBlockInViewWindow',300);
 
     	}
@@ -274,10 +274,6 @@ define([ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'jquery.appear'
 			var temp = Template7.compile(templates['chatContainer']);
 			return temp(iNdata);
     	}
-
-
-
-
 
 	return _;
 });

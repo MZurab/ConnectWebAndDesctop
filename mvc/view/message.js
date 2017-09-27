@@ -234,17 +234,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 		}
 		_['getCenterSimleTextBlock'] = getCenterSimleTextBlock;
 
-	function safeReplaceMessageToChatPage ( iNdata, iNmyUid, iNchatId ) {
-        var thisIssetLength = getLengthOfMsg(iNdata, iNchatId);
-        if (thisIssetLength > 0) {
-        	// create message
-        	replaceMsgSimpleTextToChatPage ( iNdata, iNmyUid, iNchatId );
-        }
-	}
-    _['safeReplaceMessageToChatPage'] = safeReplaceMessageToChatPage;
-
-
-    function getMessagesDomPathByChatId (iNchatId) {
+	function getMessagesDomPathByChatId (iNchatId) {
         return getChatDomPathByChatId(iNchatId) + " .messagesInChatView";
 
     }
@@ -282,13 +272,23 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 	}
     _['createMsgSimpleTextToChatPage'] = createMsgSimpleTextToChatPage;
 
-    function replaceMsgSimpleTextToChatPage ( iNdata, iNmyUid, iNchatId ) {
-        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
-        var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
-        var content = getMsgSimple ( iNdata, iNmyUid );
-        $( fullPath ).replaceWith( content );
+
+	function safeReplaceMsgSimpleTextToChatPage ( iNdata, iNmyUid, iNchatId ) {
+        var thisIssetLength = getLengthOfMsg(iNdata, iNchatId);
+        if (thisIssetLength > 0) {
+        	// create message
+        	replaceMsgSimpleTextToChatPage ( iNdata, iNmyUid, iNchatId );
+        }
 	}
-    _['replaceMsgSimpleTextToChatPage'] = replaceMsgSimpleTextToChatPage;
+    _['safeReplaceMsgSimpleTextToChatPage'] = safeReplaceMsgSimpleTextToChatPage;
+    
+	    function replaceMsgSimpleTextToChatPage ( iNdata, iNmyUid, iNchatId ) {
+	        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+	        var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
+	        var content = getMsgSimple ( iNdata, iNmyUid );
+	        $( fullPath ).replaceWith( content );
+		}
+	    _['replaceMsgSimpleTextToChatPage'] = replaceMsgSimpleTextToChatPage;
 
 
 
