@@ -19,7 +19,11 @@ define([ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'jquery.appear'
 			            <div class="counterInChatId"></div>
 			            <div class="buttonChatToBottom"></div>
 			         </div>
-			         <div class="timerInMsgSenderBlock audioTimerInMsgSenderBlock"><span></span></div>
+			         <div class="timerInMsgSenderBlock">
+			         	<div class='audioTimerInMsgSenderBlock'></div>
+			         	<div class='videoTimerInMsgSenderBlock'></div>
+			         	<span></span>
+		         	</div>
 			         <div id="bottomViewInMsgBlock">
 			            <ul class="rawBlockInBottomView">
 			               <li class="LineInBottomViewRawBlock">1</li>
@@ -108,12 +112,19 @@ define([ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'jquery.appear'
 		            <div class="buttonChatToBottom"></div>
 		         </div>
 		         
-		         <div class="effectsForCancelling _noneSelect"><div class="cancellingAudio effectsFlag"></div></div>
+		         <div class="effectsForCancelling _noneSelect">
+		         	<div class="cancellingAudio effectsFlag"></div>
+		         	<div class="cancellingVideo effectsFlag"></div>
+		         </div>
 
 		         <div class="cancelBtnInMsgSenderButton"></div>
 
 
-		         <div class="timerInMsgSenderBlock audioTimerInMsgSenderBlock"><span></span></div>
+		         <div class="timerInMsgSenderBlock">
+		         	<div class='audioTimerInMsgSenderBlock'></div>
+		         	<div class='videoTimerInMsgSenderBlock'></div>
+		         	<span></span>
+		         </div>
 		         <div id="bottomViewInMsgBlock">
 		            <ul class="rawBlockInBottomView">
 		               <li class="LineInBottomViewRawBlock">1</li>

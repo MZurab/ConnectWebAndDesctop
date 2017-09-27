@@ -38,8 +38,6 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
 			        });
 			      }
-			      console.log('selector',selector);
-			      console.log('$(selector)',$(selector));
 			      $(selector).unbind('mousedown').mousedown( ()=>{
 			      	state = true;
 			        if ( typeof funcs.down == 'function')funcs.down(state);
@@ -54,11 +52,11 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
 
 
-	templates['msgCenterSimpleText'] = `
+	templates['centerMsgSimpleText'] = `
 		<div class="centerMsgInChatView">{{content}}</div>
 	`;
 
-	templates['msgFrom'] = `
+	templates['msgSimpleTextFrom'] = `
 	   <div class="lineInFromMeMessage">
 	      <div class="lineInBoxInLine">
 	         {{#if timeSentText}}
@@ -75,7 +73,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 	   <div class="contentTextInFromMeMessage">{{content}}</div>
 	`;
 
-	templates['msgTo'] = `
+	templates['msgSimpleTextTo'] = `
 	   <div class="lineInToMeMessage">
 	      <div class="lineInBoxInLine">
 			 {{#if timeSentText}}
@@ -179,16 +177,12 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
 
 	function getFromMessageAttrChatId (iNel) {
-        // var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
-        // var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
         var r = $(iNel).parent().attr('connect_chatid');
         return r;
 	}
 	_['getFromMessageAttrChatId'] = getFromMessageAttrChatId;
 
 	function getFromMessageAttrMsgId (iNel) {
-        // var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
-        // var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
         var r = $(iNel).attr('connect_msg');
         return r;
 	}
@@ -198,8 +192,6 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
 	function getFromMessageAttrTimeSent (iNel) {
 		//time-sent
-        // var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
-        // var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
         var r = parseInt($(iNel).attr('time-sent'));
         if(typeof r != 'number') r = 0;
         return r;
@@ -208,8 +200,6 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
 	function getFromMessageAttrTimeRead (iNel) {
 		//time-read
-        // var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
-        // var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
         var r = parseInt($(iNel).attr('time-read'));
         if(typeof r != 'number') r = 0;
         return r;
@@ -218,8 +208,6 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
 	function getFromMessageAttrTimeDelivered (iNel) {
 		//time-delivered
-        // var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
-        // var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
         var r = parseInt($(iNel).attr('time-delivered'));
         if(typeof r != 'number') r = 0;
         return r;
@@ -241,7 +229,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 								content
 							@optional
 			*/
-			var temp = Template7.compile(templates['msgCenterSimpleText']);
+			var temp = Template7.compile(templates['centerMsgSimpleText']);
 			return temp(iNdata);
 		}
 		_['getCenterSimleTextBlock'] = getCenterSimleTextBlock;
@@ -290,21 +278,21 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
     function createMessageToChatPage ( iNdata, iNmyUid, iNchatId ) {
         var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
-        $( iNneedView ).append( getMessage ( iNdata, iNmyUid ) );
+        $( iNneedView ).append( getMsgSimple ( iNdata, iNmyUid ) );
 	}
     _['createMessageToChatPage'] = createMessageToChatPage;
 
     function replaceMessageToChatPage ( iNdata, iNmyUid, iNchatId ) {
         var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
         var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
-        var content = getMessage ( iNdata, iNmyUid );
+        var content = getMsgSimple ( iNdata, iNmyUid );
         $( fullPath ).replaceWith( content );
 	}
     _['replaceMessageToChatPage'] = replaceMessageToChatPage;
 
 
 
-  	function activeAppEvent (iNdata) {
+  	function initApp (iNdata) {
   		/*
   			@disct
   				active acrtions for click events (send button, keyup for flesh msg)
@@ -338,30 +326,46 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
 		$("#forTextInputInSenderBlock textarea").keydown( function(e) { 
 	    var code = e.which; // recommended to use e.which, it's normalized across browsers
+
+
+	    
 	    if (code==13) {
 	    	e.preventDefault();
 	    	$('#sendTextButtonInSenderBlock').trigger('click');
 	    }
 		}).keyup(function (e) {
 			var code = e.which; // recommended to use e.which, it's normalized across browsers
+
+			
+
+
 		    if (code==13) {
 		    	e.preventDefault();
 		    } else {
+
+		    	// hide/show live msg video&audio button / simple text send btn
+		    	var lengthInSimpleMsgTextarea = getContentLengthFromMsgSenderBlock ();
+				if( lengthInSimpleMsgTextarea > 0) {
+			    	// view send simple text btn HIDE other
+			    	smartShowLiveTextMsgButton();
+
+			    } else {
+			    	// view live send button for msg video AND audio HIDE other
+			    	smartShowLiveAudioVideoMsgButtons();
+			    }
+
 		    	iNdata['onKeyDownPrintingMsg'](e);
 		    }
 		});
 
-  		setJsHoverEffectsForCancelBtnAtMsgSendBlock();
-
-  		// onSpecialClickForSendLiveAudioOrVideo('audio');
-  		// onSpecialClickForSendLiveAudioOrVideo('video');
+  		setJsHoverEffectsForCancelBtnForLiveMsgAtMsgSendBlock();
   	}
-    _['activeAppEvent'] = activeAppEvent;
+    _['initApp'] = initApp;
 
 
 
     //@< msg canceling buttons & effects
-    	function setJsHoverEffectsForCancelBtnAtMsgSendBlock () {
+    	function setJsHoverEffectsForCancelBtnForLiveMsgAtMsgSendBlock () {
     		$('.cancelBtnInMsgSenderButton').hover(
     			function () {
     				$(this).addClass('hover');
@@ -372,38 +376,59 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 			);
     	}
 
-    	function smartShowCancelBlockAudioSendingAtMsgSenderBlock () {
+    	function smartShowCancelBlockForLiveMsgAtMsgSenderBlock (iNtype) {
     		hideEffCancelingAllAnimationsSendingAtMsgSenderBlock();
 
-    		showEffCancelingBlockSendingAtMsgSenderBlock();
-    		showEffCancelingAudioAnimationSendingAtMsgSenderBlock();
+    		showEffCancelingBlockSendingForLiveMsgAtMsgSenderBlock();
+
+
+    		if(iNtype == 'audio')
+    			showEffCancelingAudioAnimationSendingForLiveMsgAtMsgSenderBlock();
+    		else if (iNtype == 'video') 
+    			showEffCancelingVideoAnimationSendingForLiveMsgAtMsgSenderBlock();
     		// hide after view
     		setTimeout(
 			()=>{
-    			hideEffCancelingAudioAnimationSendingAtMsgSenderBlock();
+    			if(iNtype == 'audio')
+    				hideEffCancelingAudioAnimationSendingForLiveMsgAtMsgSenderBlock();
+    			else if (iNtype == 'video') 
+    				hideEffCancelingVideoAnimationSendingForLiveMsgAtMsgSenderBlock();
     		},750);
     	}
 
-    	function showEffCancelingBlockSendingAtMsgSenderBlock () {
+
+
+
+
+
+    	function showEffCancelingBlockSendingForLiveMsgAtMsgSenderBlock () {
     		$('.chatBlockInViewBlock .effectsForCancelling').show();
     	}
-    	function hideEffCancelingBlockSendingAtMsgSenderBlock () {
+    	function hideEffCancelingBlockSendingForLiveMsgAtMsgSenderBlock () {
     		$('.chatBlockInViewBlock .effectsForCancelling').hide();
     	}
 	    	function hideEffCancelingAllAnimationsSendingAtMsgSenderBlock () {
 	    		$('.effectsForCancelling .effectsFlag').hide();
 	    	}
-	    	function showEffCancelingAudioAnimationSendingAtMsgSenderBlock () {
+	    	// audio
+	    	function showEffCancelingAudioAnimationSendingForLiveMsgAtMsgSenderBlock () {
 	    		$('.effectsForCancelling .cancellingAudio').show();
 	    	}
-	    	function hideEffCancelingAudioAnimationSendingAtMsgSenderBlock () {
+	    	function hideEffCancelingAudioAnimationSendingForLiveMsgAtMsgSenderBlock () {
 	    		$('.effectsForCancelling .cancellingAudio').hide();
 	    	}
+	    	// video
+	    	function showEffCancelingVideoAnimationSendingForLiveMsgAtMsgSenderBlock () {
+	    		$('.effectsForCancelling .cancellingVideo').show();
+	    	}
+	    	function hideEffCancelingVideoAnimationSendingForLiveMsgAtMsgSenderBlock () {
+	    		$('.effectsForCancelling .cancellingVideo').hide();
+	    	}
 
-    	function showEffCancelSendingAtMsgSenderBlock () {
+    	function showEffCancelSendingForLiveMsgAtMsgSenderBlock () {
     		$('.chatBlockInViewBlock .cancelBtnInMsgSenderButton').show();
     	}
-    	function hideEffCancelSendingAtMsgSenderBlock () {
+    	function hideEffCancelSendingForLiveMsgAtMsgSenderBlock () {
     		$('.chatBlockInViewBlock .cancelBtnInMsgSenderButton').hide();
     	}
     //@> msg canceling buttons  & effects
@@ -412,7 +437,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     	function onSpecialClickForSendLiveAudioOrVideo (iNeffectType,iNdata) {
     		/*
     			@discr
-    				for send live audio and video effects
+    				btn for send live audio and video effects
     			@inputs
     				iNeffectType -> string (audio|video)
     				iNdata -> object
@@ -435,13 +460,14 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     					startMsgRecoding = true;
     					// show timer
     					if(effType == 'audio') {
-    						smartStartAudioRecodingTimeAtMsgButton();
+    						smartStartRecodingTimerAtMsgButton('audio');
     					} else if (effType == 'video') {
-
-    					}
+    						smartStartRecodingTimerAtMsgButton('video');
+						}
+						
     					timerFromStartRecordingMessage = MOMENT().getNowTime(); //
 
-	    					if(typeof iNdata['onStart'] == 'function') iNdata['onStart']();
+	    				if(typeof iNdata['onStart'] == 'function') iNdata['onStart']();
     				},150);
     			}
 
@@ -469,10 +495,10 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     						console.log('onSpecialClickForSendLiveAudioOrVideo delete message');
     						// show caceling audion effects
     						if(effType == 'audio') {
-	    						smartShowCancelBlockAudioSendingAtMsgSenderBlock();
+	    						smartShowCancelBlockForLiveMsgAtMsgSenderBlock(effType);
 	    					} else if (effType == 'video') {
-
-	    					}
+	    						smartShowCancelBlockForLiveMsgAtMsgSenderBlock(effType);
+							}
 	    					if(typeof iNdata['onDelete'] == 'function') iNdata['onDelete']();
     					}
     					smartHideTimerBlockAtMsgSendButton();
@@ -511,6 +537,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     		hideLiveTextMsgButton();
     		showLiveVideoMsgButton();
     		showLiveAudioMsgButton();
+    		// showLiveAllIconAtMsgSenderBlock();
     	}
 	    	function showLiveVideoMsgButton () {
 	    		$('#sendLiveVideoButtonInSenderBlock').show();
@@ -536,10 +563,15 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 	    		function removeClass_hideHalf () {
 		    		$('.sendMsgButtons').removeClass('hideHalfSendMsgButton');
 		    	}
-	    	
+    		
+
+    		function hideAllMsgSenderButtons () {
+    			$('.sendMsgButtons').hide();
+    		}	
     	function smartShowLiveTextMsgButton () {
-    		hideLiveVideoMsgButton();
-    		hideLiveAudioMsgButton();
+    		hideAllMsgSenderButtons();
+    		// hideLiveVideoMsgButton();
+    		// hideLiveAudioMsgButton();
     		showLiveTextMsgButton();
     	}
 	    	function showLiveTextMsgButton () {
@@ -551,21 +583,55 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     //@> msg send buttons
 
     //@< msg timer in sender buttons 
-    	function smartStartAudioRecodingTimeAtMsgButton () {
+    	// function smartStartVideoRecodingTimeAtMsgButton () {
+    	// 	showTimerBlockAtMsgSendButton();
+    	// 	hideAudioLiveIconAtMsgSenderBlock();
+    	// 	showVideoiveIconAtMsgSenderBlock();
+    	// 	//cancel buttons&effect
+    	// 	showEffCancelSendingForLiveMsgAtMsgSenderBlock();
+
+    	// 	$('.timerInMsgSenderBlock span').countdown('destroy');
+    	// 	$('.timerInMsgSenderBlock span').countdown({since: 0, compact: true, format: 'MS', description: ''});
+    	// }
+    	// function smartStartAudioRecodingTimeAtMsgButton () {
+    	// 	showTimerBlockAtMsgSendButton();
+    	// 	hideVideoLiveIconAtMsgSenderBlock();
+    	// 	showAudioLiveIconAtMsgSenderBlock();
+    	// 	//cancel buttons&effect
+    	// 	showEffCancelSendingForLiveMsgAtMsgSenderBlock();
+
+    	// 	$('.timerInMsgSenderBlock span').countdown('destroy');
+    	// 	$('.timerInMsgSenderBlock span').countdown({since: 0, compact: true, format: 'MS', description: ''});
+    	// }
+    	function smartStartRecodingTimerAtMsgButton (iNtype) {
+    		/*
+    			@inputs
+    				@required
+    					iNtype -> string (audio|video) 
+    		*/
     		showTimerBlockAtMsgSendButton();
-    		hideVideoLiveIconAtMsgSenderBlock();
-    		showAudioLiveIconAtMsgSenderBlock();
+    		hideLiveAllIconAtMsgSenderBlock();
+
+    		if(iNtype == 'audio')
+    			showAudioLiveIconAtMsgSenderBlock();
+    		else if(iNtype == 'video')
+    			showVideoLiveIconAtMsgSenderBlock();
+
     		//cancel buttons&effect
-    		showEffCancelSendingAtMsgSenderBlock();
+    		showEffCancelSendingForLiveMsgAtMsgSenderBlock();
 
     		$('.timerInMsgSenderBlock span').countdown('destroy');
     		$('.timerInMsgSenderBlock span').countdown({since: 0, compact: true, format: 'MS', description: ''});
     	}
+
+
+
+
     	function smartHideTimerBlockAtMsgSendButton () {
     		//hide timer block
     		hideTimerBlockAtMsgSendButton();
     		// hide cacell button
-    		hideEffCancelSendingAtMsgSenderBlock();
+    		hideEffCancelSendingForLiveMsgAtMsgSenderBlock();
     	}
 
     	function showTimerBlockAtMsgSendButton () {
@@ -575,8 +641,15 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     		// hide time
     		$('.timerInMsgSenderBlock').hide();
     		// hide cance btn
-    		hideEffCancelSendingAtMsgSenderBlock();
+    		hideEffCancelSendingForLiveMsgAtMsgSenderBlock();
     	}
+
+    		function hideLiveAllIconAtMsgSenderBlock  () {
+	    		$('.timerInMsgSenderBlock div').hide();
+	    	}
+	    	function showLiveAllIconAtMsgSenderBlock  () {
+	    		$('.timerInMsgSenderBlock div').show();
+	    	}
 
 	    	function showAudioLiveIconAtMsgSenderBlock  () {
 	    		$('.audioTimerInMsgSenderBlock').show();
@@ -591,6 +664,8 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 	    	function hideVideoLiveIconAtMsgSenderBlock  () {
 	    		$('.videoTimerInMsgSenderBlock').hide();
 	    	}
+
+
     //@>
 
 
@@ -607,7 +682,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
 
 
-	function getMessage (iNdata,iNmyUid) {
+	function getMsgSimple (iNdata,iNmyUid) {
 		/*
 			@discr
 
@@ -629,39 +704,39 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 		if ( iNdata.uid == iNmyUid ) {
 
             iNdata['fromMe'] = 1;
-            iNdata['boxContent'] = getMsgFrom(iNdata);
+            iNdata['boxContent'] = getMsgSimpleTextFrom(iNdata);
 		}
         else {
             iNdata['toMe'] = 1;
-            iNdata['boxContent'] = getMsgTo(iNdata);
+            iNdata['boxContent'] = getMsgSimpleTextTo(iNdata);
         }
-        return getMsgBox(iNdata);
+        return getBoxForMsg(iNdata);
 	}
-    _['getMessage'] = getMessage;
+    _['getMsgSimple'] = getMsgSimple;
 
-    	function getMsgBox (iNdata) {
+    	function getBoxForMsg (iNdata) {
 			let temp = Template7.compile(templates['msgBox']);
 			return temp(iNdata);
 		}
-    	_['getMsgFrom'] = getMsgFrom;
+    	_['getMsgSimpleTextFrom'] = getMsgSimpleTextFrom;
 
-		function getMsgFrom (iNdata) {
-			let temp = Template7.compile(templates['msgFrom']);
+		function getMsgSimpleTextFrom (iNdata) {
+			let temp = Template7.compile(templates['msgSimpleTextFrom']);
 			return temp(iNdata);
 		}
-    	_['getMsgFrom'] = getMsgFrom;
+    	_['getMsgSimpleTextFrom'] = getMsgSimpleTextFrom;
 
-		function getMsgTo (iNdata) {
-			let temp = Template7.compile(templates['msgTo']);
+		function getMsgSimpleTextTo (iNdata) {
+			let temp = Template7.compile(templates['msgSimpleTextTo']);
 			return temp(iNdata);
 		}
-    	_['getMsgTo'] = getMsgTo;
+    	_['getMsgSimpleTextTo'] = getMsgSimpleTextTo;
 
 
 
 
 
-    		function setObserverForViewInVisualScrollByChatId (iNchatId, iNdata ) {
+    		function setObserverForViewMsgInVisualScrollByChatId (iNchatId, iNdata ) {
 				let object = getMessagesDomObjectByChatId(iNchatId,'.toMeMessageInChatView');
 
 				object.appearByEach(
@@ -691,7 +766,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
 
     		}
-			_['setObserverForViewInVisualScrollByChatId'] = setObserverForViewInVisualScrollByChatId;
+			_['setObserverForViewMsgInVisualScrollByChatId'] = setObserverForViewMsgInVisualScrollByChatId;
 
 
 

@@ -105,7 +105,6 @@ function MediaStreamRecorder(mediaStream) {
         }
         invokeSaveAsDialog(file, fileName);
     };
-    
     this.get = function( iNfunction ) {
         // console.log('mmmmmm fileType',fileType);
         // if (!file) {
@@ -1119,7 +1118,7 @@ function MediaRecorderWrapper(mediaStream) {
         }
 
         if (self.mimeType.indexOf('audio') !== -1) {
-            self.mimeType = IsChrome ? 'audio/webm' : 'audio/ogg';
+            self.mimeType = IsChrome ? 'audio/ogg' : 'audio/ogg';//? 'audio/webm'
         }
 
         self.dontFireOnDataAvailableEvent = false;
@@ -1129,7 +1128,7 @@ function MediaRecorderWrapper(mediaStream) {
         };
 
         if (!self.disableLogs && !__disableLogs) {
-            console.log('Passing following params over MediaRecorder API.', recorderHints);
+            console.log('MediaRecorderWrapper1 Passing following params over MediaRecorder API.', recorderHints);
         }
 
         if (mediaRecorder) {
@@ -1158,7 +1157,7 @@ function MediaRecorderWrapper(mediaStream) {
 
         if ('canRecordMimeType' in mediaRecorder && mediaRecorder.canRecordMimeType(self.mimeType) === false) {
             if (!self.disableLogs) {
-                console.warn('MediaRecorder API seems unable to record mimeType:', self.mimeType);
+                console.warn('MediaRecorderWrapper2 API seems unable to record mimeType:', self.mimeType);
             }
         }
 

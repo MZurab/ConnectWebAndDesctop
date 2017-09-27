@@ -110,7 +110,7 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 	    		if(typeof iNobject != 'object') iNobject = {};
 
 		        var messagesRef = FIREBASE.database().ref('messages/'+iNchatId);
-		        messagesRef.orderByChild("time").limitToLast(100).on(iNtype, (messagesData) =>  { 
+		        messagesRef.orderByChild("time").limitToLast(40).on(iNtype, (messagesData) =>  { 
 		        	callbackAddOrChangeMessageFromFirebase( messagesData, iNchatId, iNtype, iNobject);
 				});
 		    }	
@@ -188,7 +188,7 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 					setReadStateForMsg(msgId,chatId,myUID);
 	    		}, 1200 );
 			};
-			VIEW.setObserverForViewInVisualScrollByChatId(iNchatId, 
+			VIEW.setObserverForViewMsgInVisualScrollByChatId(iNchatId, 
 				{
 					'success' : thisSuccessFunction,
 					'onScrollParentFalse': safeHideMessagesCountByChatId

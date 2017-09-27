@@ -3,6 +3,52 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 	const _ = {'library': RECORDER};
 	const CONST = {};
 
+	function video (iNdata) {
+		/*
+			@discr
+				for record audion
+			@inputs
+				iNdata -> object
+					onSuccess -> function
+					onError -> function
+		*/
+		//
+		getPermissionForVideoAndAudioRecord (
+			// success function
+			(stream) => {
+				var dataInner = {};
+				 var mediaRecorder = new MediaStreamRecorder(stream);
+				 // mediaRecorder.mimeType = 'audio/wav'; // check this line for audio/wav
+				 mediaRecorder.mimeType = 'video/webm';
+				 mediaRecorder.canvas = {
+				    width: 320,
+				    height: 320
+				 };
+				 mediaRecorder.videoWidth  = 320;
+				 mediaRecorder.videoHeight = 320;
+				 // mediaRecorder.recorderType = MediaRecorderWrapper;
+				 // console.log('MediaRecorderWrapper',MediaRecorderWrapper)
+				 console.log('video',mediaRecorder)
+
+				 mediaRecorder.ondataavailable =  function (blob) {
+			        // POST/PUT "Blob" using FormData/XHR2
+			        console.log('video.ondataavailable blob ',blob);
+			        // var blobURL = URL.createObjectURL(blob);
+			        if(typeof dataInner['getGlob'] == 'function') dataInner['getGlob'](blob,mediaRecorder);
+			        // mediaRecorder.save(blob,'1.ogg');
+			     };
+			     if( typeof iNdata['onSuccess']  == 'function' ) iNdata['onSuccess']( stream, mediaRecorder , dataInner);
+		    	 // mediaRecorder.start();
+			}, 
+			// error funciton
+			(e) => {
+			     if(typeof iNdata['onError']  == 'function') iNdata['onError'](e);
+				
+			}
+		);
+	}
+	_['video'] = video;
+
 
 	function audio (iNdata) {
 		/*
@@ -211,8 +257,28 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 
 	function getPermissionForVideoAndAudioRecord (onSuccess, onError) {
 		//prepared options for start audio
+		var constrainedWidth = 320,
+			constrainedHeight = 180;
+		 var video_constraints = {
+		    "mandatory": {
+		       maxHeight: constrainedHeight + 40,
+		       maxWidth: constrainedWidth + 40,
+		      "minWidth": constrainedWidth,
+		      "minHeight": constrainedHeight,
+		      "minFrameRate": "30"
+		    },
+		    "optional": []
+		  }
+		// var vid_constraints = {
+		//     mandatory: {
+		//         maxHeight: 320,
+		//         maxWidth: 320
+		//     },
+		//     width: { min: 240, ideal: 320, max: 380 },
+  //       	height: { min: 240, ideal: 320, max: 380 },
+		// }
 		var audioMediaConstraints = {
-		    video: true,
+		    video: video_constraints,
 		    audio: true
 		};
 		navigator.getUserMedia(audioMediaConstraints, onSuccess, onError);

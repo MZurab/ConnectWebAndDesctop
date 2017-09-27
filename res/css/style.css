@@ -1002,17 +1002,26 @@ input,textarea {outline:none;}
 							    font-size: 1.25rem;
 	    						display: none;
 							}
-								.audioTimerInMsgSenderBlock:before {
+								.timerInMsgSenderBlock > div { /*< gifs in timer live recording */
+									display: inline;
+								}
+								.timerInMsgSenderBlock > div:before { /*< gifs in timer live recording */
+									display: inline;
 								    content: "";
-								    display: block;
-								    width: 1.75rem;
-								    height: 2rem;
 								    float: left;
-								    background-image: url(http://cdn.ramman.net/web/res/images/gif/messages/live/audioRecording.gif);
 								    background-size: 100%;
-								    background-position-y: -0.07rem;
 								    background-repeat: no-repeat;
 								    margin-right: 0.25rem;
+								    width: 1.75rem;
+								    height: 2rem;
+								}
+								.audioTimerInMsgSenderBlock:before {
+								    background-image: url(http://cdn.ramman.net/web/res/images/gif/messages/live/audioRecording.gif);
+								    background-position-y: -0.07rem;
+								}
+								.videoTimerInMsgSenderBlock:before {
+								    background-image: url(http://cdn.ramman.net/web/res/images/gif/messages/live/videoRecording.gif);
+								    background-position-y: -0.07rem;
 								}
 								.timerInMsgSenderBlock span {
 								    margin-top: 0.1rem;
@@ -1064,6 +1073,9 @@ input,textarea {outline:none;}
 								}
 								.effectsForCancelling .cancellingAudio {
 								    background-image: url(https://cdn.ramman.net/web/res/images/gif/messages/live/audioDeleting.gif);
+								}
+								.effectsForCancelling .cancellingVideo {
+								    background-image: url(https://cdn.ramman.net/web/res/images/gif/messages/live/videoDeleting.gif);
 								}
 								.effectsFlag {
 									display: none;
