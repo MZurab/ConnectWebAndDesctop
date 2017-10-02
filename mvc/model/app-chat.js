@@ -216,6 +216,11 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
 														var sound = new Howl.Howl({
 														  src: [ downloadURL ],
 														  format: ['ogg'],
+														  onseek: function(e){
+														  	console.log('onseek e',e);
+														  	console.log('onseek sound.seek()',sound.seek());
+														  }
+
 														});
 
 														// Clear listener after first call.

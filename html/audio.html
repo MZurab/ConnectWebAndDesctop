@@ -1,0 +1,171 @@
+var downloadURL = 'https://firebasestorage.googleapis.com/v0/b/connect-9109d.appspot.com/o/public%2F11.ogg?alt=media&token=f285f3b0-4ca7-4821-9c89-1bc040654741';
+var sound = new Howl.Howl({
+  src: [ downloadURL ],
+  format: ['ogg'],
+  onplay: function(){
+    let self = this;
+  	console.log('onplay');
+
+  	step.bind(self)
+  }
+
+});
+
+
+function step () {
+    var self = this;
+
+    // Get the Howl we want to manipulate.
+    var sound = self.playlist[self.index].howl;
+
+    // Determine our current seek position.
+    var seek = sound.seek() || 0;
+    timer.innerHTML = self.formatTime(Math.round(seek));
+    progress.style.width = (((seek / sound.duration()) * 100) || 0) + '%';
+
+    // If the sound is still playing, continue stepping.
+    if (sound.playing()) {
+      requestAnimationFrame();
+    }
+}
+
+
+function audioOggList () {
+	var audioList = [];
+	const _ = {};
+
+	_['add'] = (iNurl, iNfunctions) => {
+		let obj = audioList(iNurl, iNfunctions);
+		audioList.push(obj);
+	}
+
+	return _;
+
+}
+
+
+function audioOgg (iNurl, iNfunctions) {
+	return audio(iNurl,'ogg', iNfunctions)
+}
+
+function audio (iNurl,iNformatAudio, iNfunctions) {
+	/*
+		@inputs
+			@required
+				iNurl 		-> string
+				iNfunctions > object
+					onplay -> function
+					onend -> function
+					onstop -> function
+					onstep -> function
+	*/
+	if ( typeof iNfunctions != 'object') iNfunctions = {};
+	var downloadURL = iNurl;
+	var intervalId = {};
+	const _ = {};
+	var sound = new Howl({
+	  src: [ downloadURL ],
+	  format: [iNformatAudio],
+	  onplay: (iNid) => {
+	  	console.log('onplay start',iNid);
+
+	  	intervalId = setInterval(step, 100);
+	  	if( typeof iNfunctions['onplay'] == 'function' ) iNfunctions['onplay'](sound);
+	  },
+	  onend: (iNid) => {
+	  	console.log('onend start',iNid);
+	  	clearInterval(intervalId);
+	  	step(); // onend
+	  	if( typeof iNfunctions['onend'] == 'function' ) iNfunctions['onend'](sound);
+	  },
+	  onstop: (iNid) => {
+	  	console.log('onstop start',iNid);
+	  	clearInterval(intervalId);
+	  	step(); // onstop
+	  	if( typeof iNfunctions['onstop'] == 'function' ) iNfunctions['onstop'](sound);
+	  },
+	  onpause: (iNid) => {
+	  	console.log('onpause start',iNid);
+	  	clearInterval(intervalId);
+	  	step(); // onpause
+	  	if( typeof iNfunctions['onpause'] == 'function' ) iNfunctions['onpause'](sound);
+	  },
+	  onload : (iNid) => {
+	  	console.log('onload start',iNid);
+	  	if( typeof iNfunctions['onload'] == 'function' ) iNfunctions['onload'](sound);
+	  },
+	  onloaderror : (iNid) => {
+	  	console.log('onloaderror start',iNid);
+	  	if( typeof iNfunctions['onloaderror'] == 'function' ) iNfunctions['onloaderror'](sound);
+	  }
+	});
+
+	function step (iNdestoyed) {
+		var state = sound.state();
+		if(state == 'unloaded') {
+	  		if( typeof iNfunctions['onunloaded'] == 'function' ) iNfunctions['onunloaded'](sound);
+			return false;
+		}
+	    var obj 		= {percent:false,seek:false,duration:false};
+	    var seek 		= sound.seek() 		|| 0;
+	    var duration 	= sound.duration()  || 0;
+	    if ( isFinite(duration) && duration > 0) {
+	    	obj['duration'] = duration.toFixed(2);
+	    	obj['seek'] 	= seek.toFixed(2);
+	    	obj['percent']	= (obj['seek']/obj['duration'] * 100).toFixed(2);
+		}
+	  	console.log('step', obj);
+	  	if( typeof iNfunctions['onstep'] == 'function' ) iNfunctions['onstep'](obj,sound);
+	}
+
+	_['play'] = (iNsecond) => {
+		console.log('play iNsecond',iNsecond);
+		sound.pause();
+		if ( typeof iNsecond == 'number' ) sound.seek(iNsecond);
+		var soundId =  sound.play();
+		return soundId;
+	}
+
+	_['stop'] 	= () => {
+		let r = sound.stop();
+		step();
+		return r;
+	};
+	
+	_['pause'] 	= () => {
+		let r = sound.pause(); 
+		step();
+		return r;
+	};
+
+	_['seek'] 	= (secondArray,idArray) => {
+		if (typeof secondArray == 'undefined') {
+			return sound.seek();
+		} else if (typeof idArray != 'undefined') {
+			return sound.seek(secondArray,idArray);
+		} else {
+			return sound.seek(secondArray);
+		}
+	};
+
+	_['duration'] 	= () => {
+		return sound.duration();
+	};
+
+	_['unload'] = () => {
+		return sound.unload();
+	};
+
+	_['load'] 	= () => {
+		return sound.load();
+	};
+
+	return _;
+}
+
+
+var downloadURL = 'https://firebasestorage.googleapis.com/v0/b/connect-9109d.appspot.com/o/public%2F11.ogg?alt=media&token=f285f3b0-4ca7-4821-9c89-1bc040654741';
+var s0 = audioOgg(downloadURL);
+var s1 = audioOgg(downloadURL);
+var s2 = audioOgg(downloadURL);
+var s3 = audioOgg(downloadURL);

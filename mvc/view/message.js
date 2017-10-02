@@ -56,46 +56,50 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 		<div class="centerMsgInChatView">{{content}}</div>
 	`;
 
-	templates['msgSimpleTextFrom'] = `
-	   <div class="lineInFromMeMessage">
-	      <div class="lineInBoxInLine">
-	         {{#if timeSentText}}
-		         <div class="topCircleInMessages"></div>
-		         <div class="timeTopInMessages">{{timeSentText}}</div>
-	         {{/if}}
+	//@< msg simpleText type = 1
+		templates['msgSimpleTextFrom'] = `
+		   <div class="lineInFromMeMessage">
+		      <div class="lineInBoxInLine">
+		         {{#if timeSentText}}
+			         <div class="topCircleInMessages"></div>
+			         <div class="timeTopInMessages">{{timeSentText}}</div>
+		         {{/if}}
 
-	         
-         	<div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
-         	<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
+		         
+	         	<div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
+	         	<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
 
-	      </div>
-	   </div>
-	   <div class="contentTextInFromMeMessage">{{content}}</div>
-	`;
+		      </div>
+		   </div>
+		   <div class="contentTextInFromMeMessage">{{content}}</div>
+		`;
 
-	templates['msgSimpleTextTo'] = `
-	   <div class="lineInToMeMessage">
-	      <div class="lineInBoxInLine">
-			 {{#if timeSentText}}
-		         <div class="topCircleInMessages"></div>
-		         <div class="timeTopInMessages">{{timeSentText}}</div>
-	         {{/if}}
-	         
-	         <div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
-         	<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
+		templates['msgSimpleTextTo'] = `
+		   <div class="lineInToMeMessage">
+		      <div class="lineInBoxInLine">
+				 {{#if timeSentText}}
+			         <div class="topCircleInMessages"></div>
+			         <div class="timeTopInMessages">{{timeSentText}}</div>
+		         {{/if}}
+		         
+		         <div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
+	         	<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
 
-	      </div>
-	   </div>
-	   <div class="contentTextInToMeMessage">{{content}}</div>
-	`;
+		      </div>
+		   </div>
+		   <div class="contentTextInToMeMessage">{{content}}</div>
+		`;
+	//@> msg simpleText type = 1
 
-	//del appearClass
-	templates['msgBox'] = `
-		<div id='msgId{{msgId}}' class="messagesInChatView {{#if appearClass}}connect-appear{{/if}} {{#if fromMe}}fromMeMessageInChatView{{/if}}{{#if toMe}}toMeMessageInChatView{{/if}} {{#if note}}noteMessage{{/if}}"  {{#if timeSent}}time-sent="{{timeSent}}"{{/if}}  {{#if timeRead}}time-read="{{timeRead}}"{{/if}} {{#if timeDelivered}}time-delivered="{{timeDelivered}}"{{/if}}  connect_msg="{{msgId}}" connect-appear-scroll-parent='#leftBlockInViewWindow'  connect-appear-my-parent='.ChatViewInAppWindow'>
-			{{boxContent}}
-		</div>
-	`;
-	//ChatViewInAppWindow connect_chatid
+
+
+	//@< chief msg container
+		templates['msgBox'] = `
+			<div id='msgId{{msgId}}' class="messagesInChatView {{#if appearClass}}connect-appear{{/if}} {{#if fromMe}}fromMeMessageInChatView{{/if}}{{#if toMe}}toMeMessageInChatView{{/if}} {{#if note}}noteMessage{{/if}}"  {{#if timeSent}}time-sent="{{timeSent}}"{{/if}}  {{#if timeRead}}time-read="{{timeRead}}"{{/if}} {{#if timeDelivered}}time-delivered="{{timeDelivered}}"{{/if}}  connect_msg="{{msgId}}" connect-appear-scroll-parent='#leftBlockInViewWindow'  connect-appear-my-parent='.ChatViewInAppWindow'>
+				{{boxContent}}
+			</div>
+		`;
+	//@> chief msg container
 
 
 	CONST['domPathToMsgCounter'] = '#senderBlockInViewBlock .counterInChatId';

@@ -92,5 +92,6 @@ define(['moment'], function (MOMENT) {
 		return MOMENT.now();
 	}
 	MOMENT.prototype['getNowTime'] = getNowTime;
+	window.moment = MOMENT;
 	return MOMENT;	
 });

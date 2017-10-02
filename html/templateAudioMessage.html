@@ -1,4 +1,4 @@
-<div id="" class="messagesInChatView  toMeMessageInChatView " time-sent="" time-read="" time-delivered="" connect_msg="" connect-appear-scroll-parent="#leftBlockInViewWindow" connect-appear-my-parent=".ChatViewInAppWindow">
+<div id="" class="messagesInChatView  toMeMessageInChatView msgTypeLiveAudio" time-sent="" time-read="" time-delivered="" connect_msg="" connect-appear-scroll-parent="#leftBlockInViewWindow" connect-appear-my-parent=".ChatViewInAppWindow">
    <div class="lineInToMeMessage">
       <div class="lineInBoxInLine">
          <div class="topCircleInMessages"></div>
@@ -7,28 +7,29 @@
          <div class="timeBotInMessages">04:12</div>
       </div>
    </div>
-   <div class="contentAudioInToMeMessage">
-      <div class="userNameBlockInAudioMsg">SharePay</div>
+
+
+   <div class="contentAudioInToMeMessage contentOfAudioMessage" onmousemove="onHover(event, this)" onmouseout="onMouseOut(this)" onclick="onClick(event,this)">
       <div class="audioMsgPlayedBlock">
-      	<div class="playedSpritesInAudioMsg"></div>
-	  </div>
-      <div class="backgroundForAudioMsg"></div>
+         <div class="playedSpritesInAudioMsg"></div>
+      </div>
+      <div class="backgroundForAudioMsg backgroundForAudioMsgToMe"></div>
+      <div class="backgroundForAudioMsgOnHover"></div>
       <div class="blockInAudioMsg">
          <div class="iconInAudioMessage"></div>
-
-         <div class="controllPlayInAudioMessage" style="
-            display: none;
-            "></div>
-         <div class="controllStopInAudioMessage"></div>
-
-         <div class="timeNowInAudioMessage timeInAudioMsg">0:45</div>
-         <div class="timeAllInAudioMessage timeInAudioMsg">1:05</div>
+         <div class="controllPlayInAudioMessage" onclick="playAudioOnClickBtnPlay(this,event)"></div>
+         <div class="controllStopInAudioMessage" onclick="pauseAudioOnClickBtnPause(this,event)"></div>
+         <div class="hideAudioBlock">
+            <audio class="audioSrc" preload="auto" src="https://firebasestorage.googleapis.com/v0/b/connect-9109d.appspot.com/o/public%2F12.ogg?alt=media&amp;token=bf77f013-c3c3-4a8f-8519-fa1f352637d7" onloadedmetadata="loadedAudio(this)"></audio>
+         </div>
+         <div class="timeNowInAudioMessage timeInAudioMsg"></div>
+         <div class="timeAllInAudioMessage timeInAudioMsg"></div>
       </div>
    </div>
 </div>
 
 
-<div id="" class="messagesInChatView  fromMeMessageInChatView " time-sent="" time-read="" time-delivered="" connect_msg="" connect-appear-scroll-parent="#leftBlockInViewWindow" connect-appear-my-parent=".ChatViewInAppWindow">
+<div id="testAudio" class="messagesInChatView  fromMeMessageInChatView msgTypeLiveAudio" time-sent="" time-read="" time-delivered="" connect_msg="testAudio" connect-appear-scroll-parent="#leftBlockInViewWindow" connect-appear-my-parent=".ChatViewInAppWindow">
    <div class="lineInFromMeMessage">
       <div class="lineInBoxInLine">
          <div class="topCircleInMessages"></div>
@@ -37,24 +38,26 @@
          <div class="timeBotInMessages">04:12</div>
       </div>
    </div>
-   <div class="contentAudioInFromMeMessage audioMessage">
+   <div class="contentAudioInFromMeMessage contentOfAudioMessage" onmousemove="onHover(event, this)" onmouseout="onMouseOut(this)" onclick="onClick(event,this)">
       <div class="audioMsgPlayedBlock">
-      	<div class="playedSpritesInAudioMsg"></div>
-	  </div>
-      <div class="backgroundForAudioMsg"></div>
+         <div class="playedSpritesInAudioMsg"></div>
+      </div>
+      <div class="backgroundForAudioMsg backgroundForAudioMsgFromMe"></div>
+      <div class="backgroundForAudioMsgOnHover"></div>
       <div class="blockInAudioMsg">
          <div class="iconInAudioMessage"></div>
-
-         <div class="controllPlayInAudioMessage" style="
-            display: none;
-            "></div>
-         <div class="controllStopInAudioMessage"></div>
-
-         <div class="timeNowInAudioMessage timeInAudioMsg">0:45</div>
-         <div class="timeAllInAudioMessage timeInAudioMsg">1:05</div>
+         <div class="controllPlayInAudioMessage" onclick="playAudioOnClickBtnPlay(this,event)"></div>
+         <div class="controllStopInAudioMessage" onclick="pauseAudioOnClickBtnPause(this,event)"></div>
+         <div class="hideAudioBlock">
+            <audio class="audioSrc" preload="auto" src="https://firebasestorage.googleapis.com/v0/b/connect-9109d.appspot.com/o/public%2F12.ogg?alt=media&amp;token=bf77f013-c3c3-4a8f-8519-fa1f352637d7" onloadedmetadata="loadedAudio(this)"></audio>
+         </div>
+         <div class="timeNowInAudioMessage timeInAudioMsg"></div>
+         <div class="timeAllInAudioMessage timeInAudioMsg"></div>
       </div>
    </div>
 </div>
+
+
 
 <style type="text/css">
 	.contentAudioInToMeMessage {
@@ -84,6 +87,7 @@
 		    width: 100%;
 		    bottom: -0.25rem;
 		    height: 0.25rem;
+		    display: none; /* CHANGE - add spy*/
 		}
 		.playedSpritesInAudioMsg {
 		    background-color: rgb(36, 208, 168);
@@ -93,13 +97,35 @@
 		    left: 0%;
 		}
 		/**/
+		.backgroundForAudioMsgFromMe {
+		    background: rgba(255, 0, 59, 0.25);
+		}
+		.backgroundForAudioMsgToMe {
+		    background: rgba(28, 181, 225, 0.4);
+		}
 		.backgroundForAudioMsg {
+		    height: 100%;
+		    width: 0%;
+		    position: absolute;
+		    border-radius: inherit;
+
+		}
+
+
+
+
+
+		.backgroundForAudioMsgOnHover {
 		    position: absolute;
 		    height: 100%;
-		    width: 75%;
-		    background: rgba(255, 0, 59, 0.25);
+		    width: 33%;
+		    background: rgba(114, 93, 149, 0.15);
 		    border-radius: inherit;
 		}
+
+
+
+
 		.blockInAudioMsg {
 		    width: 100%;
 		    height: 100%;
@@ -121,11 +147,12 @@
 			    width: 2.5rem;
 			    height: 2.5rem;
 			    left: 4rem;
-			    top: 0.5rem;
+			    top: 0.6rem;
 			    background-image: url(https://cdn.ramman.net/web/res/images/icons/message/audio/sprite.png);
 			    background-size: auto 200%;
 			    background-position-x: 198%;
 			    cursor: pointer;
+			    display:none;
 			}
 			.controllStopInAudioMessage {
 			    position: absolute;
@@ -138,6 +165,9 @@
 			    background-position-x: 198%;
 			    background-position-y: 100%;
 			    cursor: pointer;
+			}
+			.hideAudioBlock {
+				display: none;
 			}
 			.timeInAudioMsg {
 			    font-size: 0.9rem;
@@ -164,4 +194,228 @@
 	    float: right;
 	    position: relative;
 	}
+	.contentOfAudioMessage {
+		cursor: pointer;
+	}
 </style>
+
+<script type="text/javascript">
+
+	function loadedAudio (iNthis) {
+		setNowTextTimeForAudioNow (iNthis);
+		setDurationTextTimeForAudioNow (iNthis);
+	}
+		function setNowTextTimeForAudioNow (iNthis) {
+			var nowTextTime = moment( (iNthis.currentTime * 1000) || 0).format('mm:ss');
+			$(iNthis).closest('.blockInAudioMsg').find('.timeNowInAudioMessage').html( nowTextTime );
+		}
+		function setDurationTextTimeForAudioNow (iNthis) {
+			var durationTextTime = moment( iNthis.duration * 1000).format('mm:ss');
+			$(iNthis).closest('.blockInAudioMsg').find('.timeAllInAudioMessage').html( durationTextTime );
+		}
+		function setNowTextTimeForAudioNowBySecond (iNthis,iNsecond) {
+			var nowTextTime = moment(iNsecond * 1000).format('mm:ss');
+			$(iNthis).closest('.blockInAudioMsg').find('.timeNowInAudioMessage').html( nowTextTime );
+		}
+	function onHover (iNevent, iNobject) { 
+		console.log('onHover');
+	    // положение элемента
+	    var e = iNevent;
+	    var thisObject = iNobject;
+	    var mousePositionObject = getMousePositionByEvent(iNevent,iNobject);
+	    var XinnerPercent 	= mousePositionObject['xPercent'];
+
+
+
+	   	var element = $(iNobject).children('.backgroundForAudioMsgOnHover');
+	    setProgressBarAudio (element,XinnerPercent,0);
+
+
+
+  		// get children audio element
+	    var audioEl = $(iNobject).find('.hideAudioBlock audio').get(0);
+
+  		// get audio secund position by pass persent mouse x positoin
+	    var audioTime = getAudioCurrentTimeByPrecent (audioEl, XinnerPercent);
+
+	    setNowTextTimeForAudioNowBySecond (audioEl,audioTime);
+  	}
+
+  	function onClick (iNevent, iNobject) {
+  		// get children btnPlay element
+	    var playBtn = $(iNobject).find('.blockInAudioMsg .controllPlayInAudioMessage')
+
+  		// get mouse position
+	    var mousePositionObject = getMousePositionByEvent(iNevent,iNobject);
+
+
+  		// get mouse x position percent
+	    var XinnerPercent 		= mousePositionObject['xPercent'];
+
+  		// get children audio element
+	    var audioEl = $(iNobject).find('.hideAudioBlock audio').get(0);
+
+  		// get audio secund position by pass persent mouse x positoin
+	    var audioTime = getAudioCurrentTimeByPrecent (audioEl, XinnerPercent);
+
+	    // set children audio need secund for start
+	    setCurrentTimeByAudioEl (audioEl,audioTime);
+
+	    // play children audio
+	    playAudioOnClickBtnPlay (playBtn,iNevent);
+  	}
+
+  	function getMousePositionByEvent (iNevent,iNobject) {
+		// положение элемента
+	    var e 				= iNevent,
+	     	thisObject = iNobject,
+	    	resultObject	= {},
+	    	pos 			= $(thisObject).offset(),
+	    	width 			= $(thisObject).width(),
+	    	height 			= $(thisObject).height();
+	    var	elem_left 		= pos.left,
+	    	elem_top 		= pos.top;
+	    // положение курсора внутри элемента
+	    	resultObject['xPx']			= e.pageX - elem_left;
+	    	resultObject['yPx'] 		= e.pageY - elem_top,
+	    	resultObject['xPercent'] 	= resultObject['xPx']/width * 100,
+	    	resultObject['yPercent'] 	= resultObject['yPx']/height * 100;
+
+    	return resultObject;
+  	}
+
+  	function onMouseOut (iNobject) {
+	    var element = $(iNobject).children('.backgroundForAudioMsgOnHover');
+	    setProgressBarAudio (element,0,500);
+	}
+
+	function getAudioCurrentTimeByPrecent (iNaudioEl, iNpercent) {
+		var element = iNaudioEl;
+		var second = iNpercent * element.duration/100
+		return second;
+	}
+	function playAudioByAudioEl (iNobject) {
+  		iNobject.play();
+	}
+	function setCurrentTimeByAudioEl (iNobject,iNcurentTime) {
+		if ( typeof(iNcurentTime) == 'number' && isFinite(iNcurentTime)) {
+  			iNobject.currentTime = iNcurentTime;
+  		}
+	}
+
+	function attachTimeUpdateForAuidioEl (thisAudioEl,thisBackgroundEl) {
+  		var parent = $(thisAudioEl).closest('.blockInAudioMsg');
+  		var onHoverBackgrounEl = $(thisAudioEl).closest('.contentOfAudioMessage').find('.backgroundForAudioMsgOnHover');
+
+  		$('.contentOfAudioMessage').find('.backgroundForAudioMsgOnHover').css('width')
+  		$(thisAudioEl).unbind("timeupdate");
+		$(thisAudioEl).bind("timeupdate",
+			() => {
+			  	var percent = thisAudioEl.currentTime / thisAudioEl.duration * 100;
+
+			  	let cssWidthBackgroundEl = parseInt($(onHoverBackgrounEl).css('width'));
+			  	if(cssWidthBackgroundEl == 0)
+					setNowTextTimeForAudioNow (thisAudioEl);
+
+				setDurationTextTimeForAudioNow (thisAudioEl);
+
+
+		    	setProgressBarAudio (thisBackgroundEl,percent)
+		    	if(percent >= 100){
+		    		setTimeout(()=>{
+				    	setProgressBarAudio (thisBackgroundEl,0)
+				    	smartViewBtnPlayAudio(parent);
+		    			
+		    		},500);
+		    	}
+			}
+		);
+	}
+
+  	function playAudioOnClickBtnPlay (iNobject,iNevent) {
+  		// stop parent callback for click event
+  		if (iNevent) {
+	  		var e = iNevent;
+	  		e.stopPropagation();
+  		}
+
+  		var lastPlayingMessage = $('.msgTypeLiveAudio.flagLogicPlaying');
+  		console.log('callback lastPlayingMessage',lastPlayingMessage);
+  		if(lastPlayingMessage.length > 0){
+  			//stop messages
+  			// $(lastPlayingMessage).find('.controllStopInAudioMessage');
+  			pauseAudioOnClickBtnPause($(lastPlayingMessage).find('.controllStopInAudioMessage'));
+  			//del flag
+  			$(lastPlayingMessage).removeClass('flagLogicPlaying');
+  		}
+  		$(iNobject).closest('.msgTypeLiveAudio').addClass('flagLogicPlaying');
+
+
+  		var thisPlayBtn = $(iNobject);
+  		var thisAudioEl = thisPlayBtn.nextAll('.hideAudioBlock').children('audio').get(0);
+  		var thisBackgroundEl = thisPlayBtn.closest('.contentOfAudioMessage').children('.backgroundForAudioMsg');
+  		var parent = $(iNobject).closest('.blockInAudioMsg');
+  		
+  		// play children audio element
+  		playAudioByAudioEl (thisAudioEl)
+
+  		attachTimeUpdateForAuidioEl (thisAudioEl,thisBackgroundEl)
+
+
+  		smartViewBtnPauseAudio(parent);
+  		//changeBtnsPlayAndPause(parent);
+  	}
+
+  	function pauseAudioOnClickBtnPause (iNobject,iNevent) {
+  		// stop parent callback for click event
+  		if (iNevent) {
+	  		var e = iNevent;
+	  		e.stopPropagation();
+  		}
+  		console.log('pauseAudioOnClickBtnPause iNobject',iNobject);
+  		var thisPauseBtn = $(iNobject);
+  		console.log('pauseAudioOnClickBtnPause thisPauseBtn.next(.hideAudioBlock) ', thisPauseBtn.next('.hideAudioBlock') );
+  		var thisAudio = thisPauseBtn.nextAll('.hideAudioBlock').children('audio').get(0);
+  		console.log('pauseAudioOnClickBtnPause thisAudio',thisAudio);
+
+  		thisAudio.pause();
+  		// $(thisAudio).unbind("ended");
+
+  		var parent = $(iNobject).closest('.blockInAudioMsg');
+  		console.log('pauseAudioOnClickBtnPause parent',parent);
+  		changeBtnsPlayAndPause(parent);
+  	}
+
+  	function setProgressBarAudio (iNel,iNpercent,iNtime) {
+  		var time = iNtime || 500;
+	    let percent = iNpercent.toFixed(2)+'%';
+			iNel.clearQueue().stop();
+		if( iNtime == 0 )
+			iNel.css('width',percent);
+		else
+		    iNel.animate(
+		    	{
+	    			'width':percent
+	    		},
+	    		time
+			);
+  	}
+
+  	function changeBtnsPlayAndPause (iNparent) {
+  		var attrDisplay = $(iNparent).children('.controllStopInAudioMessage').css('display');
+  		if ( attrDisplay != 'none' ) {
+  			smartViewBtnPlayAudio(iNparent);
+  		} else {
+  			smartViewBtnPauseAudio(iNparent);
+		}
+	}
+
+	function smartViewBtnPauseAudio(iNparent) {
+  			$(iNparent).children('.controllPlayInAudioMessage').hide();
+  			$(iNparent).children('.controllStopInAudioMessage').show();
+	}
+	function smartViewBtnPlayAudio(iNparent) {
+  			$(iNparent).children('.controllStopInAudioMessage').hide();
+  			$(iNparent).children('.controllPlayInAudioMessage').show();
+	}
+</script>
