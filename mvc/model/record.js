@@ -20,12 +20,13 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 				 var mediaRecorder = new MediaStreamRecorder(stream);
 				 // mediaRecorder.mimeType = 'audio/wav'; // check this line for audio/wav
 				 mediaRecorder.mimeType = 'video/webm';
-				 mediaRecorder.canvas = {
-				    width: 320,
-				    height: 320
-				 };
-				 mediaRecorder.videoWidth  = 320;
-				 mediaRecorder.videoHeight = 320;
+				 // mediaRecorder.canvas = {
+				 //    width: 320,
+				 //    height: 320
+				 // };
+				 // mediaRecorder.videoWidth  = 320;
+				 // mediaRecorder.videoHeight = 320;
+				 console.log('getPermissionForVideoAndAudioRecord stream',stream);
 				 // mediaRecorder.recorderType = MediaRecorderWrapper;
 				 // console.log('MediaRecorderWrapper',MediaRecorderWrapper)
 				 console.log('video',mediaRecorder)
@@ -50,7 +51,17 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 	_['video'] = video;
 
 
-	function audio (iNdata) {
+	function stopRecordingByStream (iNstream) {
+		var tracks = iNstream.getTracks();
+		for(var iKey in tracks) {
+			console.log('stopRecordingByStream tracks[iKey]',tracks[iKey]);
+			tracks[iKey].stop();
+		}
+	}
+	_['stopRecordingByStream'] = stopRecordingByStream;
+
+
+	function audioOld (iNdata) {
 		/*
 			@discr
 				for record audion
@@ -88,7 +99,7 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 			}
 		);
 	}
-	_['audio'] = audio;
+	_['audioOld'] = audioOld;
 
 
 	function audio2 (iNdata) {
@@ -153,7 +164,14 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 			        if(typeof dataInner['getGlob'] == 'function') dataInner['getGlob'](false,blob);
 			        // mediaRecorder.save(blob,'1.ogg');
 			    };
-			    if( typeof iNdata['onSuccess']  == 'function' ) iNdata['onSuccess']( stream, webRecorder , dataInner);
+
+			    setTimeout (
+					() => {
+						if( typeof iNdata['onSuccess']  == 'function' ) iNdata['onSuccess']( stream, recorder);
+					},
+					500
+				);
+			    // if( typeof iNdata['onSuccess']  == 'function' ) iNdata['onSuccess']( stream, webRecorder , dataInner);
 		    	 // mediaRecorder.start();
 			}, 
 			// error funciton
@@ -166,6 +184,80 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 	_['audio2'] = audio2;
 
 
+
+	function liveAudioRecord (iNdata) {
+		/*
+			@discr
+				for record audion
+			@inputs
+				iNdata -> object
+					onSuccess 		-> function
+					onError 		-> function
+					onDataAvailable -> function
+		*/
+		//
+		getPermissionForAudioRecord (
+			// success function
+			(stream) => {
+				console.log('Recorder',Recorder);
+				 var recorder = new Recorder({
+			        // monitorGain: parseInt(monitorGain.value, 10),
+			        // numberOfChannels: parseInt(numberOfChannels.value, 10),
+			        // bitRate: parseInt(bitRate.value,10),
+			        // encoderSampleRate: parseInt(encoderSampleRate.value,10),
+
+			        // leaveStreamOpen : true,
+			        encoderSampleRate : 16000,
+			        resampleQuality: 0,
+			        encoderPath: "res/js/recorder/OggOpusRecorder/dist/encoderWorker.min.js", ///Users/zurab/Мои работы/ConnectWeb/ConnectWebAndDesctop/res/js/recorder/OggOpusRecorder/src/encoderWorker.js
+			      });
+
+
+		        recorder.addEventListener( "start", function(e){
+			        console.log('Recorder is started',e);
+			    });
+
+			    recorder.addEventListener( "stop", function(e){
+			        console.log('Recorder is stopped',e);
+					
+		     	});
+
+				recorder.addEventListener( "streamError", function(e){
+			        console.log('Recorder is streamError',e);
+				});
+
+				recorder.addEventListener( "streamReady", function(e){
+			        console.log('Recorder is streamReady',e);
+				});
+
+				recorder.addEventListener( "dataAvailable", function (e) {
+			        console.log('Recorder is dataAvailable',e);
+			        var blob = new Blob( [e.detail], { type: 'audio/ogg' } );
+			        // var fileName = new Date().toISOString() + ".opus";
+			        // var url = URL.createObjectURL( blob );  
+			        if ( typeof iNdata['onDataAvailable'] == 'function' ) iNdata['onDataAvailable'](false,blob);
+			       
+			    });
+				recorder.initStream();
+				// recorder.start();
+				// recorder.stop();
+				// recorder.initStream();
+				setTimeout (
+					() => {
+						if( typeof iNdata['onSuccess']  == 'function' ) iNdata['onSuccess']( stream, recorder);
+					},
+					500
+				);
+		    	 // mediaRecorder.start();
+			}, 
+			// error funciton
+			(e) => {
+			     if(typeof iNdata['onError']  == 'function') iNdata['onError'](e);
+				
+			}
+		);
+	}
+	_['liveAudioRecord'] = liveAudioRecord;
 
 	function audio3 (iNdata) {
 		/*
@@ -186,6 +278,8 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 			        // numberOfChannels: parseInt(numberOfChannels.value, 10),
 			        // bitRate: parseInt(bitRate.value,10),
 			        // encoderSampleRate: parseInt(encoderSampleRate.value,10),
+
+			        // leaveStreamOpen: true,
 			        encoderSampleRate : 16000,
 			        resampleQuality: 0,
 			        encoderPath: "res/js/recorder/OggOpusRecorder/dist/encoderWorker.min.js", ///Users/zurab/Мои работы/ConnectWeb/ConnectWebAndDesctop/res/js/recorder/OggOpusRecorder/src/encoderWorker.js
@@ -232,6 +326,8 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 	_['audio3'] = audio3;
 
 
+
+
 	function getUserMedia (iNmediaConstraints, iNMediaSuccess, iNMediaError) {
 		navigator.getUserMedia(iNmediaConstraints, iNMediaSuccess, iNMediaError);
 	}
@@ -257,12 +353,12 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 
 	function getPermissionForVideoAndAudioRecord (onSuccess, onError) {
 		//prepared options for start audio
-		var constrainedWidth = 320,
-			constrainedHeight = 180;
+		var constrainedWidth = 300,
+			constrainedHeight = 300;
 		 var video_constraints = {
 		    "mandatory": {
-		       maxHeight: constrainedHeight + 40,
-		       maxWidth: constrainedWidth + 40,
+		       maxHeight: constrainedHeight + 120,
+		       maxWidth: constrainedWidth + 120,
 		      "minWidth": constrainedWidth,
 		      "minHeight": constrainedHeight,
 		      "minFrameRate": "30"

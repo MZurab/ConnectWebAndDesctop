@@ -92,6 +92,68 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 	//@> msg simpleText type = 1
 
 
+	//@< COTROLLER msgLiveAudio
+		function showStreamVideoViewer () {
+			$('.aCpI_streamVideo').css('display','flex');
+		}
+		_['showStreamVideoViewer'] = showStreamVideoViewer;
+
+		function startStreamVideoCountdownTimer (iNcallbackFunction) {
+			$('.aCpI_videoStreamTimeCounter').show();
+			clearStreamVideoCountdownTimer();
+			$('.aCpI_videoStreamTimeCounter').countdown (
+				{
+					until: 3, // second
+					description: '',
+					onExpiry: function () { 
+						$(this).hide();
+						if(typeof iNcallbackFunction == 'function' ) iNcallbackFunction (); 
+					}, 
+					layout: '{sn}' // NOT 03 to 3
+				}
+			);
+
+		}
+		_['startStreamVideoCountdownTimer'] = startStreamVideoCountdownTimer;
+
+
+		function clearStreamVideoCountdownTimer (iNcallbackFunction) {
+			$('.aCpI_videoStreamTimeCounter').countdown ( 'destroy' );
+
+		}
+		_['clearStreamVideoCountdownTimer'] = clearStreamVideoCountdownTimer;
+
+
+		function hideStreamVideoViewer () {
+			$('.aCpI_streamVideo').css('display','none');
+		}
+		_['hideStreamVideoViewer'] = hideStreamVideoViewer;
+
+		// function smartHideStreamVideoViewer () {
+		// 	hideStreamVideoViewer()
+		// 	hideStreamVideoElement();
+		// }
+		// _['smartHideStreamVideoViewer'] = smartHideStreamVideoViewer;
+
+
+		function setStreamVideoElement (iNstream) {
+			// $('.aCpI_videoStreamElement')[0].src = URL.createObjectURL(iNstream);
+			$('.aCpI_videoStreamElement')[0].srcObject = iNstream;
+		}
+		_['setStreamVideoElement'] = setStreamVideoElement;
+
+		// function showStreamVideoElement (iNstream) {
+		// 	$('.aCpI_videoStreamElement').show();
+		// }
+		// _['showStreamVideoElement'] = showStreamVideoElement;
+
+		// function hideStreamVideoElement (iNstream) {
+		// 	$('.aCpI_videoStreamElement').hide();
+		// }
+		// _['hideStreamVideoElement'] = hideStreamVideoElement;
+	//@> COTROLLER msgLiveAudio
+
+
 
 	//@< chief msg container
 		templates['msgBox'] = `
@@ -465,7 +527,17 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     					if(effType == 'audio') {
     						smartStartRecodingTimerAtMsgButton('audio');
     					} else if (effType == 'video') {
-    						smartStartRecodingTimerAtMsgButton('video');
+    						// showStreamVideoViewer();
+
+    						startStreamVideoCountdownTimer (
+    							() => {
+    								smartStartRecodingTimerAtMsgButton('video');
+    								timerFromStartRecordingMessage = MOMENT().getNowTime(); //
+									if(typeof iNdata['onStartVideoRecord'] == 'function') iNdata['onStartVideoRecord']();
+								}
+							);
+							if(typeof iNdata['onStart'] == 'function') iNdata['onStart']();
+							return;
 						}
 						
     					timerFromStartRecordingMessage = MOMENT().getNowTime(); //
@@ -479,7 +551,8 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     			});
 
     			objForSpecialClick['up'] = (state) => {
-					clearTimeout(intervalId);
+					clearTimeout (intervalId);
+					clearStreamVideoCountdownTimer ();
     				if(startMsgRecoding !== true) {
     					// if does not 150 ms since first click
     					// we swiftch buttons 

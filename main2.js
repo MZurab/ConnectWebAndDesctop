@@ -38,7 +38,7 @@ require2.config({
         // Audio and Video recorder
         'mediaStreamRecorder'  : 'res/js/recorder/mediaStreamRecorder/MediaStreamRecorder',
         'WebAudioRecorder'     : 'res/js/recorder/webAudioRecorder/lib/WebAudioRecorder',
-        'WebAudioRecorder'     : 'res/js/recorder/webAudioRecorder/lib/WebAudioRecorder',
+        // 'WebAudioRecorder'     : 'res/js/recorder/webAudioRecorder/lib/WebAudioRecorder',
         'Recorder'             : 'res/js/recorder/OggOpusRecorder/dist/recorder.min',
 
         // 'MediaRecorderWrapper' : 'res/js/recorder/mediaStreamRecorder/MediaRecorderWrapper',
@@ -79,6 +79,7 @@ require2.config({
             'm_push'           : 'mvc/model/push',
             'm_synchronize'    : 'mvc/model/synchronize',
             'm_record'         : 'mvc/model/record',
+            'm_storage'        : 'mvc/model/storage',
 
 
         /*>! models */

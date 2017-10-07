@@ -11,56 +11,6 @@ define([ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'jquery.appear'
 		         <div id="leftBlockInViewWindow"></div>
 		      </div>
 		   </div>
-
-		   <div class="chatBlockInViewBlock">
-			   <div class="viewesFooterUnderWindow">
-			      <div id="senderBlockInViewBlock">
-			         <div class="boxInMessageSenderBlock">
-			            <div class="counterInChatId"></div>
-			            <div class="buttonChatToBottom"></div>
-			         </div>
-			         <div class="timerInMsgSenderBlock">
-			         	<div class='audioTimerInMsgSenderBlock'></div>
-			         	<div class='videoTimerInMsgSenderBlock'></div>
-			         	<span></span>
-		         	</div>
-			         <div id="bottomViewInMsgBlock">
-			            <ul class="rawBlockInBottomView">
-			               <li class="LineInBottomViewRawBlock">1</li>
-			               <li class="LineInBottomViewRawBlock">2</li>
-			            </ul>
-			         </div>
-			         <div id="sendTextButtonInSenderBlock" class="sendMsgButtons"></div>
-			         <div id="sendLiveAudioButtonInSenderBlock" class="sendMsgButtons"></div>
-			         <div id="sendLiveVideoButtonInSenderBlock" class="sendMsgButtons hideHalfSendMsgButton"></div>
-			         <div id="forTextInputInSenderBlock">
-			            <textarea ></textarea>
-			         </div>
-			         <div class="connectButtonInMsgSenderBlock"></div>
-			      </div>
-			   </div>
-			</div>
-
-		   <div class="chatBlockInViewBlock">
-		      <div class="viewesFooterUnderWindow">
-		         <div id="senderBlockInViewBlock">
-		         	<div class="boxInMessageSenderBlock">
-		         		<div class="buttonChatToBottom"></div>
-		         	</div>
-		            <div id="bottomViewInMsgBlock">
-		               <ul class="rawBlockInBottomView">
-		                  <li class="LineInBottomViewRawBlock">1</li>
-		                  <li class="LineInBottomViewRawBlock">2</li>
-		               </ul>
-		            </div>
-		            <div id="forTextInputInSenderBlock">
-		               <textarea></textarea>
-		            </div>
-		            <div id="sendButtonInSenderBlock" class="sendTextMsgButton"></div>
-		            <img src="https://cdn.ramman.net/images/icons/miniConnectWebIcon.png" id="ConnectButtonInFuncButtons">
-		         </div>
-		      </div>
-		   </div>
 		</div>
 	`;
 
@@ -103,7 +53,11 @@ define([ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'jquery.appear'
 			<div class="appBase_pIndexRightBlockInChiefHeader"></div>
 		`;
 
-	templates['chatSenderBlock'] = `
+	templates['appTemplate'] = `
+		<div class="aCpI_streamVideo">
+		  <video class="aCpI_videoStreamElement"></video>
+		  <div class="aCpI_videoStreamTimeCounter"></div>
+		</div>
 		<div class="chatBlockInViewBlock">
 		   <div class="viewesFooterUnderWindow">
 		      <div id="senderBlockInViewBlock">
@@ -145,6 +99,23 @@ define([ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'jquery.appear'
 	_['templates'] = templates;
 
 
+	// function showStreamVideoViewer () {
+	// 	$('.aCpI_streamVideo').css('display','flex');
+	// }
+	// _['showStreamVideoViewer'] = showStreamVideoViewer;
+
+	// function hideStreamVideoViewer () {
+	// 	$('.aCpI_streamVideo').css('display','none');
+	// }
+	// _['hideStreamVideoViewer'] = hideStreamVideoViewer;
+
+
+	// function setStreamVideoElement (iNstream) {
+	// 	// $('.aCpI_videoStreamElement')[0].src = URL.createObjectURL(iNstream);
+	// 	$('.aCpI_videoStreamElement')[0].srcObject = iNstream;
+	// }
+	// _['setStreamVideoElement'] = setStreamVideoElement;
+
 	function getChatSenderBlock (iNdata) {
 		/*
 			@inputs
@@ -160,7 +131,7 @@ define([ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'jquery.appear'
 							offlineTime -> int
 							watchNow -> bool
 		*/
-		var temp = Template7.compile(templates['chatSenderBlock']);
+		var temp = Template7.compile(templates['appTemplate']);
 		return temp(iNdata);
 	}
 	_['getChatSenderBlock'] = getChatSenderBlock;

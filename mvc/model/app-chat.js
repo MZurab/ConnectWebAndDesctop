@@ -38,244 +38,142 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
 		            'onInit' 		: function () {
 
 	        			M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index'});
-		            	M_MESSAGE.view.initApp({'onClickSendMesg':M_MESSAGE.onClickSendMesg,'onKeyDownPrintingMsg':M_MESSAGE.startSendingFlashMsg});
+		            	M_MESSAGE.view.initApp( { 'onClickSendMesg' : M_MESSAGE.onClickSendMesg , 'onKeyDownPrintingMsg' : M_MESSAGE.startSendingFlashMsg } );
 
 
 		            	//
-		            	M_MESSAGE.view.onceMouseDownForVideoLiveRecord(
-		            		() => {
-		            			M_RECORD.video( 
-			            			{
-			            				'onSuccess': (stream,recorderObject,dataInner) => {
-									        var sendThisFile = false;
-			            					
-			            					dataInner['getGlob'] = (error, blob) => {
+		            	
 
-										        console.log('videoRecorder .onGetBlob start ',sendThisFile);
+		            	M_MESSAGE.controller_msgLiveVideo_run ();
+		            	M_MESSAGE.controller_msgLiveAudio_run ();
 
-										        console.log('videoRecorder .onGetBlob blob ', blob);
-								        		// var blobURL = URL.createObjectURL(blob);
+		            	//
+		            	//
+		            	//
+		         		//set on
+							// M_MESSAGE.view.onceMouseDownForAudioLiveRecord(
+							// 	() => {
+							// 		M_RECORD.audio3( 
+							// 			{
+							// 				'onSuccess': (stream,recorderObject,dataInner) => {
+							// 			        // console.log('M_RECORD onSuccess',stream,recorderObject,dataInner);
+							// 			        var sendThisFile = false;
+												
+							// 					console.log("dataInner['onGetBlob'] 1",dataInner);
+							// 					dataInner['getGlob'] = (error, blob) => {
 
-										        // console.log('videoRecorder .onGetBlob blobURL ', blobURL);
+							// 				        console.log('mediaRecorder .onGetBlob start ',sendThisFile);
 
+							// 				        console.log('mediaRecorder .onGetBlob blob ', blob);
+							// 				        // console.log('mediaRecorder .onGetBlob file ',file);
+							// 		        		var blobURL = URL.createObjectURL(blob);
 
-										        var nM = {
-												  contentType: 'video/webm'
-										        }
-
-												var uploadTask = STORAGE.child('public/v1.webm').put( blob , nM );//metadata
-												uploadTask.on(
-													firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-													function(snapshot) {
-														// Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-														var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-														console.log('Upload is ' + progress + '% done');
-													}, 
-													function(error) {
-													  console.log('uploadTask error',error);
-													  // A full list of error codes is available at
-													  // https://firebase.google.com/docs/storage/web/handle-errors
-													  switch (error.code) {
-													    case 'storage/unauthorized':
-													      // User doesn't have permission to access the object
-													    break;
-
-													    case 'storage/canceled':
-													      // User canceled the upload
-													    break;
+							// 				        console.log('mediaRecorder .onGetBlob blobURL ', blobURL);
 
 
-													    case 'storage/unknown':
-													      // Unknown error occurred, inspect error.serverResponse
-													    break;
-													  }
-													}, 
-													function() {
-													  	// Upload completed successfully, now we can get the download URL
-													  	var downloadURL = uploadTask.snapshot.downloadURL;
-													  	console.log('downloadURL',downloadURL);
-														// var sound = new Howl.Howl({
-														//   src: [ downloadURL ],
-														//   format: ['ogg'],
-														// });
+							// 				        var nM = {
+							// 						  contentType: 'audio/ogg; codecs=opus'
+							// 				        }
 
-														// // Clear listener after first call.
-														// sound.once('load', function(){
-														//   sound.play();
-														//   console.log('Howl LOAD !');
-														//   console.log('Howl sound.duration',sound.duration());
-														// });
+							// 						var uploadTask = STORAGE.child('public/12.ogg').put( blob , nM );//metadata
+							// 						uploadTask.on(
+							// 							firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+							// 							function(snapshot) {
+							// 								// Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+							// 								var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+							// 								console.log('Upload is ' + progress + '% done');
+							// 							}, 
+							// 							function(error) {
+							// 							  console.log('uploadTask error',error);
+							// 							  // A full list of error codes is available at
+							// 							  // https://firebase.google.com/docs/storage/web/handle-errors
+							// 							  switch (error.code) {
+							// 							    case 'storage/unauthorized':
+							// 							      // User doesn't have permission to access the object
+							// 							    break;
 
-														// Fires when the sound finishes playing.
-														// sound.on('end', function(){
-														//   console.log('Howl Finished!');
-														// });
-
-														// sound.play()
-													}
-												);
-											}
-			            					M_MESSAGE.view.onSpecialClickForSendLiveAudioOrVideo(
-			            						'video',
-			            						{
-			            							'onStart': () => {
-
-			            								console.log('videoRecorder recorderObject.isRecording() 1',recorderObject);// audio 3
-			            								// recorderObject.setFileType('audio/webm');
-			            								recorderObject.start(600000);
-			            								// console.log('recorderObject.isRecording() 1',recorderObject.isRecording());// audio 2
-
-			            								// recorderObject.startRecording(); // audio 2
-			            								// recorderObject.start(); // audio 3
-			            								// console.log('recorderObject.isRecording() 2',recorderObject.isRecording());// audio 2
-			            							},
-			            							'onDelete': () => {
-			            								sendThisFile = true;
-			            								recorderObject.stop();//  audio 1
-			            								// recorderObject.cancelRecording();//  audio 2
-			            								// recorderObject.clearStream();//  audio 3
-
-			            							},
-			            							'onSend' : () => {
-			            								// recorderObject.finishRecording(); //  audio 2
-			            								// recorderObject.stop(); //  audio 3
-			            								// recorderObject.initStream(); // audio 3
-			            								recorderObject.stop();//  audio 1
-			            								recorderObject.get(dataInner['getGlob']);//save(); //  audio 1
-			            								// recorderObject.save();//save(); //  audio 1
-			            								// recorderObject.stop(); //  audio 1
-			            								// recorderObject.save(); //  audio 1
-													},
-													
-			            						}
-		            						);
-			            				}
-			            			}
-		            			)
-		            		}
-	            		);
+							// 							    case 'storage/canceled':
+							// 							      // User canceled the upload
+							// 							    break;
 
 
+							// 							    case 'storage/unknown':
+							// 							      // Unknown error occurred, inspect error.serverResponse
+							// 							    break;
+							// 							  }
+							// 							}, 
+							// 							function() {
+							// 							  	// Upload completed successfully, now we can get the download URL
+							// 							  	var downloadURL = uploadTask.snapshot.downloadURL;
+							// 							  	console.log('downloadURL',downloadURL);
+							// 								var sound = new Howl.Howl({
+							// 								  src: [ downloadURL ],
+							// 								  format: ['ogg'],
+							// 								  onseek: function(e){
+							// 								  	console.log('onseek e',e);
+							// 								  	console.log('onseek sound.seek()',sound.seek());
+							// 								  }
 
-		            	//set on
-		            	M_MESSAGE.view.onceMouseDownForAudioLiveRecord(
-		            		() => {
-		            			M_RECORD.audio3( 
-			            			{
-			            				'onSuccess': (stream,recorderObject,dataInner) => {
-									        // console.log('M_RECORD onSuccess',stream,recorderObject,dataInner);
-									        var sendThisFile = false;
-			            					
-											console.log("dataInner['onGetBlob'] 1",dataInner);
-			            					dataInner['getGlob'] = (error, blob) => {
+							// 								});
 
-										        console.log('mediaRecorder .onGetBlob start ',sendThisFile);
+							// 								// Clear listener after first call.
+							// 								sound.once('load', function(){
+							// 								  sound.play();
+							// 								  console.log('Howl LOAD !');
+							// 								  console.log('Howl sound.duration',sound.duration());
+							// 								});
 
-										        console.log('mediaRecorder .onGetBlob blob ', blob);
-										        // console.log('mediaRecorder .onGetBlob file ',file);
-								        		var blobURL = URL.createObjectURL(blob);
+							// 								// Fires when the sound finishes playing.
+							// 								sound.on('end', function(){
+							// 								  console.log('Howl Finished!');
+							// 								});
 
-										        console.log('mediaRecorder .onGetBlob blobURL ', blobURL);
+							// 								sound.play()
+							// 							}
+							// 						);
+							// 					}
+							// 					M_MESSAGE.view.onSpecialClickForSendLiveAudioOrVideo(
+							// 						'audio',
+							// 						{
+							// 							'onStart': () => {
 
+							// 								console.log('recorderObject.isRecording() 1',recorderObject);// audio 3
+							// 								// recorderObject.setFileType('audio/webm');
+							// 								// recorderObject.start(600000);
+							// 								// console.log('recorderObject.isRecording() 1',recorderObject.isRecording());// audio 2
 
-										        var nM = {
-												  contentType: 'audio/ogg; codecs=opus'
-										        }
+							// 								// recorderObject.startRecording(); // audio 2
+							// 								recorderObject.start(); // audio 3
+							// 								// console.log('recorderObject.isRecording() 2',recorderObject.isRecording());// audio 2
+							// 							},
+							// 							'onDelete': () => {
+							// 								sendThisFile = true;
+							// 								// recorderObject.stop();//  audio 1
+							// 								// recorderObject.cancelRecording();//  audio 2
+							// 								recorderObject.clearStream();//  audio 3
+							// 								recorderObject.initStream(); // audio 3
 
-												var uploadTask = STORAGE.child('public/12.ogg').put( blob , nM );//metadata
-												uploadTask.on(
-													firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-													function(snapshot) {
-														// Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-														var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-														console.log('Upload is ' + progress + '% done');
-													}, 
-													function(error) {
-													  console.log('uploadTask error',error);
-													  // A full list of error codes is available at
-													  // https://firebase.google.com/docs/storage/web/handle-errors
-													  switch (error.code) {
-													    case 'storage/unauthorized':
-													      // User doesn't have permission to access the object
-													    break;
+							// 							},
+							// 							'onSend' : () => {
+							// 								// recorderObject.finishRecording(); //  audio 2
+							// 								recorderObject.stop(); //  audio 3
+							// 								recorderObject.initStream(); // audio 3
+							// 								// recorderObject.get(getGlob);//save(); //  audio 1
+							// 								// recorderObject.stop(); //  audio 1
+							// 								// recorderObject.save(); //  audio 1
+							// 							},
+														
+							// 						}
+							// 					);
+							// 				}
+							// 			}
+							// 		)
+							// 	}
+							// );
+		         		//
+		         		//
+		         		//
 
-													    case 'storage/canceled':
-													      // User canceled the upload
-													    break;
-
-
-													    case 'storage/unknown':
-													      // Unknown error occurred, inspect error.serverResponse
-													    break;
-													  }
-													}, 
-													function() {
-													  	// Upload completed successfully, now we can get the download URL
-													  	var downloadURL = uploadTask.snapshot.downloadURL;
-													  	console.log('downloadURL',downloadURL);
-														var sound = new Howl.Howl({
-														  src: [ downloadURL ],
-														  format: ['ogg'],
-														  onseek: function(e){
-														  	console.log('onseek e',e);
-														  	console.log('onseek sound.seek()',sound.seek());
-														  }
-
-														});
-
-														// Clear listener after first call.
-														sound.once('load', function(){
-														  sound.play();
-														  console.log('Howl LOAD !');
-														  console.log('Howl sound.duration',sound.duration());
-														});
-
-														// Fires when the sound finishes playing.
-														sound.on('end', function(){
-														  console.log('Howl Finished!');
-														});
-
-														sound.play()
-													}
-												);
-											}
-			            					M_MESSAGE.view.onSpecialClickForSendLiveAudioOrVideo(
-			            						'audio',
-			            						{
-			            							'onStart': () => {
-
-			            								console.log('recorderObject.isRecording() 1',recorderObject);// audio 3
-			            								// recorderObject.setFileType('audio/webm');
-			            								// recorderObject.start(600000);
-			            								// console.log('recorderObject.isRecording() 1',recorderObject.isRecording());// audio 2
-
-			            								// recorderObject.startRecording(); // audio 2
-			            								recorderObject.start(); // audio 3
-			            								// console.log('recorderObject.isRecording() 2',recorderObject.isRecording());// audio 2
-			            							},
-			            							'onDelete': () => {
-			            								sendThisFile = true;
-			            								// recorderObject.stop();//  audio 1
-			            								// recorderObject.cancelRecording();//  audio 2
-			            								recorderObject.clearStream();//  audio 3
-
-			            							},
-			            							'onSend' : () => {
-			            								// recorderObject.finishRecording(); //  audio 2
-			            								recorderObject.stop(); //  audio 3
-			            								recorderObject.initStream(); // audio 3
-			            								// recorderObject.get(getGlob);//save(); //  audio 1
-			            								// recorderObject.stop(); //  audio 1
-			            								// recorderObject.save(); //  audio 1
-													},
-													
-			            						}
-		            						);
-			            				}
-			            			}
-		            			)
-		            		}
-	            		);
 
 		            	return true;
 		            },

@@ -107,29 +107,23 @@ function MediaStreamRecorder(mediaStream) {
     };
     
     this.get = function( iNfunction ) {
-        // console.log('mmmmmm fileType',fileType);
-        // if (!file) {
         setTimeout(
             () => {
-                 console.log('mmmmmm mediaRecorder iNfunction ',iNfunction);
+                var thisType;
                 if (!mediaRecorder) {
                     return;
                 }
-                // var fileType = 'audio/ogg';//mediaRecorder.blobs[0].type;
 
                 try {
-                    var thisType = mediaRecorder.blobs[0].type;
-                    console.log('mmmmmm mediaRecorder try ',thisType);
+                    thisType = mediaRecorder.blobs[0].type;
                 }catch (e) {
-                    console.log('mmmmmm mediaRecorder catch e',e);
-                    var thisType = fileType;
+                    thisType = false;
                 }
-                console.log('mmmmmm mediaRecorder.blobs',mediaRecorder.blobs);
-                console.log('mmmmmm mediaRecorder. thisType',thisType);
-                ConcatenateBlobs(mediaRecorder.blobs, thisType, (concatenatedBlob) => {
-                    console.log('this.get concatenatedBlob', concatenatedBlob );
-                    if( typeof (iNfunction) == 'function' ) iNfunction(false, concatenatedBlob);
-                });
+                if ( thisType )
+                    ConcatenateBlobs(mediaRecorder.blobs, thisType, (concatenatedBlob) => {
+                        console.log('this.get concatenatedBlob', concatenatedBlob );
+                        if( typeof (iNfunction) == 'function' ) iNfunction(false, concatenatedBlob);
+                    });
                 return;
             return;
             },

@@ -1,4 +1,4 @@
-define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_category'],function($, VIEW, FIREBASE, MOMENT, USER, M_APP, M_CATEGORY) {
+define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_category' , 'm_storage','m_record'],function($, VIEW, FIREBASE, MOMENT, USER, M_APP, M_CATEGORY, M_STORAGE, M_RECORD) {
 	const _ = {'view':VIEW};
 	const CONST = {
 		'var_prefixNewMessageCount' : 'connectNewMsgCountInChat-'
@@ -470,11 +470,192 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 
 
 
-	//<CHAT MODEL DUPLICATE
-	    function getCurrentChatId () {
-	        return M_APP.get('connectThisOpenChatId');
-	    }
-	//>CHAT MODEL DUPLICATE
 
-    return _;
+//@< COTROLLER msgLiveVideo
+	function controller_msgLiveVideo_sendVideoToStorage (error, blob) {
+		M_STORAGE.uploadBlob  (
+			blob,
+			{
+				'pathForSaveFile'	: 'public/v4.webm',
+				'mimeType' 			: 'video/webm'
+			},
+			{}
+		);
+	}
+
+	function controller_msgLiveVideo_run () {
+		var flagPermissionForLiveVideoRecord 		= false,
+			flagBoolStartedLoaded 					= false,
+			mediationObjectLiveVideoRecorderObject,
+			mediationObjectLiveVideoStreamObject;
+
+		VIEW.onSpecialClickForSendLiveAudioOrVideo (
+			'video',
+			{	
+
+				'onStartVideoRecord': () => {
+				// when timer finished (we give time for browser to get stream from camera)
+					if ( flagPermissionForLiveVideoRecord == true ) {
+						// set flag true -> we stared recording
+						flagBoolStartedLoaded = true;
+						// start recording
+						mediationObjectLiveVideoRecorderObject.start(600000);
+					} else {
+						// set flag false -> we don't stared recording
+						flagBoolStartedLoaded = false;
+					}
+
+				},
+				'onStart': () => {
+				// when mouse up from btn for live recording
+					M_RECORD.video ( 
+						{
+							'onSuccess': (stream,recorderObject,mediationObjectForPassToVideoRecord) => {
+								// set stream for global access in function
+								mediationObjectLiveVideoStreamObject 	= stream;
+								// set recorder for global access in function
+								mediationObjectLiveVideoRecorderObject 	= recorderObject;
+								// we get perimision for browser -> set true
+								flagPermissionForLiveVideoRecord = true;
+								// set for view element (video tag) our stream as src
+								VIEW.setStreamVideoElement(mediationObjectLiveVideoStreamObject);
+								// show stream view box
+								VIEW.showStreamVideoViewer();
+							},
+							'onError' : (e) => {
+								// we don't get perimision for browser -> set false
+								flagPermissionForLiveVideoRecord = false;
+							}
+						}
+					)
+					
+					
+				},
+				'onDelete': () => {
+				// when mouse up from outside btn || from cancel btn 
+
+					// hide stream recorder view
+					VIEW.hideStreamVideoViewer();
+					// stop recording object (delete tracks from stream)
+					M_RECORD.stopRecordingByStream(mediationObjectLiveVideoStreamObject);
+					// stop recording stream
+					mediationObjectLiveVideoRecorderObject.stop();
+					// delete stream
+					mediationObjectLiveVideoStreamObject.stop();
+
+					// annihilate loading because we send
+					flagBoolStartedLoaded = false;
+
+				},
+				'onSend' : () => {
+				// when mouse up from inside btn for live recording
+					
+					// is recording started
+					if ( flagBoolStartedLoaded == true ) {
+						// hide stream recorder view
+						VIEW.hideStreamVideoViewer();
+						// stop recording stream
+						mediationObjectLiveVideoRecorderObject.stop();
+						// upload video to storage
+						mediationObjectLiveVideoRecorderObject.get( controller_msgLiveVideo_sendVideoToStorage );
+						// stop recording object (delete tracks from stream)
+						M_RECORD.stopRecordingByStream(mediationObjectLiveVideoStreamObject);
+						// delete stream
+						mediationObjectLiveVideoStreamObject.stop();
+					}
+						// annihilate loading because we send
+						flagBoolStartedLoaded = false;
+				},
+				
+			}
+		);
+	}
+	_['controller_msgLiveVideo_run'] = controller_msgLiveVideo_run;
+
+//@> COTROLLER msgLiveVideo
+
+//@< COTROLLER msgLiveAudio
+	function controller_msgLiveAudio_sendAudioToStorage (error, blob) {
+		M_STORAGE.uploadBlob  (
+			blob,
+			{
+				'pathForSaveFile'	: 'public/a1.ogg',
+				'mimeType' 			: 'audio/ogg; codecs=opus'
+			},
+			{}
+		);
+	}
+
+	function controller_msgLiveAudio_run () {
+		var permissionForLiveAudioRecord = false;
+		var mediationObjectLiveAudioRecorderObject;
+		var mediationObjectLiveAudioStreamObject;
+
+		VIEW.onSpecialClickForSendLiveAudioOrVideo (
+			'audio',
+			{
+				'onStart': () => {
+				// when mouse up from btn for live recording
+					if ( permissionForLiveAudioRecord == false ) {
+						M_RECORD.liveAudioRecord ( 
+							{
+								'onSuccess': (stream,recorderObject) => {
+									mediationObjectLiveAudioStreamObject 	= stream;
+									mediationObjectLiveAudioRecorderObject 	= recorderObject;
+									permissionForLiveAudioRecord = true;
+
+									if ( permissionForLiveAudioRecord == true ) {
+										mediationObjectLiveAudioRecorderObject.start();
+									}
+								},
+								'onError' : (e) => {
+									permissionForLiveAudioRecord = false;
+								},
+								'onDataAvailable' : controller_msgLiveAudio_sendAudioToStorage
+							}
+						)
+					} else {
+						mediationObjectLiveAudioRecorderObject.start();
+					}
+					
+				},
+				'onDelete': () => {
+				// when mouse up from outside btn || from cancel btn 
+					console.log('onDelete permissionForLiveAudioRecord', permissionForLiveAudioRecord);
+					if ( permissionForLiveAudioRecord == true ) {
+						M_RECORD.stopRecordingByStream(mediationObjectLiveAudioStreamObject);
+						mediationObjectLiveAudioRecorderObject.clearStream();//  audio 3
+						// mediationObjectLiveAudioStreamObject.stop();
+						mediationObjectLiveAudioRecorderObject.stop();
+					}
+
+				},
+				'onSend' : () => {
+				// when mouse up from inside btn for live recording
+					if ( permissionForLiveAudioRecord == true ) {
+						mediationObjectLiveAudioRecorderObject.stop();
+						M_RECORD.stopRecordingByStream ( mediationObjectLiveAudioStreamObject );
+
+						mediationObjectLiveAudioStreamObject.stop();
+						mediationObjectLiveAudioRecorderObject.initStream();
+					}
+				},
+				
+			}
+		);
+	}
+	_['controller_msgLiveAudio_run'] = controller_msgLiveAudio_run;
+
+//@> COTROLLER msgLiveVideo
+
+
+
+
+//<CHAT MODEL DUPLICATE
+    function getCurrentChatId () {
+        return M_APP.get('connectThisOpenChatId');
+    }
+//>CHAT MODEL DUPLICATE
+
+return _;
 });
