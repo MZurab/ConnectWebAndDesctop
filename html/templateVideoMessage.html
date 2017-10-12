@@ -9,11 +9,12 @@
    </div>
    <div class="aCpI_msgLiveVideo_contentLiveVideoInToMeMessage">
       <div class="aCpI_msgLiveVideo_videoMsgContent" onmouseenter="aCpI_msgLiveVideo_onEventMouseEnter(this)" onmouseleave="aCpI_msgLiveVideo_onEventMouseLeave(this)">
+      	 <div class="aCpI_msgLiveVideo_viewWhenUploadingVideoLiveMsg aCpI_toMeMessage aCpI_msg_iconUpload"></div>
       	 <div class='aCpI_msgLiveVideo_viewWhenLoadingVideoLiveMsg'></div>
       	 <div class='aCpI_msgLiveVideo_msgNowVideoTime'></div>
          <div class="aCpI_msgLiveVideo_backgroundPlayVideoOnHover aCpI_msgLiveVideo_backgroundVideoOnHover" onclick='aCpI_msgLiveVideo_onEventClickForBackground(this)'></div>
          <!-- <div class="aCpI_msgLiveVideo_backgroundPauseVideoOnHover aCpI_msgLiveVideo_backgroundVideoOnHover"></div> -->
-         <video ontimeupdate='aCpI_msgLiveVideo_onEventTimeUpdateVideo(this)' onloadeddata='aCpI_msgLiveVideo_onEventLoadedDataVideo(this)' onplay='aCpI_msgLiveVideo_onEventPlayVideo(this)' onpause='aCpI_msgLiveVideo_onEventPauseVideo(this)' src="https://firebasestorage.googleapis.com/v0/b/connect-9109d.appspot.com/o/public%2Fv1.webm?alt=media&amp;token=a9eb0725-5858-49fa-bcbe-bed25b147585" class="liveVideoSrc"></video>
+         <video ontimeupdate='aCpI_msgLiveVideo_onEventTimeUpdateVideo(this)' onloadeddata='aCpI_msgLiveVideo_onEventLoadedDataVideo(this)' onplay='aCpI_msgLiveVideo_onEventPlayVideo(this)' onpause='aCpI_msgLiveVideo_onEventPauseVideo(this)' src="https://firebasestorage.googleapis.com/v0/b/connect-9109d.appspot.com/o/public%2Fv4.webm?alt=media&token=e8921264-fb83-439a-b66e-57d4e15b2343" class="liveVideoSrc"></video>
       </div>
    </div>
 </div>
@@ -30,6 +31,7 @@
    </div>
    <div class="aCpI_msgLiveVideo_contentLiveVideoInFromMeMessage">
       <div class="aCpI_msgLiveVideo_videoMsgContent" onmouseenter="aCpI_msgLiveVideo_onEventMouseEnter(this)" onmouseleave="aCpI_msgLiveVideo_onEventMouseLeave(this)">
+      	 <div class="aCpI_msgLiveVideo_viewWhenUploadingVideoLiveMsg aCpI_fromMeMessage aCpI_msg_iconUpload"></div>
       	 <div class='aCpI_msgLiveVideo_viewWhenLoadingVideoLiveMsg'></div>
       	 <div class='aCpI_msgLiveVideo_msgNowVideoTime'></div>
          <div class="aCpI_msgLiveVideo_backgroundPlayVideoOnHover aCpI_msgLiveVideo_backgroundVideoOnHover" onclick='aCpI_msgLiveVideo_onEventClickForBackground(this)'></div>
@@ -42,7 +44,7 @@
 
 
 <style type="text/css">
-	/*@< codeKey = aCpI - appChatPageIndex  */
+	/*@< codeKey = aCpI - appChatPageIndex  'videoLiveMsg' */
 		.aCpI_msgLiveVideo_contentLiveVideoInToMeMessage {
 		    margin-top: 0.25rem;
 		    display: table;
@@ -92,6 +94,27 @@
 				    background-repeat: no-repeat;
 				    background-color: #e2eff2;
 				}
+				/*@< aCpI_msgLiveVideo_viewWhenUploadingVideoLiveMsg */
+					.aCpI_msgLiveVideo_viewWhenUploadingVideoLiveMsg {
+					    position: absolute;
+					    width: 2.5rem;
+					    height: 2.5rem;
+					    top: 45%;
+					    display: none;
+					}
+					.aCpI_msg_iconUpload {
+					    background-image: url(https://cdn.ramman.net/web/res/images/buttons/messages/upload.png);
+					    background-size: 90%;
+					    background-repeat: no-repeat;
+					    background-position: center;
+					}
+					.aCpI_msgLiveVideo_viewWhenUploadingVideoLiveMsg.aCpI_fromMeMessage {
+					    left: -3.15rem;
+					}
+					.aCpI_msgLiveVideo_viewWhenUploadingVideoLiveMsg.aCpI_toMeMessage {
+					    right: -3.5rem;
+					}
+				/*@> aCpI_msgLiveVideo_viewWhenUploadingVideoLiveMsg */
 
 				.aCpI_msgLiveVideo_backgroundPlayVideoOnHover {
 				    background-image: url(https://cdn.ramman.net/web/res/images/icons/player/play_128x128_50.png);
@@ -109,7 +132,7 @@
 				    background-position: center center;
 				    background-repeat: no-repeat;
 				}
-	/*@> codeKey = aCpI - appChatPageIndex  */
+	/*@> codeKey = aCpI - appChatPageIndex 'videoLiveMsg'  */
 </style>
 
 <script type="text/javascript">
@@ -123,7 +146,7 @@
 		}
 	//@> global
 
-	//@< codeKey = appChatPageIndex - aCpI
+	//@< codeKey = appChatPageIndex - aCpI 'videoLiveMsg'
 		function aCpI_msgLiveVideo_onEventMouseEnter (iNthis) {
 			/*
 	  			@discr
@@ -255,5 +278,5 @@
 	  		}
 		}
 
-	//@> codeKey = appChatPageIndex - aCpI
+	//@> codeKey = appChatPageIndex - aCpI 'videoLiveMsg'
 </script>

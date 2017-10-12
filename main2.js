@@ -1,5 +1,5 @@
 require2.config({
-    // baseUrl: 'https://ramman.net/files/',//https://cdn.ramman.net/web/',
+    // baseUrl: 'https://ramman.net/files/', //https://cdn.ramman.net/web/',
     // packages: [{
     //     name: 'moment',
     //     // This location is relative to baseUrl. Choose bower_components
@@ -32,7 +32,11 @@ require2.config({
         // A platform detection library
         'platform'             : 'res/js/platform/platform',
         // A audio player
-        'Howl'                  : 'res/js/players/audio/howler/howler.min',
+        // 'Howl'              : 'res/js/players/audio/howler/howler.min',
+
+        // A progresbar library
+        'progressbar'         : 'res/js/progressbar/progressbar.min',
+
 
 
         // Audio and Video recorder
@@ -81,6 +85,8 @@ require2.config({
             'm_record'         : 'mvc/model/record',
             'm_storage'        : 'mvc/model/storage',
 
+            'm_progressbar'    : 'mvc/model/progressbar', // deps 'progressbar'
+
 
         /*>! models */
     },
@@ -114,11 +120,11 @@ require2.config({
             },
         /* >! onesignal modules for push */
 
-        /* <? audio player modules */
-            // 'audioPlayerHowler': {
-            //     exports: 'audioPlayerHowler',
+        /* <? progressbar modules */
+            // 'progressbar': {
+            //     exports: 'progressbar',
             // },
-        /* >! audio player modules */
+        /* >! progressbar modules */
         
 
 
@@ -166,13 +172,10 @@ require2(['jquery','dictionary','m_engine','m_routing','m_app','m_push','m_synch
     $(function() {
         console.log('start!');
         // set browser || desktop
-        // ROUTING.setBrowser();
-        ROUTING.setDesktop();
-        console.log('ROUTING.isBrowser()',ROUTING.isBrowser());
-        console.log('ROUTING.isDesktop()',ROUTING.isDesktop());
-        // exit();
+            // ROUTING.setBrowser(); //#if browser
+            ROUTING.setDesktop(); //#if desktop
         ENGINE.init();
-        PUSH.getPermission ( PUSH.getToken( ()=>console.log('PUSH.getToken') ) );
+        // PUSH.getPermission ( PUSH.getToken( ()=>console.log('PUSH.getToken') ) );
 
         if( ROUTING.isBrowser() && ROUTING.getUserDomain() ) {
             // if it is subdomain && it is browser -> y
@@ -180,7 +183,6 @@ require2(['jquery','dictionary','m_engine','m_routing','m_app','m_push','m_synch
         }
 
         DICTIONARY.autoChange(function () {
-            // ENGINE.prepareUrl({'app':'base','page':'index','user':'zurab','data':'data'});
             if(ROUTING.isBrowser()) {
                 if( ROUTING.getUrlLength() > 0 ) {
                     console.log('ROUTING.getUrlLength isBrowser 1', ROUTING.getUrlLength() );
@@ -199,8 +201,12 @@ require2(['jquery','dictionary','m_engine','m_routing','m_app','m_push','m_synch
                         var dataString = data.join('&');
                         console.log( 'ROUTING.getUrlLength isBrowser dataString, userDomain 3', dataString , userDomain );
                         ENGINE.passToApp({'app':'base','page':'one','user':userDomain, 'data': dataString});
-                    } else 
-                        ENGINE.passToApp({'app':'page','page':'fullWindow', 'data':'id=sign&uid=@system'});
+                    } else {
+                        if ( userLogin == 'anonym' )
+                            ENGINE.passToApp({'app':'page','page':'fullWindow', 'data':'id=sign&uid=@system'});
+                        else
+                            ENGINE.passToApp({'app':'base','page':'index', 'data':''});
+                    }
                 }
                 
             } else if(ROUTING.isDesktop()) {
@@ -216,11 +222,6 @@ require2(['jquery','dictionary','m_engine','m_routing','m_app','m_push','m_synch
                 }
 
             }
-            
-            
-            // ENGINE.prepareUrl({'app':'page','page':'miniPage','user':'zurab','data':'data'});
-            
-            // ENGINE.startUrl();
         });
 
         M_APP.setGlobalVar('engine',ENGINE);

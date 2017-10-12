@@ -17,6 +17,7 @@
       <div class="aCpI_msgLiveAudio_backgroundForAudioMsgOnHover"></div>
       <div class="aCpI_msgLiveAudio_blockInAudioMsg">
          <div class="aCpI_msgLiveAudio_iconInAudioMessage"></div>
+         <div class="aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg aCpI_toMeMessage aCpI_msg_iconUpload"></div>
          <div class="aCpI_msgLiveAudio_viewWhenLoadingLiveAudioMsg"></div>
          <div class="aCpI_msgLiveAudio_controllPlayInAudioMessage" onclick="aCpI_msgLiveAudio_playAudioOnClickBtnPlay(this,event)"></div>
          <div class="aCpI_msgLiveAudio_controllPauseInAudioMessage" onclick="aCpI_msgLiveAudio_pauseAudioOnClickBtnPause(this,event)"></div>
@@ -40,13 +41,14 @@
       </div>
    </div>
    <div class="aCpI_msgLiveAudio_contentAudioInFromMeMessage aCpI_msgLiveAudio_contentOfAudioMessage" onmousemove="aCpI_msgLiveAudio_onHover(event, this)" onmouseout="aCpI_msgLiveAudio_onMouseOut(this)" onclick="aCpI_msgLiveAudio_onClick(event,this)">
-      <div class="aCpI_msgLiveAudio_audioMsgPlayedBlock">
+   	  <div class="aCpI_msgLiveAudio_audioMsgPlayedBlock">
          <div class="aCpI_msgLiveAudio_playedSpritesInAudioMsg"></div>
       </div>
       <div class="aCpI_msgLiveAudio_backgroundForAudioMsg aCpI_msgLiveAudio_backgroundForAudioMsgFromMe"></div>
       <div class="aCpI_msgLiveAudio_backgroundForAudioMsgOnHover"></div>
       <div class="aCpI_msgLiveAudio_blockInAudioMsg">
          <div class="aCpI_msgLiveAudio_iconInAudioMessage"></div>
+         <div class="aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg aCpI_fromMeMessage aCpI_msg_iconUpload"></div>
          <div class="aCpI_msgLiveAudio_viewWhenLoadingLiveAudioMsg"></div>
          <div class="aCpI_msgLiveAudio_controllPlayInAudioMessage" onclick="aCpI_msgLiveAudio_playAudioOnClickBtnPlay(this,event)"></div>
          <div class="aCpI_msgLiveAudio_controllPauseInAudioMessage" onclick="aCpI_msgLiveAudio_pauseAudioOnClickBtnPause(this,event)"></div>
@@ -62,7 +64,7 @@
 
 
 <style type="text/css">
-	/*@< codeKey = aCpI - appChatPageIndex  */
+	/*@< codeKey = aCpI - appChatPageIndex  'audioLiveMsg'*/
 		.aCpI_msgLiveAudio_contentAudioInToMeMessage {
 		    height: 4rem;
 		    max-width: 80%;
@@ -138,6 +140,30 @@
 				    top: 0px;
 				    left: 0px;
 				}
+				/*@< aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg*/
+					.aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg {
+					    position: absolute;
+					    width: 2.5rem;
+					    height: 2.5rem;
+					    top: 0.5rem;
+					    z-index: 10;
+					    cursor: pointer;
+					    border-radius: 100%;
+					    display: none;
+					}
+					.aCpI_msg_iconUpload {
+					    background-image: url(https://cdn.ramman.net/web/res/images/buttons/messages/upload.png);
+					    background-size: 90%;
+					    background-repeat: no-repeat;
+					    background-position: center;
+					}
+					.aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg.aCpI_fromMeMessage {
+					    left: -3rem;
+					}
+					.aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg.aCpI_toMeMessage {
+					    right: -2.5rem;
+					}
+				/*@> aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg*/
 				.aCpI_msgLiveAudio_viewWhenLoadingLiveAudioMsg {
 				    position: absolute;
 				    width: 3.2rem;
@@ -205,7 +231,7 @@
 		.aCpI_msgLiveAudio_contentOfAudioMessage {
 			cursor: pointer;
 		}
-	/*@> codeKey = aCpI - appChatPageIndex  */
+	/*@> codeKey = aCpI - appChatPageIndex  'audioLiveMsg' */
 </style>
 
 <script type="text/javascript">
@@ -220,7 +246,7 @@
 		}
 	//@> global
 
-	//@< codeKey = appChatPageIndex - aCpI
+	//@< codeKey = appChatPageIndex - aCpI 'audioLiveMsg'
 		function aCpI_msgLiveAudio_onEventLoadedAudio (iNthis) {
 
 			// parent blockInAudioMsg
@@ -263,7 +289,7 @@
 		    // get mouse position by percent
 		    var mousePositionObject = global_getMousePositionByEvent(iNevent,iNobject);
 		    var XinnerPercent 	= mousePositionObject['xPercent'];
-
+		    if (XinnerPercent < 0 || XinnerPercent > 100) return;
 		    // set progress bar
 			var element = $(iNobject).children('.aCpI_msgLiveAudio_backgroundForAudioMsgOnHover');
 		    aCpI_msgLiveAudio_setProgressBar (element,XinnerPercent,0);
@@ -524,5 +550,5 @@
 	  			$(iNparent).children('.aCpI_msgLiveAudio_controllPauseInAudioMessage').hide();
 	  			$(iNparent).children('.aCpI_msgLiveAudio_controllPlayInAudioMessage').show();
 		}
-	//@> codeKey = appChatPageIndex - aCpI
+	//@> codeKey = appChatPageIndex - aCpI 'audioLiveMsg'
 </script>

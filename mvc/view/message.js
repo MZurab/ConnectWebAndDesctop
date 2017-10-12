@@ -49,15 +49,53 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 	    /* EXTENCION */
 	});
 
+	
+	//@< chief msg container
+		templates['msgBox'] = `
+			<div id='msgId{{msgId}}' class="messagesInChatView {{class}} {{#if appearClass}}connect-appear{{/if}} {{#if fromMe}}fromMeMessageInChatView{{/if}}{{#if toMe}}toMeMessageInChatView{{/if}} {{#if note}}noteMessage{{/if}}"  {{#if timeSent}}time-sent="{{timeSent}}"{{/if}}  {{#if timeRead}}time-read="{{timeRead}}"{{/if}} {{#if timeDelivered}}time-delivered="{{timeDelivered}}"{{/if}}  connect_msg="{{msgId}}" connect-appear-scroll-parent='#leftBlockInViewWindow' connect-appear-my-parent='.ChatViewInAppWindow'>
+				{{boxContent}}
+			</div>
+		`;
+		function getBoxForMsg (iNdata) {
+    		/*
+    			@inputs
+    				iNdata -> object
+    					class
+    		*/
+			let temp = Template7.compile(templates['msgBox']);
+			return temp(iNdata);
+		}
+    	_['getBoxForMsg'] = getBoxForMsg;
+	//@> chief msg container
 
+	//@<SECTION  'msg simpleText' type = 1  ------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		//@< msgSimpleText_center 
+			templates['msgSimpleText_center'] = `
+				<div class="centerMsgInChatView">{{content}}</div>
+			`;
+			function msgSimpleText_addCenter ( iNdata, iNchatId ) {
+		        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+		        $( iNneedView ).append( msgSimpleText_getTemplateByNameCenter ( iNdata ) );
+			}
+			_['msgSimpleText_addCenter'] = msgSimpleText_addCenter;
 
+				function msgSimpleText_getTemplateByNameCenter (iNdata) {
+					/*
+						@inputs
+							@required
+								iNdata
+									@required
+										content
+									@optional
+					*/
+					var temp = Template7.compile(templates['msgSimpleText_center']);
+					return temp(iNdata);
+				}
+				_['msgSimpleText_getTemplateByNameCenter'] = msgSimpleText_getTemplateByNameCenter;
+		//@> msgSimpleText_center
 
-	templates['centerMsgSimpleText'] = `
-		<div class="centerMsgInChatView">{{content}}</div>
-	`;
-
-	//@< msg simpleText type = 1
-		templates['msgSimpleTextFrom'] = `
+		templates['msgSimpleText_from'] = `
 		   <div class="lineInFromMeMessage">
 		      <div class="lineInBoxInLine">
 		         {{#if timeSentText}}
@@ -74,7 +112,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 		   <div class="contentTextInFromMeMessage">{{content}}</div>
 		`;
 
-		templates['msgSimpleTextTo'] = `
+		templates['msgSimpleText_to'] = `
 		   <div class="lineInToMeMessage">
 		      <div class="lineInBoxInLine">
 				 {{#if timeSentText}}
@@ -89,79 +127,294 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 		   </div>
 		   <div class="contentTextInToMeMessage">{{content}}</div>
 		`;
-	//@> msg simpleText type = 1
 
+		function msgSimpleText_getMsg (iNdata,iNmyUid) {
+			/*
+				@discr
 
-	//@< COTROLLER msgLiveAudio
-		function showStreamVideoViewer () {
-			$('.aCpI_streamVideo').css('display','flex');
+				@inputs
+					iNdata -> object
+						msgId 		-> string
+						state 	    -> object
+							sent      -> timestamp
+							delivered -> timestamp
+							time      -> timestamp
+						timeRead 	-> string
+						content 	-> string
+
+						@optional
+							type		-> string
+
+			*/
+			var el = {}, result;
+			if ( iNdata.uid == iNmyUid ) {
+
+	            iNdata['fromMe'] = 1;
+	            iNdata['boxContent'] = msgSimpleText_getTemplateByNameFrom(iNdata);
+			}
+	        else {
+	            iNdata['toMe'] = 1;
+	            iNdata['boxContent'] = msgSimpleText_getTemplateByNameTo(iNdata);
+	        }
+	        return getBoxForMsg(iNdata);
 		}
-		_['showStreamVideoViewer'] = showStreamVideoViewer;
+	    _['msgSimpleText_getMsg'] = msgSimpleText_getMsg;
 
-		function startStreamVideoCountdownTimer (iNcallbackFunction) {
-			$('.aCpI_videoStreamTimeCounter').show();
-			clearStreamVideoCountdownTimer();
-			$('.aCpI_videoStreamTimeCounter').countdown (
-				{
-					until: 3, // second
-					description: '',
-					onExpiry: function () { 
-						$(this).hide();
-						if(typeof iNcallbackFunction == 'function' ) iNcallbackFunction (); 
-					}, 
-					layout: '{sn}' // NOT 03 to 3
-				}
-			);
+	    	
 
+			function msgSimpleText_getTemplateByNameFrom (iNdata) {
+				let temp = Template7.compile(templates['msgSimpleText_from']);
+				return temp(iNdata);
+			}
+	    	_['msgSimpleText_getTemplateByNameFrom'] = msgSimpleText_getTemplateByNameFrom;
+
+			function msgSimpleText_getTemplateByNameTo (iNdata) {
+				let temp = Template7.compile(templates['msgSimpleText_to']);
+				return temp(iNdata);
+			}
+	    	_['msgSimpleText_getTemplateByNameTo'] = msgSimpleText_getTemplateByNameTo;
+
+	 	function msgSimpleText_createMsg ( iNdata, iNmyUid, iNchatId ) {
+	        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+	        $( iNneedView ).append( msgSimpleText_getMsg ( iNdata, iNmyUid ) );
 		}
-		_['startStreamVideoCountdownTimer'] = startStreamVideoCountdownTimer;
+	    _['msgSimpleText_createMsg'] = msgSimpleText_createMsg;
 
 
-		function clearStreamVideoCountdownTimer (iNcallbackFunction) {
-			$('.aCpI_videoStreamTimeCounter').countdown ( 'destroy' );
-
+		function msgSimpleText_safeReplace ( iNdata, iNmyUid, iNchatId ) {
+	        var thisIssetLength = getLengthOfMsg(iNdata, iNchatId);
+	        if (thisIssetLength > 0) {
+	        	// create message
+	        	msgSimpleText_replace ( iNdata, iNmyUid, iNchatId );
+	        }
 		}
-		_['clearStreamVideoCountdownTimer'] = clearStreamVideoCountdownTimer;
+	    _['msgSimpleText_safeReplace'] = msgSimpleText_safeReplace;
+	    
+		    function msgSimpleText_replace ( iNdata, iNmyUid, iNchatId ) {
+		        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+		        var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
+		        var content = msgSimpleText_getMsg ( iNdata, iNmyUid );
+		        $( fullPath ).replaceWith( content );
+			}
+		    _['msgSimpleText_replace'] = msgSimpleText_replace;
+	//@>SECTION  'msg simpleText' type = 1  ------------------------------------------------------------------------------------------------------------------------------------------------
 
+	
 
-		function hideStreamVideoViewer () {
-			$('.aCpI_streamVideo').css('display','none');
-		}
-		_['hideStreamVideoViewer'] = hideStreamVideoViewer;
+	//@<SECTION  'msg live audio' type = 20 ------------------------------------------------------------------------------------------------------------------------------------------------
+		templates['msgLiveAudio_from'] = `
+		   <div class="lineInFromMeMessage">
+		      <div class="lineInBoxInLine">
+		         {{#if timeSentText}}
+			         <div class="topCircleInMessages"></div>
+			         <div class="timeTopInMessages">{{timeSentText}}</div>
+		         {{/if}}
 
-		// function smartHideStreamVideoViewer () {
-		// 	hideStreamVideoViewer()
-		// 	hideStreamVideoElement();
-		// }
-		// _['smartHideStreamVideoViewer'] = smartHideStreamVideoViewer;
+		         
+	         	<div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
+	         	<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
 
-
-		function setStreamVideoElement (iNstream) {
-			// $('.aCpI_videoStreamElement')[0].src = URL.createObjectURL(iNstream);
-			$('.aCpI_videoStreamElement')[0].srcObject = iNstream;
-		}
-		_['setStreamVideoElement'] = setStreamVideoElement;
-
-		// function showStreamVideoElement (iNstream) {
-		// 	$('.aCpI_videoStreamElement').show();
-		// }
-		// _['showStreamVideoElement'] = showStreamVideoElement;
-
-		// function hideStreamVideoElement (iNstream) {
-		// 	$('.aCpI_videoStreamElement').hide();
-		// }
-		// _['hideStreamVideoElement'] = hideStreamVideoElement;
-	//@> COTROLLER msgLiveAudio
-
-
-
-	//@< chief msg container
-		templates['msgBox'] = `
-			<div id='msgId{{msgId}}' class="messagesInChatView {{#if appearClass}}connect-appear{{/if}} {{#if fromMe}}fromMeMessageInChatView{{/if}}{{#if toMe}}toMeMessageInChatView{{/if}} {{#if note}}noteMessage{{/if}}"  {{#if timeSent}}time-sent="{{timeSent}}"{{/if}}  {{#if timeRead}}time-read="{{timeRead}}"{{/if}} {{#if timeDelivered}}time-delivered="{{timeDelivered}}"{{/if}}  connect_msg="{{msgId}}" connect-appear-scroll-parent='#leftBlockInViewWindow'  connect-appear-my-parent='.ChatViewInAppWindow'>
-				{{boxContent}}
-			</div>
+		      </div>
+		   </div>
+		   <div class="aCpI_msgLiveAudio_contentAudioInFromMeMessage aCpI_msgLiveAudio_contentOfAudioMessage" onmousemove="aCpI_msgLiveAudio_onHover(event, this)" onmouseout="aCpI_msgLiveAudio_onMouseOut(this)" onclick="aCpI_msgLiveAudio_onClick(event,this)">
+		      <div class="aCpI_msgLiveAudio_audioMsgPlayedBlock">
+		         <div class="aCpI_msgLiveAudio_playedSpritesInAudioMsg"></div>
+		      </div>
+		      <div class="aCpI_msgLiveAudio_backgroundForAudioMsg aCpI_msgLiveAudio_backgroundForAudioMsgFromMe"></div>
+		      <div class="aCpI_msgLiveAudio_backgroundForAudioMsgOnHover"></div>
+		      <div class="aCpI_msgLiveAudio_blockInAudioMsg">
+		         <div class="aCpI_msgLiveAudio_iconInAudioMessage"></div>
+		         <div class="aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg"></div>
+		         <div class="aCpI_msgLiveAudio_viewWhenLoadingLiveAudioMsg"></div>
+		         <div class="aCpI_msgLiveAudio_controllPlayInAudioMessage" onclick="aCpI_msgLiveAudio_playAudioOnClickBtnPlay(this,event)"></div>
+		         <div class="aCpI_msgLiveAudio_controllPauseInAudioMessage" onclick="aCpI_msgLiveAudio_pauseAudioOnClickBtnPause(this,event)"></div>
+		         <div class="aCpI_msgLiveAudio_hideAudioBlock">
+		            <audio class="audioSrc flagAudioOrVideoElement" onplay="aCpI_msgLiveAudio_onEventPlay(this)" onpause="aCpI_msgLiveAudio_onEventPause(this)" preload="auto" src="{{content}}" onloadeddata="aCpI_msgLiveAudio_onEventLoadedAudio(this)" ontimeupdate="aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl(this)"></audio>
+		         </div>
+		         <div class="aCpI_msgLiveAudio_timeNowInAudioMessage aCpI_msgLiveAudio_timeInAudioMsg"></div>
+		         <div class="aCpI_msgLiveAudio_timeAllInAudioMessage aCpI_msgLiveAudio_timeInAudioMsg"></div>
+		      </div>
+		   </div>
 		`;
-	//@> chief msg container
+
+		templates['msgLiveAudio_to'] = `
+	   		<div class="lineInBoxInLine">
+				 {{#if timeSentText}}
+			         <div class="topCircleInMessages"></div>
+			         <div class="timeTopInMessages">{{timeSentText}}</div>
+		         {{/if}}
+		         
+		         <div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
+	         	 <div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
+		  	</div>
+			<div class="aCpI_msgLiveAudio_contentAudioInToMeMessage aCpI_msgLiveAudio_contentOfAudioMessage" onmousemove="aCpI_msgLiveAudio_onHover(event, this)" onmouseout="aCpI_msgLiveAudio_onMouseOut(this)" onclick="aCpI_msgLiveAudio_onClick(event,this)">
+		      <div class="aCpI_msgLiveAudio_audioMsgPlayedBlock">
+		         <div class="aCpI_msgLiveAudio_playedSpritesInAudioMsg"></div>
+		      </div>
+		      <div class="aCpI_msgLiveAudio_backgroundForAudioMsg aCpI_msgLiveAudio_backgroundForAudioMsgToMe"></div>
+		      <div class="aCpI_msgLiveAudio_backgroundForAudioMsgOnHover"></div>
+		      <div class="aCpI_msgLiveAudio_blockInAudioMsg">
+		         <div class="aCpI_msgLiveAudio_iconInAudioMessage"></div>
+				 <div class="aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg"></div>
+		         <div class="aCpI_msgLiveAudio_viewWhenLoadingLiveAudioMsg"></div>
+		         <div class="aCpI_msgLiveAudio_controllPlayInAudioMessage" onclick="aCpI_msgLiveAudio_playAudioOnClickBtnPlay(this,event)"></div>
+		         <div class="aCpI_msgLiveAudio_controllPauseInAudioMessage" onclick="aCpI_msgLiveAudio_pauseAudioOnClickBtnPause(this,event)"></div>
+		         <div class="aCpI_msgLiveAudio_hideAudioBlock">
+		            <audio class="audioSrc flagAudioOrVideoElement" onplay="aCpI_msgLiveAudio_onEventPlay(this)" onpause="aCpI_msgLiveAudio_onEventPause(this)" preload="auto" src="{{content}}" onloadeddata="aCpI_msgLiveAudio_onEventLoadedAudio(this)" ontimeupdate="aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl(this)"></audio>
+		         </div>
+		         <div class="aCpI_msgLiveAudio_timeNowInAudioMessage aCpI_msgLiveAudio_timeInAudioMsg"></div>
+		         <div class="aCpI_msgLiveAudio_timeAllInAudioMessage aCpI_msgLiveAudio_timeInAudioMsg"></div>
+		      </div>
+		    </div>
+		`;
+
+		function  msgLiveAudio_createMsg ( iNdata, iNmyUid, iNchatId ) {
+	        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+	        $( iNneedView ).append( msgLiveAudio_getMsg ( iNdata, iNmyUid ) );
+		}
+	    _['msgLiveAudio_createMsg'] = msgLiveAudio_createMsg;
+
+			function msgLiveAudio_getMsg (iNdata,iNmyUid) {
+				/*
+					@discr
+
+					@inputs
+						iNdata -> object
+							msgId 		-> string
+							state 	    -> object
+								sent      -> timestamp
+								delivered -> timestamp
+								time      -> timestamp
+							timeRead 	-> string
+							content 	-> string
+
+							@optional
+								type		-> string
+
+				*/
+				var el = {}, result;
+				iNdata['class'] = 'msgTypeLiveAudio';
+				if ( iNdata.uid == iNmyUid ) {
+					iNdata['fromMe'] = 1;
+		            iNdata['boxContent'] = msgLiveAudio_getTemplateByNameFrom(iNdata);
+				}
+		        else {
+		            iNdata['toMe'] = 1;
+		            iNdata['boxContent'] = msgLiveAudio_getTemplateByNameTo(iNdata);
+		        }
+		        return getBoxForMsg(iNdata);
+			}
+		    _['msgLiveAudio_getMsg'] = msgLiveAudio_getMsg;
+
+		    	function msgLiveAudio_getTemplateByNameFrom (iNdata) {
+					let temp = Template7.compile(templates['msgLiveAudio_from']);
+					return temp(iNdata);
+				}
+		    	_['msgLiveAudio_getTemplateByNameFrom'] = msgLiveAudio_getTemplateByNameFrom;
+
+				function msgLiveAudio_getTemplateByNameTo (iNdata) {
+					let temp = Template7.compile(templates['msgLiveAudio_to']);
+					return temp(iNdata);
+				}
+		    	_['msgLiveAudio_getTemplateByNameTo'] = msgLiveAudio_getTemplateByNameTo;
+
+    		function msgLiveAudio_safeReplace ( iNdata, iNmyUid, iNchatId ) {
+		        var thisIssetLength = getLengthOfMsg(iNdata, iNchatId);
+		        if (thisIssetLength > 0) {
+		        	// create message
+		        	msgLiveAudio_replace ( iNdata, iNmyUid, iNchatId );
+		        }
+			}
+		    _['msgLiveAudio_safeReplace'] = msgLiveAudio_safeReplace;
+		    
+			    function msgLiveAudio_replace ( iNdata, iNmyUid, iNchatId ) {
+			        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+			        var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
+			        var content = msgLiveAudio_getMsg ( iNdata, iNmyUid );
+			        $( fullPath ).replaceWith( content );
+				}
+			    _['msgLiveAudio_replace'] = msgLiveAudio_replace;
+	//@SECTION> 'msg live audio' type = 20
+
+	//@<SECTION 'msg live video' type = 21
+		//@< controller 'record' msgLiveAudio 
+			function msgLiveVideo_record_showStreamVideoViewer () {
+				$('.aCpI_streamVideo').css('display','flex');
+			}
+			_['msgLiveVideo_record_showStreamVideoViewer'] = msgLiveVideo_record_showStreamVideoViewer;
+
+			function msgLiveVideo_record_startStreamVideoCountdownTimer (iNcallbackFunction) {
+				$('.aCpI_videoStreamTimeCounter').show();
+				msgLiveVideo_record_clearStreamVideoCountdownTimer();
+				$('.aCpI_videoStreamTimeCounter').countdown (
+					{
+						until: 3, // second
+						description: '',
+						onExpiry: function () { 
+							$(this).hide();
+							if(typeof iNcallbackFunction == 'function' ) iNcallbackFunction (); 
+						}, 
+						layout: '{sn}' // NOT 03 to 3
+					}
+				);
+
+			}
+			_['msgLiveVideo_record_startStreamVideoCountdownTimer'] = msgLiveVideo_record_startStreamVideoCountdownTimer;
+
+
+			function msgLiveVideo_record_clearStreamVideoCountdownTimer (iNcallbackFunction) {
+				$('.aCpI_videoStreamTimeCounter').countdown ( 'destroy' );
+
+			}
+			_['msgLiveVideo_record_clearStreamVideoCountdownTimer'] = msgLiveVideo_record_clearStreamVideoCountdownTimer;
+
+
+			function msgLiveVideo_record_hideStreamVideoViewer () {
+				$('.aCpI_streamVideo').css('display','none');
+			}
+			_['msgLiveVideo_record_hideStreamVideoViewer'] = msgLiveVideo_record_hideStreamVideoViewer;
+
+			function msgLiveVideo_record_removeStreamVideoElement () {
+				$('.aCpI_streamVideo > video').remove();
+			}
+			function msgLiveVideo_record_setStreamVideoElement (iNstream) {
+				msgLiveVideo_record_removeStreamVideoElement();
+
+				var video = document.createElement('video'),
+					videosContainer = $('.aCpI_streamVideo').get(0);
+
+	                video = msgLiveVideo_record_mergeProps(video, {
+	                    // controls: true,
+	                    class: 'aCpI_videoStreamElement',
+	                    muted: true
+	                });
+	                video.srcObject = iNstream;
+	                video.play();
+	                videosContainer.appendChild(video);
+			}
+			_['msgLiveVideo_record_setStreamVideoElement'] = msgLiveVideo_record_setStreamVideoElement;
+
+				
+				//@< copy from res/js/recorder/mediaStreamRecorder/MediaStreamRecorder.js
+					// Merge all other data-types except "function"
+					function msgLiveVideo_record_mergeProps(mergein, mergeto) {
+						// create video el
+					    for (var t in mergeto) {
+					        if (typeof mergeto[t] !== 'function') {
+					            mergein[t] = mergeto[t];
+					        }
+					    }
+					    return mergein;
+					}
+				//@> copy from res/js/recorder/mediaStreamRecorder/MediaStreamRecorder.js
+		//@> controller 'record' msgLiveVideo ------------------------------------------------------------------------------------------------------------------------------------------------ 
+
+	//@SECTION> 'msg live video' type = 21
+
+	
+
+
+
 
 
 	CONST['domPathToMsgCounter'] = '#senderBlockInViewBlock .counterInChatId';
@@ -280,25 +533,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 	}
 	_['getFromMessageAttrTimeDelivered'] = getFromMessageAttrTimeDelivered;
 
-	function addCenterSimpleTextToChatPage ( iNdata, iNchatId ) {
-        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
-        $( iNneedView ).append( getCenterSimleTextBlock ( iNdata ) );
-	}
-	_['addCenterSimpleTextToChatPage'] = addCenterSimpleTextToChatPage;
-
-		function getCenterSimleTextBlock (iNdata) {
-			/*
-				@inputs
-					@required
-						iNdata
-							@required
-								content
-							@optional
-			*/
-			var temp = Template7.compile(templates['centerMsgSimpleText']);
-			return temp(iNdata);
-		}
-		_['getCenterSimleTextBlock'] = getCenterSimleTextBlock;
+	
 
 	function getMessagesDomPathByChatId (iNchatId) {
         return getChatDomPathByChatId(iNchatId) + " .messagesInChatView";
@@ -332,29 +567,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 	}
     _['getLengthOfMsg'] = getLengthOfMsg;
 
-    function createMsgSimpleTextToChatPage ( iNdata, iNmyUid, iNchatId ) {
-        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
-        $( iNneedView ).append( getMsgSimple ( iNdata, iNmyUid ) );
-	}
-    _['createMsgSimpleTextToChatPage'] = createMsgSimpleTextToChatPage;
-
-
-	function safeReplaceMsgSimpleTextToChatPage ( iNdata, iNmyUid, iNchatId ) {
-        var thisIssetLength = getLengthOfMsg(iNdata, iNchatId);
-        if (thisIssetLength > 0) {
-        	// create message
-        	replaceMsgSimpleTextToChatPage ( iNdata, iNmyUid, iNchatId );
-        }
-	}
-    _['safeReplaceMsgSimpleTextToChatPage'] = safeReplaceMsgSimpleTextToChatPage;
-    
-	    function replaceMsgSimpleTextToChatPage ( iNdata, iNmyUid, iNchatId ) {
-	        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
-	        var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
-	        var content = getMsgSimple ( iNdata, iNmyUid );
-	        $( fullPath ).replaceWith( content );
-		}
-	    _['replaceMsgSimpleTextToChatPage'] = replaceMsgSimpleTextToChatPage;
+   
 
 
 
@@ -510,15 +723,29 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     					onStart 	-> function
     					onDelete 	-> function
     					onSend 		-> function
+    					onOff 		-> function
+    					defaultState -> bool
 			*/
     		var effType = iNeffectType;
     		var objForSpecialClick = {};
+    			//@< active effects
+    			var flagDefaultWork = true;
+				if ( typeof iNdata['defaultState'] == 'boolean' ) {
+    				flagDefaultWork = iNdata['defaultState'];
+    			}
+    			//@> active effects
     			// click
     			var startMsgRecoding = false;
-    			var intervalId = null;
-    			var deleteThisMsg = true;
+    			var intervalId 		= null;
+    			var deleteThisMsg 	= true;
     			var timerFromStartRecordingMessage = 0;
-    			objForSpecialClick['down']= () => {
+
+    			objForSpecialClick['down'] = () => {
+				// we mouse btn down insed element
+					if(!flagDefaultWork)  {
+						if(typeof iNdata['onOff'] == 'function') iNdata['onOff']();
+						return;
+					}
     				startMsgRecoding = false;
     				deleteThisMsg = true;
     				intervalId = setTimeout(()=>{
@@ -526,10 +753,13 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     					// show timer
     					if(effType == 'audio') {
     						smartStartRecodingTimerAtMsgButton('audio');
-    					} else if (effType == 'video') {
-    						// showStreamVideoViewer();
+						
+	    					timerFromStartRecordingMessage = MOMENT().getNowTime(); //
 
-    						startStreamVideoCountdownTimer (
+		    				if(typeof iNdata['onStart'] == 'function') iNdata['onStart']();
+    					} else if (effType == 'video') {
+
+    						msgLiveVideo_record_startStreamVideoCountdownTimer (
     							() => {
     								smartStartRecodingTimerAtMsgButton('video');
     								timerFromStartRecordingMessage = MOMENT().getNowTime(); //
@@ -539,23 +769,26 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 							if(typeof iNdata['onStart'] == 'function') iNdata['onStart']();
 							return;
 						}
-						
-    					timerFromStartRecordingMessage = MOMENT().getNowTime(); //
-
-	    				if(typeof iNdata['onStart'] == 'function') iNdata['onStart']();
     				},150);
     			}
 
-    			$('.cancelBtnInMsgSenderButton').mouseup(()=>{
+    			$('.cancelBtnInMsgSenderButton').mouseup( () => {
+    				if(!flagDefaultWork)  {
+						if(typeof iNdata['onOff'] == 'function') iNdata['onOff']();
+						return;
+					}
     				deleteThisMsg = false;
     			});
 
     			objForSpecialClick['up'] = (state) => {
+    				if(!flagDefaultWork)  {
+						if(typeof iNdata['onOff'] == 'function') iNdata['onOff']();
+						return;
+					}
 					clearTimeout (intervalId);
-					clearStreamVideoCountdownTimer ();
+					msgLiveVideo_record_clearStreamVideoCountdownTimer ();
     				if(startMsgRecoding !== true) {
-    					// if does not 150 ms since first click
-    					// we swiftch buttons 
+    					// if does not 150 ms since first click -> we swiftch buttons 
     					smartSwitchLiveAudioVideoMsgButtons();
     				} else {
     					var timeWhenMouseUp = MOMENT().getNowTime(); //
@@ -583,6 +816,16 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 			} else if (effType == 'video') {
     			$('#sendLiveVideoButtonInSenderBlock').specialClick(objForSpecialClick);
 			}
+
+			var off = () => {
+				flagDefaultWork = false;
+			}
+
+			var on = ()  => {
+				flagDefaultWork = true;
+			} 
+
+			return {on:on, off:off};
     	}
     	_['onSpecialClickForSendLiveAudioOrVideo'] = onSpecialClickForSendLiveAudioOrVideo;
     		
@@ -717,7 +960,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 	    	}
 
 
-    //@>
+    //@> msg timer in sender buttons 
 
 
 
@@ -733,89 +976,35 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
 
 
-	function getMsgSimple (iNdata,iNmyUid) {
-		/*
-			@discr
+	function setObserverForViewMsgInVisualScrollByChatId (iNchatId, iNdata ) {
+		let object = getMessagesDomObjectByChatId(iNchatId,'.toMeMessageInChatView');
 
-			@inputs
-				iNdata -> object
-					msgId 		-> string
-					state 	    -> object
-						sent      -> timestamp
-						delivered -> timestamp
-						time      -> timestamp
-					timeRead 	-> string
-					content 	-> string
-
-					@optional
-						type		-> string
-
-		*/
-		var el = {}, result;
-		if ( iNdata.uid == iNmyUid ) {
-
-            iNdata['fromMe'] = 1;
-            iNdata['boxContent'] = getMsgSimpleTextFrom(iNdata);
-		}
-        else {
-            iNdata['toMe'] = 1;
-            iNdata['boxContent'] = getMsgSimpleTextTo(iNdata);
-        }
-        return getBoxForMsg(iNdata);
-	}
-    _['getMsgSimple'] = getMsgSimple;
-
-    	function getBoxForMsg (iNdata) {
-			let temp = Template7.compile(templates['msgBox']);
-			return temp(iNdata);
-		}
-    	_['getMsgSimpleTextFrom'] = getMsgSimpleTextFrom;
-
-		function getMsgSimpleTextFrom (iNdata) {
-			let temp = Template7.compile(templates['msgSimpleTextFrom']);
-			return temp(iNdata);
-		}
-    	_['getMsgSimpleTextFrom'] = getMsgSimpleTextFrom;
-
-		function getMsgSimpleTextTo (iNdata) {
-			let temp = Template7.compile(templates['msgSimpleTextTo']);
-			return temp(iNdata);
-		}
-    	_['getMsgSimpleTextTo'] = getMsgSimpleTextTo;
-
-
-
-
-
-    		function setObserverForViewMsgInVisualScrollByChatId (iNchatId, iNdata ) {
-				let object = getMessagesDomObjectByChatId(iNchatId,'.toMeMessageInChatView');
-
-				object.appearByEach(
-					iNdata['success'],
-					{
-						'scroll-window'		:'#leftBlockInViewWindow',
-						'my-filter-window'	: getChatDomPathByChatId(iNchatId),
-						'checkForAddClass'	: (iNobject) => {
-							return !$(iNobject).attr('time-read');
-						},
-						'checkForRemoveClass'	: (iNobject) => {
-							return $(iNobject).attr('time-read');
-						},
-						'onScrollParent'	: (iNobject) => {
-							if( $(iNobject).scrollBot() > $(iNobject).height() / 2 ) {
-							 	// show button if not button
-								$('.buttonChatToBottom').show();
-								if(typeof iNdata['onScrollParentTrue'] == 'function')  iNdata['onScrollParentTrue']();
-							} else {
-								// show button if not button
-								$('.buttonChatToBottom').hide();
-								if(typeof iNdata['onScrollParentFalse'] == 'function') iNdata['onScrollParentFalse'](iNchatId);
-							}
-						}
+		object.appearByEach(
+			iNdata['success'],
+			{
+				'scroll-window'		:'#leftBlockInViewWindow',
+				'my-filter-window'	: getChatDomPathByChatId(iNchatId),
+				'checkForAddClass'	: (iNobject) => {
+					return !$(iNobject).attr('time-read');
+				},
+				'checkForRemoveClass'	: (iNobject) => {
+					return $(iNobject).attr('time-read');
+				},
+				'onScrollParent'	: (iNobject) => {
+					if( $(iNobject).scrollBot() > $(iNobject).height() / 2 ) {
+					 	// show button if not button
+						$('.buttonChatToBottom').show();
+						if(typeof iNdata['onScrollParentTrue'] == 'function')  iNdata['onScrollParentTrue']();
+					} else {
+						// show button if not button
+						$('.buttonChatToBottom').hide();
+						if(typeof iNdata['onScrollParentFalse'] == 'function') iNdata['onScrollParentFalse'](iNchatId);
 					}
-				);//'.ChatViewInAppWindow'
+				}
 			}
-			_['setObserverForViewMsgInVisualScrollByChatId'] = setObserverForViewMsgInVisualScrollByChatId;
+		);//'.ChatViewInAppWindow'
+	}
+	_['setObserverForViewMsgInVisualScrollByChatId'] = setObserverForViewMsgInVisualScrollByChatId;
 
 
 

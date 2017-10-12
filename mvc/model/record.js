@@ -13,7 +13,7 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 					onError -> function
 		*/
 		//
-		getPermissionForVideoAndAudioRecord (
+		getPermissionForLiveVideoRecord (
 			// success function
 			(stream) => {
 				var dataInner = {};
@@ -26,7 +26,7 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 				 // };
 				 // mediaRecorder.videoWidth  = 320;
 				 // mediaRecorder.videoHeight = 320;
-				 console.log('getPermissionForVideoAndAudioRecord stream',stream);
+				 console.log('getPermissionForLiveVideoRecord stream',stream);
 				 // mediaRecorder.recorderType = MediaRecorderWrapper;
 				 // console.log('MediaRecorderWrapper',MediaRecorderWrapper)
 				 console.log('video',mediaRecorder)
@@ -143,23 +143,11 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 				webRecorder.onEncodingProgress = function(recorder, progress) { console.log('webRecorder.onEncodingProgress - recorder, progress',recorder, progress); }
 				webRecorder.onEncoderLoading = function(recorder, encoding) { 	console.log('webRecorder.onEncoderLoading - recorder, encoding',recorder, encoding); }
 
-				 // mediaRecorder.mimeType = 'audio/wav'; // check this line for audio/wav
-				 // mediaRecorder.mimeType = 'audio/ogg';
-				 // mediaRecorder.recorderType = MediaRecorderWrapper;
-				 // console.log('MediaRecorderWrapper',MediaRecorderWrapper)
-				 console.log('webRecorder',webRecorder)
-
 
 				webRecorder.onError =  function (recorder, blob) {
-			        console.log('webRecorder.onError recorder ',recorder);
-			        console.log('webRecorder.onError recorder ',recorder);
 				};
 				webRecorder.onComplete =   (recorder, blob) =>{
 			        // POST/PUT "Blob" using FormData/XHR2
-			        console.log('webRecorder.onComplete recorder ',recorder);
-			        console.log('webRecorder.onComplete blob ',blob);
-			        console.log('webRecorder.onComplete dataInner ',dataInner);
-			        console.log("webRecorder.onComplete typeof dataInner['getGlob'] ",typeof dataInner['getGlob']);
 			        // var blobURL = URL.createObjectURL(blob);
 			        if(typeof dataInner['getGlob'] == 'function') dataInner['getGlob'](false,blob);
 			        // mediaRecorder.save(blob,'1.ogg');
@@ -171,7 +159,7 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 					},
 					500
 				);
-			    // if( typeof iNdata['onSuccess']  == 'function' ) iNdata['onSuccess']( stream, webRecorder , dataInner);
+			    if( typeof iNdata['onSuccess']  == 'function' ) iNdata['onSuccess']( stream, webRecorder , dataInner);
 		    	 // mediaRecorder.start();
 			}, 
 			// error funciton
@@ -199,7 +187,6 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 		getPermissionForAudioRecord (
 			// success function
 			(stream) => {
-				console.log('Recorder',Recorder);
 				 var recorder = new Recorder({
 			        // monitorGain: parseInt(monitorGain.value, 10),
 			        // numberOfChannels: parseInt(numberOfChannels.value, 10),
@@ -212,43 +199,39 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 			        encoderPath: "res/js/recorder/OggOpusRecorder/dist/encoderWorker.min.js", ///Users/zurab/Мои работы/ConnectWeb/ConnectWebAndDesctop/res/js/recorder/OggOpusRecorder/src/encoderWorker.js
 			      });
 
+				 recorder.onStart ( 
+				 	() => {
+				 		// console.log('recorder.onStart');
+				 	}
+				 );
+				 recorder.onStop ( 
+				 	() => {
+				 		// console.log('recorder.onStop');
+				 	}
+				 );
+				 recorder.onPause ( 
+				 	() => {
+				 		// console.log('recorder.onPause');
+				 	}
+				 );
+				 recorder.onSave (
+					(e) => {
+			        	var blob = new Blob( [e.detail], { type: 'audio/ogg' } );
+			        	if ( typeof iNdata['onDataAvailable'] == 'function' ) iNdata['onDataAvailable'](false,blob);
 
-		        recorder.addEventListener( "start", function(e){
-			        console.log('Recorder is started',e);
-			    });
+					}
+				 );
 
-			    recorder.addEventListener( "stop", function(e){
-			        console.log('Recorder is stopped',e);
-					
-		     	});
+				 // recorder.delete();
+				 
+		    	 recorder.initStream(
+					{
+						onSuccess : () => {
+							if( typeof iNdata['onSuccess']  == 'function' ) iNdata['onSuccess']( stream, recorder );
 
-				recorder.addEventListener( "streamError", function(e){
-			        console.log('Recorder is streamError',e);
-				});
-
-				recorder.addEventListener( "streamReady", function(e){
-			        console.log('Recorder is streamReady',e);
-				});
-
-				recorder.addEventListener( "dataAvailable", function (e) {
-			        console.log('Recorder is dataAvailable',e);
-			        var blob = new Blob( [e.detail], { type: 'audio/ogg' } );
-			        // var fileName = new Date().toISOString() + ".opus";
-			        // var url = URL.createObjectURL( blob );  
-			        if ( typeof iNdata['onDataAvailable'] == 'function' ) iNdata['onDataAvailable'](false,blob);
-			       
-			    });
-				recorder.initStream();
-				// recorder.start();
-				// recorder.stop();
-				// recorder.initStream();
-				setTimeout (
-					() => {
-						if( typeof iNdata['onSuccess']  == 'function' ) iNdata['onSuccess']( stream, recorder);
-					},
-					500
-				);
-		    	 // mediaRecorder.start();
+						}
+					}
+				 );
 			}, 
 			// error funciton
 			(e) => {
@@ -258,75 +241,6 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 		);
 	}
 	_['liveAudioRecord'] = liveAudioRecord;
-
-	function audio3 (iNdata) {
-		/*
-			@discr
-				for record audion
-			@inputs
-				iNdata -> object
-					onSuccess -> function
-					onError -> function
-		*/
-		//
-		getPermissionForAudioRecord (
-			// success function
-			(stream) => {
-				console.log('Recorder',Recorder);
-				 var recorder = new Recorder({
-			        // monitorGain: parseInt(monitorGain.value, 10),
-			        // numberOfChannels: parseInt(numberOfChannels.value, 10),
-			        // bitRate: parseInt(bitRate.value,10),
-			        // encoderSampleRate: parseInt(encoderSampleRate.value,10),
-
-			        // leaveStreamOpen: true,
-			        encoderSampleRate : 16000,
-			        resampleQuality: 0,
-			        encoderPath: "res/js/recorder/OggOpusRecorder/dist/encoderWorker.min.js", ///Users/zurab/Мои работы/ConnectWeb/ConnectWebAndDesctop/res/js/recorder/OggOpusRecorder/src/encoderWorker.js
-			      });
-				var dataInner = {};
-
-
-		        recorder.addEventListener( "start", function(e){
-			        console.log('Recorder is started 1',e);
-			    });
-
-			    recorder.addEventListener( "stop", function(e){
-			        console.log('Recorder is stopped',e);
-					
-		     	});
-
-				recorder.addEventListener( "streamError", function(e){
-			        console.log('Recorder is streamError',e);
-				});
-
-				recorder.addEventListener( "streamReady", function(e){
-			        console.log('Recorder is streamReady',e);
-				});
-
-				recorder.addEventListener( "dataAvailable", function(e){
-			        console.log('Recorder is dataAvailable',e);
-			        var blob = new Blob( [e.detail], { type: 'audio/ogg' } );
-			        var fileName = new Date().toISOString() + ".opus";
-			        var url = URL.createObjectURL( blob );  
-			        if(typeof dataInner['getGlob'] == 'function') dataInner['getGlob'](false,blob);
-			       
-			    });
-				recorder.initStream();
-				if( typeof iNdata['onSuccess']  == 'function' ) iNdata['onSuccess']( stream, recorder , dataInner);
-		    	 // mediaRecorder.start();
-			}, 
-			// error funciton
-			(e) => {
-			     if(typeof iNdata['onError']  == 'function') iNdata['onError'](e);
-				
-			}
-		);
-	}
-	_['audio3'] = audio3;
-
-
-
 
 	function getUserMedia (iNmediaConstraints, iNMediaSuccess, iNMediaError) {
 		navigator.getUserMedia(iNmediaConstraints, iNMediaSuccess, iNMediaError);
@@ -351,17 +265,17 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 	}
 	_['getPermissionForVideoRecord'] = getPermissionForVideoRecord;
 
-	function getPermissionForVideoAndAudioRecord (onSuccess, onError) {
+	function getPermissionForLiveVideoRecord (onSuccess, onError) {
 		//prepared options for start audio
-		var constrainedWidth = 300,
-			constrainedHeight = 300;
+		var constrainedWidth = 200,
+			constrainedHeight = 200;
 		 var video_constraints = {
 		    "mandatory": {
 		       maxHeight: constrainedHeight + 120,
 		       maxWidth: constrainedWidth + 120,
 		      "minWidth": constrainedWidth,
 		      "minHeight": constrainedHeight,
-		      "minFrameRate": "30"
+		      // "minFrameRate": "30"
 		    },
 		    "optional": []
 		  }
@@ -371,7 +285,7 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 		//         maxWidth: 320
 		//     },
 		//     width: { min: 240, ideal: 320, max: 380 },
-  //       	height: { min: 240, ideal: 320, max: 380 },
+  		//     height: { min: 240, ideal: 320, max: 380 },
 		// }
 		var audioMediaConstraints = {
 		    video: video_constraints,
@@ -379,7 +293,7 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 		};
 		navigator.getUserMedia(audioMediaConstraints, onSuccess, onError);
 	}
-	_['getPermissionForVideoAndAudioRecord'] = getPermissionForVideoAndAudioRecord;
+	_['getPermissionForLiveVideoRecord'] = getPermissionForLiveVideoRecord;
 
 	return _;
 });

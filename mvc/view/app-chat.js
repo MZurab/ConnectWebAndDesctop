@@ -55,7 +55,7 @@ define([ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'jquery.appear'
 
 	templates['appTemplate'] = `
 		<div class="aCpI_streamVideo">
-		  <video class="aCpI_videoStreamElement"></video>
+		  <video class="aCpI_videoStreamElement" muted></video>
 		  <div class="aCpI_videoStreamTimeCounter"></div>
 		</div>
 		<div class="chatBlockInViewBlock">

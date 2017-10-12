@@ -767,11 +767,18 @@ input,textarea {outline:none;}
 				    align-items: center;
 				    display: none;
 				}
-					.aCpI_videoStreamElement {
+					.aCpI_streamVideo > video { /* .aCpI_videoStreamElement  */
 					    max-width: 75%;
 					    max-height: 75%;
 					    border-radius: 100%;
 					    cursor: pointer;
+
+					    transform: rotateY(180deg);
+					    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+					    -moz-transform:rotateY(180deg); /* Firefox */
+
+					    position: absolute;
+					    z-index: 0;
 					}
 					.aCpI_videoStreamTimeCounter {
 					    font-size: 8rem;
@@ -780,8 +787,272 @@ input,textarea {outline:none;}
 					    display: flex;
 					    position: absolute;
     					text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35), 0 0 1em rgba(0, 0, 0, 0.35);
+    					z-index: 1;
 					}
 			/*@> aCpI chat */
+
+
+			/*@< codeKey = aCpI - appChatPageIndex  'audioLiveMsg'*/
+				.aCpI_msgLiveAudio_contentAudioInToMeMessage {
+				    height: 4rem;
+				    max-width: 80%;
+				    display: block;
+				    width: 25rem;
+				    margin-left: 0.9rem;
+				    background: white;
+				    border-radius: 0 0.3rem 0.3rem 0;
+				    font-size: 1.2rem;
+				    float: left;
+				    position: relative;
+				}
+					.aCpI_msgLiveAudio_userNameBlockInAudioMsg {
+					    position: absolute;
+					    font-size: 0.9rem;
+					    top: -1.2rem;
+					    right: 0px;
+					    color: #1cb5e1;
+					    font-weight: 900;
+					    font-family: sans-serif;
+					}
+					/*ms*/
+					.aCpI_msgLiveAudio_audioMsgPlayedBlock {
+					    position: absolute;
+					    width: 100%;
+					    bottom: -0.25rem;
+					    height: 0.25rem;
+					    display: none; /* CHANGE - add spy*/
+					}
+					.aCpI_msgLiveAudio_playedSpritesInAudioMsg {
+					    background-color: rgb(36, 208, 168);
+					    height: 100%;
+					    position: absolute;
+					    width: 100%;
+					    left: 0%;
+					}
+					/**/
+					.aCpI_msgLiveAudio_backgroundForAudioMsgFromMe {
+					    background: rgba(255, 0, 59, 0.25);
+					}
+					.aCpI_msgLiveAudio_backgroundForAudioMsgToMe {
+					    background: rgba(28, 181, 225, 0.4);
+					}
+					.aCpI_msgLiveAudio_backgroundForAudioMsg {
+					    height: 100%;
+					    width: 0%;
+					    position: absolute;
+					    border-radius: inherit;
+
+					}
+
+					.aCpI_msgLiveAudio_backgroundForAudioMsgOnHover {
+					    position: absolute;
+					    height: 100%;
+					    width: 0%;
+					    background: rgba(114, 93, 149, 0.15);
+					    border-radius: inherit;
+					}
+
+					.aCpI_msgLiveAudio_blockInAudioMsg {
+					    width: 100%;
+					    height: 100%;
+					    position: relative;
+					    margin: 0.25rem;
+					}
+						.aCpI_msgLiveAudio_iconInAudioMessage {
+						    width: 3.5rem;
+						    height: 3.5rem;
+						    background-image: url(https://cdn.ramman.net/images/icons/users/zurab.jpg); /* dynamic */
+						    background-size: 100%;
+						    border-radius: 100%;
+						    position: absolute;
+						    top: 0px;
+						    left: 0px;
+						}
+						/*@< aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg*/
+							.aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg {
+							    position: absolute;
+							    width: 2.5rem;
+							    height: 2.5rem;
+							    top: 0.5rem;
+							    z-index: 10;
+							    cursor: pointer;
+							    border-radius: 100%;
+							    display: none;
+							}
+							.aCpI_msg_iconUpload {
+							    background-image: url(https://cdn.ramman.net/web/res/images/buttons/messages/upload.png);
+							    background-size: 90%;
+							    background-repeat: no-repeat;
+							    background-position: center;
+							}
+							.aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg.aCpI_fromMeMessage {
+							    left: -3rem;
+							}
+							.aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg.aCpI_toMeMessage {
+							    right: -2.5rem;
+							}
+						/*@> aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg*/
+						.aCpI_msgLiveAudio_viewWhenLoadingLiveAudioMsg {
+						    position: absolute;
+						    width: 3.2rem;
+						    height: 3.2rem;
+						    left: 3.7rem;
+						    top: 0.2rem;
+						    background-image: url(https://cdn.ramman.net/web/res/gif/messages/live/liveAudioLoading_256_256.gif);
+						    background-size: 100% 100%;
+						    background-position-x: 198%;
+						    cursor: pointer;
+						}
+						.aCpI_msgLiveAudio_controllPlayInAudioMessage {
+						    position: absolute;
+						    width: 2.5rem;
+						    height: 2.5rem;
+						    left: 4rem;
+						    top: 0.6rem;
+						    background-image: url(https://cdn.ramman.net/web/res/images/icons/message/audio/sprite.png);
+						    background-size: auto 200%;
+						    background-position-x: 198%;
+						    cursor: pointer;
+						    display: none;
+						}
+						.aCpI_msgLiveAudio_controllPauseInAudioMessage {
+						    position: absolute;
+						    width: 2.5rem;
+						    height: 2.5rem;
+						    left: 4rem;
+						    top: 0.5rem;
+						    background-image: url(https://cdn.ramman.net/web/res/images/icons/message/audio/sprite.png);
+						    background-size: auto 200%;
+						    background-position-x: 198%;
+						    background-position-y: 100%;
+						    cursor: pointer;
+						    display:none;
+						}
+						.aCpI_msgLiveAudio_hideAudioBlock {
+							display: none;
+						}
+						.aCpI_msgLiveAudio_timeInAudioMsg {
+						    font-size: 0.9rem;
+						    position: absolute;
+						    bottom: 0.5rem;
+						    font-family: sans-serif;
+						}
+						.aCpI_msgLiveAudio_timeNowInAudioMessage {
+						    left: 7rem;
+						}
+						.aCpI_msgLiveAudio_timeAllInAudioMessage {
+						    right: 0.5rem;
+						}
+
+				.aCpI_msgLiveAudio_contentAudioInFromMeMessage {
+				    height: 4rem;
+				    max-width: 80%;
+				    display: block;
+				    width: 25rem;
+				    margin-right: 0.9rem;
+				    background: white;
+				    border-radius: 0.3rem 0 0 0.3rem;
+				    font-size: 1.2rem;
+				    float: right;
+				    position: relative;
+				}
+				.aCpI_msgLiveAudio_contentOfAudioMessage {
+					cursor: pointer;
+				}
+			/*@> codeKey = aCpI - appChatPageIndex  'audioLiveMsg' */
+
+
+			/*@< codeKey = aCpI - appChatPageIndex  'videoLiveMsg' */
+				.aCpI_msgLiveVideo_contentLiveVideoInToMeMessage {
+				    margin-top: 0.25rem;
+				    display: table;
+				    padding: 0.5rem;
+				    max-width: 80%;
+				    background: white;
+				    margin-left: 0.9rem;
+				    margin-bottom: 0.25rem;
+				    border-radius: 0 0.3rem 0.3rem 0;
+				    font-size: 1.2rem;
+				}
+				.aCpI_msgLiveVideo_contentLiveVideoInFromMeMessage {
+				    margin-top: 0.25rem;
+				    display: table;
+				    padding: 0.5rem;
+				    max-width: 80%;
+				    background: white;
+				    margin-right: 0.9rem;
+				    margin-bottom: 0.25rem;
+				    border-radius: 0.3rem 0 0 0.3rem;
+				    font-size: 1.2rem;
+				    float: right;
+				}
+					.aCpI_msgLiveVideo_videoMsgContent {
+						min-width: 10rem;
+						min-height: 10rem;
+					    max-width: 20rem;
+					    max-height: 20rem;
+					    position: relative;
+					}
+
+						.aCpI_msgLiveVideo_msgNowVideoTime {
+						    position: absolute;
+					        bottom: 0.15rem;
+		    				left: 0.35rem;
+						    color: white;
+						    font-size: 1rem;
+						    text-shadow: 1px 1px 2px black, 0 0 1em black;
+						}
+						/*@< aCpI_msgLiveVideo_viewWhenUploadingVideoLiveMsg */
+							.aCpI_msgLiveVideo_viewWhenUploadingVideoLiveMsg {
+							    position: absolute;
+							    width: 2.5rem;
+							    height: 2.5rem;
+							    top: 45%;
+							    display: none;
+							}
+							.aCpI_msg_iconUpload {
+							    background-image: url(https://cdn.ramman.net/web/res/images/buttons/messages/upload.png);
+							    background-size: 90%;
+							    background-repeat: no-repeat;
+							    background-position: center;
+							}
+							.aCpI_msgLiveVideo_viewWhenUploadingVideoLiveMsg.aCpI_fromMeMessage {
+							    left: -3.15rem;
+							}
+							.aCpI_msgLiveVideo_viewWhenUploadingVideoLiveMsg.aCpI_toMeMessage {
+							    right: -3.5rem;
+							}
+						/*@> aCpI_msgLiveVideo_viewWhenUploadingVideoLiveMsg */
+						.aCpI_msgLiveVideo_viewWhenLoadingVideoLiveMsg {
+						    background-image: url(https://cdn.ramman.net/images/gif/loader.min.gif);
+						    position: absolute;
+						    z-index: 3;
+						    width: 100%;
+						    height: 100%;
+						    background-position: center center;
+						    background-repeat: no-repeat;
+						    background-color: #e2eff2;
+						}
+
+						.aCpI_msgLiveVideo_backgroundPlayVideoOnHover {
+						    background-image: url(https://cdn.ramman.net/web/res/images/icons/player/play_128x128_50.png);
+						}
+						.aCpI_msgLiveVideo_backgroundPauseVideoOnHover {
+						    background-image: url(https://cdn.ramman.net/web/res/images/icons/player/pause_128x128_50.png);
+						}
+						.aCpI_msgLiveVideo_backgroundVideoOnHover {
+						    z-index: 2;
+						    width: 100%;
+						    height: 100%;
+						    background-color: rgba(255, 255, 255, 0.85);
+						    position: absolute;
+						    cursor: pointer;
+						    background-position: center center;
+						    background-repeat: no-repeat;
+						}
+			/*@> codeKey = aCpI - appChatPageIndex 'videoLiveMsg'  */
+
+
 
 			#viewAndChatBlockInViewBlock {
 				overflow: hidden;

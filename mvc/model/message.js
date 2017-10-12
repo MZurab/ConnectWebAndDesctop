@@ -1,4 +1,4 @@
-define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_category' , 'm_storage','m_record'],function($, VIEW, FIREBASE, MOMENT, USER, M_APP, M_CATEGORY, M_STORAGE, M_RECORD) {
+define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_category' , 'm_storage','m_record','m_progressbar'],function($, VIEW, FIREBASE, MOMENT, USER, M_APP, M_CATEGORY, M_STORAGE, M_RECORD,M_PROGRESSBAR) {
 	const _ = {'view':VIEW};
 	const CONST = {
 		'var_prefixNewMessageCount' : 'connectNewMsgCountInChat-'
@@ -81,19 +81,19 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
     		if(typeof iNobject != 'object') iNobject = {};
 			M_APP.view.createLoaderInAppView();
 
-			startChildFromMessages(iNchatId,'child_added',iNobject);
+			getMessagesFromDb(iNchatId,'child_added',iNobject);
 
 			setTimeout (
 				() => {
 					let chatId = iNchatId;
-					startChildFromMessages(chatId,'child_changed',iNobject);
+					getMessagesFromDb(chatId,'child_changed',iNobject);
 				},
 				5000
 			); 
 	    }
 	    _['synchronizeWithMessageDb'] = synchronizeWithMessageDb;
 
-		    function startChildFromMessages (iNchatId, iNtype, iNobject) {
+		    function getMessagesFromDb (iNchatId, iNtype, iNobject) {
 		    	/*
 		    		@inputs
 		    			@required
@@ -111,11 +111,11 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 
 		        var messagesRef = FIREBASE.database().ref('messages/'+iNchatId);
 		        messagesRef.orderByChild("time").limitToLast(40).on(iNtype, (messagesData) =>  { 
-		        	callbackAddOrChangeMessageFromFirebase( messagesData, iNchatId, iNtype, iNobject);
+		        	callbackAddOrChangeMessageForDb( messagesData, iNchatId, iNtype, iNobject);
 				});
 		    }
 		    
-			    function callbackAddOrChangeMessageFromFirebase (iNdataFromFB, iNchatId, iNtype,iNobject) {
+			    function callbackAddOrChangeMessageForDb (iNdataFromFB, iNchatId, iNtype,iNobject) {
 			    	/*
 			    		@inputs
 			    			@required
@@ -151,15 +151,15 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 
 			    		if(typeof iNobject['functionOnChildChanged'] == 'function') iNobject['functionOnChildAdded'](iNchatId);
 
-						VIEW.safeReplaceMsgSimpleTextToChatPage( objectForCreateMessage, myUID, iNchatId  );
+						VIEW.msgSimpleText_safeReplace( objectForCreateMessage, myUID, iNchatId  );
 
 			    	} else {
 			    		if(typeof iNobject['functionOnChildAdded'] == 'function') iNobject['functionOnChildAdded'](iNchatId);
-			    		safeCreateCenterMessageByPassedTime(objectForCreateMessage,fullData,iNchatId,myUID);
+			    		msgSimpleText_safeCreateMessageByPassedTime(objectForCreateMessage,fullData,iNchatId,myUID);
 
 			    		
 
-						VIEW.createMsgSimpleTextToChatPage( objectForCreateMessage, myUID, iNchatId  );
+						VIEW.msgSimpleText_createMsg( objectForCreateMessage, myUID, iNchatId  );
 
 						VIEW.effChatViewScrollToBotWithTimeOut (
 							() => {
@@ -198,9 +198,9 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 	    }
 	    _['setObserverForAppearMessageInVisualScrollByChatId'] = setObserverForAppearMessageInVisualScrollByChatId;
 
-	    function safeCreateCenterMessageByPassedTime (iNobject,iNfullBlock,iNchatId,iNmyUid) {
+	    function msgSimpleText_safeCreateMessageByPassedTime (iNobject,iNfullBlock,iNchatId,iNmyUid) {
     		if(iNfullBlock.time > 0) {
-				safeCreateCenterDateText ( iNchatId, iNfullBlock.time );
+				msgSimpleText_createCenterDateText ( iNchatId, iNfullBlock.time );
 			}
 
 	    }
@@ -426,7 +426,7 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 	  		return FIREBASE.database().ref().update(updates);
 		}
 
-	function safeCreateCenterDateText (iNchatId,iNtime) {
+	function msgSimpleText_createCenterDateText (iNchatId,iNtime) {
 		var lastMsgTimeText = getLastMsgTimeByChatId(iNchatId);
 		var lastMsgTime 	= parseInt(lastMsgTimeText);
 		var isThisDay		= MOMENT().isThisDay(iNtime);
@@ -444,7 +444,7 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 			}else {
 				objForChat['content'] = MOMENT().getFullText(iNtime);
 			}
-			VIEW.addCenterSimpleTextToChatPage(objForChat, iNchatId);
+			VIEW.msgSimpleText_addCenter(objForChat, iNchatId);
 		}
 	}
 	function setLastMsgTimeByChatId (iNchatId,iNtime) {
@@ -472,7 +472,7 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 
 
 //@< COTROLLER msgLiveVideo
-	function controller_msgLiveVideo_sendVideoToStorage (error, blob) {
+	function controller_msgLiveVideo_record_sendVideoToStorage (error, blob) {
 		M_STORAGE.uploadBlob  (
 			blob,
 			{
@@ -483,16 +483,16 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 		);
 	}
 
-	function controller_msgLiveVideo_run () {
+	function controller_msgLiveVideo_record_run () {
 		var flagPermissionForLiveVideoRecord 		= false,
 			flagBoolStartedLoaded 					= false,
 			mediationObjectLiveVideoRecorderObject,
 			mediationObjectLiveVideoStreamObject;
 
-		VIEW.onSpecialClickForSendLiveAudioOrVideo (
+		var specialClickObject = VIEW.onSpecialClickForSendLiveAudioOrVideo (
 			'video',
 			{	
-
+				// defaultState : false,
 				'onStartVideoRecord': () => {
 				// when timer finished (we give time for browser to get stream from camera)
 					if ( flagPermissionForLiveVideoRecord == true ) {
@@ -511,6 +511,15 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 					M_RECORD.video ( 
 						{
 							'onSuccess': (stream,recorderObject,mediationObjectForPassToVideoRecord) => {
+								console.log ( 'specialClickObject video mediationObjectLiveVideoRecorderObject ',mediationObjectLiveVideoRecorderObject );
+								if ( typeof mediationObjectLiveVideoRecorderObject != 'undefined' ) {
+									// stop recording object (delete tracks from stream)
+									M_RECORD.stopRecordingByStream(mediationObjectLiveVideoStreamObject);
+									// stop recording stream
+									mediationObjectLiveVideoRecorderObject.stop();
+									// delete stream
+									mediationObjectLiveVideoStreamObject.stop();
+								}
 								// set stream for global access in function
 								mediationObjectLiveVideoStreamObject 	= stream;
 								// set recorder for global access in function
@@ -518,11 +527,17 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 								// we get perimision for browser -> set true
 								flagPermissionForLiveVideoRecord = true;
 								// set for view element (video tag) our stream as src
-								VIEW.setStreamVideoElement(mediationObjectLiveVideoStreamObject);
+								VIEW.msgLiveVideo_record_setStreamVideoElement(mediationObjectLiveVideoStreamObject);
 								// show stream view box
-								VIEW.showStreamVideoViewer();
+								VIEW.msgLiveVideo_record_showStreamVideoViewer();
+
+								// active special click object
+								// specialClickObject.on();
 							},
 							'onError' : (e) => {
+								// deactive special click object
+								// specialClickObject.off();
+
 								// we don't get perimision for browser -> set false
 								flagPermissionForLiveVideoRecord = false;
 							}
@@ -535,7 +550,7 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 				// when mouse up from outside btn || from cancel btn 
 
 					// hide stream recorder view
-					VIEW.hideStreamVideoViewer();
+					VIEW.msgLiveVideo_record_hideStreamVideoViewer();
 					// stop recording object (delete tracks from stream)
 					M_RECORD.stopRecordingByStream(mediationObjectLiveVideoStreamObject);
 					// stop recording stream
@@ -553,11 +568,11 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 					// is recording started
 					if ( flagBoolStartedLoaded == true ) {
 						// hide stream recorder view
-						VIEW.hideStreamVideoViewer();
+						VIEW.msgLiveVideo_record_hideStreamVideoViewer();
 						// stop recording stream
 						mediationObjectLiveVideoRecorderObject.stop();
 						// upload video to storage
-						mediationObjectLiveVideoRecorderObject.get( controller_msgLiveVideo_sendVideoToStorage );
+						mediationObjectLiveVideoRecorderObject.get( controller_msgLiveVideo_record_sendVideoToStorage );
 						// stop recording object (delete tracks from stream)
 						M_RECORD.stopRecordingByStream(mediationObjectLiveVideoStreamObject);
 						// delete stream
@@ -570,12 +585,28 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 			}
 		);
 	}
-	_['controller_msgLiveVideo_run'] = controller_msgLiveVideo_run;
+	_['controller_msgLiveVideo_record_run'] = controller_msgLiveVideo_record_run;
 
-//@> COTROLLER msgLiveVideo
+//@> COTROLLER record_msgLiveVideo 
 
-//@< COTROLLER msgLiveAudio
-	function controller_msgLiveAudio_sendAudioToStorage (error, blob) {
+
+
+
+// msg live video 
+	function createMsg () {
+
+	}
+	function uploadMsg () {
+
+	}
+	function replaceMsg () {
+
+	}
+	
+//
+
+//@< COTROLLER msgLiveAudio record
+	function controller_msgLiveAudio_record_sendAudioToStorage (error, blob) {
 		M_STORAGE.uploadBlob  (
 			blob,
 			{
@@ -586,37 +617,48 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 		);
 	}
 
-	function controller_msgLiveAudio_run () {
+	function controller_msgLiveAudio_record_run () {
 		var permissionForLiveAudioRecord = false;
 		var mediationObjectLiveAudioRecorderObject;
 		var mediationObjectLiveAudioStreamObject;
 
-		VIEW.onSpecialClickForSendLiveAudioOrVideo (
+		var specialClickObject = VIEW.onSpecialClickForSendLiveAudioOrVideo (
 			'audio',
 			{
+				// defaultState : false,
 				'onStart': () => {
 				// when mouse up from btn for live recording
-					if ( permissionForLiveAudioRecord == false ) {
+					// if ( permissionForLiveAudioRecord == false ) {
 						M_RECORD.liveAudioRecord ( 
 							{
 								'onSuccess': (stream,recorderObject) => {
+									if ( typeof mediationObjectLiveAudioStreamObject != 'undefined' ) {
+										M_RECORD.stopRecordingByStream(mediationObjectLiveAudioStreamObject);
+										mediationObjectLiveAudioRecorderObject.delete();
+										mediationObjectLiveAudioStreamObject.stop();
+									}
+									// set stream
 									mediationObjectLiveAudioStreamObject 	= stream;
+									// set record object
 									mediationObjectLiveAudioRecorderObject 	= recorderObject;
 									permissionForLiveAudioRecord = true;
 
-									if ( permissionForLiveAudioRecord == true ) {
+									if ( permissionForLiveAudioRecord == true )
 										mediationObjectLiveAudioRecorderObject.start();
-									}
+
+
+									// active special click object
+									// specialClickObject.on();
+									
 								},
 								'onError' : (e) => {
+									// deactive special click object
+									// specialClickObject.off();
 									permissionForLiveAudioRecord = false;
 								},
-								'onDataAvailable' : controller_msgLiveAudio_sendAudioToStorage
+								'onDataAvailable' : controller_msgLiveAudio_record_sendAudioToStorage
 							}
-						)
-					} else {
-						mediationObjectLiveAudioRecorderObject.start();
-					}
+						);
 					
 				},
 				'onDelete': () => {
@@ -624,27 +666,27 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 					console.log('onDelete permissionForLiveAudioRecord', permissionForLiveAudioRecord);
 					if ( permissionForLiveAudioRecord == true ) {
 						M_RECORD.stopRecordingByStream(mediationObjectLiveAudioStreamObject);
-						mediationObjectLiveAudioRecorderObject.clearStream();//  audio 3
-						// mediationObjectLiveAudioStreamObject.stop();
-						mediationObjectLiveAudioRecorderObject.stop();
+						mediationObjectLiveAudioRecorderObject.delete();
+						mediationObjectLiveAudioStreamObject.stop();
+
+						// mediationObjectLiveAudioRecorderObject.initStream();
 					}
 
 				},
 				'onSend' : () => {
 				// when mouse up from inside btn for live recording
 					if ( permissionForLiveAudioRecord == true ) {
-						mediationObjectLiveAudioRecorderObject.stop();
+						mediationObjectLiveAudioRecorderObject.save();
 						M_RECORD.stopRecordingByStream ( mediationObjectLiveAudioStreamObject );
 
 						mediationObjectLiveAudioStreamObject.stop();
-						mediationObjectLiveAudioRecorderObject.initStream();
 					}
 				},
 				
 			}
 		);
 	}
-	_['controller_msgLiveAudio_run'] = controller_msgLiveAudio_run;
+	_['controller_msgLiveAudio_record_run'] = controller_msgLiveAudio_record_run;
 
 //@> COTROLLER msgLiveVideo
 
