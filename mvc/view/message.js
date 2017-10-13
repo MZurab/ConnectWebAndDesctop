@@ -51,21 +51,48 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
 	
 	//@< chief msg container
-		templates['msgBox'] = `
+		templates['msg_boxForMessage'] = `
 			<div id='msgId{{msgId}}' class="messagesInChatView {{class}} {{#if appearClass}}connect-appear{{/if}} {{#if fromMe}}fromMeMessageInChatView{{/if}}{{#if toMe}}toMeMessageInChatView{{/if}} {{#if note}}noteMessage{{/if}}"  {{#if timeSent}}time-sent="{{timeSent}}"{{/if}}  {{#if timeRead}}time-read="{{timeRead}}"{{/if}} {{#if timeDelivered}}time-delivered="{{timeDelivered}}"{{/if}}  connect_msg="{{msgId}}" connect-appear-scroll-parent='#leftBlockInViewWindow' connect-appear-my-parent='.ChatViewInAppWindow'>
 				{{boxContent}}
 			</div>
 		`;
-		function getBoxForMsg (iNdata) {
+		function msg_getTemplateByNameBoxForMsg (iNdata) {
     		/*
     			@inputs
     				iNdata -> object
     					class
     		*/
-			let temp = Template7.compile(templates['msgBox']);
+			let temp = Template7.compile(templates['msg_boxForMessage']);
 			return temp(iNdata);
 		}
-    	_['getBoxForMsg'] = getBoxForMsg;
+    	_['msg_getTemplateByNameBoxForMsg'] = msg_getTemplateByNameBoxForMsg;
+
+    	function msg_getPathToDomForMsg (  iNchatId, iNmsgId ) {
+    		/*
+    			@discr
+    				get selector (path to dom message element)
+    			@inputs
+    				iNchatId -> string
+    				iNmsgId -> string
+    		*/
+	        var iNneedView = msg_getPathToDomForChat(iNchatId);
+	        var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNmsgId+"']";
+	        return fullPath;
+		}
+	    _['msg_getPathToDomForMsg'] = msg_getPathToDomForMsg;
+
+    	function msg_getPathToDomForChat (  iNchatId ) {
+    		/*
+    			@discr
+    				get selector (path to dom message element)
+    			@inputs
+    				iNchatId -> string
+    				iNmsgId -> string
+    		*/
+	        var fullPath = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+	        return fullPath;
+		}
+	    _['msg_getPathToDomForMsg'] = msg_getPathToDomForMsg;
 	//@> chief msg container
 
 	//@<SECTION  'msg simpleText' type = 1  ------------------------------------------------------------------------------------------------------------------------------------------------
@@ -75,7 +102,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 				<div class="centerMsgInChatView">{{content}}</div>
 			`;
 			function msgSimpleText_addCenter ( iNdata, iNchatId ) {
-		        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+		        var iNneedView = msg_getPathToDomForChat(iNchatId);//"#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
 		        $( iNneedView ).append( msgSimpleText_getTemplateByNameCenter ( iNdata ) );
 			}
 			_['msgSimpleText_addCenter'] = msgSimpleText_addCenter;
@@ -156,7 +183,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 	            iNdata['toMe'] = 1;
 	            iNdata['boxContent'] = msgSimpleText_getTemplateByNameTo(iNdata);
 	        }
-	        return getBoxForMsg(iNdata);
+	        return msg_getTemplateByNameBoxForMsg(iNdata);
 		}
 	    _['msgSimpleText_getMsg'] = msgSimpleText_getMsg;
 
@@ -175,14 +202,14 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 	    	_['msgSimpleText_getTemplateByNameTo'] = msgSimpleText_getTemplateByNameTo;
 
 	 	function msgSimpleText_createMsg ( iNdata, iNmyUid, iNchatId ) {
-	        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+	        var iNneedView = msg_getPathToDomForChat(iNchatId);// "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
 	        $( iNneedView ).append( msgSimpleText_getMsg ( iNdata, iNmyUid ) );
 		}
 	    _['msgSimpleText_createMsg'] = msgSimpleText_createMsg;
 
 
 		function msgSimpleText_safeReplace ( iNdata, iNmyUid, iNchatId ) {
-	        var thisIssetLength = getLengthOfMsg(iNdata, iNchatId);
+	        var thisIssetLength = msg_getLength(iNdata, iNchatId);
 	        if (thisIssetLength > 0) {
 	        	// create message
 	        	msgSimpleText_replace ( iNdata, iNmyUid, iNchatId );
@@ -191,8 +218,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 	    _['msgSimpleText_safeReplace'] = msgSimpleText_safeReplace;
 	    
 		    function msgSimpleText_replace ( iNdata, iNmyUid, iNchatId ) {
-		        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
-		        var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
+		        var fullPath = msg_getPathToDomForMsg (  iNchatId, iNdata['msgId'] )
 		        var content = msgSimpleText_getMsg ( iNdata, iNmyUid );
 		        $( fullPath ).replaceWith( content );
 			}
@@ -269,7 +295,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 		`;
 
 		function  msgLiveAudio_createMsg ( iNdata, iNmyUid, iNchatId ) {
-	        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+	        var iNneedView = msg_getPathToDomForChat(iNchatId);//"#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
 	        $( iNneedView ).append( msgLiveAudio_getMsg ( iNdata, iNmyUid ) );
 		}
 	    _['msgLiveAudio_createMsg'] = msgLiveAudio_createMsg;
@@ -302,7 +328,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 		            iNdata['toMe'] = 1;
 		            iNdata['boxContent'] = msgLiveAudio_getTemplateByNameTo(iNdata);
 		        }
-		        return getBoxForMsg(iNdata);
+		        return msg_getTemplateByNameBoxForMsg(iNdata);
 			}
 		    _['msgLiveAudio_getMsg'] = msgLiveAudio_getMsg;
 
@@ -319,7 +345,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 		    	_['msgLiveAudio_getTemplateByNameTo'] = msgLiveAudio_getTemplateByNameTo;
 
     		function msgLiveAudio_safeReplace ( iNdata, iNmyUid, iNchatId ) {
-		        var thisIssetLength = getLengthOfMsg(iNdata, iNchatId);
+		        var thisIssetLength = msg_getLength(iNdata, iNchatId);
 		        if (thisIssetLength > 0) {
 		        	// create message
 		        	msgLiveAudio_replace ( iNdata, iNmyUid, iNchatId );
@@ -328,12 +354,40 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 		    _['msgLiveAudio_safeReplace'] = msgLiveAudio_safeReplace;
 		    
 			    function msgLiveAudio_replace ( iNdata, iNmyUid, iNchatId ) {
-			        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+			        var iNneedView = msg_getPathToDomForChat(iNchatId);//"#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
 			        var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
 			        var content = msgLiveAudio_getMsg ( iNdata, iNmyUid );
 			        $( fullPath ).replaceWith( content );
 				}
 			    _['msgLiveAudio_replace'] = msgLiveAudio_replace;
+
+		    function msgLiveAudio_showUploadBlock (argument) {
+				/*
+					@discr
+					@inputs
+						@required
+						@optional
+
+				*/
+		    }
+		    function msgLiveAudio_showLoader (argument) {
+				/*
+					@discr
+					@inputs
+						@required
+						@optional
+
+				*/
+		    }
+		    function msgLiveAudio_showUploadBtn (argument) {
+				/*
+					@discr
+					@inputs
+						@required
+						@optional
+
+				*/
+		    }
 	//@SECTION> 'msg live audio' type = 20
 
 	//@<SECTION 'msg live video' type = 21
@@ -535,37 +589,33 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
 	
 
-	function getMessagesDomPathByChatId (iNchatId) {
-        return getChatDomPathByChatId(iNchatId) + " .messagesInChatView";
+	function msg_getPathToDomForMessages (iNchatId) {
+        return msg_getPathToDomForChat(iNchatId) + " .messagesInChatView";
 
     }
-    _['getMessagesDomPathByChatId'] = getMessagesDomPathByChatId;
+    _['msg_getPathToDomForMessages'] = msg_getPathToDomForMessages;
 
     function getMessagesDomObjectByChatId (iNchatId,iNextra) {
-    	var msgPath = getMessagesDomPathByChatId(iNchatId);
+    	var msgPath = msg_getPathToDomForMessages(iNchatId);
     	if (typeof iNextra == 'string')  msgPath = msgPath + iNextra;
         return $( msgPath );
 	}
     _['getMessagesDomObjectByChatId'] = getMessagesDomObjectByChatId;
 
-    function getChatDomPathByChatId (iNchatId) {
-        return "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+
+    function msg_getDomElForChat (iNchatId) {
+        return $( msg_getPathToDomForChat(iNchatId) );
 
     }
-    _['getChatDomPathByChatId'] = getChatDomPathByChatId;
+    _['msg_getDomElForChat'] = msg_getDomElForChat;
 
-    function getChatDomObjectByChatId (iNchatId) {
-        return $( getChatDomPathByChatId(iNchatId) );
-
-    }
-    _['getChatDomObjectByChatId'] = getChatDomObjectByChatId;
-
-    function getLengthOfMsg ( iNdata, iNchatId ) {
-        var iNneedView = "#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
-        var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
+    function msg_getLength ( iNdata, iNchatId ) {
+        // var iNneedView = msg_getPathToDomForChat(iNchatId);
+        //"#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+        var fullPath = msg_getPathToDomForChat(iNchatId,iNdata['msgId']);//iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
         return $( fullPath ).length;
 	}
-    _['getLengthOfMsg'] = getLengthOfMsg;
+    _['msg_getLength'] = msg_getLength;
 
    
 
@@ -983,7 +1033,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 			iNdata['success'],
 			{
 				'scroll-window'		:'#leftBlockInViewWindow',
-				'my-filter-window'	: getChatDomPathByChatId(iNchatId),
+				'my-filter-window'	: msg_getPathToDomForChat(iNchatId),
 				'checkForAddClass'	: (iNobject) => {
 					return !$(iNobject).attr('time-read');
 				},

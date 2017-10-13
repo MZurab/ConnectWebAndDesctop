@@ -84,6 +84,7 @@ require2.config({
             'm_synchronize'    : 'mvc/model/synchronize',
             'm_record'         : 'mvc/model/record',
             'm_storage'        : 'mvc/model/storage',
+            'm_database'       : 'mvc/model/database',
 
             'm_progressbar'    : 'mvc/model/progressbar', // deps 'progressbar'
 

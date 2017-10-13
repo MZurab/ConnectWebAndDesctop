@@ -41,12 +41,7 @@ define(['jquery', 'v_message', 'm_firebase', 'm_moment', 'm_user', 'm_app', 'm_c
 			VIEW.showNewMsgCounter();
 		}
 
-			// function getMyNewMessagesCountByChatIdFromAll (iNchatId) {
-			// 	var msgCountFromLocaleStorage = getMyNewMessagesCountByChatId(iNchatId);
-			// 	var msgCountFromDom 		  = getNewMsgCounter(iNchatId);
-			// 	var commonCounter 			  = msgCountFromLocaleStorage + msgCountFromDom;
-			// 	return commonCounter;
-			// }
+
 
 			function getMyNewMessagesCountByChatId (iNchatId) {
 				return parseInt(M_APP.get(CONST['var_prefixNewMessageCount']+iNchatId))||0;
