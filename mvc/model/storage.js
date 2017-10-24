@@ -30,7 +30,7 @@ define(['m_firebase'],function( FIREBASE ) {
 				iNfunctions -> object
 					onProgress (progress : int)
 					onError ( error : object )
-					onSuccess
+					onSuccess (downloadURL: string)
 		*/
 
 		var metadataForPassToStorage = {},
@@ -53,15 +53,15 @@ define(['m_firebase'],function( FIREBASE ) {
 						// Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
 						var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
-						if (typeof iNfunctions['onProgress'] == 'function') iNfunctions['onProgress'](progress);
 
 						console.log('storage.js upload - Upload is ' + progress + '% done');
+						if (typeof iNfunctions['onProgress'] == 'function') iNfunctions['onProgress'](progress);
 					}, 
 					function(error) {
 					  // A full list of error codes is available at
 					  // https://firebase.google.com/docs/storage/web/handle-errors
 
-					if (typeof iNfunctions['onError'] == 'function') iNfunctions['onError'](error);
+					  if (typeof iNfunctions['onError'] == 'function') iNfunctions['onError'](error);
 					  console.log('storage.js upload - uploadTask error',error);
 					  // switch (error.code) {
 					  //   case 'storage/unauthorized':
@@ -81,8 +81,7 @@ define(['m_firebase'],function( FIREBASE ) {
 					function() {
 					  	// Upload completed successfully, now we can get the download URL
 					  	var downloadURL = uploadTask.snapshot.downloadURL;
-					if (typeof iNfunctions['onSuccess'] == 'function') iNfunctions['onSuccess'](downloadURL);
-					  	console.log('storage.js upload - downloadURL',downloadURL);
+						if (typeof iNfunctions['onSuccess'] == 'function') iNfunctions['onSuccess'](downloadURL);
 					}
 				);
 		

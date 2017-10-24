@@ -1,4 +1,4 @@
-define(['jquery','v_category','m_view','m_app','m_user'], function ( $, VIEW, M_VIEW, M_APP,USER) {
+define(['jquery','v_category','m_view','m_app','m_user','dictionary'], function ( $, VIEW, M_VIEW, M_APP,USER, DICTIONARY) {
 	const _ = {'view':VIEW};
 	const CONST = {
 	};
@@ -8,11 +8,13 @@ define(['jquery','v_category','m_view','m_app','m_user'], function ( $, VIEW, M_
 	function getObjectForUpdateChatBlock  (chatBlock) {
         var changeObject = {};
             if( typeof(chatBlock.msg) != 'undefined' ) {
-                if( typeof(chatBlock.msg.content) == 'string' ) 	changeObject.lmsgText = chatBlock.msg.content;
-                if( typeof(chatBlock.msg.time) != 'undefined' )     changeObject.lmsgTime = chatBlock.msg.time;
+                if( typeof(chatBlock.msg.content) == 'string' ) 	changeObject.lmsgText 	= chatBlock.msg.content;
+                if( typeof(chatBlock.msg.time) != 'undefined' )     changeObject.lmsgTime 	= chatBlock.msg.time;
+                if( typeof(chatBlock.msg.type) != 'undefined' )     changeObject.lmsgType 	= chatBlock.msg.type;
+                if( typeof(chatBlock.msg.uid) != 'undefined'  )     changeObject.lmsgUid 	= chatBlock.msg.uid;
             }
             if( typeof(chatBlock.live) != 'undefined' ) {
-                if( typeof(chatBlock.live.status) 	!= 'undefined' )  changeObject.liveStatus = chatBlock.live.status;
+                if( typeof(chatBlock.live.status) 	!= 'undefined' )  	changeObject.liveStatus = chatBlock.live.status;
                 if( typeof(chatBlock.live.type) 	!= 'undefined' )    changeObject.liveType = chatBlock.live.type;
                 if( typeof(chatBlock.live.data) 	!= 'undefined' )    changeObject.liveData = chatBlock.live.data;
                 if( typeof(chatBlock.live.uid) 		!= 'undefined' )     changeObject.liveUser = chatBlock.live.uid;
@@ -120,8 +122,9 @@ define(['jquery','v_category','m_view','m_app','m_user'], function ( $, VIEW, M_
 	        }
 
 	    // chat last msg text and last msg time if isset lmsgText
-	        if(  typeof(iNdata.lmsgText) != 'undefined' ) 		VIEW.domChangeLastMsgTextAndTimeInChatBlock(iNchatId,iNdata);
-
+	        if(  typeof(iNdata.lmsgText) != 'undefined' ) 		{
+	        	VIEW.domChangeLastMsgTextAndTimeInChatBlock(iNchatId,iNdata);
+        	}
 	    // chat last msg text and last msg time if isset lmsgText
 	        if(  typeof(iNdata.login) != 'undefined' ) 			VIEW.domChangeLoginInChatBlock(iNchatId,iNdata);
 	    // change icon if it isset
@@ -145,18 +148,39 @@ define(['jquery','v_category','m_view','m_app','m_user'], function ( $, VIEW, M_
     		}
         
 	    if( typeof(iNdata.liveData) != 'undefined' &&  typeof(iNdata.liveType) != 'undefined' &&  typeof(iNdata.liveUser) != 'undefined' && USER.getMyId() != iNdata.liveUser) {
-	        
-	        switch(iNdata.liveType) {
-	            case 1: // simple text chat
-
-	                VIEW.domLiveSimpleTextAnimation(iNchatId,iNdata);
-	            break;
-	        }
-
+	        flash_startEffectByDataFromDb (iNchatId,iNdata);
 	        VIEW.startEffHideLiveInChatsList(iNchatId);
 	    }
 	}
     _['domChangeChatBlock'] = domChangeChatBlock;
+
+
+
+    function flash_startEffectByDataFromDb (iNchatId,iNdata) {
+    	/*
+    		@inputs
+    			iNchatId -> string
+    			iNdata -> object
+	    			liveData
+	    			liveType
+	    			liveUser
+	    			liveTime
+    	*/
+    	switch(iNdata.liveType) {
+            case 1: // simple text chat
+            	iNdata.liveData = DICTIONARY.withString("[dictionary-symbols]")+ " - "  + iNdata.liveData;
+				VIEW.flash_msgSimpleText_activeFlashEffect(iNchatId,iNdata);
+            break;
+            case 20: // live audio
+            	iNdata.liveData = DICTIONARY.withString("[dictionary-seconds]")+ " - " + iNdata.liveData;
+				VIEW.flash_msgLiveAudio_activeFlashEffect(iNchatId,iNdata);
+            break;
+            case 21: // live video
+            	iNdata.liveData = DICTIONARY.withString("[dictionary-seconds]")+ " - " + iNdata.liveData;
+				VIEW.flash_msgLiveVideo_activeFlashEffect(iNchatId,iNdata);
+            break;
+        }
+    }
 
    
 

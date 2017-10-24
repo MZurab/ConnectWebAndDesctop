@@ -5,7 +5,9 @@ define(['m_firebase'],function( FIREBASE ) {
 
 
 	// set firebase realtime db framework 
-	const Datebase = FIREBASE.database;
+	const Datebase      = FIREBASE.database;
+    const Datebase2     = FIREBASE.firestore;
+    window.db2 = Datebase2;
 
 	function updateRealtimeDb ( iNcollection, iNpath, iNdata ) {
 			/*
@@ -24,17 +26,41 @@ define(['m_firebase'],function( FIREBASE ) {
 	}
 	_['updateRealtimeDb'] = updateRealtimeDb;
 
+    function addRealtimeDb ( iNcollection, iNpath, iNdata ) {
+            /*
+                @disrc
+                    start sendidng flesh msg to firebase db
+                @inputs
+                    @required
+                        iNdata -> object
+                            type
+                            data
+            */
+            var baseKey = iNcollection + '/' + iNpath;
+            Datebase().ref(baseKey).set(iNdata);
+    }
+    _['addRealtimeDb'] = addRealtimeDb;
+
+
 	function getSeverVarTimestamp () {
 		return FIREBASE.database.ServerValue.TIMESTAMP ;
 	}
 	_['getSeverVarTimestamp'] = getSeverVarTimestamp;
 
-	function generateId (iNcollection,iNpath) {
+	function generateIdForRealtimeDbByFullPathToDb (iNcollection,iNpath) {
 	  var path = iNcollection + '/' + iNpath;
-      var generateId = Datebase().ref().child(path).push().key;
-      return generateId;
+      var generateIdForRealtimeDbByFullPathToDb = Datebase().ref().child(path).push().key;
+      return generateIdForRealtimeDbByFullPathToDb;
 	}
-	_['generateId'] = generateId;
+	_['generateIdForRealtimeDbByFullPathToDb'] = generateIdForRealtimeDbByFullPathToDb;
+
+
+    function generateIdForFirestoreByFullPathToDb (iNcollection,iNpath) {
+      var path = iNcollection + '/' + iNpath;
+      var generateIdForRealtimeDbByFullPathToDb = db.collection(iNcollection).doc(); //Datebase().ref().child(path).push().key;
+      return generateIdForRealtimeDbByFullPathToDb;
+    }
+    _['generateIdForFirestoreByFullPathToDb'] = generateIdForFirestoreByFullPathToDb;
 
 	function getDataFromRealtimeDb (iNcollection, iNpath, iNdata) {
     	/*
@@ -65,12 +91,12 @@ define(['m_firebase'],function( FIREBASE ) {
         	var order = iNdata['order'];
         	if ( !Array.isArray(order)  ) order = [order];
         	for (var iKey in order ) {
-        		ref.orderByChild( order['iKey'] );
+        		ref.orderByChild( order[iKey] );
         	}
         }
 
         if( typeof iNdata['limitToLast'] == 'number' ) {
-        	var limit = iNdata['limit'];
+        	var limit = iNdata['limitToLast'];
     		ref.limitToLast( limit );
         }
 
@@ -111,38 +137,38 @@ define(['m_firebase'],function( FIREBASE ) {
 						functionOnSuccess
     	*/
     	if( typeof iNdata != 'object') iNdata = {};
-    	var path 	= iNcollection + '/' + iNpath;
-        var ref 	= Datebase().ref(path);
-        var type 	= iNdata['type']||'all';
-        var functionOnSuccess 	= iNdata['functionOnSuccess']||function(){};
-        var functionOnError 	= iNdata['functionOnError']||function(){};
+        var path    = iNcollection + '/' + iNpath;
+        var ref     = Datebase().ref(path);
+        var type    = iNdata['type']||'all';
+        var functionOnSuccess   = iNdata['functionOnSuccess']||function(){};
+        var functionOnError     = iNdata['functionOnError']||function(){};
         
         if( typeof iNdata['order'] != 'undefined' ) {
-        	var order = iNdata['order'];
-        	if ( !Array.isArray(order)  ) order = [order];
-        	for (var iKey in order ) {
-        		ref.orderByChild( order['iKey'] );
-        	}
+            var order = iNdata['order'];
+            if ( !Array.isArray(order)  ) order = [order];
+            for (var iKey in order ) {
+                ref.orderByChild( order[iKey] );
+            }
         }
 
         if( typeof iNdata['limitToLast'] == 'number' ) {
-        	var limit = iNdata['limit'];
-    		ref.limitToLast( limit );
+            var limit = iNdata['limitToLast'];
+            ref.limitToLast( limit );
         }
 
         switch (type) {
-        	case "all": 
-        		ref.once('value',functionOnSuccess,functionOnError)
-        	break;
-        	case "child_added": 
-        		ref.once('child_added',functionOnSuccess,functionOnError)
-        	break;
-        	case "child_removed": 
-        		ref.once('child_removed',functionOnSuccess,functionOnError)
-        	break;
-        	case "child_moved": 
-        		ref.once('child_moved',functionOnSuccess,functionOnError)
-        	break;
+            case "all": 
+                ref.once('value',functionOnSuccess,functionOnError)
+            break;
+            case "child_added": 
+                ref.once('child_added',functionOnSuccess,functionOnError)
+            break;
+            case "child_removed": 
+                ref.once('child_removed',functionOnSuccess,functionOnError)
+            break;
+            case "child_moved": 
+                ref.once('child_moved',functionOnSuccess,functionOnError)
+            break;
         }
 
     }

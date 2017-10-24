@@ -1,4 +1,6 @@
-define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.countdown'],function(  Template7, V_APP, MOMENT, $){
+define(
+	['dictionary', 'm_progressbar','template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.countdown'],
+	function ( DICTIONARY, M_PROGRESSBAR, Template7, V_APP, MOMENT, $) {
 	const _ = {};
 	const CONST = {};
 	const templates = {};
@@ -56,6 +58,162 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 				{{boxContent}}
 			</div>
 		`;
+		//@<SECTION common time
+		  	templates['msg_commonTimeFromMeBlock'] = `
+				<div class="lineInFromMeMessage">
+			      <div class="lineInBoxInLine">
+			         
+				         <div class="topCircleInMessages" {{#if timeSentText}}{{else}}{{/if}}></div>
+				         <div class="timeTopInMessages">{{timeSentText}}</div>
+			         
+
+			        <div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
+		         	<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
+
+			      </div>
+			   </div>
+		  	`;
+		  		function msg_getTemplateByNameCommonTimeFromMeBlock (iNdata) {
+		  			/*
+		    			@inputs
+		    				iNdata -> object
+		    					class
+		    		*/
+					let temp = Template7.compile(templates['msg_commonTimeFromMeBlock']);
+					return temp(iNdata);
+		  		}
+
+			templates['msg_commonTimeToMeBlock'] = `
+				<div class="lineInToMeMessage">
+			   		<div class="lineInBoxInLine">
+						 
+						<div class="topCircleInMessages" {{#if timeSentText}}{{else}}style="display:none;"{{/if}}></div>
+						<div class="timeTopInMessages" {{#if timeSentText}}{{else}}style="display:none;"{{/if}}>{{timeSentText}}</div>
+				         
+				        <div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
+			         	<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
+				  	</div>
+			  	</div>
+		  	`;
+		  		function msg_getTemplateByNameCommonTimeToMeBlock (iNdata) {
+		  			/*
+		    			@inputs
+		    				iNdata -> object
+		    					class
+		    		*/
+					let temp = Template7.compile(templates['msg_commonTimeToMeBlock']);
+					return temp(iNdata);
+		  		}
+		  			
+		  			function msg_updateDomCommonTimeBlock (iNchatId,iNmsgId,iNdata) {
+							/*
+								@inputs
+									@required
+										iNdata -> object
+											timeSent 		-> int
+											timeSentText 	-> string
+
+											timeRead 		-> int
+											timeReadText 	-> string
+
+											timeDelivered 		-> int
+											timeDeliveredText 	-> string
+							*/
+						console.log('msg_updateDomCommonTimeBlock iNchatId,iNmsgId,iNdata',iNchatId,iNmsgId,iNdata); 
+
+		  				if ( iNdata['timeSentText'] && iNdata['timeSent'])
+		  					msg_updateDomTimeSent (iNchatId,iNmsgId,iNdata);
+
+		  				if ( iNdata['timeReadText'] && iNdata['timeRead'])
+		  					msg_updateDomTimeRead (iNchatId,iNmsgId,iNdata);
+
+		  				if ( iNdata['timeDeliveredText'] && iNdata['timeDelivered'])
+		  					msg_updateDomTimeDelivered (iNchatId,iNmsgId,iNdata);
+		  			}
+						function msg_updateDomTimeSent (iNchatId,iNmsgId,iNdata) {
+							/*
+								@inputs
+									@required
+										iNdata -> object
+											timeSent 		-> int
+											timeSentText 	-> string
+							*/
+							console.log('msg_updateDomTimeSent iNchatId,iNmsgId,iNdata',iNchatId,iNmsgId,iNdata);
+							let msgSelector 	= msg_getPathToDomForMsg(iNchatId,iNmsgId);
+							console.log('msg_updateDomTimeSent msgSelector', msgSelector);
+							// set timeSent -> update dom attr time
+							$(msgSelector).attr('time-sent', iNdata['timeSent'] );
+							// show dom el top circle
+							$(msgSelector + ' .topCircleInMessages').show();
+							// set new val -> show dom el top circle
+							$(msgSelector + ' .timeTopInMessages').html( iNdata['timeSentText'] ).show();
+						}
+						function msg_updateDomTimeRead (iNchatId,iNmsgId,iNdata) {
+							/*
+								@inputs
+									@required
+										iNdata -> object
+											timeRead 		-> int
+											timeReadText 	-> string
+							*/
+							let msgSelector 	= msg_getPathToDomForMsg(iNchatId,iNmsgId);
+							// set timeSent -> update dom attr time
+							$(msgSelector).attr('time-read', iNdata['timeRead'] );
+							// set new val -> show dom el top circle
+							$(msgSelector + ' .timeBotInMessages').html( iNdata['timeReadText'] ).show();
+						}
+						function msg_updateDomTimeDelivered (iNchatId,iNmsgId,iNdata) {
+							/*
+								@inputs
+									@required
+										iNdata -> object
+											timeDelivered 		-> int
+											timeDeliveredText 	-> string
+							*/
+							let msgSelector 	= msg_getPathToDomForMsg(iNchatId,iNmsgId);
+							// set timeSent -> update dom attr time
+							$(msgSelector).attr('time-delivered', iNdata['timeDelivered'] );
+							// set new attr title -> show dom el top circle
+							$(msgSelector + ' .botCircleInMessages').attr('title', iNdata['timeDeliveredText'] ).show();
+						}
+
+			  		function msg_getDomAttrByNameChatId (iNel) {
+				        var r = $(iNel).parent().attr('connect_chatid');
+				        return r;
+					}
+					_['msg_getDomAttrByNameChatId'] = msg_getDomAttrByNameChatId;
+
+					function msg_getDomAttrByNameMsgId (iNel) {
+				        var r = $(iNel).attr('connect_msg');
+				        return r;
+					}
+					_['msg_getDomAttrByNameMsgId'] = msg_getDomAttrByNameMsgId;
+
+					function msg_getDomAttrByNameMessageTimeSent (iNel) {
+						//time-sent
+				        var r = parseInt($(iNel).attr('time-sent'));
+				        if(typeof r != 'number' || !isFinite(r) ) r = 0;
+				        return r;
+					}
+					_['msg_getDomAttrByNameMessageTimeSent'] = msg_getDomAttrByNameMessageTimeSent;
+
+					function msg_getDomAttrByNameMessageTimeRead (iNel) {
+						//time-read
+				        var r = parseInt($(iNel).attr('time-read'));
+				        if(typeof r != 'number' || !isFinite(r) ) r = 0;
+				        return r;
+					}
+					_['msg_getDomAttrByNameMessageTimeRead'] = msg_getDomAttrByNameMessageTimeRead;
+
+					function msg_getDomAttrByNameMessageTimeDelivered (iNel) {
+						//time-delivered
+				        var r = parseInt($(iNel).attr('time-delivered'));
+				        if(typeof r != 'number' || !isFinite(r) ) r = 0;
+				        return r;
+					}
+					_['msg_getDomAttrByNameMessageTimeDelivered'] = msg_getDomAttrByNameMessageTimeDelivered;
+		//@SECTION> common time
+
 		function msg_getTemplateByNameBoxForMsg (iNdata) {
     		/*
     			@inputs
@@ -93,7 +251,71 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 	        return fullPath;
 		}
 	    _['msg_getPathToDomForMsg'] = msg_getPathToDomForMsg;
+
+
+		function msg_createMsgByItsType ( iNtype, iNobjectForCreateMessage, iNmyUID, iNchatId ) {
+    		switch(iNtype) {
+    			//@< text messages
+    			case 1: 	// simpleText 
+					msgSimpleText_createMsg( iNobjectForCreateMessage, iNmyUID, iNchatId );
+    			break;
+    			//@> text messages
+
+    			//@< live messages
+	    			case 20: 	// liveAudio 
+						// msgLiveAudio_createMsg( iNobjectForCreateMessage, iNmyUID, iNchatId );
+						msgLiveAudio_safeReplace( iNobjectForCreateMessage, iNmyUID, iNchatId  );
+	    			break;
+
+	    			case 21: 	// liveAudio
+						// msgLiveVideo_createMsg( iNobjectForCreateMessage, iNmyUID, iNchatId );
+						msgLiveVideo_safeReplace( iNobjectForCreateMessage, iNmyUID, iNchatId  );
+	    			break;
+    			//@> live messages
+
+				//@< file messages
+    			//@< file messages
+
+				//@< documents messages
+    			//@< documents messages
+    		}
+		}
+	    _['msg_createMsgByItsType'] = msg_createMsgByItsType;
+
+	    function msg_replaceMsgByItsType ( iNtype, iNobjectForCreateMessage, iNmyUID, iNchatId ) {
+	    	console.log('msg_replaceMsgByItsType' , iNtype, iNobjectForCreateMessage, iNmyUID, iNchatId);
+    		switch(iNtype) {
+    			//@< text messages
+    			case 1: 	// simpleText 
+					msgSimpleText_safeReplace( iNobjectForCreateMessage, iNmyUID, iNchatId  );
+    			break;
+    			//@> text messages
+
+    			//@< live messages
+	    			case 20: 	// liveAudio 
+						msgLiveAudio_safeReplace( iNobjectForCreateMessage, iNmyUID, iNchatId  );
+	    			break;
+
+	    			case 21: 	// liveAudio
+						msgLiveVideo_safeReplace( iNobjectForCreateMessage, iNmyUID, iNchatId  );
+	    			break;
+    			//@> live messages
+
+				//@< file messages
+    			//@< file messages
+
+				//@< documents messages
+    			//@< documents messages
+    		}
+		}
+	    _['msg_replaceMsgByItsType'] = msg_replaceMsgByItsType;
+
+
 	//@> chief msg container
+
+
+
+
 
 	//@<SECTION  'msg simpleText' type = 1  ------------------------------------------------------------------------------------------------------------------------------------------------
 		
@@ -123,35 +345,12 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 		//@> msgSimpleText_center
 
 		templates['msgSimpleText_from'] = `
-		   <div class="lineInFromMeMessage">
-		      <div class="lineInBoxInLine">
-		         {{#if timeSentText}}
-			         <div class="topCircleInMessages"></div>
-			         <div class="timeTopInMessages">{{timeSentText}}</div>
-		         {{/if}}
-
-		         
-	         	<div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
-	         	<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
-
-		      </div>
-		   </div>
+		   {{commonTimeBlock}}
 		   <div class="contentTextInFromMeMessage">{{content}}</div>
 		`;
 
 		templates['msgSimpleText_to'] = `
-		   <div class="lineInToMeMessage">
-		      <div class="lineInBoxInLine">
-				 {{#if timeSentText}}
-			         <div class="topCircleInMessages"></div>
-			         <div class="timeTopInMessages">{{timeSentText}}</div>
-		         {{/if}}
-		         
-		         <div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
-	         	<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
-
-		      </div>
-		   </div>
+		   {{commonTimeBlock}}
 		   <div class="contentTextInToMeMessage">{{content}}</div>
 		`;
 
@@ -174,18 +373,38 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
 			*/
 			var el = {}, result;
-			if ( iNdata.uid == iNmyUid ) {
 
-	            iNdata['fromMe'] = 1;
-	            iNdata['boxContent'] = msgSimpleText_getTemplateByNameFrom(iNdata);
+			iNdata['class'] = 'msgTypeSimpleText';
+			if ( iNdata.uid == iNmyUid ) {
+				iNdata['fromMe'] 			= 1;
+	            iNdata['commonTimeBlock'] 	= msg_getTemplateByNameCommonTimeFromMeBlock(iNdata);
+	            iNdata['boxContent'] 		= msgSimpleText_getTemplateByNameFrom(iNdata);
 			}
 	        else {
-	            iNdata['toMe'] = 1;
-	            iNdata['boxContent'] = msgSimpleText_getTemplateByNameTo(iNdata);
+	            iNdata['toMe'] 				= 1;
+	            iNdata['commonTimeBlock'] 	= msg_getTemplateByNameCommonTimeToMeBlock(iNdata);
+				iNdata['boxContent'] 		= msgSimpleText_getTemplateByNameTo(iNdata);
 	        }
 	        return msg_getTemplateByNameBoxForMsg(iNdata);
 		}
 	    _['msgSimpleText_getMsg'] = msgSimpleText_getMsg;
+
+	    function msgSimpleText_updateContent (iNchatId, iNdata,iNmyUid) {
+			/*
+				@discr
+				@inputs
+					iNchatId -> string
+					iNdata -> object
+						msgId 		-> string
+						content 	-> string
+					iNmyUid -> string
+			*/
+			var msgPath = msg_getPathToDomForMsg(iNchatId,iNdata['msgId']);
+			if ( iNdata.uid == iNmyUid )
+				$(msgPath + ' .contentTextInFromMeMessage').html(iNdata['content']);
+			else
+				$(msgPath + ' .contentTextInToMeMessage').html(iNdata['content']);
+		}
 
 	    	
 
@@ -211,16 +430,19 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 		function msgSimpleText_safeReplace ( iNdata, iNmyUid, iNchatId ) {
 	        var thisIssetLength = msg_getLength(iNdata, iNchatId);
 	        if (thisIssetLength > 0) {
-	        	// create message
 	        	msgSimpleText_replace ( iNdata, iNmyUid, iNchatId );
 	        }
+
 		}
 	    _['msgSimpleText_safeReplace'] = msgSimpleText_safeReplace;
 	    
 		    function msgSimpleText_replace ( iNdata, iNmyUid, iNchatId ) {
-		        var fullPath = msg_getPathToDomForMsg (  iNchatId, iNdata['msgId'] )
-		        var content = msgSimpleText_getMsg ( iNdata, iNmyUid );
-		        $( fullPath ).replaceWith( content );
+
+	        	// update common time
+	        	msg_updateDomCommonTimeBlock (iNchatId,iNdata['msgId'],iNdata);
+
+	        	// update content
+	        	msgSimpleText_updateContent (iNchatId, iNdata, iNmyUid);
 			}
 		    _['msgSimpleText_replace'] = msgSimpleText_replace;
 	//@>SECTION  'msg simpleText' type = 1  ------------------------------------------------------------------------------------------------------------------------------------------------
@@ -229,19 +451,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
 	//@<SECTION  'msg live audio' type = 20 ------------------------------------------------------------------------------------------------------------------------------------------------
 		templates['msgLiveAudio_from'] = `
-		   <div class="lineInFromMeMessage">
-		      <div class="lineInBoxInLine">
-		         {{#if timeSentText}}
-			         <div class="topCircleInMessages"></div>
-			         <div class="timeTopInMessages">{{timeSentText}}</div>
-		         {{/if}}
-
-		         
-	         	<div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
-	         	<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
-
-		      </div>
-		   </div>
+		   {{commonTimeBlock}}
 		   <div class="aCpI_msgLiveAudio_contentAudioInFromMeMessage aCpI_msgLiveAudio_contentOfAudioMessage" onmousemove="aCpI_msgLiveAudio_onHover(event, this)" onmouseout="aCpI_msgLiveAudio_onMouseOut(this)" onclick="aCpI_msgLiveAudio_onClick(event,this)">
 		      <div class="aCpI_msgLiveAudio_audioMsgPlayedBlock">
 		         <div class="aCpI_msgLiveAudio_playedSpritesInAudioMsg"></div>
@@ -250,7 +460,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 		      <div class="aCpI_msgLiveAudio_backgroundForAudioMsgOnHover"></div>
 		      <div class="aCpI_msgLiveAudio_blockInAudioMsg">
 		         <div class="aCpI_msgLiveAudio_iconInAudioMessage"></div>
-		         <div class="aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg"></div>
+		         <div class="aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg aCpI_fromMeMessage"></div>
 		         <div class="aCpI_msgLiveAudio_viewWhenLoadingLiveAudioMsg"></div>
 		         <div class="aCpI_msgLiveAudio_controllPlayInAudioMessage" onclick="aCpI_msgLiveAudio_playAudioOnClickBtnPlay(this,event)"></div>
 		         <div class="aCpI_msgLiveAudio_controllPauseInAudioMessage" onclick="aCpI_msgLiveAudio_pauseAudioOnClickBtnPause(this,event)"></div>
@@ -264,15 +474,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 		`;
 
 		templates['msgLiveAudio_to'] = `
-	   		<div class="lineInBoxInLine">
-				 {{#if timeSentText}}
-			         <div class="topCircleInMessages"></div>
-			         <div class="timeTopInMessages">{{timeSentText}}</div>
-		         {{/if}}
-		         
-		         <div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
-	         	 <div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
-		  	</div>
+			{{commonTimeBlock}}
 			<div class="aCpI_msgLiveAudio_contentAudioInToMeMessage aCpI_msgLiveAudio_contentOfAudioMessage" onmousemove="aCpI_msgLiveAudio_onHover(event, this)" onmouseout="aCpI_msgLiveAudio_onMouseOut(this)" onclick="aCpI_msgLiveAudio_onClick(event,this)">
 		      <div class="aCpI_msgLiveAudio_audioMsgPlayedBlock">
 		         <div class="aCpI_msgLiveAudio_playedSpritesInAudioMsg"></div>
@@ -281,7 +483,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 		      <div class="aCpI_msgLiveAudio_backgroundForAudioMsgOnHover"></div>
 		      <div class="aCpI_msgLiveAudio_blockInAudioMsg">
 		         <div class="aCpI_msgLiveAudio_iconInAudioMessage"></div>
-				 <div class="aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg"></div>
+				 <div class="aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg aCpI_toMeMessage"></div>
 		         <div class="aCpI_msgLiveAudio_viewWhenLoadingLiveAudioMsg"></div>
 		         <div class="aCpI_msgLiveAudio_controllPlayInAudioMessage" onclick="aCpI_msgLiveAudio_playAudioOnClickBtnPlay(this,event)"></div>
 		         <div class="aCpI_msgLiveAudio_controllPauseInAudioMessage" onclick="aCpI_msgLiveAudio_pauseAudioOnClickBtnPause(this,event)"></div>
@@ -295,12 +497,12 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 		`;
 
 		function  msgLiveAudio_createMsg ( iNdata, iNmyUid, iNchatId ) {
-	        var iNneedView = msg_getPathToDomForChat(iNchatId);//"#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+	        var iNneedView = msg_getPathToDomForChat(iNchatId);
 	        $( iNneedView ).append( msgLiveAudio_getMsg ( iNdata, iNmyUid ) );
 		}
 	    _['msgLiveAudio_createMsg'] = msgLiveAudio_createMsg;
 
-			function msgLiveAudio_getMsg (iNdata,iNmyUid) {
+    		function msgLiveAudio_getMsg (iNdata,iNmyUid) {
 				/*
 					@discr
 
@@ -321,16 +523,32 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 				var el = {}, result;
 				iNdata['class'] = 'msgTypeLiveAudio';
 				if ( iNdata.uid == iNmyUid ) {
-					iNdata['fromMe'] = 1;
-		            iNdata['boxContent'] = msgLiveAudio_getTemplateByNameFrom(iNdata);
+					iNdata['fromMe'] 			= 1;
+		            iNdata['commonTimeBlock'] 	= msg_getTemplateByNameCommonTimeFromMeBlock(iNdata);
+		            iNdata['boxContent'] 		= msgLiveAudio_getTemplateByNameFrom(iNdata);
 				}
 		        else {
-		            iNdata['toMe'] = 1;
-		            iNdata['boxContent'] = msgLiveAudio_getTemplateByNameTo(iNdata);
+		            iNdata['toMe'] 				= 1;
+		            iNdata['commonTimeBlock'] 	= msg_getTemplateByNameCommonTimeToMeBlock(iNdata);
+					iNdata['boxContent'] 		= msgLiveAudio_getTemplateByNameTo(iNdata);
 		        }
 		        return msg_getTemplateByNameBoxForMsg(iNdata);
 			}
 		    _['msgLiveAudio_getMsg'] = msgLiveAudio_getMsg;
+
+		    function msgLiveAudio_updateContent (iNchatId, iNdata,iNmyUid) {
+				/*
+					@discr
+					@inputs
+						iNchatId -> string
+						iNdata -> object
+							msgId 		-> string
+							content 	-> string
+						iNmyUid -> string
+				*/
+				var msgPath = msg_getPathToDomForMsg(iNchatId,iNdata['msgId']);
+				$(msgPath + ' .aCpI_msgLiveAudio_hideAudioBlock audio').attr('src', iNdata['content']);
+			}
 
 		    	function msgLiveAudio_getTemplateByNameFrom (iNdata) {
 					let temp = Template7.compile(templates['msgLiveAudio_from']);
@@ -346,22 +564,54 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
     		function msgLiveAudio_safeReplace ( iNdata, iNmyUid, iNchatId ) {
 		        var thisIssetLength = msg_getLength(iNdata, iNchatId);
+		        console.log('msgLiveAudio_safeReplace thisIssetLength',thisIssetLength);
+		        console.log('msgLiveAudio_safeReplace iNdata, iNmyUid, iNchatId',iNdata, iNmyUid, iNchatId);
 		        if (thisIssetLength > 0) {
 		        	// create message
 		        	msgLiveAudio_replace ( iNdata, iNmyUid, iNchatId );
+		        } else {
+		        	msgLiveAudio_createMsg ( iNdata, iNmyUid, iNchatId );
 		        }
 			}
 		    _['msgLiveAudio_safeReplace'] = msgLiveAudio_safeReplace;
 		    
 			    function msgLiveAudio_replace ( iNdata, iNmyUid, iNchatId ) {
-			        var iNneedView = msg_getPathToDomForChat(iNchatId);//"#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
-			        var fullPath = iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
-			        var content = msgLiveAudio_getMsg ( iNdata, iNmyUid );
-			        $( fullPath ).replaceWith( content );
+		        	// update common time
+		        	msg_updateDomCommonTimeBlock (iNchatId,iNdata['msgId'],iNdata);
+
+		        	// update content NOT NEED -> we never change src 
+		        	// msgLiveAudio_updateContent (iNchatId, iNdata, iNmyUid);
 				}
 			    _['msgLiveAudio_replace'] = msgLiveAudio_replace;
 
-		    function msgLiveAudio_showUploadBlock (argument) {
+			    	function msgLiveAudio_getUrl (iNchatId, iNmsgId) {
+			        	var fullPath = msg_getPathToDomForMsg(iNchatId, iNmsgId);
+			        	return $(fullPath + ' audio').attr('src');
+			    	}
+
+
+		    function msgLiveAudio_showUploadBlock (iNchatId,iNmsgId) {
+	    		let selector = msgLiveAudio_getPathToDomForUploadBlock(iNchatId,iNmsgId);
+				$(selector).show();
+		    }
+		    _['msgLiveAudio_showUploadBlock'] = msgLiveAudio_showUploadBlock;
+
+	    	function msgLiveAudio_hideUploadBlock (iNchatId,iNmsgId) {
+	    		let selector = msgLiveAudio_getPathToDomForUploadBlock(iNchatId,iNmsgId);
+				$(selector).hide();
+		    }
+		    _['msgLiveAudio_hideUploadBlock'] = msgLiveAudio_hideUploadBlock;
+
+			    	function msgLiveAudio_getPathToDomForUploadBlock (iNchatId,iNmsgId) {
+			    		let msgPath = msg_getPathToDomForMsg(iNchatId,iNmsgId);
+						return msgPath + ' .aCpI_msgLiveAudio_viewWhenUploadingLiveAudioMsg';
+				    }
+
+		    function msgLiveAudio_clearUploadBlock (iNchatId,iNmsgId) {
+	    		let selector = msgLiveAudio_getPathToDomForUploadBlock(iNchatId,iNmsgId);
+				$(selector).html();
+		    }
+		    function msgLiveAudio_initLoader (iNchatId, iNmsgId) {
 				/*
 					@discr
 					@inputs
@@ -369,29 +619,242 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 						@optional
 
 				*/
-		    }
-		    function msgLiveAudio_showLoader (argument) {
-				/*
-					@discr
-					@inputs
-						@required
-						@optional
+				msgLiveAudio_showUploadBlock(iNchatId, iNmsgId)
+				
+				let selector = msgLiveAudio_getPathToDomForUploadBlock(iNchatId, iNmsgId);
 
-				*/
-		    }
-		    function msgLiveAudio_showUploadBtn (argument) {
-				/*
-					@discr
-					@inputs
-						@required
-						@optional
+				msgLiveAudio_hideUploadBtn(iNchatId, iNmsgId);
 
-				*/
+		    	return M_PROGRESSBAR.init (selector, 0, 
+		    		{
+		    			'color' : '#000',
+		    		}
+	    		);
+			}
+		    _['msgLiveAudio_initLoader'] = msgLiveAudio_initLoader;
+
+		    function msgLiveAudio_showUploadBtn (iNchatId, iNmsgId) {
+				let path = msgLiveAudio_getPathToDomForUploadBlock (iNchatId,iNmsgId);
+
+				msgLiveAudio_clearUploadBlock();
+
+				msgLiveAudio_showUploadBlock();
+				$(path).addClass('aCpI_msg_iconUpload');
+
 		    }
+		    _['msgLiveAudio_showUploadBtn'] = msgLiveAudio_showUploadBtn;
+
+	    	function msgLiveAudio_hideUploadBtn (iNchatId,iNmsgId) {
+				let path = msgLiveAudio_getPathToDomForUploadBlock (iNchatId,iNmsgId);
+				$(path).removeClass('aCpI_msg_iconUpload');
+		    }
+
+		    function msgLiveAudio_setObserverForUploadBtn (iNchatId,iNmsgId,iNfunctionUploadFile) {
+				let path = msgLiveAudio_getPathToDomForUploadBlock (iNchatId,iNmsgId);
+				$(path).click(function () {
+					if( $(this).hasClass('aCpI_msg_iconUpload') ) {
+						// if this is a upload btn
+						if(typeof(iNfunctionUploadFile) == 'function') iNfunctionUploadFile();
+					}
+				});
+			}
+		    _['msgLiveAudio_setObserverForUploadBtn'] = msgLiveAudio_setObserverForUploadBtn;
 	//@SECTION> 'msg live audio' type = 20
 
 	//@<SECTION 'msg live video' type = 21
-		//@< controller 'record' msgLiveAudio 
+		templates['msgLiveVideo_from'] = `
+		   {{commonTimeBlock}}
+		   <div class="aCpI_msgLiveVideo_contentLiveVideoInFromMeMessage">
+		      <div class="aCpI_msgLiveVideo_videoMsgContent" onmouseenter="aCpI_msgLiveVideo_onEventMouseEnter(this)" onmouseleave="aCpI_msgLiveVideo_onEventMouseLeave(this)">
+		      	 <div class="aCpI_msgLiveVideo_viewWhenUploadingVideoLiveMsg aCpI_fromMeMessage aCpI_msg_iconUpload"></div>
+		      	 <div class='aCpI_msgLiveVideo_viewWhenLoadingVideoLiveMsg'></div>
+		      	 <div class='aCpI_msgLiveVideo_msgNowVideoTime'></div>
+		         <div class="aCpI_msgLiveVideo_backgroundPlayVideoOnHover aCpI_msgLiveVideo_backgroundVideoOnHover" onclick='aCpI_msgLiveVideo_onEventClickForBackground(this)'></div>
+		         <!-- <div class="aCpI_msgLiveVideo_backgroundPauseVideoOnHover aCpI_msgLiveVideo_backgroundVideoOnHover"></div> -->
+		         <video ontimeupdate='aCpI_msgLiveVideo_onEventTimeUpdateVideo(this)' onloadeddata='aCpI_msgLiveVideo_onEventLoadedDataVideo(this)' onplay='aCpI_msgLiveVideo_onEventPlayVideo(this)' onpause='aCpI_msgLiveVideo_onEventPauseVideo(this)' src="{{content}}" class="liveVideoSrc"></video>
+		      </div>
+		   </div>
+		`;
+
+		templates['msgLiveVideo_to'] = `
+		   {{commonTimeBlock}}
+		   <div class="aCpI_msgLiveVideo_contentLiveVideoInToMeMessage">
+		      <div class="aCpI_msgLiveVideo_videoMsgContent" onmouseenter="aCpI_msgLiveVideo_onEventMouseEnter(this)" onmouseleave="aCpI_msgLiveVideo_onEventMouseLeave(this)">
+		      	 <div class="aCpI_msgLiveVideo_viewWhenUploadingVideoLiveMsg aCpI_toMeMessage aCpI_msg_iconUpload"></div>
+		      	 <div class='aCpI_msgLiveVideo_viewWhenLoadingVideoLiveMsg'></div>
+		      	 <div class='aCpI_msgLiveVideo_msgNowVideoTime'></div>
+		         <div class="aCpI_msgLiveVideo_backgroundPlayVideoOnHover aCpI_msgLiveVideo_backgroundVideoOnHover" onclick='aCpI_msgLiveVideo_onEventClickForBackground(this)'></div>
+		         <!-- <div class="aCpI_msgLiveVideo_backgroundPauseVideoOnHover aCpI_msgLiveVideo_backgroundVideoOnHover"></div> -->
+		         <video ontimeupdate='aCpI_msgLiveVideo_onEventTimeUpdateVideo(this)' onloadeddata='aCpI_msgLiveVideo_onEventLoadedDataVideo(this)' onplay='aCpI_msgLiveVideo_onEventPlayVideo(this)' onpause='aCpI_msgLiveVideo_onEventPauseVideo(this)' src="{{content}}" class="liveVideoSrc"></video>
+		      </div>
+		   </div>
+		`;
+
+		function  msgLiveVideo_createMsg ( iNdata, iNmyUid, iNchatId ) {
+	        var iNneedView = msg_getPathToDomForChat(iNchatId);//"#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+	        $( iNneedView ).append( msgLiveVideo_getMsg ( iNdata, iNmyUid ) );
+		}
+	    _['msgLiveVideo_createMsg'] = msgLiveVideo_createMsg;
+
+    		function msgLiveVideo_getMsg (iNdata,iNmyUid) {
+				/*
+					@discr
+
+					@inputs
+						iNdata -> object
+							msgId 		-> string
+							state 	    -> object
+								sent      -> timestamp
+								delivered -> timestamp
+								time      -> timestamp
+							timeRead 	-> string
+							content 	-> string
+
+							@optional
+								type		-> string
+
+				*/
+				var el = {}, result;
+				iNdata['class'] = 'msgTypeLiveVideo';
+				if ( iNdata.uid == iNmyUid ) {
+					iNdata['fromMe'] 			= 1;
+		            iNdata['commonTimeBlock'] 	= msg_getTemplateByNameCommonTimeFromMeBlock(iNdata);
+		            iNdata['boxContent'] 		= msgLiveVideo_getTemplateByNameFrom(iNdata);
+				}
+		        else {
+		            iNdata['toMe'] 				= 1;
+		            iNdata['commonTimeBlock'] 	= msg_getTemplateByNameCommonTimeToMeBlock(iNdata);
+					iNdata['boxContent'] 		= msgLiveVideo_getTemplateByNameTo(iNdata);
+		        }
+		        return msg_getTemplateByNameBoxForMsg(iNdata);
+			}
+		    _['msgLiveVideo_getMsg'] = msgLiveVideo_getMsg;
+
+		    function msgLiveVideo_updateContent (iNchatId, iNdata,iNmyUid) {
+				/*
+					@discr
+					@inputs
+						iNchatId -> string
+						iNdata -> object
+							msgId 		-> string
+							content 	-> string
+						iNmyUid -> string
+				*/
+				var msgPath = msg_getPathToDomForMsg(iNchatId,iNdata['msgId']);
+				$(msgPath + ' .aCpI_msgLiveVideo_videoMsgContent video').attr('src', iNdata['content']);
+			}
+
+		    	function msgLiveVideo_getTemplateByNameFrom (iNdata) {
+					let temp = Template7.compile(templates['msgLiveVideo_from']);
+					return temp(iNdata);
+				}
+		    	_['msgLiveVideo_getTemplateByNameFrom'] = msgLiveVideo_getTemplateByNameFrom;
+
+				function msgLiveVideo_getTemplateByNameTo (iNdata) {
+					let temp = Template7.compile(templates['msgLiveVideo_to']);
+					return temp(iNdata);
+				}
+		    	_['msgLiveVideo_getTemplateByNameTo'] = msgLiveVideo_getTemplateByNameTo;
+
+    		function msgLiveVideo_safeReplace ( iNdata, iNmyUid, iNchatId ) {
+		        var thisIssetLength = msg_getLength(iNdata, iNchatId);
+		        console.log('msgLiveVideo_safeReplace thisIssetLength',thisIssetLength);
+		        console.log('msgLiveVideo_safeReplace iNdata, iNmyUid, iNchatId',iNdata, iNmyUid, iNchatId);
+		        if (thisIssetLength > 0) {
+		        	// create message
+		        	msgLiveVideo_replace ( iNdata, iNmyUid, iNchatId );
+		        } else {
+		        	msgLiveVideo_createMsg ( iNdata, iNmyUid, iNchatId );
+		        }
+			}
+		    _['msgLiveVideo_safeReplace'] = msgLiveVideo_safeReplace;
+		    
+			    function msgLiveVideo_replace ( iNdata, iNmyUid, iNchatId ) {
+		        	// update common time
+		        	msg_updateDomCommonTimeBlock (iNchatId,iNdata['msgId'],iNdata);
+
+		        	// update content NOT NEED -> we never change src of video el
+		        	// msgLivVideo_updateContent (iNchatId, iNdata, iNmyUid);
+				}
+			    _['msgLiveVideo_replace'] = msgLiveVideo_replace;
+
+			    	function msgLiveVideo_getUrl (iNchatId, iNmsgId) {
+			        	var fullPath = msg_getPathToDomForMsg(iNchatId, iNmsgId);
+			        	return $(fullPath + ' video').attr('src');
+			    	}
+
+
+		    function msgLiveVideo_showUploadBlock (iNchatId,iNmsgId) {
+	    		let selector = msgLiveVideo_getPathToDomForUploadBlock(iNchatId,iNmsgId);
+				$(selector).show();
+		    }
+		    _['msgLiveVideo_showUploadBlock'] = msgLiveVideo_showUploadBlock;
+
+	    	function msgLiveVideo_hideUploadBlock (iNchatId,iNmsgId) {
+	    		let selector = msgLiveVideo_getPathToDomForUploadBlock(iNchatId,iNmsgId);
+				$(selector).hide();
+		    }
+		    _['msgLiveVideo_hideUploadBlock'] = msgLiveVideo_hideUploadBlock;
+
+			    	function msgLiveVideo_getPathToDomForUploadBlock (iNchatId,iNmsgId) {
+			    		let msgPath = msg_getPathToDomForMsg(iNchatId,iNmsgId);
+						return msgPath + ' .aCpI_msgLiveVideo_viewWhenUploadingVideoLiveMsg';
+				    }
+
+		    function msgLiveVideo_clearUploadBlock (iNchatId,iNmsgId) {
+	    		let selector = msgLiveVideo_getPathToDomForUploadBlock(iNchatId,iNmsgId);
+				$(selector).html();
+		    }
+		    function msgLiveVideo_initLoader (iNchatId, iNmsgId) {
+				/*
+					@discr
+					@inputs
+						@required
+						@optional
+
+				*/
+				msgLiveVideo_showUploadBlock(iNchatId, iNmsgId)
+				
+				let selector = msgLiveVideo_getPathToDomForUploadBlock(iNchatId, iNmsgId);
+
+				msgLiveVideo_hideUploadBtn(iNchatId, iNmsgId);
+
+		    	return M_PROGRESSBAR.init (selector, 0, 
+		    		{
+		    			'color' : '#000',
+		    		}
+	    		);
+			}
+		    _['msgLiveVideo_initLoader'] = msgLiveVideo_initLoader;
+
+		    function msgLiveVideo_showUploadBtn (iNchatId, iNmsgId) {
+				let path = msgLiveVideo_getPathToDomForUploadBlock (iNchatId,iNmsgId);
+
+				msgLiveVideo_clearUploadBlock();
+
+				msgLiveVideo_showUploadBlock();
+				$(path).addClass('aCpI_msg_iconUpload');
+
+		    }
+		    _['msgLiveVideo_showUploadBtn'] = msgLiveVideo_showUploadBtn;
+
+	    	function msgLiveVideo_hideUploadBtn (iNchatId,iNmsgId) {
+				let path = msgLiveVideo_getPathToDomForUploadBlock (iNchatId,iNmsgId);
+				$(path).removeClass('aCpI_msg_iconUpload');
+			}
+
+			function msgLiveVideo_setObserverForUploadBtn (iNchatId,iNmsgId,iNfunctionUploadFile) {
+				let path = msgLiveVideo_getPathToDomForUploadBlock (iNchatId,iNmsgId);
+				$(path).click(function () {
+					if( $(this).hasClass('aCpI_msg_iconUpload') ) {
+						// if this is a upload btn
+						if(typeof(iNfunctionUploadFile) == 'function') iNfunctionUploadFile();
+					}
+				});
+			}
+		    _['msgLiveVideo_setObserverForUploadBtn'] = msgLiveVideo_setObserverForUploadBtn;
+
+		//@< controller 'record' msgLiveVideo 
 			function msgLiveVideo_record_showStreamVideoViewer () {
 				$('.aCpI_streamVideo').css('display','flex');
 			}
@@ -549,45 +1012,46 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
 
 
-	function getFromMessageAttrChatId (iNel) {
-        var r = $(iNel).parent().attr('connect_chatid');
-        return r;
-	}
-	_['getFromMessageAttrChatId'] = getFromMessageAttrChatId;
-
-	function getFromMessageAttrMsgId (iNel) {
-        var r = $(iNel).attr('connect_msg');
-        return r;
-	}
-	_['getFromMessageAttrMsgId'] = getFromMessageAttrMsgId;
-
-
-
-	function getFromMessageAttrTimeSent (iNel) {
-		//time-sent
-        var r = parseInt($(iNel).attr('time-sent'));
-        if(typeof r != 'number') r = 0;
-        return r;
-	}
-	_['getFromMessageAttrTimeSent'] = getFromMessageAttrTimeSent;
-
-	function getFromMessageAttrTimeRead (iNel) {
-		//time-read
-        var r = parseInt($(iNel).attr('time-read'));
-        if(typeof r != 'number') r = 0;
-        return r;
-	}
-	_['getFromMessageAttrTimeRead'] = getFromMessageAttrTimeRead;
-
-	function getFromMessageAttrTimeDelivered (iNel) {
-		//time-delivered
-        var r = parseInt($(iNel).attr('time-delivered'));
-        if(typeof r != 'number') r = 0;
-        return r;
-	}
-	_['getFromMessageAttrTimeDelivered'] = getFromMessageAttrTimeDelivered;
-
 	
+
+	function msg_getLastMsg (iNdata) {
+		/*
+			@discr
+				hide nem msg counter block
+			@inputs
+				@required
+					iNdata
+						lmsgType
+						lmsgText
+						lmsgTime
+						lmsgUid
+
+						chatId
+						chatType
+
+		*/
+		var lmsgType 	= iNdata['lmsgType'],
+			lmsgText 	= iNdata['lmsgText'],
+			lmsgTime 	= iNdata['lmsgTime'],
+			lmsgUid 	= iNdata['lmsgUid'],
+			result;
+
+		switch (lmsgType) {
+			case 1: // simple text
+				result =  lmsgText;
+			break;
+
+			case 20: // liveAudio
+				result = DICTIONARY.withString('[dictionary-audio]');
+			break;
+
+			case 21: // liveVideo
+				result = DICTIONARY.withString('[dictionary-video]');
+			break;
+		}
+		return result;
+	}
+	_['msg_getLastMsg'] 	= msg_getLastMsg;
 
 	function msg_getPathToDomForMessages (iNchatId) {
         return msg_getPathToDomForChat(iNchatId) + " .messagesInChatView";
@@ -612,7 +1076,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     function msg_getLength ( iNdata, iNchatId ) {
         // var iNneedView = msg_getPathToDomForChat(iNchatId);
         //"#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
-        var fullPath = msg_getPathToDomForChat(iNchatId,iNdata['msgId']);//iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
+        var fullPath = msg_getPathToDomForMsg (iNchatId,iNdata['msgId']);//iNneedView + " .messagesInChatView[connect_msg='"+iNdata['msgId']+"']";
         return $( fullPath ).length;
 	}
     _['msg_getLength'] = msg_getLength;
@@ -628,18 +1092,18 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 			@inputs
 				@required
 					iNdata
-						onClickSendMesg -> function
-						onKeyDownPrintingMsg -> function
+						simpleMsgText_onClickSendBtn -> function
+						simpleMsgText_printing -> function
 
   		*/
-  		if ( typeof iNdata['onClickSendMesg'] == 'function') {
+  		if ( typeof iNdata['simpleMsgText_onClickSendBtn'] == 'function') {
   			// if value is empty
   			$('#sendTextButtonInSenderBlock').off();
 
   			$('#sendTextButtonInSenderBlock').click(function (e) {
   				var value =  $('#forTextInputInSenderBlock textarea').val();
   				if(value == '') return true;
-			    iNdata['onClickSendMesg'](e);
+			    iNdata['simpleMsgText_onClickSendBtn'](e);
 			    $('#forTextInputInSenderBlock textarea').val('');
 			    effChatViewScrollToBotSafe();
   			});
@@ -682,8 +1146,8 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 			    	// view live send button for msg video AND audio HIDE other
 			    	smartShowLiveBtnsAudioVideoMsg();
 			    }
-
-		    	iNdata['onKeyDownPrintingMsg'](e);
+			    // send flash message when printing simpe msg text
+		    	iNdata['simpleMsgText_printing']();
 		    }
 		});
 
@@ -775,6 +1239,11 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     					onSend 		-> function
     					onOff 		-> function
     					defaultState -> bool
+    					onTimerTick -> function 
+    						onTimerTick (iNperiod)
+    							iNperiod - > array
+    								iNperiod[6] -> seconds
+    								iNperiod[5] -> minutes
 			*/
     		var effType = iNeffectType;
     		var objForSpecialClick = {};
@@ -802,7 +1271,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     					startMsgRecoding = true;
     					// show timer
     					if(effType == 'audio') {
-    						smartStartRecodingTimerAtMsgButton('audio');
+    						smartStartRecodingTimerAtMsgButton('audio',iNdata.onTimerTick);
 						
 	    					timerFromStartRecordingMessage = MOMENT().getNowTime(); //
 
@@ -811,7 +1280,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
     						msgLiveVideo_record_startStreamVideoCountdownTimer (
     							() => {
-    								smartStartRecodingTimerAtMsgButton('video');
+    								smartStartRecodingTimerAtMsgButton('video',iNdata.onTimerTick);
     								timerFromStartRecordingMessage = MOMENT().getNowTime(); //
 									if(typeof iNdata['onStartVideoRecord'] == 'function') iNdata['onStartVideoRecord']();
 								}
@@ -842,19 +1311,26 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     					smartSwitchLiveAudioVideoMsgButtons();
     				} else {
     					var timeWhenMouseUp = MOMENT().getNowTime(); //
-    					var passedTimeFromStartRecordToMouseUp = timeWhenMouseUp - timerFromStartRecordingMessage; //
+    					var passedTimeFromStartRecordToMouseUp = timeWhenMouseUp - timerFromStartRecordingMessage;
+    					// stop timer
+						stopRecordingTimer();
+
     					// we send msg if 
     					if (timerFromStartRecordingMessage != 0 && passedTimeFromStartRecordToMouseUp > 500 && deleteThisMsg) {
     						// we send message
 	    					if(typeof iNdata['onSend'] == 'function') iNdata['onSend']();
     					}else {
-    						// we delete message
+						// we delete message
+
     						// show caceling audion effects
     						if(effType == 'audio') {
 	    						smartShowCancelBlockForLiveMsgAtMsgSenderBlock(effType);
 	    					} else if (effType == 'video') {
 	    						smartShowCancelBlockForLiveMsgAtMsgSenderBlock(effType);
 							}
+
+
+
 	    					if(typeof iNdata['onDelete'] == 'function') iNdata['onDelete']();
     					}
     					smartHideTimerBlockAtMsgSendButton();
@@ -947,11 +1423,15 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
     //@> msg send buttons¸¸¸
 
     //@< msg timer in sender buttons 
-    	function smartStartRecodingTimerAtMsgButton (iNtype) {
+    	function smartStartRecodingTimerAtMsgButton (iNtype,oNtick) {
     		/*
     			@inputs
     				@required
     					iNtype -> string (audio|video) 
+    					oNtick -> function
+    						oNtick(periods)
+    							periods -> array
+    								periods[6]
     		*/
     		showTimerBlockAtMsgSendButton();
     		hideLiveAllIconAtMsgSenderBlock();
@@ -963,10 +1443,14 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
     		//cancel buttons&effect
     		showEffCancelSendingForLiveMsgAtMsgSenderBlock();
-
-    		$('.timerInMsgSenderBlock span').countdown('destroy');
-    		$('.timerInMsgSenderBlock span').countdown({since: 0, compact: true, format: 'MS', description: ''});
+    		// stop previos time if it work
+			stopRecordingTimer();
+    		$('.timerInMsgSenderBlock span').countdown({since: 0, compact: true, format: 'MS', description: '', onTick: oNtick});
     	}
+
+    	function stopRecordingTimer () {
+    		$('.timerInMsgSenderBlock span').countdown('destroy');
+		}
 
 
 
@@ -1026,7 +1510,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 
 
 
-	function setObserverForViewMsgInVisualScrollByChatId (iNchatId, iNdata ) {
+	function msgSimpleText_setObserverForViewMsgInVisualScrollByChatId (iNchatId, iNdata ) {
 		let object = getMessagesDomObjectByChatId(iNchatId,'.toMeMessageInChatView');
 
 		object.appearByEach(
@@ -1054,7 +1538,7 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 			}
 		);//'.ChatViewInAppWindow'
 	}
-	_['setObserverForViewMsgInVisualScrollByChatId'] = setObserverForViewMsgInVisualScrollByChatId;
+	_['msgSimpleText_setObserverForViewMsgInVisualScrollByChatId'] = msgSimpleText_setObserverForViewMsgInVisualScrollByChatId;
 
 
 
@@ -1071,8 +1555,9 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 		function effChatViewScrollToBotSafe (iNfunctionSuccess,iNfunctionError) {
 			// if we don'see this chat block
 			if( $('.ChatViewInAppWindow:visible').length < 1 ) return false;
+			var scrollHeightSize =  $('#leftBlockInViewWindow').height() / 2 + 200
 			if (  
-				!( $('#leftBlockInViewWindow').scrollBot() >  ( $('#leftBlockInViewWindow').height() / 2 )  ) ||
+				!( $('#leftBlockInViewWindow').scrollBot() >  scrollHeightSize  ) ||
 				$('#leftBlockInViewWindow').scrollTop() == 0
 			) {
 				V_APP.delLoaderInAppView()
@@ -1085,6 +1570,479 @@ define(['template7','v_app', 'm_moment','jquery',  'jquery.appear', 'jquery.coun
 		}
 		_['effChatViewScrollToBotSafe'] = effChatViewScrollToBotSafe;
 	//<CHAT VIEW DUPLICATE
+
+
+
+
+
+
+
+
+
+
+
+
+
+	///
+	///
+		//@< global
+			function msg_pauseAllOtherPlayingAudioOrVideoEl () {
+				$('.flagForSearchPlayingAudioOrVideo').each(
+					function (i,thisEl)  {
+						$(this).get(0).pause()
+					}
+				);
+			}
+			window.aCpI_msg_pauseAllOtherPlayingAudioOrVideoEl = msg_pauseAllOtherPlayingAudioOrVideoEl;
+			_['msg_pauseAllOtherPlayingAudioOrVideoEl'] = msg_pauseAllOtherPlayingAudioOrVideoEl;
+		//@> global
+
+		//@< codeKey = appChatPageIndex - aCpI 'audioLiveMsg'
+			function aCpI_msgLiveAudio_onEventLoadedAudio (iNthis) {
+
+				// parent blockInAudioMsg
+				let parentBlockInAudioMsg = $(iNthis).closest('.aCpI_msgLiveAudio_blockInAudioMsg');
+				// hide loader
+				parentBlockInAudioMsg.find('.aCpI_msgLiveAudio_viewWhenLoadingLiveAudioMsg').hide();
+				// view play btn
+				parentBlockInAudioMsg.find('.aCpI_msgLiveAudio_controllPlayInAudioMessage').show();
+
+				// set now time
+				aCpI_msgLiveAudio_setNowTextTimeForAudioNow (iNthis);
+
+				// set duration
+				aCpI_msgLiveAudio_setDurationTextTimeForAudioNow (iNthis);
+			}
+			window.aCpI_msgLiveAudio_onEventLoadedAudio = aCpI_msgLiveAudio_onEventLoadedAudio;
+
+				function aCpI_msgLiveAudio_setNowTextTimeForAudioNow (iNthis) {
+					var nowTextTime = moment( (iNthis.currentTime * 1000) || 0).format('mm:ss');
+					$(iNthis).closest('.aCpI_msgLiveAudio_blockInAudioMsg').find('.aCpI_msgLiveAudio_timeNowInAudioMessage').html( nowTextTime );
+				}
+				function aCpI_msgLiveAudio_setDurationTextTimeForAudioNow (iNthis) {
+					var durationTextTime = moment( (iNthis.duration * 1000) || 0 ).format('mm:ss');
+					$(iNthis).closest('.aCpI_msgLiveAudio_blockInAudioMsg').find('.aCpI_msgLiveAudio_timeAllInAudioMessage').html( durationTextTime );
+				}
+				function aCpI_msgLiveAudio_setNowTextTimeForAudioNowBySecond (iNthis,iNsecond) {
+					var nowTextTime = moment( (iNsecond * 1000) || 0 ).format('mm:ss');
+					$(iNthis).closest('.aCpI_msgLiveAudio_blockInAudioMsg').find('.aCpI_msgLiveAudio_timeNowInAudioMessage').html( nowTextTime );
+				}
+			function aCpI_msgLiveAudio_onHover (iNevent, iNobject) { 
+		  		/*
+		  			@discr
+		  				mouse move on audio msg for moving audio 
+		  			@inputs
+		  				@required
+		  					iNevent -> object (event)
+		  					iNobject -> object (this)
+		  		*/
+			    var e = iNevent;
+			    var thisObject = iNobject;
+
+			    // get mouse position by percent
+			    var mousePositionObject = global_getMousePositionByEvent(iNevent,iNobject);
+			    var XinnerPercent 	= mousePositionObject['xPercent'];
+
+			    // set progress bar
+				var element = $(iNobject).children('.aCpI_msgLiveAudio_backgroundForAudioMsgOnHover');
+			    aCpI_msgLiveAudio_setProgressBar (element,XinnerPercent,0);
+
+				// get children audio element
+			    var audioEl = $(iNobject).find('.aCpI_msgLiveAudio_hideAudioBlock audio').get(0);
+
+		  		// get audio secund position by pass persent mouse x positoin
+			    var audioTime = aCpI_msgLiveAudio_getCurrentTimeByPrecent (audioEl, XinnerPercent);
+
+			    // set second text when mouse moving
+			    aCpI_msgLiveAudio_setNowTextTimeForAudioNowBySecond (audioEl,audioTime);
+		  	}
+			window.aCpI_msgLiveAudio_onHover = aCpI_msgLiveAudio_onHover;
+
+		  	function aCpI_msgLiveAudio_onClick (iNevent, iNobject) {
+		  		/*
+		  			@discr
+		  				click audio msg fir start play
+		  			@inputs
+		  				@required
+		  					iNevent -> object (event)
+		  					iNobject -> object (this)
+		  		*/
+		  		// get children btnPlay element
+			    var playBtn = $(iNobject).find('.aCpI_msgLiveAudio_blockInAudioMsg .aCpI_msgLiveAudio_controllPlayInAudioMessage')
+
+		  		// get mouse position
+			    var mousePositionObject = global_getMousePositionByEvent(iNevent,iNobject);
+
+
+		  		// get mouse x position percent
+			    var XinnerPercent 		= mousePositionObject['xPercent'];
+
+		  		// get children audio element
+			    var audioEl = $(iNobject).find('.aCpI_msgLiveAudio_hideAudioBlock audio').get(0);
+
+		  		// get audio secund position by pass persent mouse x positoin
+			    var audioTime = aCpI_msgLiveAudio_getCurrentTimeByPrecent (audioEl, XinnerPercent);
+
+			    // set children audio need secund for start
+			    aCpI_msgLiveAudio_setCurrentTimeByAudioEl (audioEl,audioTime);
+
+			    // play children audio
+			    aCpI_msgLiveAudio_playAudioOnClickBtnPlay (playBtn,iNevent);
+		  	}
+			window.aCpI_msgLiveAudio_onClick = aCpI_msgLiveAudio_onClick;
+
+		  	function global_getMousePositionByEvent (iNevent,iNobject) {
+		  		/*
+		  			@discr
+		  				GLOBAL FUNCTION get mouse position by Event, This
+		  			@inputs
+		  				@required
+		  					iNevent -> object (event)
+		  					iNobject -> object (this)
+		  		*/
+				// position of element
+			    var e 				= iNevent,
+			     	thisObject = iNobject,
+			    	resultObject	= {},
+			    	pos 			= $(thisObject).offset(),
+			    	width 			= $(thisObject).width(),
+			    	height 			= $(thisObject).height();
+			    var	elem_left 		= pos.left,
+			    	elem_top 		= pos.top;
+			    // position of cursor in this element
+			    	resultObject['xPx']			= e.pageX - elem_left;
+			    	resultObject['yPx'] 		= e.pageY - elem_top,
+			    	resultObject['xPercent'] 	= resultObject['xPx']/width * 100,
+			    	resultObject['yPercent'] 	= resultObject['yPx']/height * 100;
+
+		    	return resultObject;
+		  	}
+
+		  	function aCpI_msgLiveAudio_onMouseOut (iNobject) {
+		  		/*
+		  			@discr
+		  				when mouse out from audio msg element, set onHover progress bar
+		  			@inputs
+		  				@required
+		  					iNevent -> object (event)
+		  					iNobject -> object (this)
+		  		*/
+				var element = $(iNobject).children('.aCpI_msgLiveAudio_backgroundForAudioMsgOnHover');
+			    aCpI_msgLiveAudio_setProgressBar (element,0,500);
+			}
+			window.aCpI_msgLiveAudio_onMouseOut = aCpI_msgLiveAudio_onMouseOut;
+
+			function aCpI_msgLiveAudio_getCurrentTimeByPrecent (iNaudioEl, iNpercent) {
+		  		/*
+		  			@discr
+		  				get current audio time by passed percent
+		  			@inputs
+		  				@required
+		  					iNevent -> object (event)
+		  					iNobject -> object (this)
+		  		*/
+				var element = iNaudioEl;
+				var second = iNpercent * element.duration/100
+				return second;
+			}
+			function aCpI_msgLiveAudio_setCurrentTimeByAudioEl (iNobject,iNcurentTime) {
+				/*
+		  			@discr
+		  				set current time for audio element (iNobject)
+		  			@inputs
+		  				@required
+		  					iNobject -> object (this)
+		  					iNcurentTime -> int (second)
+		  		*/
+				if ( typeof(iNcurentTime) == 'number' && isFinite(iNcurentTime)) {
+		  			iNobject.currentTime = iNcurentTime;
+		  		}
+			}
+
+			function aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl (thisAudioEl) {
+		  		/*
+		  			@discr
+		  				attach time update
+		  			@inputs
+		  				@required
+		  					thisAudioEl -> object (domElement)
+		  		*/
+		  		var parent 					= $(thisAudioEl).closest('.aCpI_msgLiveAudio_blockInAudioMsg');
+		  		var onHoverBackgrounEl 		= $(thisAudioEl).closest('.aCpI_msgLiveAudio_contentOfAudioMessage').find('.aCpI_msgLiveAudio_backgroundForAudioMsgOnHover');
+		  		var thisBackgroundEl 		= $(thisAudioEl).closest('.aCpI_msgLiveAudio_contentOfAudioMessage').find('.aCpI_msgLiveAudio_backgroundForAudioMsg');
+
+		  		var percent = thisAudioEl.currentTime / thisAudioEl.duration * 100;
+
+			  	let cssWidthBackgroundEl = parseInt($(onHoverBackgrounEl).css('width'));
+			  	if(cssWidthBackgroundEl == 0)
+					aCpI_msgLiveAudio_setNowTextTimeForAudioNow (thisAudioEl);
+
+				aCpI_msgLiveAudio_setDurationTextTimeForAudioNow (thisAudioEl);
+
+
+		    	aCpI_msgLiveAudio_setProgressBar (thisBackgroundEl,percent)
+		    	if(percent >= 100){
+		    		setTimeout(()=>{
+				    	aCpI_msgLiveAudio_setProgressBar (thisBackgroundEl,0)
+				    	aCpI_msgLiveAudio_smartViewBtnPlayAudio(parent);
+		    			
+		    		},500);
+		    	}
+			}
+			window.aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl = aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl;
+
+		  	function aCpI_msgLiveAudio_playAudioOnClickBtnPlay (iNobject,iNevent) {
+		  		/*
+		  			@discr
+		  				onClick action for audio msg play btn
+		  			@inputs
+		  				@required
+		  					iNobject -> object (this)
+		  					iNevent -> object (event)
+		  		*/
+		  		// stop parent callback for click event
+		  		if (iNevent) {
+			  		var e = iNevent;
+			  		e.stopPropagation();
+		  		}
+		  		var thisPlayBtn = $(iNobject);
+		  		var thisAudioEl = thisPlayBtn.nextAll('.aCpI_msgLiveAudio_hideAudioBlock').children('audio').get(0);
+
+		  		thisAudioEl.play();
+		  	}
+			window.aCpI_msgLiveAudio_playAudioOnClickBtnPlay = aCpI_msgLiveAudio_playAudioOnClickBtnPlay;
+
+					
+
+					function aCpI_msgLiveAudio_addPlayingFlags (iNthis) {
+						/*
+				  			@discr
+				  				add flag by addClass 'flagForSearchPlayingAudioOrVideo' && 'flagForSearchPlayingLiveAudio'
+				  			@inputs
+				  				@required
+				  					iNthis -> object (this video el)
+				  		*/
+				  		$(iNthis)
+				  			.addClass('flagForSearchPlayingAudioOrVideo')
+				  			.addClass('flagForSearchPlayingLiveAudio');
+					}
+					_['msgLiveAudio_addPlayingFlags'] = aCpI_msgLiveAudio_addPlayingFlags;
+
+		  	function aCpI_msgLiveAudio_pauseAudioOnClickBtnPause (iNobject,iNevent) {
+		  		/*
+		  			@discr
+		  				onClick action for audio msg pause btn
+		  			@inputs
+		  				@required
+		  					iNobject -> object (this)
+		  					iNevent -> object (event)
+		  		*/
+		  		// stop parent callback for click event
+		  		if (iNevent) {
+			  		var e = iNevent;
+			  		e.stopPropagation();
+		  		}
+		  		var thisPauseBtn = $(iNobject);
+		  		var thisAudio = thisPauseBtn.nextAll('.aCpI_msgLiveAudio_hideAudioBlock').children('audio').get(0);
+
+		  		thisAudio.pause();
+		  	}
+			window.aCpI_msgLiveAudio_pauseAudioOnClickBtnPause = aCpI_msgLiveAudio_pauseAudioOnClickBtnPause;
+				
+				function aCpI_msgLiveAudio_onEventPause (iNobject) {
+					// del flag
+					aCpI_msgLiveAudio_delPlayingFlags(iNobject);
+
+						var parent = $(iNobject).closest('.aCpI_msgLiveAudio_blockInAudioMsg');
+					aCpI_msgLiveAudio_smartViewBtnPlayAudio(parent)
+				}
+				window.aCpI_msgLiveAudio_onEventPause = aCpI_msgLiveAudio_onEventPause;
+						function aCpI_msgLiveAudio_delPlayingFlags (iNthis) {
+						/*
+				  			@discr
+				  				delete flag by removeClass 'flagForSearchPlayingAudioOrVideo' && 'flagForSearchPlayingLiveAudio'
+				  			@inputs
+				  				@required
+				  					iNthis -> object (this video el)
+				  		*/
+			  			$(iNthis)
+				  			.removeClass('flagForSearchPlayingAudioOrVideo')
+				  			.removeClass('flagForSearchPlayingLiveAudio');
+					}
+
+		  	function aCpI_msgLiveAudio_setProgressBar (iNel,iNpercent,iNtime) {
+		  		/*
+		  			@discr
+		  				set css width for progress bar element (iNel) 
+		  			@inputs
+		  				@required
+		  					iNel -> object (this)
+		  					iNpercent -> int ()
+		  					iNtime -> int (@animations length ms) 
+		  		*/
+		  		var time = iNtime || 500;
+			    let percent = iNpercent.toFixed(2)+'%';
+					iNel.clearQueue().stop();
+				if( iNtime == 0 )
+					iNel.css('width',percent);
+				else
+				    iNel.animate(
+				    	{
+			    			'width':percent
+			    		},
+			    		time
+					);
+		  	}
+
+			function aCpI_msgLiveAudio_smartViewBtnPauseAudio(iNparent) {
+		  			$(iNparent).children('.aCpI_msgLiveAudio_controllPlayInAudioMessage').hide();
+		  			$(iNparent).children('.aCpI_msgLiveAudio_controllPauseInAudioMessage').show();
+			}
+			_['msgLiveAudio_smartViewBtnPauseAudio'] = aCpI_msgLiveAudio_smartViewBtnPauseAudio;
+
+			function aCpI_msgLiveAudio_smartViewBtnPlayAudio(iNparent) {
+		  			$(iNparent).children('.aCpI_msgLiveAudio_controllPauseInAudioMessage').hide();
+		  			$(iNparent).children('.aCpI_msgLiveAudio_controllPlayInAudioMessage').show();
+			}
+		//@> codeKey = appChatPageIndex - aCpI 'audioLiveMsg'
+
+		//@< codeKey = appChatPageIndex - aCpI 'videoLiveMsg'
+			function aCpI_msgLiveVideo_onEventMouseEnter (iNthis) {
+				/*
+		  			@discr
+		  				for '.aCpI_msgLiveVideo_videoMsgContent' event mouser enter -> we show pause/play btn block
+		  			@inputs
+		  				@required
+		  					iNthis -> object (this)
+		  		*/
+		  		$(iNthis).children('.aCpI_msgLiveVideo_backgroundVideoOnHover').show();
+			}
+			window.aCpI_msgLiveVideo_onEventMouseEnter = aCpI_msgLiveVideo_onEventMouseEnter;	
+
+			function aCpI_msgLiveVideo_onEventMouseLeave (iNthis) {
+				/*
+		  			@discr
+		  				for '.aCpI_msgLiveVideo_videoMsgContent' event mouser leave -> we hide pause/play btn block
+		  			@inputs
+		  				@required
+		  					iNthis -> object (this)
+		  		*/
+		  		$(iNthis).children('.aCpI_msgLiveVideo_backgroundVideoOnHover').hide();
+			}
+			window.aCpI_msgLiveVideo_onEventMouseLeave = aCpI_msgLiveVideo_onEventMouseLeave;	
+
+			
+
+				
+				function msgLiveVideo_addPlayingFlags (iNthis) {
+					/*
+			  			@discr
+			  				add flag by addClass 'flagForSearchPlayingAudioOrVideo' && 'flagForSearchPlayingLiveVideo'
+			  			@inputs
+			  				@required
+			  					iNthis -> object (this video el)
+			  		*/
+			  		$(iNthis)
+			  			.addClass('flagForSearchPlayingAudioOrVideo')
+			  			.addClass('flagForSearchPlayingLiveVideo');
+				}
+				_['msgLiveVideo_addPlayingFlags'] = msgLiveVideo_addPlayingFlags;
+
+			function aCpI_msgLiveVideo_onEventPauseVideo (iNthis) {
+				/*
+		  			@discr
+		  				for video '.liveVideoSrc' event onpause video -> we change btn play TO pause (adding class)
+		  			@inputs
+		  				@required
+		  					iNthis -> object (this)
+		  		*/
+		  		let backElement = $(iNthis).closest('.aCpI_msgLiveVideo_videoMsgContent').find('.aCpI_msgLiveVideo_backgroundVideoOnHover');
+		  		//del
+		  		$(backElement)
+		  			.removeClass('aCpI_msgLiveVideo_backgroundPauseVideoOnHover')
+		  			.addClass('aCpI_msgLiveVideo_backgroundPlayVideoOnHover');
+
+
+		  		// dell flag by removeClass 'flagForSearchPlayingAudioOrVideo' && 'flagForSearchPlayingLiveVideo'
+		  		aCpI_msgLiveVideo_delPlayingFlags(iNthis);
+			}
+			window.aCpI_msgLiveVideo_onEventPauseVideo = aCpI_msgLiveVideo_onEventPauseVideo;	
+
+				function aCpI_msgLiveVideo_delPlayingFlags (iNthis) {
+					/*
+			  			@discr
+			  				delete flag by removeClass 'flagForSearchPlayingAudioOrVideo' && 'flagForSearchPlayingLiveVideo'
+			  			@inputs
+			  				@required
+			  					iNthis -> object (this video el)
+			  		*/
+		  			$(iNthis)
+			  			.removeClass('flagForSearchPlayingAudioOrVideo')
+			  			.removeClass('flagForSearchPlayingLiveVideo');
+				}
+			function aCpI_msgLiveVideo_onEventLoadedDataVideo (iNthis) {
+				/*
+		  			@discr
+		  				for video '.liveVideoSrc' event onpause video -> we change btn play TO pause (adding class)
+		  			@inputs
+		  				@required
+		  					iNthis -> object (this)
+		  		*/
+		  		let loadingEl = $(iNthis).closest('.aCpI_msgLiveVideo_videoMsgContent').find('.aCpI_msgLiveVideo_viewWhenLoadingVideoLiveMsg').hide();
+			}
+			window.aCpI_msgLiveVideo_onEventLoadedDataVideo = aCpI_msgLiveVideo_onEventLoadedDataVideo;	
+
+			function aCpI_msgLiveVideo_onEventTimeUpdateVideo (iNthis) {
+				/*
+		  			@discr
+		  				for video '.liveVideoSrc' event onpause video -> we change btn play TO pause (adding class)
+		  			@inputs
+		  				@required
+		  					iNthis -> object (this)
+		  		*/
+
+		  		// set current time for this video
+		  		var currentTime 	= (iNthis.currentTime * 1000) || 0;
+		  		var textCurrentTime = moment(currentTime).format('mm:ss');
+		  		let parent = $(iNthis).closest('.aCpI_msgLiveVideo_videoMsgContent').find('.aCpI_msgLiveVideo_msgNowVideoTime').html(textCurrentTime);
+			}
+			window.aCpI_msgLiveVideo_onEventTimeUpdateVideo = aCpI_msgLiveVideo_onEventTimeUpdateVideo;	
+
+
+			function aCpI_msgLiveVideo_onEventClickForBackground (iNthis) {
+				/*
+		  			@discr
+		  				for video '.liveVideoSrc' event onpause video -> we change btn play TO pause (adding class)
+		  			@inputs
+		  				@required
+		  					iNthis -> object (this)
+		  		*/
+		  		var isPauseBtn = $(iNthis).hasClass('aCpI_msgLiveVideo_backgroundPauseVideoOnHover');
+		  		var videoEl = $(iNthis).next().get(0);
+		  		if( isPauseBtn ) {
+		  			// pause this video
+		  			videoEl.pause()
+		  		} else {
+		  			// play this video
+		  			videoEl.play()
+
+		  		}
+			}
+			window.aCpI_msgLiveVideo_onEventClickForBackground = aCpI_msgLiveVideo_onEventClickForBackground;	
+
+		//@> codeKey = appChatPageIndex - aCpI 'videoLiveMsg'
+
+
+
+
+
+	///
+	///
+
+
+
+
+
 
 	return _;
 

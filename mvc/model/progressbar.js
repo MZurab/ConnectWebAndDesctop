@@ -31,12 +31,12 @@ define(['jquery', 'progressbar'],function($, PROGRESSBAR ) {
 							duration 		-> int
 			*/
 			var container 	= $(iNselector).get(0),
-				color 		= iNdata['color']		|| '#aaa',
+				color 		= iNdata['color']		|| '#000',
 				duration 	= iNdata['duration']	|| 1000,
 				colorFrom 	= iNdata['colorFrom']	|| '#aaa',
 				widthFrom 	= iNdata['widthFrom']	|| 1,
 				widthTo 	= iNdata['widthTo']		|| 4,
-				colorTo 	= iNdata['colorTo']		|| '#333',
+				colorTo 	= iNdata['colorTo']		|| '#000',
 				fontSize 	= iNdata['fontSize']	|| '1rem',
 				easing 		= iNdata['easing']		|| 'easeInOut',
 				fontFamily  = iNdata['fontFamily']	|| '"Raleway", Helvetica, sans-serif',
@@ -79,7 +79,7 @@ define(['jquery', 'progressbar'],function($, PROGRESSBAR ) {
 
 		function to (iNprogress) {
 			if( typeof iNprogress == 'number' )
-				bar.animate(progress);  // Number from 0.0 to 1.0
+				bar.animate(iNprogress);  // Number from 0.0 to 1.0
 		}
 		r['to'] = to;
 

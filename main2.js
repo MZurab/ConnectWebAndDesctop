@@ -1,5 +1,6 @@
 require2.config({
     // baseUrl: 'https://ramman.net/files/', //https://cdn.ramman.net/web/',
+    
     // packages: [{
     //     name: 'moment',
     //     // This location is relative to baseUrl. Choose bower_components
@@ -8,7 +9,8 @@ require2.config({
     //     main: 'moment'
     // }],
     paths: {
-    	'firebase'             : ['https://www.gstatic.com/firebasejs/4.2.0/firebase','res/js/firebase/firebase'],
+    	'firebase'             : ['https://www.gstatic.com/firebasejs/4.5.1/firebase'           , 'res/js/firebase/firebase'  ], // https://www.gstatic.com/firebasejs/4.2.0/firebase
+        'firestore'            : ['https://www.gstatic.com/firebasejs/4.5.1/firebase-firestore' , 'res/js/firebase/firestore' ], // https://www.gstatic.com/firebasejs/4.2.0/firestore
         'template7'            : 'res/js/template7/template7',
         "yametrika"            : ["//mc.yandex.ru/metrika/watch","res/js/analytics/yandex/metrika"],
         // A BEAUTIFUL, RESPONSIVE, CUSTOMIZABLE, ACCESSIBLE (WAI-ARIA) REPLACEMENT FOR JAVASCRIPT'S POPUP BOXES
@@ -152,8 +154,13 @@ require2.config({
 
         /* <? google modules*/
             'firebase': {
-                exports: 'Firebase',
+                exports: 'firebase',
             },
+            'firestore': {
+                deps: ['firebase'],
+                exports: 'firebase.firestore'
+            },
+
         /* >! google modules */
 
         /* <? framework7.io modules*/

@@ -1,4 +1,7 @@
-define(['m_app','v_view','jquery','mixitup','dictionary','m_moment','jquery.textillate','jquery.lettering'], function( M_APP, V_VIEW, $, mixitup, DICTIONARY , MOMENT ) {//'m_view','m_app'
+define(
+	['m_app','v_message','v_view','jquery','mixitup','dictionary','m_moment','jquery.textillate','jquery.lettering'], 
+	function( M_APP,V_MESSAGE, V_VIEW, $, mixitup, DICTIONARY , MOMENT ) 
+{//'m_view','m_app'
 	const _ = {};
 	const templates = {}; _['templates'] = templates;
 	templates['UserMenuChildN'] = `
@@ -59,11 +62,10 @@ define(['m_app','v_view','jquery','mixitup','dictionary','m_moment','jquery.text
 
 		   <div class="secondLineInUserBlock">
 		      <div class="leftBlockInSecondLine">
-		         <div class="liveStatusTextBlock liveBlocks">
-		            <div class="liveStatusTextWriting"></div>
+		         <div class="aCpAll_msgSimpleText_flashBlock aCpAll_flashBLocks">
+		            <div class="aCpAll_msgSimpleText_flashIcon aCpAll_flashBLocks_icon"></div>
 		            <div class="valueInLiveBlocks">
-		               {{printing}}... 
-		               <span class="printingAmount">
+		               <span class="aCpAll_msgSimpleText_animateContainer">
 		                  <span style="visibility: visible;"></span>
 		                  <ul class="texts" style="display: none;">
 		                     <li></li>
@@ -71,6 +73,29 @@ define(['m_app','v_view','jquery','mixitup','dictionary','m_moment','jquery.text
 		               </span>
 		            </div>
 		         </div>
+		         <div class="aCpAll_msgLiveAudio_flashBlock aCpAll_flashBLocks">
+		            <div class="aCpAll_msgLiveAudio_flashIcon aCpAll_flashBLocks_icon"></div>
+		            <div class="valueInLiveBlocks">
+		               <span class="aCpAll_msgLiveAudio_animateContainer">
+		                  <span style="visibility: visible;"></span>
+		                  <ul class="texts" style="display: none;">
+		                     <li></li>
+		                  </ul>
+		               </span>
+		            </div>
+		         </div>
+		         <div class="aCpAll_msgLiveVideo_flashBlock aCpAll_flashBLocks">
+		            <div class="aCpAll_msgLiveVideo_flashIcon aCpAll_flashBLocks_icon"></div>
+		            <div class="valueInLiveBlocks">
+		               <span class="aCpAll_msgLiveVideo_animateContainer">
+		                  <span style="visibility: visible;"></span>
+		                  <ul class="texts" style="display: none;">
+		                     <li></li>
+		                  </ul>
+		               </span>
+		            </div>
+		         </div>
+
 		      </div>
 		      <div class="rightBlockInSecondLine"> <span class="newMsgInSecondLine"></span> </div>
 		   </div>
@@ -87,7 +112,9 @@ define(['m_app','v_view','jquery','mixitup','dictionary','m_moment','jquery.text
 	`;
 	const vars = {}; _['vars'] = vars;
 	vars['pathToChatList'] 				= '.usersBlockContainerInMenusBlock .app[app-name="base"] .view[view-name="index"] .scrolBlockForChat';
-	vars['pathForEffectsTestPrinting'] 	= '.valueInLiveBlocks .printingAmount';
+	vars['pathForFlashMsgSimpleText'] 	= '.valueInLiveBlocks .aCpAll_msgSimpleText_animateContainer';
+	vars['pathForFlashMsgLiveVideo'] 	= '.valueInLiveBlocks .aCpAll_msgLiveVideo_animateContainer';
+	vars['pathForFlashMsgLiveAudio'] 	= '.valueInLiveBlocks .aCpAll_msgLiveAudio_animateContainer';
 	vars['pathForEffectsLastMsg'] 		= '.lastMessageInThirdLine';
 	const output = {}; _['output'] = output;
 
@@ -334,7 +361,9 @@ define(['m_app','v_view','jquery','mixitup','dictionary','m_moment','jquery.text
 				@required
 					iNchatId -> string
 		*/
-		startEffPrintingByChatId( iNchatId );
+		flash_msgSimpleText_init( iNchatId );
+		flash_msgLiveAudio_init( iNchatId );
+		flash_msgLiveVideo_init( iNchatId );
 		startEffLastMsgByChatId( iNchatId );
 	}
 	_['setEffectsForChatList'] = setEffectsForChatList;
@@ -447,7 +476,7 @@ define(['m_app','v_view','jquery','mixitup','dictionary','m_moment','jquery.text
 		}
 		_['startEffSortChats'] = startEffSortChats;
 
-		function startEffPrintingByChatId (iNchatId) {
+		function flash_msgSimpleText_init (iNchatId) {
 		    /*
 		    	@discr
 		        	sort chats block
@@ -459,9 +488,41 @@ define(['m_app','v_view','jquery','mixitup','dictionary','m_moment','jquery.text
 							sort
 		    */
             var chatObject = getPathToDomElByChatId(iNchatId);
-	    	$(chatObject +' '+ vars['pathForEffectsTestPrinting']).textillate({ autoStart:false, in: {effect: 'wobble',delay:10 } });
+	    	$(chatObject +' '+ vars['pathForFlashMsgSimpleText']).textillate({ autoStart:false, in: {effect: 'wobble',delay:10 } });
 		}
-		_['startEffPrintingByChatId'] = startEffPrintingByChatId;
+		_['flash_msgSimpleText_init'] = flash_msgSimpleText_init;
+
+		function flash_msgLiveAudio_init (iNchatId) {
+		    /*
+		    	@discr
+		        	sort chats block
+		        @inputs
+					@required
+					@optional
+						iNdata -> object
+							filter
+							sort
+		    */
+            var chatObject = getPathToDomElByChatId(iNchatId);
+	    	$(chatObject +' '+ vars['pathForFlashMsgLiveAudio']).textillate({ autoStart:false, in: {effect: 'wobble',delay:10 } });
+		}
+		_['flash_msgLiveAudio_init'] = flash_msgLiveAudio_init;
+
+		function flash_msgLiveVideo_init (iNchatId) {
+		    /*
+		    	@discr
+		        	sort chats block
+		        @inputs
+					@required
+					@optional
+						iNdata -> object
+							filter
+							sort
+		    */
+            var chatObject = getPathToDomElByChatId(iNchatId);
+	    	$(chatObject +' '+ vars['pathForFlashMsgLiveVideo']).textillate({ autoStart:false, in: {effect: 'wobble',delay:10 } });
+		}
+		_['flash_msgLiveVideo_init'] = flash_msgLiveVideo_init;
 
 		function startEffLastMsgByChatId (iNchatId) {
 		    /*
@@ -494,7 +555,7 @@ define(['m_app','v_view','jquery','mixitup','dictionary','m_moment','jquery.text
 		    if( typeof(output['objectTimeoutForHideLiveInChatsList']) != 'undefined') clearTimeout(output['objectTimeoutForHideLiveInChatsList'])
 		    output['objectTimeoutForHideLiveInChatsList'] = setTimeout(function () {
             	var chatObject = getPathToDomElByChatId(iNchatId);
-		        $(chatObject + ' .liveBlocks').hide();
+		        $(chatObject + ' .aCpAll_flashBLocks').hide();
 		    }, iNtime);
 		}
 		_['startEffHideLiveInChatsList'] = startEffHideLiveInChatsList;
@@ -681,11 +742,12 @@ define(['m_app','v_view','jquery','mixitup','dictionary','m_moment','jquery.text
                     lmsgTime (String)
             */
             var chatObject = getPathToDomElByChatId(iNchatId);
-            if($(chatObject + ' .lastMessageInThirdLine .current').text() != iNdata.lmsgText) {
+            var lastMsgText = V_MESSAGE.msg_getLastMsg (iNdata);
+            if($(chatObject + ' .lastMessageInThirdLine .current').text() != lastMsgText) {
                 var NowTime = getTodayTime( iNdata.lmsgTime );
-                $(chatObject + ' .lastMessageInThirdLine').find('.texts li:first').text(iNdata.lmsgText);
-                $(chatObject + ' .lastMessageInThirdLine').textillate('out');
-                $(chatObject+ " .timelastMsgInThirdLine").text( NowTime );
+                $(chatObject + ' .lastMessageInThirdLine').find('.texts li:first').text(lastMsgText);
+                $(chatObject + ' .lastMessageInThirdLine').textillate( 'out' );
+                $(chatObject + " .timelastMsgInThirdLine").text( NowTime );
                 $(chatObject).attr('data-lastmsgtime', iNdata.lmsgTime );
                 startEffSortChats();
             }
@@ -698,7 +760,14 @@ define(['m_app','v_view','jquery','mixitup','dictionary','m_moment','jquery.text
 		}  
 		_['getTodayTime'] = getTodayTime;
 
-        function domLiveSimpleTextAnimation (iNchatId, iNdata) {
+
+		function flash_hideAllFlashBlocks (iNchatId) {
+			// body...
+            var chatObject = getPathToDomElByChatId(iNchatId);
+			$(chatObject + ' .aCpAll_flashBLocks').hide();
+		}
+
+        function flash_msgSimpleText_activeFlashEffect (iNchatId, iNdata) {
             /*
                 invoke chat animation printing simple text
                 1 - chatObject
@@ -706,21 +775,82 @@ define(['m_app','v_view','jquery','mixitup','dictionary','m_moment','jquery.text
                 2 - iNdata with liveData and liveStatus
 
             */
+
             var chatObject = getPathToDomElByChatId(iNchatId);
-            var currentValue = $(chatObject + ' .printingAmount .current').text();
+            var currentValue = $(chatObject + ' .aCpAll_msgSimpleText_animateContainer .current').text();
             if(currentValue != iNdata.liveData){
-                if(iNdata.liveType == 1){
+
+            	flash_hideAllFlashBlocks(iNchatId);
+
+                if(iNdata.liveType == 1) {
                     // 
-                    $(chatObject + ' .liveStatusTextBlock').show();
-                    $(chatObject + ' .liveStatusTextWriting').show();
+                    $(chatObject + ' .aCpAll_msgSimpleText_flashBlock').show();
+                    console.log("$(chatObject + ' .aCpAll_msgSimpleText_flashBlock')",$(chatObject + ' .aCpAll_msgSimpleText_flashBlock'));
+                    // $(chatObject + ' .aCpAll_msgSimpleText_flashIcon').show();
                 }else{
                     // del this later
                 }
-                $(chatObject + ' .printingAmount').find('.texts li:first').text(iNdata.liveData);
-                $(chatObject + ' .printingAmount').textillate('start');
+                $(chatObject + ' .aCpAll_msgSimpleText_animateContainer').find('.texts li:first').text(iNdata.liveData);
+                $(chatObject + ' .aCpAll_msgSimpleText_animateContainer').textillate('start');
             }
         }
-		_['domLiveSimpleTextAnimation'] = domLiveSimpleTextAnimation;
+		_['flash_msgSimpleText_activeFlashEffect'] = flash_msgSimpleText_activeFlashEffect;
+
+
+		function flash_msgLiveAudio_activeFlashEffect (iNchatId, iNdata) {
+            /*
+                invoke chat animation printing simple text
+                1 - chatObject
+                    defined chat object
+                2 - iNdata with liveData and liveStatus
+
+            */
+
+            var chatObject = getPathToDomElByChatId(iNchatId);
+            var currentValue = $(chatObject + ' .aCpAll_msgLiveAudio_animateContainer .current').text();
+            if(currentValue != iNdata.liveData){
+	            console.log('flash_msgLiveAudio_activeFlashEffect iNdata',iNdata);
+	            flash_hideAllFlashBlocks(iNchatId);
+                if(iNdata.liveType == 20){
+                    // 
+                    $(chatObject + ' .aCpAll_msgLiveAudio_flashBlock').show();
+                    $(chatObject + ' .aCpAll_msgLiveAudio_flashIcon').show();
+                }else{
+                    // del this later
+                }
+                $(chatObject + ' .aCpAll_msgLiveAudio_animateContainer').find('.texts li:first').text(iNdata.liveData);
+                $(chatObject + ' .aCpAll_msgLiveAudio_animateContainer').textillate('start');
+            }
+        }
+		_['flash_msgLiveAudio_activeFlashEffect'] = flash_msgLiveAudio_activeFlashEffect;
+
+		function flash_msgLiveVideo_activeFlashEffect (iNchatId, iNdata) {
+            /*
+                invoke chat animation printing simple text
+                1 - chatObject
+                    defined chat object
+                2 - iNdata with liveData and liveStatus
+
+            */
+            
+            var chatObject = getPathToDomElByChatId(iNchatId);
+            var currentValue = $(chatObject + ' .aCpAll_msgLiveVideo_animateContainer .current').text();
+            if(currentValue != iNdata.liveData){
+	            console.log('flash_msgLiveVideo_activeFlashEffect iNdata',iNdata);
+	            flash_hideAllFlashBlocks(iNchatId);
+
+                if(iNdata.liveType == 21) {
+                    // 
+                    $(chatObject + ' .aCpAll_msgLiveVideo_flashBlock').show();
+                    $(chatObject + ' .aCpAll_msgLiveVideo_flashIcon').show();
+                }else{
+                    // del this later
+                }
+                $(chatObject + ' .aCpAll_msgLiveVideo_animateContainer').find('.texts li:first').text(iNdata.liveData);
+                $(chatObject + ' .aCpAll_msgLiveVideo_animateContainer').textillate('start');
+            }
+        }
+		_['flash_msgLiveVideo_activeFlashEffect'] = flash_msgLiveVideo_activeFlashEffect;
 
 		function domAddVerificateStatusToChatBlock (chatObject) {
             /*

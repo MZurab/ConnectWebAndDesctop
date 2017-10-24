@@ -38,12 +38,15 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
 		            'onInit' 		: function () {
 
 	        			M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index'});
-		            	M_MESSAGE.view.initApp( { 'onClickSendMesg' : M_MESSAGE.onClickSendMesg , 'onKeyDownPrintingMsg' : M_MESSAGE.startSendingFlashMsg } );
+		            	M_MESSAGE.view.initApp( { 
+		            		// for send simpleTextMessage when click
+		            		'simpleMsgText_onClickSendBtn' : M_MESSAGE.simpleMsgText_onClickSendBtn , 
+		            		// for send flash data for simpleTextMessage
+		            		'simpleMsgText_printing' : M_MESSAGE.msgSimpleText_flashSending } 
+	            		);
 
 
 		            	//
-		            	
-
 		            	M_MESSAGE.controller_msgLiveVideo_record_run ();
 		            	M_MESSAGE.controller_msgLiveAudio_record_run ();
 
