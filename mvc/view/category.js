@@ -675,7 +675,7 @@ define(
             	@inputs
 	                iNchatId -> stirng
             */
-            var chatObject = getPathToDomElByChatId(iNchatId);
+            var chatObject = getPathToDomElByChatId(iNchatId) + ' .chatDataInUsersBlock';
             $(chatObject).addClass('flagUserOnline');
             $(chatObject).attr('connect_online',1);
         }
