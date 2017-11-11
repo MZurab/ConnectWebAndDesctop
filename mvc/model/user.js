@@ -22,9 +22,11 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
     	_['saveUserLang'] = saveUserLang;
 	//@@@>>> USER
 	function signOut (inSuccess,iNerror){
-		console.log('signOut localStorage 1 ',localStorage );
+		// invoke global function for deleted note from fb db 
+		M_APP.globalFunctions_invoke('devise_removeNoteFromDatabase');
+		// clear local storage
 	    M_APP.clear();
-		console.log('signOut localStorage 2 ',localStorage );
+	    // sign out from fb auth
 	    FIREBASE.auth().signOut().then( () =>  {
 	    	if (typeof (inSuccess) == 'function') inSuccess();
 	    }, (error) => {
@@ -271,7 +273,7 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	                M_APP.saveUserCountry(formBlock['country']);
 	                M_APP.saveUserLang(formBlock['lang']);
 	                M_APP.save('sentSmsTime',M_APP.getTime());
-	                _startSmsTimer('signup');
+	                startSmsTimer('signup');
 	            } else {                                        // Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð²Ñ…Ð¾Ð´Ð° Ð½Ðµ Ð²ÐµÑ€Ð½Ñ‹
 	                M_VIEW.error(DICTIONARY.get('error-issetUser'));
 	            }
@@ -322,24 +324,40 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
     _['getMyToken'] = getMyToken;
 
 	function startTimer (iNid,iNendTime,enfFunction){
-	    $(iNid).countdown(iNendTime)
-	    .on('update.countdown', function(event) {
-	      var format = '%M:%S';//%H:
-	      if(event.offset.totalDays > 0) {
-	        format = '%-d day%!d ' + format;
-	      }
-	      if(event.offset.totalDays > 0) {
-	        format = '%-d day%!d ' + format;
-	      }
-	      if(event.offset.weeks > 0) {
-	        format = '%-w week%!w ' + format;
-	      }
-	      $(this).html(event.strftime(format));
-	    }).on('finish.countdown', 
-	        function(event) {
-	            if ( typeof(enfFunction) != 'undefined' ) enfFunction();
-	        }
-	    );
+	    // $(iNid)
+	    // .countdown(iNendTime)
+	    // .on('update.countdown', function(event) {
+	    //   var format = '%M:%S';//%H:
+	    //   if(event.offset.totalDays > 0) {
+	    //     format = '%-d day%!d ' + format;
+	    //   }
+	    //   if(event.offset.totalDays > 0) {
+	    //     format = '%-d day%!d ' + format;
+	    //   }
+	    //   if(event.offset.weeks > 0) {
+	    //     format = '%-w week%!w ' + format;
+	    //   }
+	    //   $(this).html(event.strftime(format));
+	    // }).on('finish.countdown', 
+	    //     function(event) {
+	    //         if ( typeof(enfFunction) != 'undefined' ) enfFunction();
+	    //     }
+	    // );
+	    console.log('startTimer iNendTime',iNendTime);
+	    
+	    $(iNid).countdown ( 'destroy' );
+	    $(iNid)
+	    .countdown (
+			{
+				until: iNendTime, // second
+				description: '',
+				onExpiry: function () { 
+					// $(this).hide();
+        			if ( typeof(enfFunction) != 'undefined' ) enfFunction();
+				}, 
+				layout: '{mnn}:{snn}' // NOT 03 to 3
+			}
+		);
 	}
     _['startTimer'] = startTimer;
 
@@ -352,7 +370,7 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	        $('.page-formSignIn,.formSignUp').hide();
 	        $('.page-formSmsCode').show();
 	        if(typeof(iNtype) == 'string') $('#codeType').val(iNtype);
-	        startTimer('.page-LastTimeForExpireSms',sentSmsTime + 300000,function (){$('.reSendSms').show();$('.LastTimeForExpireSms').hide()});
+	        startTimer('.page-LastTimeForExpireSms',300/*sentSmsTime + 300000*/,function (){$('.reSendSms').show();$('.LastTimeForExpireSms').hide()});
 	    }
 	}
     _['startSmsTimer'] = startSmsTimer;
@@ -418,6 +436,11 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	    return false;
 	}
     _['reSendSms'] = reSendSms;
+
+
+
+
+
 
 	return _;
 });

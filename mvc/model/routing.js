@@ -1,4 +1,4 @@
-define(['jquery','m_user'],function($,USER){
+define([ 'jquery', 'm_user', 'platform' ],function($,USER, PLATFORM){
 	//@<<< URL FUNCTIONS
 		const _ = {};
 		const USER_DOMAIN = [ // CHANGE
@@ -352,6 +352,21 @@ define(['jquery','m_user'],function($,USER){
 			function setBrowser () {
 				window['ConnectDeviseType'] = '@browser';
 			} _['setBrowser'] = setBrowser;
+
+			function setDeviseName (iNname) {
+				window['ConnectDeviseName'] = iNname;
+			} _['setDeviseName'] = setDeviseName;
+
+			function getDeviseName () {
+				if ( typeof window['ConnectDeviseName'] != 'string' || window['ConnectDeviseName'].length < 1 ) {
+					return PLATFORM.name + ' ' + PLATFORM.os.toString();
+				}
+				return window['ConnectDeviseName'] + ' ' + PLATFORM.os.toString();
+			} _['getDeviseName'] = getDeviseName;
+
+			function getUserAgent () {
+				return navigator.userAgent||'';
+			} _['getUserAgent'] = getUserAgent;
 
 		function isDesktop () {
 			if ( window['ConnectDeviseType'] == '@desktop' ) {

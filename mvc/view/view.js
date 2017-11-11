@@ -218,7 +218,7 @@ define(['jquery','template7','dictionary'], function ($,Template7, DICTIONARY) {
 							iNtext -> string
 
 				*/
-				$('.rcontent_loader operationName').iNtext();
+				$('.rcontent_loader .operationName').text(iNtext);
 			}
 			
 	//>! work with loader

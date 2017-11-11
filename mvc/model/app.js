@@ -99,7 +99,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 				@required
 					iNapp -> string
 		*/
-		return window[this.refixForApp_ + '-' + iNapp + '-' + this.openPageName_ ] || false;
+		return window[this.prefixForApp_ + '-' + iNapp + '-' + this.openPageName_ ] || false;
 	}
 	function _thisApp () {
 		/*
@@ -329,7 +329,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 		} else if( _thisPage(iNdata['app']) != iNdata['page']) {
 			// if this app now open and this page does not open we have to invoke page open page on onDisappear
 			// did safe invoke onDisappear  methods for this app
-			var pagesFunctionsFromThisApp = getPageFuncitons( iNapp , _thisPage( _thisApp() ) );// _invokeApp(_thisApp(),'pages');
+			var pagesFunctionsFromThisApp = getPageFuncitons( iNapp , _thisPage( _thisApp().name ) );// _invokeApp(_thisApp(),'pages');
 
 			if (pagesFunctionsFromThisApp != false) {
 				// invoke safe onDesappear for page 
@@ -854,7 +854,28 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	//@< work with header
 
 
+	//@< work with global functions
+	function globalFunctions_invoke (iName) {
+		console.log('globalFunctions_invoke iName',iName);
+		if(typeof window.GF == 'object' && typeof window.GF[iName] == 'function') {
+			console.log('globalFunctions_invoke window.GF[iName]',window.GF[iName]);
+			window.GF[iName]();
+			return true;
+		}
+		return false;
+	}
+
+	function globalFunctions_create (iName, iNfunction) {
+		if(typeof window.GF != 'object') window.GF = {};
+		window.GF[iName] = iNfunction;
+		return true;
+	}
+	//@> work with global functions
+
 	return {
+		'globalFunctions_invoke' : globalFunctions_invoke,
+		'globalFunctions_create' : globalFunctions_create,
+
 	    'openChiefApp'  : _openChiefApp,
 	    'openListApp'   : _openListApp,
 	    'readyListApp'  : _readyListApp,

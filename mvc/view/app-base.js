@@ -64,12 +64,13 @@ define(['jquery','m_user','template7','v_view','v_app'],function($,USER,Template
 					iNtype -> string 
 						in [end,begin, after, before, change]
 		*/
+		console.log('addUserHeaderInList iNdata,iNtype',iNdata,iNtype);
 		if( typeof iNtype != 'string' ) iNtype = 'end';
 		var objForAddHeader = {'app':CONST['name'],'page': CONST['pageIndex']};
 		// add user flag
-
-
 			objForAddHeader['content'] = getListHeaderForIndexPage (iNdata);
+
+			
 		V_APP.safeViewMenuHeaderWithContent(objForAddHeader,iNtype);
 	}
 	_['addUserHeaderInList'] = addUserHeaderInList;

@@ -865,7 +865,7 @@ define(
 				msgLiveVideo_record_clearStreamVideoCountdownTimer();
 				$('.aCpI_videoStreamTimeCounter').countdown (
 					{
-						until: 3, // second
+						until: 5, // second
 						description: '',
 						onExpiry: function () { 
 							$(this).hide();

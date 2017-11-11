@@ -128,73 +128,73 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
 	CONST['chatViewPrefix'] = 'connectPrefixChatViewStatus-';
 
 	function runController_thisChatWatching (iNchatId) {
-		onDisconectSetChatOffline(iNchatId);
-		safeSetChatViewOnline(iNchatId);
+		// onDisconectSetChatOffline(iNchatId);
+		// safeSetChatViewOnline(iNchatId);
 	}
 	function runController_thisChatWatchingWhenChatDownloadMessage (iNchatId) {
-		safeSetChatViewOnline(iNchatId);
+		// safeSetChatViewOnline(iNchatId);
 	}
 
 	function safeSetChatViewOnline (iNchatId) {
-		let chatStatus = getChatViewStatus(iNchatId);
-		if(chatStatus != 1) {
-			setChatViewOnline(iNchatId);
-			return true;
-		}
-		return false;
+		// let chatStatus = getChatViewStatus(iNchatId);
+		// if(chatStatus != 1) {
+		// 	setChatViewOnline(iNchatId);
+		// 	return true;
+		// }
+		// return false;
 	}
 		function setChatViewOnline (iNchatId) {
-			setChatViewStatus(iNchatId,1);
+			// setChatViewStatus(iNchatId,1);
 
-			let uid = USER.getMyId();
-			let path = "chats/"+iNchatId+"/member/"+uid+"/online";
-			let updateArray = {};
-				updateArray[path] = 1
+			// let uid = USER.getMyId();
+			// let path = "chats/"+iNchatId+"/member/"+uid+"/online";
+			// let updateArray = {};
+			// 	updateArray[path] = 1
 
-	    	FIREBASE.database().ref().update(updateArray);
+	  //   	FIREBASE.database().ref().update(updateArray);
 
 		}
 
 	function safeSetChatViewOffline (iNchatId) {
-		let chatStatus = getChatViewStatus(iNchatId);
-		if(chatStatus != 0) {
-			setChatViewOffline(iNchatId);
-			return true;
-		}
-		return false;
+		// let chatStatus = getChatViewStatus(iNchatId);
+		// if(chatStatus != 0) {
+		// 	setChatViewOffline(iNchatId);
+		// 	return true;
+		// }
+		// return false;
 	}
 		function setChatViewOffline (iNchatId) {
-			setChatViewStatus(iNchatId,0);
+			// setChatViewStatus(iNchatId,0);
 
-			let uid = USER.getMyId();
-			let path = "chats/"+iNchatId+"/member/"+uid+"/online";
-			let updateArray = {};
-				updateArray[path] = FIREBASE.database.ServerValue.TIMESTAMP;
-	    	FIREBASE.database().ref().update(updateArray);
+			// let uid = USER.getMyId();
+			// let path = "chats/"+iNchatId+"/member/"+uid+"/online";
+			// let updateArray = {};
+			// 	updateArray[path] = FIREBASE.database.ServerValue.TIMESTAMP;
+	  //   	FIREBASE.database().ref().update(updateArray);
 		}
 			function setChatViewStatus (iNchatId,iNstatus) {
-				let varPath = CONST['chatViewPrefix'] + iNchatId;
-				M_APP.save(varPath,iNstatus);
+				// let varPath = CONST['chatViewPrefix'] + iNchatId;
+				// M_APP.save(varPath,iNstatus);
 			}
 			function getChatViewStatus (iNchatId) {
-				let varPath = CONST['chatViewPrefix'] + iNchatId;
-				return parseInt(M_APP.get(varPath))||0;
+				// let varPath = CONST['chatViewPrefix'] + iNchatId;
+				// return parseInt(M_APP.get(varPath))||0;
 			}
 
 	function onDisconectSetChatOffline (iNchatId) {
-		let uid = USER.getMyId();
-		let path = "chats/"+iNchatId+"/member/"+uid+"/online";
-		let chatTime = FIREBASE.database.ServerValue.TIMESTAMP;
-		let ref = FIREBASE.database().ref(path);
-		ref.on(
-			'value',
-			(iNdata) => {
-				if(iNdata.val() != 1 && getCurrentChatId() == iNchatId) {
-					setChatViewOnline (iNchatId);
-				}
-				ref.onDisconnect().set(chatTime);
-			}
-		);
+		// let uid = USER.getMyId();
+		// let path = "chats/"+iNchatId+"/member/"+uid+"/online";
+		// let chatTime = FIREBASE.database.ServerValue.TIMESTAMP;
+		// let ref = FIREBASE.database().ref(path);
+		// ref.on(
+		// 	'value',
+		// 	(iNdata) => {
+		// 		if(iNdata.val() != 1 && getCurrentChatId() == iNchatId) {
+		// 			setChatViewOnline (iNchatId);
+		// 		}
+		// 		ref.onDisconnect().set(chatTime);
+		// 	}
+		// );
 	}
 //@>CONTROLLER VIEW or NO defined chat (chat view now status)
 
@@ -251,7 +251,7 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
 		// set actions when connection will be disconected
         setCurrentChatId(iNobject['chatId']);
         // controller for wathching i view now this chat or no
-		runController_thisChatWatching (chatId);
+		// runController_thisChatWatching (chatId); -> disable
 
         
 

@@ -203,10 +203,13 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user','mediaStream
       @algoritm
         1 - get page object from server 
     */
+    console.log( 'getPage  iNdata', iNdata );
+    console.log( 'getPage  url_getPage', url_getPage );
     $.get (
       url_getPage, 
       iNdata,
       function (iNcontent) {
+        console.log('getPage  iNcontent',iNcontent);
         iNfunction(iNcontent);
       },
       'json'
@@ -249,7 +252,9 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user','mediaStream
             //add content
             VIEW.addFullWindowByTemplate( { 'content' : iNresult['content'] } );
             //add headers
+            console.log('addFullWindowByTemplate  iNresult[content]',iNresult['content']);
             processingData(iNresult);
+            console.log('addFullWindowByTemplate  iNresult',iNresult);
             //add events default pages
             addActionForEvents(iNdata['id']);
             //hide loader
@@ -261,20 +266,31 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user','mediaStream
         getPage ( 
           iNdata,
           function (iNresult){ 
-            //add content
+            //add content head
             M_APP.view.safeViewAppHeaderWithContent ({
               app : 'page',
               page : 'miniPage',
               content : VIEW.getMiniPageHeader(iNresult['head'])
             },'change');
+            console.log('addMiniPageToAppView iNresult[head]',iNresult['head']);
+
+            //@< add content body 
             M_APP.view.d_createChiefApp({
+              app : 'page'
+            });
+
+            M_APP.view.d_createPageInChiefApp({
               app : 'page',
               page : 'miniPage',
               content : iNresult['content']
             });
+            console.log('addMiniPageToAppView iNresult[content]',iNresult['content']);
+            //@> add content body 
 
             //add headers
             processingData(iNresult);
+            console.log('addMiniPageToAppView processingData iNresult',iNresult);
+
             //add events default pages
             //hide loader
             M_VIEW.closeLoader(); 

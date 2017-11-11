@@ -493,6 +493,8 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 			*/
 			var selector = CONST['pathAppView']; 
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
+			console.log('_d_createChiefApp selector',selector);
+			console.log('_d_createChiefApp iNdata',iNdata);
         	V_VIEW.d_addDataToViewEl(selector, _getChiefApp(iNdata) ,'change')
         }
         //< app headers
@@ -735,7 +737,7 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
         	if( typeof iNtype != 'string') iNtype = 'end';
         	var selector = CONST['pathAppHeader'] + ' .' + CONST['nameInAppHeader']+'[app-name="'+iNdata['app']+'"]',
         		content = _getPageAppHeader(iNdata);
-			V_VIEW.d_addDataToViewEl(selector, _getPageForListApp(content) , iNtype);
+			V_VIEW.d_addDataToViewEl(selector, content /* _getPageForListApp(content) */, iNtype); 
         }
 
 
@@ -753,6 +755,29 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
         			'[app-name="' + iNdata['app'] + '"]'
         		).hide();
 	        }
+
+
+	        function _d_checkMenuHeader (iNdata) {
+		    	/*
+					@discr
+						update isset page in list app by object (iNdata)
+					@inputs
+						@required
+							iNdata -> object
+								page 		-> string
+								app 	-> string
+								@optional
+									extra		-> string
+						@optional
+					@return
+						int : 0 - false, 0< true
+				*/
+				var selector = '#menusBlock .topBlockInMenusBlock .menuHeaderInMenusBlock[app-name="'+iNdata['app']+'"] .appPage[view-name="'+iNdata['page']+'"]';
+				if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
+		    	return $(selector).length;
+		    }
+
+
 	        function _d_removeMenuHeader (iNdata) {
 	        	/*
 	        		@discr
@@ -879,6 +904,7 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 					// check app container
 					_d_addAppMenuHeaderByTemplate(iNdata,iNtype);
 				} else if ( typeof iNdata['page'] == 'string' && _d_getLengthMenuHeader(iNdata) < 1 ) {
+					// check page container
 					_d_addPageMenuHeaderByTemplate( iNdata,iNtype);
 				}
 			}
@@ -911,6 +937,7 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 	        	var selector = CONST['pathMenuHeader'] + ' .' + CONST['nameInMenuHeader'] + '[app-name="'+iNdata['app']+'"]';
 	        	if ( typeof iNdata['page'] == 'string' )
 	        		selector += '.' + CONST['pageNameInMenuHeader'] + '[page-name="'+ iNdata['page'] +'"]';
+	        	console.log('_d_getLengthMenuHeader selector , $(selector).length',selector,$(selector).length);
 	        	return $(selector).length;
 	        }
 
@@ -969,7 +996,7 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 				if( typeof iNtype != 'string' ) iNtype = 'end';		
 	        	var selector = CONST['pathMenuHeader'] + ' .' + CONST['nameInMenuHeader']+'[app-name="'+iNdata['app']+'"]',
 	        		content = _getPageMenuHeader(iNdata);
-				V_VIEW.d_addDataToViewEl(selector, _getPageForListApp(content) ,iNtype);
+				V_VIEW.d_addDataToViewEl(selector, content ,iNtype);
 	        }
         //> app headers
 
@@ -1362,6 +1389,7 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 				    'd_hideMenuPagesHeader'           	: _d_hideMenuPagesHeader,
 				    'd_hideMenuHeader'          		: _d_hideMenuHeader,
 				    'd_removeMenuHeader'          		: _d_removeMenuHeader,
+				    'd_checkMenuHeader'				: _d_checkMenuHeader,
 
 		    	//app header
 				    'd_addPageAppHeaderByTemplate'		: _d_addPageAppHeaderByTemplate,

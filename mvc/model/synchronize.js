@@ -30,10 +30,22 @@ define(['jquery','m_user'],function( $, USER ) {
 
 		} else if  (inputObj['command'] == 'saveLocalStorage' && inputObj['content']) {
 		  // save change in local storage
+	  		console.log( 'listener if ' , (USER.getMyId() != USER.getMyIdFromObj(inputObj['content']) ) );
 		  if ( USER.getMyId() != USER.getMyIdFromObj(inputObj['content']) ) {
+	  		console.log( "listener USER.getMyIdFromObj(inputObj['content']) " , USER.getMyIdFromObj(inputObj['content'])  );
+	  		console.log( "listener USER.getMyId() " , USER.getMyId()  );
+	  		console.log( "listener inputObj['content'] " , inputObj['content']  );
+	  		
 		  	writeLocalStorage(inputObj['content']);
 		  	setLastSentLocalStorage(inputObj['content']);
-		  	location.reload();
+		  	console.log('listener reload timer start');
+		  	setTimeout(
+	  			() => { 
+				  	console.log('listener reload ');
+				  	location.reload() 
+			  	},
+	  			500
+  			);
 		  } else {
 		  	writeLocalStorage(inputObj['content']);
 		  	setLastSentLocalStorage(inputObj['content']);

@@ -1,13 +1,15 @@
-define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictionary','v_app-base','m_user'] , function ($ , FIREBASE , M_CATEGORY , M_APP , M_VIEW,USER, DICTIONARY, VIEW , USER) {
+define( 
+  ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictionary','v_app-base','m_user','m_routing', 'm_database', 'sweetalert2'] , 
+  function ($ , FIREBASE , M_CATEGORY , M_APP , M_VIEW,USER, DICTIONARY, VIEW , USER, ROUTING, M_DATABASE,SWEETALERT) {
 
   const _ = {}; _['name'] = 'base';
   const CONST = {};
   // init pages const
-  const pages = {}; _['pages'] = pages; var thisPageName;
+  const pages = {}; _['pages'] = pages;
     //< page menu
 
         //< page index
-          thisPageName = 'index';
+          var thisPageName = 'index';
           pages[thisPageName]  = {'attr':{},'menus':{},'functions':{}};
             pages[thisPageName]['attr'] = {
               'id2' : '2',
@@ -21,22 +23,38 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
             };
             pages[thisPageName]['functions'] = {
               'isPage'  : function () { 
-                let i =  ( M_APP.view.d_checkPageInListApp({app:'base','page':'index'}) > 0 ) ? true : false; 
+                let i =  ( M_APP.view.d_checkPageInListApp({app:'base','page':'index'}) > 0 ) ? true : false;
+                console.log('isPage index i',i); 
                 return i;
               },
               'onView'  : function (d,d1) { 
+                  console.log('onView index');
+                // hide all app in list
                 M_APP.view.d_hideApps('all','list');
+
+                // show this app in list
                 M_APP.view.d_showApps('base','list');
+
+                // add standart header for this list app
+                addStandartHeaderInListView();
+
                 console.log('app-bae index onView',d,d1);
 
                 getMyChats();
 
                 return true;
               },
+              'onHide'  : function () { 
+                  console.log('onHide index');
+                  return true;
+               },
               'onAppear'  : function () {
-                M_VIEW.closeLoader(); 
+                  console.log('onAppear index');
+                  M_VIEW.closeLoader(); 
               },
-              'onHide'  : function () { return true;},
+              'onDisappear'  : function () {
+                  console.log('onDisappear index');
+              },
               // 'setPage' : function () {console.log('app private','setPage'); return true;},
               'onCreate' : function (d,d1) { 
                 M_APP.view.d_createPageInListApp({app:'base','page':'index','content': '<div class="scrolBlockForChat" style="" id="MixItUp81681F"></div>'}); 
@@ -45,37 +63,61 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
           //>page index
 
           //< page one
-            thisPageName = 'one';
+            var thisPageName = 'one';
             pages[thisPageName]  = {'attr':{},'menus':{},'functions':{}};
               pages[thisPageName]['attr'] = {
-                'id2' : '2',
-                'id3' : '3',
+                // 'id2' : '2',
+                // 'id3' : '3',
               };
               pages[thisPageName]['menus'] = {
                 'attr' : {
-                  'id1' : 'id2',
-                  'id3' : 'id4'
+                  // 'id1' : 'id2',
+                  // 'id3' : 'id4'
                 }
               };
               pages[thisPageName]['functions'] = {
                 'isPage'  : function () { 
                   let i =  ( M_APP.view.d_checkPageInListApp({app:'base','page':'index'}) > 0 ) ? true : false; 
+                  console.log('isPage one i',i); 
                   return i;
                 },
                 'onView'  : function (d,d1) { 
+                    console.log('onView one');
+                  // hide all app in list
                   M_APP.view.d_hideApps('all','list');
+
+                  // show this app in list
                   M_APP.view.d_showApps('base','list');
 
-                  console.log('app-bae one onView',d,d1);
+                  // add header with back btn for this list app
+                  addHeaderWithBackBtnInListView();
+
+                  // attach for back btn this func by click for  open index page 
+                  $('.appBase_backButton').click(
+                    function(){
+                      M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index','data':''});
+                    }
+                  );
 
                   var uid = d['uid'];
                   createChatByGetUrlUserInfo(uid);
                   return true;
                 },
                 'onAppear'  : function () {
+                    console.log('onAppear one');
                   M_VIEW.closeLoader(); 
                 },
-                'onHide'  : function () { return true;},
+                'onDisappear'  : function () {
+                    console.log('onDisappear one');
+                },
+                'onHide'  : function () { 
+                  console.log('onHide one');
+
+                  // clear user menus 
+                  $('.usersBlockContainerInMenusBlock .app[app-name="base"] .view[view-name="index"] .scrolBlockForChat').html('');
+                  
+                  return true;
+                },
                 // 'setPage' : function () {    return true;},
                 'onCreate' : function (d,d1) { 
                   M_APP.view.d_createPageInListApp({app:'base','page':'index','content': '<div class="scrolBlockForChat" style="" id="MixItUp81681F"></div>'}); 
@@ -93,8 +135,8 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
 
   // function onCreate
   function onCreate (iNstring,iNobject) {
+    // create app block in list
     M_APP.view.d_createListApp({app:'base'}); 
-    d_addMyHeader();
 
   }
   _['onCreate'] = onCreate;
@@ -109,7 +151,7 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
 
   // function onInit
   function onInit (iNstring,iNobject) {
-    runController_MyOnlineStatus();
+    controller_devise_run();
     
     //
 
@@ -159,12 +201,23 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
 
 
 
-  function d_addMyHeader () {
-    VIEW.addUserHeaderInList({
+
+
+  function addStandartHeaderInListView () {
+    VIEW.addUserHeaderInList( {
       'icon' : USER.getMyIcon(),
       'name' : USER.getMyDisplayName(),
       'login': USER.getMyLogin(),
-    },'change')
+    },'change');
+  }
+
+  function addHeaderWithBackBtnInListView () {
+    VIEW.addUserHeaderInList({
+      'icon'  : USER.getMyIcon(),
+      'name'  : USER.getMyDisplayName(),
+      'login' : USER.getMyLogin(),
+      'back'  : true,
+    },'change');
   }
 
 
@@ -252,12 +305,12 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
   }
 
   function getMessagesByChatId () {
-    M_CATEGORY.view.startEffSortChats();
-    var myUid       = M_APP.get('uid'),
-        chatsRef = FIREBASE.database().ref('chats/'+chatId);
-    chatsRef.once('value', function(chatData) {
+    // M_CATEGORY.view.startEffSortChats();
+    // var myUid       = M_APP.get('uid'),
+    //     chatsRef = FIREBASE.database().ref('chats/'+chatId);
+    // chatsRef.once('value', function(chatData) {
 
-    });
+    // });
   }
 
 
@@ -292,9 +345,12 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
             }else{
               // create chat static
               var objForCreateChat = {};
-                  objForCreateChat['chatId'] = objectForAjax['user']['login'];
-                  objForCreateChat['userId'] = objectForAjax['user']['uid'];
-              M_CATEGORY.view.createChatList();
+                  objForCreateChat['chatId']  = resultOfAjax['chat'];//resultOfAjax['user']['login'];
+                  objForCreateChat['userId']  = resultOfAjax['user']['uid'];
+                  objForCreateChat['login']   = resultOfAjax['user']['login'];
+              M_CATEGORY.view.createChatList(objForCreateChat);
+
+              console.log('createChatByGetUrlUserInfo viewThisChatFromFDB');
               viewThisChatFromFDB (resultOfAjax['chat'],resultOfAjax);
             }
           }
@@ -342,6 +398,7 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
           function (resultOfAjax) {
             if(typeof resultOfAjax == 'object' && resultOfAjax['status'] == 1 ) {
               // create chat if it did not exist
+              console.log('createChat viewThisChatFromFDB');
               viewThisChatFromFDB(resultOfAjax['chat'],iNuserData);
             }
           }
@@ -359,20 +416,20 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
 
               // M_CATEGORY.view.safeAddChatList(objForCreatChat);
               // attach link with chat db
-              safeAttachLiveLinkToChatElement(objForCreatChat['chatId'], () => {
-                // add category
-               viewServiceMenu (objForCreatChat,iNuserData);
+              safeAttachLiveLinkToChatElement(objForCreatChat['chatId'], 
+                () => {
+                  // add category
+                 viewServiceMenu (objForCreatChat,iNuserData);
 
-              });
-
-            // }
+                }
+              );
             // hide all chat list
             M_CATEGORY.view.effHideChatLists();
             // show this chat list
             M_CATEGORY.view.effShowChatList(objForCreatChat['chatId']);
         }
           function viewServiceMenu (objForCreatChat,iNuserData) {
-                console.log('viewServiceMenu',iNuserData,objForCreatChat['userId']);
+                console.log('viewServiceMenu',iNuserData,objForCreatChat);
                 M_CATEGORY.view.addMenuByCategoryList (iNuserData,objForCreatChat['userId']);
                 // dictionary
                 DICTIONARY.start('.menuListForUsers');
@@ -433,16 +490,43 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
             domSortChatsBlock() - for create sort or check
     */
     M_CATEGORY.view.startEffSortChats();
-    var myUid       = M_APP.get('uid'),
-    membersRef      = FIREBASE.database().ref('members/'+myUid);
-    membersRef.on('child_added', function(memberData) { 
-          var memberBlock   = memberData.val();
-          var chatId    = memberData.key;
-          var user2     = M_APP.getJsonKey(memberBlock);
-          M_CATEGORY.userForPrivateChat(chatId,user2);
+    var myUid       = M_APP.get('uid');
+    // membersRef      = FIREBASE.database().ref('members/'+myUid);
+
+
+    M_DATABASE.getRealtimeDataFromFirestoreDb (
+          'users',
+          myUid + '/members',
+          {
+            'functionOnOther' : () => {
+
+            },
+            
+            'functionOnChangeFromServer' : (memberData) => {
+            
+            },
+            
+            'functionOnAdd' : (memberData) => {
+              var memberBlock   = memberData.data();
+              var chatId        = memberData.id;
+              var user2         = M_APP.getJsonKey(memberBlock);
+              M_CATEGORY.userForPrivateChat(chatId,user2);
+                   
+              safeAttachLiveLinkToChatElement(chatId);
+            }
+          }
+    );
+
+
+
+    // membersRef.on('child_added', function(memberData) { 
+    //       var memberBlock   = memberData.val();
+    //       var chatId    = memberData.key;
+    //       var user2     = M_APP.getJsonKey(memberBlock);
+    //       M_CATEGORY.userForPrivateChat(chatId,user2);
                
-          safeAttachLiveLinkToChatElement(chatId);
-    });
+    //       safeAttachLiveLinkToChatElement(chatId);
+    // });
   }
   _['getMyChats'] = getMyChats;
 
@@ -459,17 +543,26 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
     _['setMyNewMessagesCountByChatId'] = setMyNewMessagesCountByChatId;
   //@> copy funcitons from message.js model
 
-  function startNewMsgCounter (iNchatId,iNmyUid) {
-    let chatsMyNewMsgRef = FIREBASE.database().ref('chats/' + iNchatId + '/member/' + iNmyUid + '/newMsg');
-    chatsMyNewMsgRef.on('value', 
-      (iNdata) => {
-        let number = iNdata.val()||0;
-        // save in local storage in db
-        if(number == 0) return false; 
-        setMyNewMessagesCountByChatId(iNchatId,number);
-        M_CATEGORY.view.domSafeShowNewMsgCountInChatBlock( iNchatId, number );
-      }
-    );
+  function startNewMsgCounter (iNdata, iNchatId,iNmyUid) {
+
+    let number = iNdata['member'][iNmyUid]['newMsg']||0;
+    // save in local storage in db
+    if(number == 0) return false; 
+    setMyNewMessagesCountByChatId(iNchatId,number);
+    M_CATEGORY.view.domSafeShowNewMsgCountInChatBlock( iNchatId, number );
+
+
+
+    // let chatsMyNewMsgRef = FIREBASE.database().ref('chats/' + iNchatId + '/member/' + iNmyUid + '/newMsg');
+    // chatsMyNewMsgRef.on('value', 
+    //   (iNdata) => {
+    //     let number = iNdata.val()||0;
+    //     // save in local storage in db
+    //     if(number == 0) return false; 
+    //     setMyNewMessagesCountByChatId(iNchatId,number);
+    //     M_CATEGORY.view.domSafeShowNewMsgCountInChatBlock( iNchatId, number );
+    //   }
+    // );
   }
 
 
@@ -478,40 +571,84 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
       offAllLinkWithChatDbByChatId(iNchatId);
       //check chat list for exist
       var  chatId           = iNchatId,
-           myUid            = USER.getMyId(),
-           chatsRef         = FIREBASE.database().ref('chats/' + chatId + '/info');
+           myUid            = USER.getMyId();
+           // chatsRef         = FIREBASE.database().ref('chats/' + chatId + '/info');
+      
+       console.log('safeAttachLiveLinkToChatElement myUid, chatId',myUid, chatId);
 
-       
-      chatsRef.once ( 'value', (chatData) => {
-        var chatId    = chatData.ref.parent.key,
-            chatBlock = chatData.val(),
-            chatType  = chatBlock.chat.type;
-        //@< creating chat
-          if (chatType == 1) {
-              //create "private" chat
-              safeUpdatePrivateChatBlockFromUserDb( chatId,chatBlock, chatType ,iNfunction); // changeObject
-          } else if (chatType == 2) {
-              //create "common" chat
-              safeUpdateCommonChatBlockFromUserDb ( chatId, chatBlock, chatType ,iNfunction);
+       M_DATABASE.getRealtimeDataFromFirestoreDb (
+          'chats',
+          chatId,
+          {
+            'functionOnOther' : () => {
+
+            },
+            'functionOnChangeFromServer' : (chatData) => {
+                    var chatId           = chatData.id;
+                    var chatKey          = 'info'; //chatData.id;
+                    var chatDataValue    = chatData.data();
+                    var chatObject      = {}; 
+                      chatObject[chatKey] = chatDataValue.info;
+                      var chatBlock     = chatDataValue.info;
+                      var chatType      = chatDataValue.type;
+                      var changeObject  = M_CATEGORY.getObjectForUpdateChatBlock ( chatObject );
+                            changeObject['chatType'] = chatType;
+                            changeObject['chatId']   = chatId;
+                      // change chat
+                      M_CATEGORY.safeUpdateChatBlock(changeObject,chatType);
+
+            },
+            'functionOnAdd' : (chatData) => {
+                   var  chatId    = chatData.id,
+                        chatBlock = chatData.data(),
+                        chatType  = chatBlock.type;
+
+                        console.log('safeAttachLiveLinkToChatElement functionOnAdd chatId,chatBlock',chatId,chatBlock);
+
+                   //@< creating chat
+                      if (chatType == 1) {
+                          //create "private" chat
+                          safeUpdatePrivateChatBlockFromUserDb( chatId, chatBlock.info, chatType , iNfunction); // changeObject
+                      } else if (chatType == 2) {
+                          //create "common" chat
+                          safeUpdateCommonChatBlockFromUserDb ( chatId, chatBlock.info, chatType , iNfunction);
+                      }
+                  //@> creating chat
+                  startNewMsgCounter(chatBlock,chatId,myUid);
+            }
           }
-        //@> creating chat
+       );
+       
+      // chatsRef.once ( 'value', (chatData) => {
+      //   var chatId    = chatData.ref.parent.key,
+      //       chatBlock = chatData.val(),
+      //       chatType  = chatBlock.chat.type;
+      //   //@< creating chat
+      //     if (chatType == 1) {
+      //         //create "private" chat
+      //         safeUpdatePrivateChatBlockFromUserDb( chatId,chatBlock, chatType ,iNfunction); // changeObject
+      //     } else if (chatType == 2) {
+      //         //create "common" chat
+      //         safeUpdateCommonChatBlockFromUserDb ( chatId, chatBlock, chatType ,iNfunction);
+      //     }
+      //   //@> creating chat
 
-        startNewMsgCounter(chatId,myUid);
-      });
-      chatsRef.on ( 'child_changed' , function (chatData) {
-          var chatId           = chatData.ref.parent.parent.key;
-          var chatKey          = chatData.ref.key;
-          var chatDataValue    = chatData.val();
-          var chatObject      = {}; 
-            chatObject[chatKey] = chatDataValue;
-            var chatBlock     = chatData.val();
-            var chatType      = chatBlock.type;
-            var changeObject  = M_CATEGORY.getObjectForUpdateChatBlock ( chatObject );
-                  changeObject['chatType'] = chatType;
-                  changeObject['chatId']   = chatId;
-            // change chat
-            M_CATEGORY.safeUpdateChatBlock(changeObject,chatType);
-      });
+      //   startNewMsgCounter(chatId,myUid);
+      // });
+      // chatsRef.on ( 'child_changed' , function (chatData) {
+      //     var chatId           = chatData.ref.parent.parent.key;
+      //     var chatKey          = chatData.ref.key;
+      //     var chatDataValue    = chatData.val();
+      //     var chatObject      = {}; 
+      //       chatObject[chatKey] = chatDataValue;
+      //       var chatBlock     = chatData.val();
+      //       var chatType      = chatBlock.type;
+      //       var changeObject  = M_CATEGORY.getObjectForUpdateChatBlock ( chatObject );
+      //             changeObject['chatType'] = chatType;
+      //             changeObject['chatId']   = chatId;
+      //       // change chat
+      //       M_CATEGORY.safeUpdateChatBlock(changeObject,chatType);
+      // });
   }
 
   function offAllLinkWithChatDbByChatId (iNchatId) {
@@ -645,79 +782,191 @@ define( ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictiona
 
 
 //@<CONTROLLER MY ONLINE STATUS
-  CONST['myOnlineStatusSpy'] = 'connectTimeoutId-spyMyOnlineStatus';
-  CONST['myOnlineStatusState'] = 'connectMyOnlineStatusState';
 
-  function runController_MyOnlineStatus () {
-    onDisconectControllerOnlineStatus();
+  CONST['myOnlineStatusSpy']    = 'connectTimeoutId-spyMyOnlineStatus';
+  CONST['myOnlineStatusState']  = 'connectMyOnlineStatusState';
+
+  function controller_devise_run () {
+    devise_onDisconectController();
     // set mousemove event for control my online status
     $( "html" ).off('mousemove');
     $( "html" ).mousemove( function( event ) {
-      onEvent_MousemoveMyStatusController();
+      onEvent_devise_MousemoveController();
     });
   } 
-  function getFromFBDmyStatusPath () {
-      let uid = USER.getMyId();
-      let path = "users/"+uid+"/info/live/online";
-      return path;
-  }
+  
 
-  function safeSetStatusIOnline () {
-    let myOnlineState = getMyOnlineStatusState();
+  function devise_setStateIOnline () {
+    let myOnlineState = devise_getMyOnlineState();
     if(myOnlineState != 1) {
-      setStatusIOnline();
+      devise_setStateOnline();
     }
   }
-    function setStatusIOnline () {
-        setOnlineOfflineStatus(1);
-        setMyOnlineStatusState(1);
+    
+    function devise_setStateOffline () {
+        // set online status
+        let path      = devise_getPathToDeviseTable();
+        if(path === false) return false;
+        let ref       = FIREBASE.database().ref(path);
+        let onffineState   = devise_getObjectForWriteToDbBySetState(0);
+        ref.update(onffineState);
     }
-    function setStatusIOffline () {
-        setOnlineOfflineStatus(FIREBASE.database.ServerValue.TIMESTAMP);
-        setMyOnlineStatusState(0);
-    }
-      function setOnlineOfflineStatus (iNnumber) {
-        let path = getFromFBDmyStatusPath();
-
-        let updateArray = {};
-          updateArray[path] = iNnumber;//FIREBASE.database.ServerValue.TIMESTAMP;
-          FIREBASE.database().ref().update(updateArray);
-      }
-      function setMyOnlineStatusState (iNstate) {
-        M_APP.save(CONST['myOnlineStatusState'],iNstate);
-      }
-    function getMyOnlineStatusState () {
+      
+      
+    function devise_getMyOnlineState () {
+        /*
+            @discr
+              get online(@return 1)/onffine(@return 0)
+            @inputs
+            @return
+              @type enumint 
+              1 - online
+              0 - offline
+       */
       return parseInt(M_APP.get(CONST['myOnlineStatusState']))||0;
     }
-    
 
+    function devise_setMyOnlineState (iNstate) {
+        /*
+            @discr
+              set online(@return 1)/onffine(@return 0)
+            @inputs
+              iNstate -> int
+                @type enumint 
+                  1 - online
+                  0 - offline
+            @return
+       */
+      M_APP.save(CONST['myOnlineStatusState'], iNstate);
+    }
 
-  function onDisconectControllerOnlineStatus () {
-      var timeStamp = FIREBASE.database.ServerValue.TIMESTAMP;
-      let ref = FIREBASE.database().ref(getFromFBDmyStatusPath());
-      ref.on(
-        'value',
-        (iNdata) => {
-          // if i am not in online and my othere device change my state
-          if(iNdata.val() != 1 && getMyOnlineStatusState() == 1) {
-            setStatusIOnline ();
-          }
-          ref.onDisconnect().set(timeStamp);
+    function devise_setStateOnline () {
+        // set online status
+        let path      = devise_getPathToDeviseTable();
+        if(path === false) return false;
+        let ref       = FIREBASE.database().ref(path);
+        var onlineState   = devise_getObjectForWriteToDbBySetState(1);
+        ref.update(onlineState);
+    }
+      function devise_getObjectForWriteToDbBySetState (iNval) {
+        /*
+            @discr
+            @inputs
+              iNvalue
+       */
+        const path          = devise_getPathToDeviseTable();
+        if(path === false) return false;
+        const onlineState   = iNval;
+              // set online/offline state
+              devise_setMyOnlineState(onlineState);
+        const objectForAdd  = { 'online' : onlineState };
+              // get user agent
+              objectForAdd['uagent']  = ROUTING.getUserAgent();
+              // get devise name
+              objectForAdd['name']    = ROUTING.getDeviseName();
+              objectForAdd['time'] = FIREBASE.database.ServerValue.TIMESTAMP;
+
+              // if ( onlineState < 1) {
+              //   //is offline flag
+
+              // } else {
+              //   //is online flag
+              //   objectForAdd['timeout'] = FIREBASE.database.ServerValue.TIMESTAMP;
+              // }
+
+        var isDesktop =  ROUTING.isDesktop(); //#if desktop
+        if( ROUTING.isDesktop() ) {
+          // is desctop
+          objectForAdd['type'] = 2;
+        } else {
+          // is browser
+          objectForAdd['type'] = 1;
         }
-      );
-  }
+        return objectForAdd;
+      }
 
-  function onEvent_MousemoveMyStatusController () {
+    function devise_getPathToDeviseTable () {
+        let uid = USER.getMyId();
+        let token     = USER.getMyToken();
+        if(!uid || !token) return false;
+        let path = "devises/" + uid + '/' + token;
+        return path;
+    }
+    function devise_removeNoteFromDatabase () {
+        /*
+          @discr
+            deleted note from firebase datebase for deleted from firestore by cloud functions
+        */
+        let path      = devise_getPathToDeviseTable();
+        console.log('devise_removeNoteFromDatabase path',path);
+        if(path === false) return false;
+        FIREBASE.database().ref(path).remove();
+
+    }
+    // did global function
+    M_APP.globalFunctions_create('devise_removeNoteFromDatabase',devise_removeNoteFromDatabase);
+    _['devise_removeNoteFromDatabase'] = devise_removeNoteFromDatabase;
+
+    function devise_onDisconectController () {
+        let path      = devise_getPathToDeviseTable();
+        if(path === false) return false;
+        let ref           = FIREBASE.database().ref(path);
+        var onlineState   = devise_getObjectForWriteToDbBySetState(1);
+        var offlineState  = devise_getObjectForWriteToDbBySetState(0);
+        ref.off();
+        console.log('devise_onDisconectController path',path);
+        ref.on(
+          'value',
+          (iNdata) => {
+            var value = iNdata.val();
+            console.log('devise_onDisconectController value, iNdata',iNdata);
+            console.log('devise_onDisconectController value, path',value, path);
+            //if deleted this -> we signout from this account
+            if(value === null) {
+            console.log('devise_onDisconectController NULL value, path',value, path);
+              // return;
+              USER.signOut(
+                () => {
+                  // we've signed out successfull -> we open page for sign in
+                  M_APP.getGlobalVar('engine').passToApp({'app':'page','page':'fullWindow','data':'id=sign&uid=@system'});
+                  // SWEETALERT.swal(
+                  //   'Выход',
+                  //   '?',
+                  //   'question'
+                  // );
+
+                },
+                () => {
+                  // error
+                  // SWEETALERT.swal();
+                  
+                }
+              );
+              return;
+            }
+            // if i am not in online and my othere devise change my state
+            if(value.online != 1 && devise_getMyOnlineState() == 1) {
+              // devise_setStateOnline ();
+              ref.update(onlineState);
+            }
+            ref.onDisconnect().set(offlineState);
+          }
+        );
+    }
+  //
+  //
+
+  function onEvent_devise_MousemoveController () {
     // set my status online safe (with check it already isset)
-    safeSetStatusIOnline();
+    devise_setStateIOnline();
     // clear previous timeout id
     clearTimeout(getMyStatusTimeoutId());
     // save time out and passed there function
     let timeOutId = setTimeout(
       () => {
-        setStatusIOffline();
+        devise_setStateOffline();
       },
-      300000 // 5 m (300 sc)
+      300000 // 5 m (300 sc) 300000 ms
     );
     // sace timeout id
     setMyStatusTimeoutId(timeOutId);

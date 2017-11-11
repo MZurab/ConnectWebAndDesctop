@@ -1,6 +1,6 @@
 define(
-    ['jquery', 'v_message', 'm_moment', 'm_user', 'm_app', 'm_category', 'm_storage', 'm_record', 'm_progressbar', 'm_database'],
-    function($, VIEW, MOMENT, USER, M_APP, M_CATEGORY, M_STORAGE, M_RECORD, M_PROGRESSBAR, M_DATABASE) {
+    ['jquery', 'v_message', 'm_moment', 'm_user', 'm_app', 'm_category', 'm_storage', 'm_record', 'm_progressbar', 'm_database', 'log'],
+    function($, VIEW, MOMENT, USER, M_APP, M_CATEGORY, M_STORAGE, M_RECORD, M_PROGRESSBAR, M_DATABASE, LOG) {
         const _ = {
             'view': VIEW
         };
@@ -86,13 +86,13 @@ define(
 
             getMessagesFromDb(iNchatId, 'child_added', iNobject);
 
-            setTimeout(
-                () => {
-                    let chatId = iNchatId;
-                    getMessagesFromDb(chatId, 'child_changed', iNobject);
-                },
-                5000
-            );
+            // setTimeout(
+            //     () => {
+            //         let chatId = iNchatId;
+            //         getMessagesFromDb(chatId, 'child_changed', iNobject);
+            //     },
+            //     5000
+            // );
         }
         _['synchronizeWithMessageDb'] = synchronizeWithMessageDb;
 
@@ -117,16 +117,49 @@ define(
             //     callbackAddOrChangeMessageForDb(messagesData, iNchatId, iNtype, iNobject);
             // });
 
-            M_DATABASE.getDataFromRealtimeDb ('messages', iNchatId, 
-                {
-                    'order' : 'time',
-                    limitToLast : 40,
-                    type : iNtype,
-                    functionOnSuccess : (messagesData) => {
-                        callbackAddOrChangeMessageForDb(messagesData, iNchatId, iNtype, iNobject);
-                    }
-                }
-            )
+            // M_DATABASE.getDataFromRealtimeDb ('messages', iNchatId, 
+            //     {
+            //         'order' : 'time',
+            //         limitToLast : 40,
+            //         type : iNtype,
+            //         functionOnSuccess : (messagesData) => {
+            //             callbackAddOrChangeMessageForDb(messagesData, iNchatId, iNtype, iNobject);
+            //         }
+            //     }
+            // )
+            LOG.on();
+
+            // var iKey = 'member.769b72df-6e67-465c-9334-b1a8bfb95a1a2.status';
+            // var whereEquilTo = {};
+            //     whereEquilTo[iKey] = 1;
+            var iNobject = {
+                'limitToFirst' : 40,
+                'functionOnAdd':    (messagesData) => {
+                    console.log('getMessagesFromDb functionOnAdd',messagesData);
+                    callbackAddOrChangeMessageForDb(messagesData, iNchatId, 'child_added', iNobject);
+                },//(d) => { console.log('getRealtimeDataFromFirestoreDb functionOnAdd',d);  },
+                'functionOnChangeFromServer': (messagesData) => {
+                    console.log('getMessagesFromDb functionOnChange',messagesData);
+                    callbackAddOrChangeMessageForDb(messagesData, iNchatId, 'child_changed', iNobject);
+                },
+                'functionOnOther' : () => { 
+                    // callbackAddOrChangeMessageForDb({}, iNchatId, 'child_added', iNobject);
+                    console.log('functionOnOther')
+                    // view chat
+                    VIEW.effChatViewScrollToBotWithTimeOut(
+                        () => {
+                            
+                        },
+                        () => {
+                            
+                        }
+                    );
+
+
+                }//(d) => { console.log('getRealtimeDataFromFirestoreDb functionOnAdd',d); },
+            };
+
+            M_DATABASE.getRealtimeDataFromFirestoreDb('chats', iNchatId +'/messages' , iNobject);
         }
 
         function callbackAddOrChangeMessageForDb(iNdataFromFB, iNchatId, iNtype, iNobject) {
@@ -142,12 +175,17 @@ define(
                                         functionOnChildChanged
                                         functionOnChildAdded
                     */
+
+
             var messagesData = iNdataFromFB;
             var myUID = USER.getMyId();
-            var fullData = messagesData.val()
+            var fullData = messagesData.data()||{};//messagesData.val()
+            LOG.print('callbackAddOrChangeMessageForDb fullData',fullData);
+
             var objectForCreateMessage = fullData['info'];
             var msgType = fullData['type'];
-            objectForCreateMessage['msgId'] = messagesData.key;
+            objectForCreateMessage['msgId'] = messagesData.id;//messagesData.key;
+            LOG.print('callbackAddOrChangeMessageForDb objectForCreateMessage',objectForCreateMessage);
 
             // add for simple msg text spy for set read state when we watch this msg
             if (objectForCreateMessage['uid'] != myUID && objectForCreateMessage['type'] == 1) {
@@ -236,7 +274,7 @@ define(
         }
 
 
-        function msgLiveAudio_safeSerReadState () {
+        function msgLiveAudio_safeSetReadState () {
             var msgSelectorText = msg_getPathToDomForMsg (  iNchatId, iNmsgId );
                     var myUID = USER.getMyId();
             msg_getDomAttrByNameMessageTimeSent (msgSelectorText);
@@ -251,13 +289,17 @@ define(
 
 
         function getTimeTextForAllMessages(iNobject, iNfullBlock, iNchatId, iNmyUid) {
+            // for firestore db get timestamp
 
+            // get time stamp (if message only send from me we get know time -> we get now time)
+            iNfullBlock.time =  ( ( iNfullBlock.time ) ? iNfullBlock.time.getTime() : new Date().getTime() );
             if (iNfullBlock.time > 0) {
-                iNobject.timeSentText = MOMENT().getTimeMiniText(iNfullBlock.time);
-                iNobject.timeSent = iNfullBlock.time;
+                // create time text for sent messages for add to dom by template
+                iNobject.timeSentText   = MOMENT().getTimeMiniText( iNfullBlock.time );
+                iNobject.timeSent       = iNfullBlock.time;
             }
             if (iNobject['uid'] != iNmyUid) {
-                // this is message to me
+                // this is message to me (i've not create it) -> we get for
                 getTimeForToMeMessages(iNobject, iNfullBlock, iNchatId, iNmyUid)
             } else {
                 // this is message from me
@@ -267,21 +309,26 @@ define(
 
         function getTimeForToMeMessages(iNobject, iNfullBlock, iNchatId, iNmyUid) {
             //get status by timestamp read,delivered,sent
-            console.log('getTimeForToMeMessages iNobjectd',iNobject );
-            console.log('getTimeForToMeMessages iNfullBlock', iNfullBlock );
-            console.log('getTimeForToMeMessages iNchatId', iNchatId);
-            console.log('getTimeForToMeMessages iNmyUid',iNmyUid);
             var myState = msgFromMe_getTimesOfState(iNfullBlock, iNmyUid);
             console.log('getTimeForToMeMessages myState',myState);
-            if (typeof myState == 'object') {
+            console.log('getTimeForToMeMessages iNfullBlock',iNfullBlock);
+            console.log('getTimeForToMeMessages iNmyUid',iNmyUid);
+            if ( typeof myState == 'object' ) {
                 var states = myState;
-                if (states.read > 0) {
-                    iNobject.timeReadText = MOMENT().getTimeMiniText(states.read);
-                    iNobject.timeRead = states.read;
+                console.log('timestamp states',states);
+                if ( typeof states.read == 'object'  && states.read) { // states.read > 0
+                    console.log('timestamp states.read',states.read);
+                    // states.read = states.read.getTime(); // for firestore
+
+                    iNobject.timeReadText = MOMENT().getTimeMiniText(states.read.getTime());
+                    iNobject.timeRead = states.read.getTime();
                 }
-                if (states.delivered > 0) {
-                    iNobject.timeDeliveredText = MOMENT().getTimeMiniText(states.delivered);
-                    iNobject.timeDelivered = states.delivered;
+                if ( typeof states.delivered == 'object'  && states.delivered  ) { // states.delivered > 0
+                    // states.delivered = states.delivered.getTime(); // for firestore
+
+
+                    iNobject.timeDeliveredText = MOMENT().getTimeMiniText(states.delivered.getTime());
+                    iNobject.timeDelivered = states.delivered.getTime();
                 } else {
                     setTimeout(() => {
                         let thisObj = iNobject;
@@ -297,13 +344,13 @@ define(
             //get status by timestamp read,delivered,sent
             if (typeof iNobject.state == 'object') {
                 var states = iNobject.state;
-                if (states.read > 0) {
-                    iNobject.timeReadText = MOMENT().getTimeMiniText(states.read);
-                    iNobject.timeRead = states.read;
+                if (states.read && typeof states.read == 'object' && states.read.getTime() > 0) {
+                    iNobject.timeReadText = MOMENT().getTimeMiniText(states.read.getTime());
+                    iNobject.timeRead = states.read.getTime();
                 }
-                if (states.delivered > 0) {
-                    iNobject.timeDeliveredText = MOMENT().getTimeMiniText(states.delivered);
-                    iNobject.timeDelivered = states.delivered;
+                if ( states.delivered && typeof states.delivered == 'object' && states.delivered.getTime() > 0 ) {
+                    iNobject.timeDeliveredText = MOMENT().getTimeMiniText(states.delivered.getTime());
+                    iNobject.timeDelivered = states.delivered.getTime();
                 }
             }
         }
@@ -318,15 +365,16 @@ define(
 
         function msgFromMe_getReadTime(iNobject, myUID) {
             var thisStateObject = msgFromMe_getTimesOfState(iNobject, myUID);
-            if (typeof thisStateObject['read'] == 'number')
-                return thisStateObject['read'];
+            console.log('msgFromMe_getReadTime thisStateObject',thisStateObject);
+            if (typeof thisStateObject['read'] == 'object' && thisStateObject['read'] != null && typeof thisStateObject['read'].getTime == 'function')
+                return thisStateObject['read'].getTime();
             return 0;
         }
 
         function getMyStateDeliveredFromMsg(iNobject, myUID) {
             var thisStateObject = msgFromMe_getTimesOfState(iNobject, myUID);
-            if (typeof thisStateObject['delivered'] == 'number')
-                return thisStateObject['delivered'];
+            if (typeof thisStateObject['delivered'] == 'object' && thisStateObject['delivered'] != null && thisStateObject['delivered'] == 'function')
+                return thisStateObject['delivered'].getTime();
             return 0;
         }
 
@@ -369,8 +417,6 @@ define(
             */
             var chatId = iNchatId||msg_getCurrentChatId();
             var myUID = USER.getMyId();
-            var baseKey = 'chats/' + chatId + '/info/live';
-            //change delete fixed type
             var objForSendToDb = {
                 'data'  : iNdata['data'],
                 'uid'   : iNdata['uid']||myUID,
@@ -378,45 +424,153 @@ define(
                 'type'  : iNdata['type']
             }
 
+            var baseKey = 'chats/' + chatId + '/info/live';
+            // let collection = 'chats',
+            //     pathToDb = chatId + '/info/live';
+            // M_DATABASE.addRealtimeDb ( collection, pathToDb, objForSendToDb )
 
-            // var updateArray = {};
-            // updateArray[baseKey] = objForSendToDb;
-
-            // FIREBASE.database().ref().update(updateArray);
-
-            let collection = 'chats',
-                pathToDb = chatId + '/info/live';
-            M_DATABASE.addRealtimeDb ( collection, pathToDb, objForSendToDb )
+            let objForSafeUpdate = {
+                'info' : {
+                    'live' : objForSendToDb
+                }
+            };
+            M_DATABASE.safeUpdateFirestoreDb ( 'chats', chatId, objForSafeUpdate );
 
         }
         _['msg_flashSending'] = msg_flashSending;
 
         function msg_setReadState(iNmsgId, iNchatId, myUID) {
-            // var baseKey = 'messages/' + iNchatId + '/' + iNmsgId + '/member/' + myUID + '/state';
 
-            // var keyRead = baseKey + '/read';
 
-            // var updateArray = {};
-            // updateArray[keyRead] = M_DATABASE.getSeverVarTimestamp();;
-            // var result = FIREBASE.database().ref().update(updateArray);
+            // var firestoreKey = 'member.' + myUID + '.state' + '.read';
+            // var fsUpdateObg = {};
+            //     fsUpdateObg[firestoreKey] = M_DATABASE.getFirestoreSeverVarTimestamp();
+            // M_DATABASE.updateFirestoreDb ( 'chats' , iNchatId + '/messages/' + iNmsgId, fsUpdateObg);
 
-            let collection = 'messages',
-                pathToDb = iNchatId + '/' + iNmsgId + '/member/' + myUID + '/state' + '/read';
-            M_DATABASE.addRealtimeDb ( collection, pathToDb, M_DATABASE.getSeverVarTimestamp() )
+            // let objForSafeUpdate = { 'member' : {} };
+            //     objForSafeUpdate [ 'member' ][ myUID ] = {
+            //         'state' : {
+            //             'read' : M_DATABASE.getFirestoreSeverVarTimestamp()
+            //         }
+            //     }
+            // M_DATABASE.safeUpdateFirestoreDb ( 'chats', iNchatId + '/messages/'+iNmsgId, objForSafeUpdate );
+            msg_stateAddToQueue ('read',myUID , iNchatId, iNmsgId);
+        }
+
+
+        function msg_stateAddToQueue (iNstateKey,iNmyUid , iNchatId, iNmsgId) {
+            // body...
+            if(
+                typeof iNstateKey   != 'string'   ||
+                typeof iNmyUid      != 'string'   ||
+                typeof iNchatId     != 'string'   ||
+                typeof iNmsgId      != 'string'
+            ) return true;
+
+            if(typeof window['connecVar_storageForMsgState'] != 'object')
+                window['connecVar_storageForMsgState'] = {};
+
+            if(typeof window['connecVar_storageForMsgState'][iNchatId] != 'object')
+                window['connecVar_storageForMsgState'][iNchatId] = {};
+
+            if(typeof window['connecVar_storageForMsgState'][iNchatId][iNmsgId] != 'object')
+                window['connecVar_storageForMsgState'][iNchatId][iNmsgId]  = { };
+
+            if(typeof window['connecVar_storageForMsgState'][iNchatId][iNmsgId]['member'] != 'object')
+                window['connecVar_storageForMsgState'][iNchatId][iNmsgId]['member']  = {};
+
+
+            if(typeof window['connecVar_storageForMsgState'][iNchatId][iNmsgId]['member'][iNmyUid] != 'object')
+                window['connecVar_storageForMsgState'][iNchatId][iNmsgId]['member'][iNmyUid]  = { 'state':{} };
+
+            window['connecVar_storageForMsgState'][iNchatId][iNmsgId]['member'][iNmyUid]['state'][iNstateKey] = M_DATABASE.getFirestoreSeverVarTimestamp()
+
+            // start to add state
+            msg_stateSendToDb (iNchatId, iNmsgId, iNmyUid);
+        }
+        _['msg_stateAddToQueue'] = msg_stateAddToQueue;
+
+        function msg_stateSendToDb (iNchatId, iNmsgId, iNmyUid) {
+            // get timeout id
+            var timeoutId = window['connecVar_timeoutId_storageForMsgState'];
+            // clear timeout id
+            clearTimeout(window['connecVar_timeoutId_storageForMsgState']);
+
+            window['connecVar_timeoutId_storageForMsgState'] = setTimeout (
+                function () {
+                    var connecVar_storageForMsgState = window['connecVar_storageForMsgState'];
+                    var dataForCheck, dateForAddLength, dataForUpdate;
+                    const firestoreDb       = M_DATABASE.getFirestoreDb();
+                    const firestoreBatch    = M_DATABASE.getBatchFirestoreDb (firestoreDb );
+
+                    console.log('<------------------------START---------------------------->');
+                    console.log('msg_stateSendToDb prepare for batch',window['connecVar_storageForMsgState']);
+                    
+                    for (var chatId in connecVar_storageForMsgState) {
+                        try {
+                            // for check for prepare operations
+                            dataForCheck = window['connecVar_storageForMsgState'][iNchatId][iNmsgId]['member'][iNmyUid]['state'];
+                            // for add to Queue
+                            dataForUpdate = window['connecVar_storageForMsgState'][iNchatId][iNmsgId];
+                            // get length for last check for update to msg in db
+                            dateForAddLength = Object.keys(dataForCheck).length;
+                            if(dateForAddLength > 0) {
+
+                                console.log('add to batch', 'chats', iNchatId + '/messages/' + iNmsgId, dataForUpdate);
+                                // add to queqe
+                                M_DATABASE.safeUpdateFirestoreDb ( 'chats', iNchatId + '/messages/' + iNmsgId, dataForUpdate, {} , firestoreDb)
+                            }
+                        } catch (e) {
+                            continue;
+                        }
+                    }
+
+                    console.log('start batch operations');
+                    //run batch (start write operations)
+                    M_DATABASE.runBatchFirestoreDb (
+                        firestoreBatch,
+                        {
+                            'onSuccess' : () => { console.log('msg_stateSendToDb added to db',window['connecVar_storageForMsgState']); window['connecVar_storageForMsgState'] = {}; }
+                        }
+                    );
+
+                    //clear for add
+
+                    console.log('<------------------------END---------------------------->');
+                }, 250
+            );
+
+            // clear timeout id
+
+            
         }
 
         function msg_setDeliveredState (iNmsgId, iNchatId, myUID) {
-            // var baseKey = 'messages/' + iNchatId + '/' + iNmsgId + '/member/' + myUID + '/state';
 
-            // var keyDelivered = baseKey + '/delivered';
+            // let collection = 'messages',
+            //     pathToDb = iNchatId + '/' + iNmsgId + '/member/' + myUID + '/state' + '/delivered';
+            // M_DATABASE.addRealtimeDb ( collection, pathToDb, M_DATABASE.getSeverVarTimestamp() )
 
-            // var updateArray = {};
-            // updateArray[keyDelivered] = M_DATABASE.getSeverVarTimestamp();
-            // var result = FIREBASE.database().ref().update(updateArray);
 
-            let collection = 'messages',
-                pathToDb = iNchatId + '/' + iNmsgId + '/member/' + myUID + '/state' + '/delivered';
-            M_DATABASE.addRealtimeDb ( collection, pathToDb, M_DATABASE.getSeverVarTimestamp() )
+            // var firestoreKey = 'member.' + myUID + '.state' + '.delivered';
+            // var fsUpdateObg = {};
+            //     fsUpdateObg[firestoreKey] = M_DATABASE.getFirestoreSeverVarTimestamp();
+            // M_DATABASE.updateFirestoreDb ( 'chats' , iNchatId + '/messages/' + iNmsgId, fsUpdateObg);
+            ///// M_DATABASE.addFirestoreDb( collection, pathToDb, M_DATABASE.getFirestoreSeverVarTimestamp() )
+
+
+            // let objForSafeUpdate = {
+            //     'member' : {}
+            // };
+            //     objForSafeUpdate [ 'member' ][ myUID ] = {
+            //         'state' : {
+            //             'delivered' : M_DATABASE.getFirestoreSeverVarTimestamp()
+            //         }
+            //     }
+            // M_DATABASE.safeUpdateFirestoreDb ( 'chats', iNchatId + '/messages/'+iNmsgId, objForSafeUpdate );
+
+
+            msg_stateAddToQueue ('delivered',myUID , iNchatId, iNmsgId);
         }
 
         function msg_addToDb(iNdata, iNchatId, iNmsgId) {
@@ -452,13 +606,24 @@ define(
             let msgId = iNmsgId || msg_generateMsgIdByChatId(iNchatId); //   FIREBASE.database().ref().child('messages/'+iNchatId).push().key;
 
             let pathToDb = iNchatId + '/' + msgId;
-            M_DATABASE.addRealtimeDb(collection, pathToDb, objForSentToDb);addRealtimeDb
+            // M_DATABASE.addRealtimeDb(collection, pathToDb, objForSentToDb);
+
+
+
+
+            collection = 'chats';
+            pathToDb = iNchatId + '/messages/' + msgId;
+            M_DATABASE.addFirestoreDb(collection, pathToDb, objForSentToDb);
+
+
         }
         _['msg_addToDb'] = msg_addToDb;
 
         function msg_generateMsgIdByChatId(iNchatId) {
-            let collection = 'messages';
-            return M_DATABASE.generateIdForRealtimeDbByFullPathToDb(collection, iNchatId);
+            let collection = 'chats';
+            // return M_DATABASE.generateIdForRealtimeDbByFullPathToDb(collection, iNchatId);
+            let patch = iNchatId + '/' + 'messages';
+            return M_DATABASE.generateIdForFirestoreByFullPathToDb(collection, patch);
         }
 
         function prepareObjectForSentToMsgBase(iNdata, iNmyUid) {
@@ -477,7 +642,7 @@ define(
                             type
                     2 - iNmyUid
             */
-            var timeStamp = M_DATABASE.getSeverVarTimestamp();
+            var timeStamp = M_DATABASE.getFirestoreSeverVarTimestamp(); // getSeverVarTimestamp();
             var objForSentToDb = {
                 'info': {
                     'options': {
@@ -530,7 +695,7 @@ define(
 
             let collection = 'chats',
                 pathToDb =  'info/' + iNchatId + '/msg';
-            return M_DATABASE.addRealtimeDb ( collection, pathToDb, lastMessage )
+            return M_DATABASE.addRealtimeDb ( collection, pathToDb, lastMessage );
         }
 
         function msgSimpleText_createCenterDateText(iNchatId, iNtime) {

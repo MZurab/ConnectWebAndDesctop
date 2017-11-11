@@ -9,8 +9,8 @@ require2.config({
     //     main: 'moment'
     // }],
     paths: {
-    	'firebase'             : ['https://www.gstatic.com/firebasejs/4.5.1/firebase'           , 'res/js/firebase/firebase'  ], // https://www.gstatic.com/firebasejs/4.2.0/firebase
-        'firestore'            : ['https://www.gstatic.com/firebasejs/4.5.1/firebase-firestore' , 'res/js/firebase/firestore' ], // https://www.gstatic.com/firebasejs/4.2.0/firestore
+    	'firebase'             : ['https://www.gstatic.com/firebasejs/4.6.0/firebase'             ], // , 'res/js/firebase/firebase' https://www.gstatic.com/firebasejs/4.2.0/firebase
+        'firestore'            : ['https://www.gstatic.com/firebasejs/4.6.0/firebase-firestore' ], // , 'res/js/firebase/firestore' https://www.gstatic.com/firebasejs/4.2.0/firestore
         'template7'            : 'res/js/template7/template7',
         "yametrika"            : ["//mc.yandex.ru/metrika/watch","res/js/analytics/yandex/metrika"],
         // A BEAUTIFUL, RESPONSIVE, CUSTOMIZABLE, ACCESSIBLE (WAI-ARIA) REPLACEMENT FOR JAVASCRIPT'S POPUP BOXES
@@ -75,9 +75,10 @@ require2.config({
             'm_category'       : 'mvc/model/category',
             'm_firebase'       : 'mvc/model/firebase', // https://ramman.net/res/
             'm_user'           : 'mvc/model/user',
-            'm_routing'        : 'mvc/model/routing',
+            'm_routing'       : 'mvc/model/routing',
             'm_moment'         : 'mvc/model/moment',
             'dictionary'       : 'mvc/model/dictionary',
+            'log'              : 'mvc/model/log',
 
             'm_call'           : 'mvc/model/call',
             'm_message'        : 'mvc/model/message',
@@ -176,12 +177,15 @@ require2.config({
     }
 });
 
-require2(['jquery','dictionary','m_engine','m_routing','m_app','m_push','m_synchronize','m_user'], function( $, DICTIONARY, ENGINE, ROUTING, M_APP, PUSH, SYNCHRONIZE,USER) {
+require2(
+    ['jquery','dictionary','m_engine','m_routing','m_app','m_push','m_synchronize','m_user'], 
+    function( $, DICTIONARY, ENGINE, ROUTING, M_APP, PUSH, SYNCHRONIZE,USER) {
     $(function() {
-        console.log('start!');
+        console.log('start!', localStorage,ROUTING);
         // set browser || desktop
             // ROUTING.setBrowser(); //#if browser
             ROUTING.setDesktop(); //#if desktop
+            ROUTING.setDeviseName('Apple Mac');
         ENGINE.init();
         // PUSH.getPermission ( PUSH.getToken( ()=>console.log('PUSH.getToken') ) );
 
@@ -191,7 +195,7 @@ require2(['jquery','dictionary','m_engine','m_routing','m_app','m_push','m_synch
         }
 
         DICTIONARY.autoChange(function () {
-            if(ROUTING.isBrowser()) {
+            if( ROUTING.isBrowser() ) {
                 if( ROUTING.getUrlLength() > 0 ) {
                     console.log('ROUTING.getUrlLength isBrowser 1', ROUTING.getUrlLength() );
                     ENGINE.startUrl();
@@ -217,7 +221,7 @@ require2(['jquery','dictionary','m_engine','m_routing','m_app','m_push','m_synch
                     }
                 }
                 
-            } else if(ROUTING.isDesktop()) {
+            } else if( ROUTING.isDesktop() ) {
                 var user = USER.getMyLogin()||'anonym';
                 console.log('ROUTING.getUrlLength isDesktop,user 0', ROUTING.getUrlLength(), user );
                 if( user != 'anonym' ) {

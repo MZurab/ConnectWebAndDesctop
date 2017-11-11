@@ -64,5 +64,7 @@ function printObject (v1,v2,v3,v4,v5,v6,v7,v8) {
 }
 _['printObject'] = printObject;
 
+
+// window.LOG = _;
 return _;
 });
