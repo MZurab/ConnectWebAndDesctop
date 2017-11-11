@@ -43,71 +43,75 @@ define(
 
     templates['UserList'] = `
 		<div class="mix usersBlockInMenusBlock" connect_uid="{{userId}}" connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" connect_userType='{{userType}}' connect_userLogin='{{login}}'>
-		   <div class="iconBlockInUserBlock">
-		      <div class="iconInUserBlock">
-		      	<img class="lazy" data-original="{{icon}}" src="{{icon}}">
-		      </div>
-		      <div class="typeInUserBlock"></div>
-		   </div>
-		   
-		   <div class="firstLineInUserBlock">
-		      <div class="usersNameInUserBlock">
-		         <div class="userNameInChatList">{{chatName}}</div>
-		      </div>
-		      <div class="toCallBlockInUserNameBlock">
-		         <div class="btnToVoiceCallInFirstLine"></div>
-		         <div class="btnToVideoCallInFirstLine"></div>
-		      </div>
-		   </div>
+			<div class='chatDataInUsersBlock'>
+				<div class="iconBlockInUserBlock">
+			      <div class="iconInUserBlock">
+			      	<img class="lazy" data-original="{{icon}}" src="{{icon}}">
+			      </div>
+			      <div class="typeInUserBlock"></div>
+			    </div>
 
-		   <div class="secondLineInUserBlock">
-		      <div class="leftBlockInSecondLine">
-		         <div class="aCpAll_msgSimpleText_flashBlock aCpAll_flashBLocks">
-		            <div class="aCpAll_msgSimpleText_flashIcon aCpAll_flashBLocks_icon"></div>
-		            <div class="valueInLiveBlocks">
-		               <span class="aCpAll_msgSimpleText_animateContainer">
-		                  <span style="visibility: visible;"></span>
-		                  <ul class="texts" style="display: none;">
-		                     <li></li>
-		                  </ul>
-		               </span>
-		            </div>
-		         </div>
-		         <div class="aCpAll_msgLiveAudio_flashBlock aCpAll_flashBLocks">
-		            <div class="aCpAll_msgLiveAudio_flashIcon aCpAll_flashBLocks_icon"></div>
-		            <div class="valueInLiveBlocks">
-		               <span class="aCpAll_msgLiveAudio_animateContainer">
-		                  <span style="visibility: visible;"></span>
-		                  <ul class="texts" style="display: none;">
-		                     <li></li>
-		                  </ul>
-		               </span>
-		            </div>
-		         </div>
-		         <div class="aCpAll_msgLiveVideo_flashBlock aCpAll_flashBLocks">
-		            <div class="aCpAll_msgLiveVideo_flashIcon aCpAll_flashBLocks_icon"></div>
-		            <div class="valueInLiveBlocks">
-		               <span class="aCpAll_msgLiveVideo_animateContainer">
-		                  <span style="visibility: visible;"></span>
-		                  <ul class="texts" style="display: none;">
-		                     <li></li>
-		                  </ul>
-		               </span>
-		            </div>
-		         </div>
+		   		<div class="firstLineInUserBlock">
+			      <div class="usersNameInUserBlock">
+			         <div class="userNameInChatList">{{chatName}}</div>
+			      </div>
+			      <div class="toCallBlockInUserNameBlock">
+			         <div class="btnToVoiceCallInFirstLine"></div>
+			         <div class="btnToVideoCallInFirstLine"></div>
+			      </div>
+			    </div>
 
-		      </div>
-		      <div class="rightBlockInSecondLine"> <span class="newMsgInSecondLine"></span> </div>
-		   </div>
+			    <div class="secondLineInUserBlock">
+			      <div class="leftBlockInSecondLine">
+			         <div class="aCpAll_msgSimpleText_flashBlock aCpAll_flashBLocks">
+			            <div class="aCpAll_msgSimpleText_flashIcon aCpAll_flashBLocks_icon"></div>
+			            <div class="valueInLiveBlocks">
+			               <span class="aCpAll_msgSimpleText_animateContainer">
+			                  <span style="visibility: visible;"></span>
+			                  <ul class="texts" style="display: none;">
+			                     <li></li>
+			                  </ul>
+			               </span>
+			            </div>
+			         </div>
+			         <div class="aCpAll_msgLiveAudio_flashBlock aCpAll_flashBLocks">
+			            <div class="aCpAll_msgLiveAudio_flashIcon aCpAll_flashBLocks_icon"></div>
+			            <div class="valueInLiveBlocks">
+			               <span class="aCpAll_msgLiveAudio_animateContainer">
+			                  <span style="visibility: visible;"></span>
+			                  <ul class="texts" style="display: none;">
+			                     <li></li>
+			                  </ul>
+			               </span>
+			            </div>
+			         </div>
+			         <div class="aCpAll_msgLiveVideo_flashBlock aCpAll_flashBLocks">
+			            <div class="aCpAll_msgLiveVideo_flashIcon aCpAll_flashBLocks_icon"></div>
+			            <div class="valueInLiveBlocks">
+			               <span class="aCpAll_msgLiveVideo_animateContainer">
+			                  <span style="visibility: visible;"></span>
+			                  <ul class="texts" style="display: none;">
+			                     <li></li>
+			                  </ul>
+			               </span>
+			            </div>
+			         </div>
 
-		   <div class="thirdLineInUserBlock">
-		      <div class="leftBlockInThirdLine">
-		         <div class="lastMessageInThirdLine">{{lmsgText}}</div>
-		      </div>
-		      <div class="rightBlockInThirdLine">
-		         <div class="timelastMsgInThirdLine">{{lmsgText}}</div>
-		      </div>
-		   </div>
+			      </div>
+			      <div class="rightBlockInSecondLine"> <span class="newMsgInSecondLine"></span> </div>
+			    </div>
+
+			    <div class="thirdLineInUserBlock">
+			      <div class="leftBlockInThirdLine">
+			         <div class="lastMessageInThirdLine">{{lmsgText}}</div>
+			      </div>
+			      <div class="rightBlockInThirdLine">
+			         <div class="timelastMsgInThirdLine">{{lmsgText}}</div>
+			      </div>
+			    </div>
+
+			</div>  
+			<div class='menusInUsersBlock'></div> 
 		</div>
 	`;
 	const vars = {}; _['vars'] = vars;
@@ -303,8 +307,8 @@ define(
 				}
 
 	function addMenuByContentAndUid (iNcontent,iNuserId) {
-		var path = ".usersBlockInMenusBlock[connect_uid='"+iNuserId+"']";
-		V_VIEW.d_addDataToViewEl(path,iNcontent,'after');
+		var path = ".usersBlockInMenusBlock[connect_uid='"+iNuserId+"'] .menusInUsersBlock";
+		V_VIEW.d_addDataToViewEl(path,iNcontent,'change');
 	}
 	_['addMenuByContentAndUid'] = addMenuByContentAndUid;
 
@@ -684,7 +688,7 @@ define(
             	@inputs
 	                iNchatId -> stirng
             */
-            var chatObject = getPathToDomElByChatId(iNchatId);
+            var chatObject = getPathToDomElByChatId(iNchatId) + ' .chatDataInUsersBlock';
             $(chatObject).removeClass('flagUserOnline');
             $(chatObject).attr('connect_online',iNtime);
         }

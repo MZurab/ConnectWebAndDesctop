@@ -385,48 +385,58 @@ input,textarea {outline:none;}
 				    overflow: scroll;
 				    padding-right: 10%;
 				}
-					.usersBlockInMenusBlock:hover {
-						background: #e9ebeb !important;
+					.usersBlockInMenusBlock {
+
 					}
-					.usersBlockInMenusBlock .iconBlockInUserBlock {
-						position: absolute;
-						top: 5px;
-						left: 10px;
-						cursor: pointer;
-					}
-						.usersBlockInMenusBlock .iconInUserBlock {
-							height: 50px;
-							width: 65px;
-							margin: auto;
-							overflow: hidden;
-							border-radius:100%;
-    						text-align: center;
+						.chatDataInUsersBlock {
+    						min-height: 80px;
 						}
-							.iconInUserBlock img{
-								max-width: 95%;
-							    max-height: 95%;
-							    margin-top: 2.5%;
+							.chatDataInUsersBlock:hover {
+								background: #e9ebeb !important;
 							}
-						.usersBlockInMenusBlock .typeInUserBlock {
-							display: table;
-							margin: auto;
-							margin-top: 0.1rem; 
-							background: #1ca4d6;
-							color: white;
-							border-radius:5px;
-							padding: 0px 5px;
-							font-size: 0.9rem;
+						.menusInUsersBlock {
 
 						}
-					.usersBlockInMenusBlock .firstLineInUserBlock {
-					    position: absolute;
-					    font-size: 1rem;
-					    left: 80px;
-					    top: 7px;
-	    				right: 5px;
-					    height: 20px;
 
-					}
+						.usersBlockInMenusBlock .iconBlockInUserBlock {
+							position: absolute;
+							top: 5px;
+							left: 10px;
+							cursor: pointer;
+						}
+							.usersBlockInMenusBlock .iconInUserBlock {
+								height: 50px;
+								width: 65px;
+								margin: auto;
+								overflow: hidden;
+								border-radius:100%;
+	    						text-align: center;
+							}
+								.iconInUserBlock img{
+									max-width: 95%;
+								    max-height: 95%;
+								    margin-top: 2.5%;
+								}
+							.usersBlockInMenusBlock .typeInUserBlock {
+								display: table;
+								margin: auto;
+								margin-top: 0.1rem; 
+								background: #1ca4d6;
+								color: white;
+								border-radius:5px;
+								padding: 0px 5px;
+								font-size: 0.9rem;
+
+							}
+						.usersBlockInMenusBlock .firstLineInUserBlock {
+						    position: absolute;
+						    font-size: 1rem;
+						    left: 80px;
+						    top: 7px;
+		    				right: 5px;
+						    height: 20px;
+
+						}
 						.firstLineInUserBlock .usersNameInUserBlock {
 							display: table;
 						    font-weight: 900;
