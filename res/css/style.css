@@ -1117,6 +1117,9 @@ input,textarea {outline:none;}
 				    height: 100%;
 				    position: relative;
 				}
+				#viewAndChatBlockInViewBlock .viewesInWindow.app[app-name='page'] {
+					background: white;
+				}
 					#viewAndChatBlockInViewBlock .viewesInWindow.app .view {
 						overflow-y: auto;
     					overflow-x: hidden;

@@ -30,18 +30,24 @@ define(
                 console.log('isPage index i',i); 
                 return i;
               },
-              'onView'  : function (d,d1) { 
-                  console.log('onView index');
+              'onView'  : function (iNojbectData,iNojbectApp) { 
+                  console.log('onView index iNojbectData,iNojbectApp',iNojbectData,iNojbectApp);
+                if(iNojbectData['back']) {
+                  // clear user menus from 'one' page
+                  $('.usersBlockContainerInMenusBlock .app[app-name="base"] .view[view-name="index"] .scrolBlockForChat').html('');
+                  // add header with back btn for this list app
+                  addHeaderWithBackBtnInListView();
+                } else {
+                  // add standart header for this list app
+                  addStandartHeaderInListView();
+                }
+                
                 // hide all app in list
                 M_APP.view.d_hideApps('all','list');
 
                 // show this app in list
                 M_APP.view.d_showApps('base','list');
 
-                // add standart header for this list app
-                addStandartHeaderInListView();
-
-                console.log('app-bae index onView',d,d1);
 
                 getMyChats();
 
@@ -98,7 +104,7 @@ define(
                   // attach for back btn this func by click for  open index page 
                   $('.appBase_backButton').click(
                     function(){
-                      M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index','data':''});
+                      M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index','data':'back=1'});
                     }
                   );
 
@@ -116,8 +122,7 @@ define(
                 'onHide'  : function () { 
                   console.log('onHide one');
 
-                  // clear user menus 
-                  $('.usersBlockContainerInMenusBlock .app[app-name="base"] .view[view-name="index"] .scrolBlockForChat').html('');
+                  
 
                   return true;
                 },

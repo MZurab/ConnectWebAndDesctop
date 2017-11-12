@@ -32,7 +32,7 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user','mediaStream
             'onOut'  : function () { return true;},
             'onView'  : function (inputData,inputApp) {
               console.log('app-page  fullWindow onView', inputData, inputApp);
-              addPageToFullWindow(inputData);
+              addPageToFullWindow({'id':iNdata['id'],'uid':iNdata['uid']});
               console.log('MEDIA',MEDIA);
               // VIEW.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
               return true;
@@ -62,7 +62,8 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user','mediaStream
                 create app view with page 
                 create header view with page
               */
-              addMiniPageToAppView({'id':'sign','uid':'@system'});
+              console.log('miniPage onView iNdata,iNobject',iNdata,iNobject);
+              addMiniPageToAppView({'id':iNdata['id'],'uid':iNdata['uid']});
               return true;
             },
             'onHide'  : function () {
