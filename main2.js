@@ -12,21 +12,30 @@ require2.config({
     	'firebase'             : ['https://www.gstatic.com/firebasejs/4.6.0/firebase'             ], // , 'res/js/firebase/firebase' https://www.gstatic.com/firebasejs/4.2.0/firebase
         'firestore'            : ['https://www.gstatic.com/firebasejs/4.6.0/firebase-firestore' ], // , 'res/js/firebase/firestore' https://www.gstatic.com/firebasejs/4.2.0/firestore
         'template7'            : 'res/js/template7/template7',
+        //algolia service
+        'algolia'              : ["https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min", "res/js/algolia/algoliasearch.min"],
+
         "yametrika"            : ["//mc.yandex.ru/metrika/watch","res/js/analytics/yandex/metrika"],
         // A BEAUTIFUL, RESPONSIVE, CUSTOMIZABLE, ACCESSIBLE (WAI-ARIA) REPLACEMENT FOR JAVASCRIPT'S POPUP BOXES
         "sweetalert2"          : "res/js/sweetalert2/sweetalert2",
         // A high-performance, dependency-free library for animated filtering, sorting, insertion, removal and more
         "mixitup"              : 'res/js/mixitup/mixitup.min',
         
-        'jquery'               : 'res/js/jquery/jquery',
-        "jquery.lettering"     : "res/js/jquery/jquery.lettering",
-        "jquery.textillate"    : "res/js/jquery/jquery.textillate",
+        //@< jquery
+            //sourse library
+            'jquery'               : 'res/js/jquery/jquery',
+            // for algolia autocomplete
+            "jquery.autocomplete"  : ["https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.jquery.min","res/js/algolia/autocomplete.jquery.min"],
 
-        'jquery.countdown'     : 'res/js/jquery/countdown/jquery.countdown.min',
-        'jquery.plugin'        : 'res/js/jquery/countdown/jquery.plugin.min',
+            //timer block
+            'jquery.countdown'     : 'res/js/jquery/countdown/jquery.countdown.min',
+            'jquery.plugin'        : 'res/js/jquery/countdown/jquery.plugin.min',
 
-        'jquery.appear'        : 'res/js/jquery/jquery.appear',
-
+            //text effects
+            'jquery.appear'        : 'res/js/jquery/jquery.appear',
+            "jquery.textillate"    : "res/js/jquery/jquery.textillate",
+            "jquery.lettering"     : "res/js/jquery/jquery.lettering",
+        //@> jquery
         'lazyload'             : 'res/js/lazyload/lazyload',
         'rx'                   : 'res/js/rxjs/rx.min',
         // Parse, validate, manipulate, and display dates and times in JavaScript.
@@ -96,6 +105,12 @@ require2.config({
     },
     shim: {
         /* <? jquery modules */
+
+            // for algolia autocomplete
+            'jquery.autocomplete': {
+                deps: ['jquery'],
+                exports: 'jQuery.fn.autocomplete'
+            },
             'jquery.countdown': {
                 deps: ['jquery','jquery.plugin'],
                 exports: 'jQuery.fn.countdown'

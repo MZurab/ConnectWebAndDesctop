@@ -1,8 +1,12 @@
-define(['m_firebase'],function( FIREBASE ) {
+define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
     const _ = {};
     const CONST = {};
 
-
+    //@< algolia
+        var algoliaClient = ALGOLIA('OKSL1FNILG', 'c6cadc6f629b4daf66c5b78e4a9ab343');
+        _['algolia'] = algoliaClient;
+        // var index = client.initIndex('YourIndex');
+    //@> algolia
 
     // set firebase realtime db framework 
     const Datebase      = FIREBASE.database;

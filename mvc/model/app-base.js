@@ -1,5 +1,8 @@
 define( 
-  ['jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictionary','v_app-base','m_user','m_routing', 'm_database', 'sweetalert2'] , 
+  [
+    'jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictionary','v_app-base','m_user','m_routing', 'm_database', 'sweetalert2',
+    'jquery.autocomplete'
+  ] , 
   function ($ , FIREBASE , M_CATEGORY , M_APP , M_VIEW,USER, DICTIONARY, VIEW , USER, ROUTING, M_DATABASE,SWEETALERT) {
 
   const _ = {}; _['name'] = 'base';
@@ -115,7 +118,7 @@ define(
 
                   // clear user menus 
                   $('.usersBlockContainerInMenusBlock .app[app-name="base"] .view[view-name="index"] .scrolBlockForChat').html('');
-                  
+
                   return true;
                 },
                 // 'setPage' : function () {    return true;},
@@ -137,6 +140,8 @@ define(
   function onCreate (iNstring,iNobject) {
     // create app block in list
     M_APP.view.d_createListApp({app:'base'}); 
+    // init search input autocomplete
+    initForAutocompleteForSearch();
 
   }
   _['onCreate'] = onCreate;
@@ -200,7 +205,32 @@ define(
 
 
 
-
+  function initForAutocompleteForSearch () {
+    var index = M_DATABASE.algolia.initIndex('connect-search');
+    $('.searchInputInSearchBlock').autocomplete({ hint: false }, [
+      {
+        source: $.fn.autocomplete.sources.hits(index, { hitsPerPage: 25 }),
+        displayKey: 'name',
+        templates: {
+          suggestion: function(suggestion) {
+            var type  = DICTIONARY.withString ('[dictionary-' + suggestion._highlightResult.type.value + ']');
+            return `
+              <div class="autocompleteIconBlock">
+                 <img src="https://cdn.ramman.net/images/icons/apps/app_onepay.png">
+              </div>
+              <div class="autocompleteTextBlock">
+                 <div class="autocompleteOptionName">${suggestion._highlightResult.name.value}</div>
+                 <div class="autocompleteOptionType">${type}</div>
+              </div>
+              <div class="autocompleteLoginBlock">${suggestion._highlightResult.login.value}</div>
+            `;
+          }
+        }
+      }
+    ]).on('autocomplete:selected', function(event, suggestion, dataset) {
+      console.log(suggestion, dataset);
+    });
+  }
 
 
   function addStandartHeaderInListView () {
