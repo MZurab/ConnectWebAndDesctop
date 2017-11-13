@@ -92,10 +92,11 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 
     function getMyFirebaseUid () {
 		var result = checkSignIn();
+    	console.log(' getMyFirebaseUid result checkSignIn',result);
     	if(result){
     		result = FIREBASE.auth().currentUser.uid;
+    		console.log(' getMyFirebaseUid result firabase.auth().currentUser.uid',result);
     	}
-    	console.log(' getMyFirebaseUid result',result);
         return result;
     }
 

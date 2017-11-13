@@ -18,6 +18,7 @@ define(['jquery','m_user'],function( $, USER ) {
 		// restart interval
 		startInterval(event);
 
+	  	console.log('listener inputObj[command] ', inputObj['command']);
 		if ( inputObj['command'] == 'getLocalStorage' ) {
 		  //
 		  let lStorage = getLocalStorage();
@@ -30,11 +31,8 @@ define(['jquery','m_user'],function( $, USER ) {
 
 		} else if  (inputObj['command'] == 'saveLocalStorage' && inputObj['content']) {
 		  // save change in local storage
-	  		console.log( 'listener if ' , (USER.getMyId() != USER.getMyIdFromObj(inputObj['content']) ) );
+	  		console.log( 'listener if ' , (USER.getMyId() != USER.getMyIdFromObj(inputObj['content']) ) , USER.getMyId(), USER.getMyIdFromObj(inputObj['content']));
 		  if ( USER.getMyId() != USER.getMyIdFromObj(inputObj['content']) ) {
-	  		console.log( "listener USER.getMyIdFromObj(inputObj['content']) " , USER.getMyIdFromObj(inputObj['content'])  );
-	  		console.log( "listener USER.getMyId() " , USER.getMyId()  );
-	  		console.log( "listener inputObj['content'] " , inputObj['content']  );
 	  		
 		  	writeLocalStorage(inputObj['content']);
 		  	setLastSentLocalStorage(inputObj['content']);
@@ -44,11 +42,12 @@ define(['jquery','m_user'],function( $, USER ) {
 				  	console.log('listener reload ');
 				  	location.reload() 
 			  	},
-	  			500
+	  			250
   			);
 		  } else {
-		  	writeLocalStorage(inputObj['content']);
-		  	setLastSentLocalStorage(inputObj['content']);
+			console.log('listener else', inputObj );
+		  	// writeLocalStorage(inputObj['content']);
+		  	// setLastSentLocalStorage(inputObj['content']);
 		  }
 		}
 	}
@@ -144,7 +143,7 @@ define(['jquery','m_user'],function( $, USER ) {
 	        }
 	      }
 	    ,
-	    250
+	    800
 	    );
 	}
 
