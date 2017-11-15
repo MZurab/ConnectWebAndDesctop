@@ -1,4 +1,4 @@
-define([ 'jquery', 'm_user', 'platform' ],function($,USER, PLATFORM){
+define([ 'jquery', 'm_user', 'platform' ],function( $, USER, PLATFORM){
 	//@<<< URL FUNCTIONS
 		const _ = {};
 		const USER_DOMAIN = [ // CHANGE

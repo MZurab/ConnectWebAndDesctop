@@ -1,12 +1,13 @@
 define(
-	['m_app','v_message','v_view','jquery','mixitup','dictionary','m_moment','jquery.textillate','jquery.lettering'], 
-	function( M_APP,V_MESSAGE, V_VIEW, $, mixitup, DICTIONARY , MOMENT ) 
+	['sweetalert2', 'm_app','v_message','v_view','jquery','mixitup','dictionary','m_moment','jquery.textillate','jquery.lettering'], 
+	function(SWEETALERT, M_APP,V_MESSAGE, V_VIEW, $, mixitup, DICTIONARY , MOMENT ) 
 {//'m_view','m_app'
+				
 	const _ = {};
 	const templates = {}; _['templates'] = templates;
 	templates['UserMenuChildN'] = `
-  	<li menuid='{{id}}' menuparent='{{parent}}'  appName='{{app}}' pageName='{{page}}' class='appUserMenu {{#if children}}flagMenuHasChildren{{/if}}  flagSubMenu {{#if thisSubMenu}}flagMenuLevelN{{else}}flagMenuLevel2{{/if}}{{#if parentBox}} {{join parentBox delimiter=" "}}{{/if}}' >
-      <a href="{{data}}">{{name}}</a>
+  	<li menuid='{{id}}' menuparent='{{parent}}' {{a}} appName='{{app}}' pageName='{{page}}' class='appUserMenu {{#if children}}flagMenuHasChildren{{/if}}  flagSubMenu {{#if thisSubMenu}}flagMenuLevelN{{else}}flagMenuLevel2{{/if}}{{#if parentBox}} {{join parentBox delimiter=" "}}{{/if}}' >
+      <a href="{{data}}" class='{{classForATeg}}' {{attrForATeg}} >{{name}}</a>
       {{#if children}}
     		<div class="userMenuParentButton"></div>
       {{/if}}
@@ -14,7 +15,7 @@ define(
   `;
   	templates['UserMenuChildOne'] = `
   	<li menuid='{{id}}' class='appUserMenu {{#if sub}}flagMenuHasChildren{{/if}} flagMenuLevel1' appName='{{app}}' pageName='{{page}}'>
-        <a href="{{data}}" class='menuLink flagMenuLevel1'>{{name}}</a>
+        <a href="{{data}}" class='menuLink flagMenuLevel1 {{classForATeg}}' {{attrForATeg}}>{{name}}</a>
 		{{#if sub}}
 			<div class="userMenuParentButton"></div>
 			<ul class="subMenusForUid">
@@ -207,8 +208,22 @@ define(
 	    	$('.appUserMenu.flagMenuLevel1 > a, .appUserMenu.flagMenuLevel1 > div.userMenuParentButton').click(clickToMenuFirstLevel);
 	    	$('.appUserMenu.flagMenuLevel2 > a, .appUserMenu.flagMenuLevel2 > div.userMenuParentButton').click(clickToMenuSecondLevel);
 	    	$('.appUserMenu.flagMenuLevelN > a, .appUserMenu.flagMenuLevelN > div.userMenuParentButton').click(clickToMenuLevelN);
+
+    		//desable app open by link -> we need off other actions then view error 
+	    	$('.appUserMenu.flagMenuLevel1 > a.viewError, .appUserMenu.flagMenuLevel2 > a.viewError, .appUserMenu.flagMenuLevelN > a.viewError').off('click');
+	    	$('.appUserMenu.flagMenuLevel1 > a.viewError, .appUserMenu.flagMenuLevel2 > a.viewError, .appUserMenu.flagMenuLevelN > a.viewError').click(clickToMenuForViewError);
 	    }
 		_['activeActionsForMenuEvents'] = activeActionsForMenuEvents;
+
+			function clickToMenuForViewError (e) {
+				e.preventDefault();
+				var errorCode = $(this).attr('errorText');
+				SWEETALERT(
+				  DICTIONARY.withString('[error-value]') + '!',
+				  DICTIONARY.withString(errorCode),
+				  'error'
+				)
+			}
 
 			function clickToMenuFirstLevel (e) {
 				e.preventDefault();
@@ -314,15 +329,24 @@ define(
 
 	function getUserMenuContainerByCats (iNmenu) {
 	  	var data = iNmenu.categories;
-    	for(var appKey in data) {
+	  	var updatedCategories = {};
+	  	var updatedMenu = {'categories':updatedCategories};
+	  	// ser order 
+	  	var orderList = ['chat','market','dock','sharepay','onepay','page']; // chat menu program create
+
+	  	console.log('getUserMenuContainerByCats orderList',orderList);
+    	for(var iKey in orderList) {
+    		var appKey = orderList[iKey];
+    		if(!data[appKey])continue;
+    		updatedCategories[appKey] = data[appKey];
     		var dataBlock2 = [];
-	    	for(var mKey in data[appKey]){
-    			var thisMenu =  data[appKey][mKey];
+	    	for(var mKey in updatedCategories[appKey]){
+    			var thisMenu =  updatedCategories[appKey][mKey];
 				addUserMenuChildOne(thisMenu,dataBlock2);
 			}
-   			data[appKey]['sub'] = dataBlock2.join(' ');
+   			updatedCategories[appKey]['sub'] = dataBlock2.join(' ');
 	    }
-	  	return getUserMenuContainerFromTemplate(iNmenu).replace(/[  \n\t\r]+/g,' ');
+	  	return getUserMenuContainerFromTemplate(updatedMenu).replace(/[  \n\t\r]+/g,' ');
 	}
 	_['getUserMenuContainerByCats'] = getUserMenuContainerByCats;
   

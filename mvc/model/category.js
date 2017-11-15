@@ -1,7 +1,6 @@
 define(['jquery','v_category','m_view','m_app','m_user','dictionary'], function ( $, VIEW, M_VIEW, M_APP,USER, DICTIONARY) {
-	const _ = {'view':VIEW};
-	const CONST = {
-	};
+	const _        = {'view':VIEW};
+	const CONST    = {};
 
 
 
@@ -183,6 +182,43 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary'], function 
     }
 
    
+    function addChatBlockToCategory (iNuserData,iNchatId,iNuserId) {
+        // chatType does not work - CHANGE
+        var href = "chatId="+iNchatId+"&userId="+iNuserId+"&chatType=1&back=1"
+        var objForCreateChat = {
+           'app'            : 'chat', 
+           'code'           : 'chiefChat',
+           'page'           : 'index',
+           'name'           : DICTIONARY.withString('[app-chat]'),
+           'id'             : iNchatId,
+           'data'           : href
+
+        };
+        iNuserData['categories']['chat'] = {};
+        iNuserData['categories']['chat'][iNchatId] = objForCreateChat;
+        return true;
+
+    }
+    _['addChatBlockToCategory'] = addChatBlockToCategory;
+
+    function addDisabledChatBlockToCategory (iNuserData,iNuserId) {
+        // chatType does not work - CHANGE
+        var objForCreateChat = {
+           'app'            : 'chat', 
+           'code'           : 'chiefChat',
+           'page'           : 'index',
+           'name'           : DICTIONARY.withString('[app-chat]'),
+           'id'             : iNuserId,
+           'classForATeg'   : 'viewError',
+           'attrForATeg'    : "errorText='[phrase-needSignForChat]'",
+
+        };
+        iNuserData['categories']['chat'] = {};
+        iNuserData['categories']['chat'][iNuserId] = objForCreateChat;
+        return true;
+
+    }
+    _['addDisabledChatBlockToCategory'] = addDisabledChatBlockToCategory;
 
     
 

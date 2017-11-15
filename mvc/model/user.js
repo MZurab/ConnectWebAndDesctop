@@ -22,12 +22,20 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
     	_['saveUserLang'] = saveUserLang;
 	//@@@>>> USER
 	function signOut (inSuccess,iNerror){
-		// invoke global function for deleted note from fb db 
-		M_APP.globalFunctions_invoke('devise_removeNoteFromDatabase');
-		// clear local storage
-	    M_APP.clear();
-	    // sign out from fb auth
-	    FIREBASE.auth().signOut().then( () =>  {
+		// sign out from fb auth
+	    FIREBASE.auth().signOut().then( 
+    	() =>  {
+    		// invoke global function for deleted note from fb db 
+			M_APP.globalFunctions_invoke('devise_removeNoteFromDatabase');
+			// clear local storage
+		    M_APP.clear();
+
+		    // if we are in subdomain we also have sign out from main domain
+		    var ROUTING = M_APP.getGlobalVar('m_routing');
+	    	if ( ROUTING.getUserDomain() ) {
+				//add flag @connectFlagForSyncUserOuted -> with this flag we pass signOut command to main domain from this subdomain in synchronize.js
+				M_APP.saveTempStorage ( '@connectFlagForSync_UserSignOut', 1 );
+			}
 	    	if (typeof (inSuccess) == 'function') inSuccess();
 	    }, (error) => {
 	    	if (typeof (iNerror) == 'function') iNerror(error);
@@ -36,22 +44,31 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
     _['signOut'] = signOut;
 
 	function signIn (token,iNfuntion) {
-	        	console.log('signIn start');
-	    FIREBASE.auth().signInWithCustomToken(token).then(function(user) {
-	        	console.log('signIn in');
-	       // user signed in
+    	console.log('signIn start');
+	    FIREBASE.auth().signInWithCustomToken(token).then( 
+	    (user) => {
+	    	// save new user id
 	        M_APP.save('uid', FIREBASE.auth().currentUser.uid );
+	        
+	        // if we are in subdomain we also have sign in main domain
+	    	var ROUTING = M_APP.getGlobalVar('m_routing');
+	    	if ( ROUTING.getUserDomain() ) {
+				//we are in subdomain -> we copy local storage to temp for sync with main domanin our subdomain
+				M_APP.storage_copyLocalToTemp();
+				//add flag @connectFlagForSyncUserChanged -> with this flag we pass out signIn user to main domain from this subdomain in synchronize.js
+				M_APP.saveTempStorage ( '@connectFlagForSync_UserSignIn', 1 );
+			}
+
+			// invoke passed success func or pass to base app by default
 	        if(typeof(iNfuntion) != 'undefined') {
 	        	iNfuntion(); 
-	        	console.log('signIn !getGlobalVar iNfuntion -',iNfuntion);
-	        }
-	        else {
-	        	console.log("M_APP.getGlobalVar('engine')",M_APP.getGlobalVar('engine'));
-
+	        } else {
+	        	// pass to index page
 	        	M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index','user': getMyLogin(),'data':''});
-	        	console.log('user passToApp',{'app':'base','page':'one','user': getMyLogin(),'data':''});
-	        	// M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'one','user':'sharepay','data':'uid=sharepay'});
 	        }
+
+
+	    	
 		}).catch(function(error) {
 	      var errorCode = error.code;
 	      var errorMessage = error.message;

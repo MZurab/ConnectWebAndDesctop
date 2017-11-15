@@ -33,15 +33,18 @@ define(
               'onView'  : function (iNojbectData,iNojbectApp) { 
                   console.log('onView index iNojbectData,iNojbectApp',iNojbectData,iNojbectApp);
                 if(iNojbectData['back']) {
-                  // clear user menus from 'one' page
-                  $('.usersBlockContainerInMenusBlock .app[app-name="base"] .view[view-name="index"] .scrolBlockForChat').html('');
                   // add header with back btn for this list app
-                  addHeaderWithBackBtnInListView();
+                  // addHeaderWithBackBtnInListView();
                 } else {
+                  // clear user menus if we come from 'one' page by click btn
+                  $('.usersBlockContainerInMenusBlock .app[app-name="base"] .view[view-name="index"] .scrolBlockForChat').html('');
                   // add standart header for this list app
-                  addStandartHeaderInListView();
+                  addStandartHeaderForListView();
+                  if ( USER.getMyId() ) {
+                    getMyChats();
+                  }
                 }
-                
+
                 // hide all app in list
                 M_APP.view.d_hideApps('all','list');
 
@@ -49,7 +52,10 @@ define(
                 M_APP.view.d_showApps('base','list');
 
 
-                getMyChats();
+                // getMyChats();
+
+                // get chat if we auth user
+                
 
                 return true;
               },
@@ -99,17 +105,11 @@ define(
                   M_APP.view.d_showApps('base','list');
 
                   // add header with back btn for this list app
-                  addHeaderWithBackBtnInListView();
+                  // addHeaderWithBackBtnInListView();
 
-                  // attach for back btn this func by click for  open index page 
-                  $('.appBase_backButton').click(
-                    function(){
-                      M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index','data':'back=1'});
-                    }
-                  );
+                  
 
-                  var uid = d['uid'];
-                  createChatByGetUrlUserInfo(uid);
+                  createChatByGetUrlUserInfo(d['uid']);
                   return true;
                 },
                 'onAppear'  : function () {
@@ -143,10 +143,17 @@ define(
 
   // function onCreate
   function onCreate (iNstring,iNobject) {
+
     // create app block in list
     M_APP.view.d_createListApp({app:'base'}); 
+
     // init search input autocomplete
     initForAutocompleteForSearch();
+
+    // get chat if we auth user
+    if ( USER.getMyId() ) {
+      // getMyChats();
+    }
 
   }
   _['onCreate'] = onCreate;
@@ -238,21 +245,40 @@ define(
   }
 
 
-  function addStandartHeaderInListView () {
-    VIEW.addUserHeaderInList( {
-      'icon' : USER.getMyIcon(),
-      'name' : USER.getMyDisplayName(),
-      'login': USER.getMyLogin(),
-    },'change');
+  function addStandartHeaderForListView () {
+    if ( USER.getMyId() ) {
+      VIEW.addUserHeaderInList ( {
+        'icon' : USER.getMyIcon(),
+        'name' : USER.getMyDisplayName(),
+        'login': USER.getMyLogin(),
+      },'change');
+    } else {
+      // add header for non auth user
+      VIEW.addUserHeaderInList ( 
+        {
+          'icon' : 'https://cdn.ramman.net/web/res/images/icons/user/noPhoto.png',
+          'name' : DICTIONARY.withString('[system-signIn]/[system-signUp]'),
+        },
+        'change'
+      );
+
+    }
   }
 
-  function addHeaderWithBackBtnInListView () {
+  function addHeaderWithBackBtnInListView (iNicon,iNname,iNlogin) {
     VIEW.addUserHeaderInList({
-      'icon'  : USER.getMyIcon(),
-      'name'  : USER.getMyDisplayName(),
-      'login' : USER.getMyLogin(),
+      'icon'  : iNicon,//USER.getMyIcon()
+      'name'  : iNname,//USER.getMyDisplayName()
+      'login' : iNlogin,//USER.getMyLogin()
       'back'  : true,
     },'change');
+
+    // attach for back btn this func by click for  open index page 
+    $('.appBase_backButton').click(
+      function(){
+        M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index','data':'back=1'});
+      }
+    );
   }
 
 
@@ -373,18 +399,41 @@ define(
               objectForAjax['uid']        = iNlogin;
         getByGetRequest_userInfo(objectForAjax,
           function (resultOfAjax) {
+            console.log('createChatByGetUrlUserInfo resultOfAjax',resultOfAjax);
             console.log('app-base.js createChatByGetUrlUserInfo',USER.getMyLogin() );
-            if(resultOfAjax['chat'] == false && USER.getMyLogin() ){
-              // create chat
-              createChat( iNlogin , resultOfAjax );
-            }else{
-              // create chat static
-              var objForCreateChat = {};
-                  objForCreateChat['chatId']  = resultOfAjax['chat'];//resultOfAjax['user']['login'];
-                  objForCreateChat['userId']  = resultOfAjax['user']['uid'];
-                  objForCreateChat['login']   = resultOfAjax['user']['login'];
-              M_CATEGORY.view.createChatList(objForCreateChat);
+            console.log('resultOfAjax[chat]', resultOfAjax['chat'] );
 
+
+            var icon        = 'https://cdn.ramman.net/images/icons/apps/app_sharepay.png';
+            var userName    = resultOfAjax['user']['name'];
+            var userLogin    = resultOfAjax['user']['login'];
+            
+            // add header with back btn for this list app
+            addHeaderWithBackBtnInListView(icon,userName,userLogin);
+
+            if (resultOfAjax['chat'] == false ) {
+              if ( USER.getMyLogin() ) {
+                // if we signed -> create chat
+                createChat( iNlogin , resultOfAjax );
+
+              } else {
+                // if we does not signed
+                var objForCreateChat = {};
+                  objForCreateChat['chatId']      = resultOfAjax['user']['login']; //because we dont have chat
+                  objForCreateChat['userId']      = resultOfAjax['user']['uid'];
+                  objForCreateChat['login']       = userLogin;//resultOfAjax['user']['login'];
+                  objForCreateChat['icon']        = icon;//'https://cdn.ramman.net/images/icons/apps/app_sharepay.png';
+                  objForCreateChat['chatName']    = userName;//resultOfAjax['user']['name'];
+                  console.log('createChatByGetUrlUserInfo objForCreateChat',objForCreateChat);
+
+                  // created chat
+                  M_CATEGORY.view.createChatList(objForCreateChat);
+
+                  // add user menu  
+                  addServiceMenu (objForCreateChat,resultOfAjax);
+              }
+            } else {
+              // create chat static
               console.log('createChatByGetUrlUserInfo viewThisChatFromFDB');
               viewThisChatFromFDB (resultOfAjax['chat'],resultOfAjax);
             }
@@ -453,8 +502,8 @@ define(
               // attach link with chat db
               safeAttachLiveLinkToChatElement(objForCreatChat['chatId'], 
                 () => {
-                  // add category
-                 viewServiceMenu (objForCreatChat,iNuserData);
+                  // add service category
+                  addServiceMenu (objForCreatChat,iNuserData);
 
                 }
               );
@@ -463,11 +512,26 @@ define(
             // show this chat list
             M_CATEGORY.view.effShowChatList(objForCreatChat['chatId']);
         }
-          function viewServiceMenu (objForCreatChat,iNuserData) {
-                console.log('viewServiceMenu',iNuserData,objForCreatChat);
-                M_CATEGORY.view.addMenuByCategoryList (iNuserData,objForCreatChat['userId']);
-                // dictionary
-                DICTIONARY.start('.menuListForUsers');
+          function addServiceMenu ( objForCreatChat, iNuserData ) {
+            console.log ( 'addServiceMenu $iNuserData, $objForCreatChat', iNuserData, objForCreatChat );
+
+            // add chat if we has chat
+            var chatId = VIEW.getRealChatIdByUid(objForCreatChat['userId']);
+            console.log ( 'addServiceMenu chatId', chatId );
+            if ( chatId ) {
+              // we has chatId
+              M_CATEGORY.addChatBlockToCategory (iNuserData,chatId,objForCreatChat['userId']);
+
+            } else {
+              // we has not chatId -> we disable chat btn link
+              M_CATEGORY.addDisabledChatBlockToCategory (iNuserData,objForCreatChat['userId']);
+
+            }
+
+            // add menu to user chat
+            M_CATEGORY.view.addMenuByCategoryList ( iNuserData, objForCreatChat['userId'] );
+            // translated all menu dictionary
+            DICTIONARY.start('.menuListForUsers');
           }
 
         function getByGetRequest_ChatDataBySafeCreate (iNdata,iNfunction) {
@@ -822,12 +886,16 @@ define(
   CONST['myOnlineStatusState']  = 'connectMyOnlineStatusState';
 
   function controller_devise_run () {
-    devise_onDisconectController();
-    // set mousemove event for control my online status
-    $( "html" ).off('mousemove');
-    $( "html" ).mousemove( function( event ) {
-      onEvent_devise_MousemoveController();
-    });
+    console.log('controller_devise_run run USER.getMyId()',USER.getMyId() );
+    if ( USER.getMyId() ) {
+
+      devise_onDisconectController();
+      // set mousemove event for control my online status
+      $( "html" ).off('mousemove');
+      $( "html" ).mousemove( function( event ) {
+        onEvent_devise_MousemoveController();
+      });
+    }
   } 
   
 
@@ -875,13 +943,15 @@ define(
       M_APP.save(CONST['myOnlineStatusState'], iNstate);
     }
 
-    function devise_setStateOnline () {
+    function devise_setStateOnline (iNsuccessFunction) {
         // set online status
         let path      = devise_getPathToDeviseTable();
         if(path === false) return false;
         let ref       = FIREBASE.database().ref(path);
         var onlineState   = devise_getObjectForWriteToDbBySetState(1);
-        ref.update(onlineState);
+        ref.update(onlineState).then(function(dataSnapshot) {
+          if(typeof iNsuccessFunction == 'function') iNsuccessFunction();
+        });
     }
       function devise_getObjectForWriteToDbBySetState (iNval) {
         /*
@@ -935,7 +1005,12 @@ define(
         let path      = devise_getPathToDeviseTable();
         console.log('devise_removeNoteFromDatabase path',path);
         if(path === false) return false;
-        FIREBASE.database().ref(path).remove();
+        FIREBASE.database().ref(path).remove().then(function() {
+          console.log("devise_removeNoteFromDatabase Remove succeeded.")
+        })
+        .catch(function(error) {
+          console.log("devise_removeNoteFromDatabase Remove failed: " + error.message)
+        });;
 
     }
     // did global function
@@ -950,50 +1025,69 @@ define(
         var offlineState  = devise_getObjectForWriteToDbBySetState(0);
         ref.off();
         console.log('devise_onDisconectController path',path);
-        ref.on(
-          'value',
-          (iNdata) => {
-            var value = iNdata.val();
-            console.log('devise_onDisconectController value, iNdata',iNdata);
-            console.log('devise_onDisconectController value, path',value, path);
-            //if deleted this -> we signout from this account
-            if(value === null) {
-            console.log('devise_onDisconectController NULL value, path',value, path);
-              // return;
-              USER.signOut(
-                () => {
-                  // we've signed out successfull -> we open page for sign in
-                  M_APP.getGlobalVar('engine').passToApp({'app':'page','page':'fullWindow','data':'id=sign&uid=@system'});
-                  // SWEETALERT.swal(
-                  //   'Выход',
-                  //   '?',
-                  //   'question'
-                  // );
+        // update online state then begin spy for disconect 
+        devise_setStateOnline (
+          () => {
+            ref.on(
+              'value',
+              (iNdata) => {
+                var value = iNdata.val();
+                console.log('devise_onDisconectController value, iNdata',iNdata);
+                console.log('devise_onDisconectController value, path',value, path);
+                //if deleted this -> we signout from this account
+                if(value === null) {
+                  console.log('devise_onDisconectController NULL value, path',value, path);
+                  // return;
 
-                },
-                () => {
-                  // error
-                  // SWEETALERT.swal();
-                  
+                  USER.signOut(
+                    () => {
+                      // we've signed out successfull -> we open page for sign in
+                      M_APP.getGlobalVar('engine').passToApp({'app':'page','page':'fullWindow','data':'id=sign&uid=@system'});
+                      // SWEETALERT.swal(
+                      //   'Выход',
+                      //   '?',
+                      //   'question'
+                      // );
+
+                    },
+                    () => {
+                      // error
+                      // SWEETALERT.swal();
+                      
+                    }
+                  );
+
+                  return;
                 }
-              );
-              return;
-            }
-            // if i am not in online and my othere devise change my state
-            if(value.online != 1 && devise_getMyOnlineState() == 1) {
-              // devise_setStateOnline ();
-              ref.update(onlineState);
-            }
-            ref.onDisconnect().set(offlineState);
+                // if i am not in online and my othere devise change my state
+                if(value.online != 1 && devise_getMyOnlineState() == 1) {
+                  // devise_setStateOnline ();
+                  ref.update(onlineState);
+                }
+                ref.onDisconnect().set(offlineState);
+              }
+            );
           }
-        );
+        )
+
+
+        // ref.once('value')
+        // .then(function(dataSnapshot) {
+        //   // handle read data.
+        //     console.log('devise_onDisconectController once dataSnapshot.val()',dataSnapshot.val());
+            
+        // });
+
+
+        
     }
   //
   //
 
   function onEvent_devise_MousemoveController () {
-    // set my status online safe (with check it already isset)
-    devise_setStateIOnline();
+    // set my status online safe (with check it already isset) DISABLE
+    // devise_setStateIOnline();
+
     // clear previous timeout id
     clearTimeout(getMyStatusTimeoutId());
     // save time out and passed there function

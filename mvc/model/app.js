@@ -1,32 +1,135 @@
 define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
+	const _ = {'view':VIEW};
+	// create temp local storage for works 
+	window.connectTempLocalStorage = {};
+
 	//@<<< TIME FUNCTIONS
 		function _getSec () {
 		    return new Date().getTime()/1000;
 		}
+		_['getSec'] = _getSec;
+
 		function _getTime () {
 		    return new Date().getTime();
 		}
+		_['getTime'] = _getTime;
 	//@>>> TIME FUNCTIONS
 
 	//@<<< LOCAL STORAGE
+		// function _getValidStorage () {
+		// 	if ( getGlobalVar('m_routing').getUserDomain() ) {
+		// 		//if we are in subdomain
+		// 		return window.connectTempLocalStorage;
+		// 	} else {
+		// 		//if we are in chief site
+		//     	return localStorage;
+
+		// 	}
+		// }
+		// _['getValidStorage'] = _getValidStorage;
+
+			function _getLocalStorage () {
+		    	return localStorage;
+			}
+			_['getLocalStorage'] = _getLocalStorage;
+
+			function getStringOfLocalStorage() {
+	          var a = {}, lstorage = _getLocalStorage();
+	          for (var i = 0; i < lstorage.length; i++) {
+	              var k = lstorage.key(i);
+	              var v = lstorage.getItem(k);
+	              a[k] = v;
+	          }
+	          var s = JSON.stringify(a);
+	          return s;
+	      }
+	      _['getStringOfLocalStorage'] = getStringOfLocalStorage;
+
+			function _getTempStorage (argument) {
+		    	return window.connectTempLocalStorage;
+			}
+			_['getTempStorage'] = _getTempStorage;
+
+			function _storage_copyLocalToTemp () {
+				window.connectTempLocalStorage = _getLocalStorage()||{};
+			}
+			_['storage_copyLocalToTemp'] = _storage_copyLocalToTemp;
+
 		function _save ( name, value ) {
-		    return localStorage.setItem( name , value );
+			if ( getGlobalVar('m_routing').getUserDomain() ) {
+				//if we are in subdomain
+				return _saveTempStorage( name, value );
+			} else {
+				//if we are in chief site
+		    	return _saveLocalStorage ( name , value );
+
+			}
 		}
-		function _get (name){
-		    return localStorage.getItem(name);
+		_['save'] = _save;
+
+			function _saveTempStorage ( name, value ) {
+				return window.connectTempLocalStorage[name] = value;
+			}
+			_['saveTempStorage'] = _saveTempStorage;
+
+			function _saveLocalStorage ( name, value ) {
+				return localStorage.setItem( name , value );
+			}
+			_['saveLocalStorage'] = _saveLocalStorage;
+
+		function _get (name) {
+	    	return _getFromLocalStorageByKey( name );
+
+			// if ( getGlobalVar('m_routing').getUserDomain() ) {
+			// 	//if we are in subdomain
+			// 	return _getFromTempStorageByKey ( name );
+			// } else {
+			// 	//if we are in chief site
+		 //    	return _getFromLocalStorageByKey( name ); 
+			// }
 		}
-		function _del (name){
+		_['get'] = _get;
+
+			function _getFromTempStorageByKey (name) {
+			    return window.connectTempLocalStorage[name];
+			}
+			_['getFromTempStorageByKey'] = _getFromTempStorageByKey;
+
+			function _getFromLocalStorageByKey (name) {
+			    return localStorage.getItem(name);
+			}
+			_['getFromLocalStorageByKey'] = _getFromLocalStorageByKey;
+
+		function _del (name) {
 		    localStorage.removeItem(name);
 		}
-		function _clear (){
-		    localStorage.clear();
+		_['del'] = _del;
+
+		function _clear () {
+			// clear temp storage
+			_clearTempStorage (  );
+			// clear local storage
+			_clearLocalStorage(); 
 		}
+		_['clear'] = _clear;
+
+			function _clearLocalStorage (argument) {
+		    	localStorage.clear();
+			}
+			_['clearLocalStorage'] = _clearLocalStorage;
+
+			function _clearTempStorage (argument) {
+		    	window.connectTempLocalStorage = {};
+			}
+			_['clearTempStorage'] = _clearTempStorage;
+			
 	//@>>> LOCAL STORAGE
 
 	//@@@<<< IMPORTS
 		function _addScript (iNhref,iNfuntion) {
 			$.getScript(iNhref, iNfuntion );//( data, textStatus, jqxhr )
 		}
+		_['addScript'] = _addScript;
 	//@@@>>> IMPORTS
 
 	function _forEach (data, callback){
@@ -36,27 +139,34 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	    }
 	  }
 	}
+	_['forEach'] = _forEach;
 
 	/*?<<< json object  */
 		function _getJsonKey (ObjectThis){
 		    return Object.keys(ObjectThis)[0];
 		}
+		_['getJsonKey'] = _getJsonKey;
+
 		function _getJsonKeys (ObjectThis){
 		    return Object.keys(ObjectThis);
 		}
+		_['getJsonKeys'] = _getJsonKeys;
 	/*!>>> json object  */
 
 	/*?<<< SOUND */
-		function addSource (elem, path) {
+		function _addSource (elem, path) {
 		  $('<source>').attr('src', path).appendTo(elem);
 		}
+		_['addSource'] = _addSource;
+
 		    function _playSound(iNsrc){
 		        var audio = $('<audio />', {
 		           autoPlay : 'autoplay'
 		         });
-		         addSource(audio, iNsrc);
+		         _addSource(audio, iNsrc);
 		         audio.appendTo('body');
 		    }
+			_['playSound'] = _playSound;
 	/*?<<< SOUND  */
 
 	
@@ -79,6 +189,8 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 		*/
 		window.rammanNowOpenedApp = iNapp;
 	}
+	_['setApp'] = _setApp;
+
 	function _setPage (iNapp,iNpage) {
 		/*
 			@discr
@@ -91,6 +203,8 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 		// _setApp(iNapp);
 		window[this.prefixForApp_ + '-' + iNapp+'-'+this.openPageName_] = iNpage;
 	}
+	_['setPage'] = _setPage;
+
 	function _thisPage (iNapp) {
 		/*
 			@discr
@@ -101,6 +215,8 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 		*/
 		return window[this.prefixForApp_ + '-' + iNapp + '-' + this.openPageName_ ] || false;
 	}
+	_['thisPage'] = _thisPage;
+
 	function _thisApp () {
 		/*
 			@discr
@@ -115,6 +231,8 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 		var thisApp = window.rammanNowOpenedApp||false;
 		return thisApp;
 	}
+	_['thisApp'] = _thisApp;
+
 	function _invokeOpenedApp (iNmethodName) {
 		/*
 			@discr
@@ -130,6 +248,8 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 		}
 		return _thisApp();
 	}
+	_['invokeOpenedApp'] = _invokeOpenedApp;
+
 	function _invokeApp (iNappName,iNmethodName) {
 		/*
 			@example
@@ -160,22 +280,33 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 				}
 		return false;
 	}
+	_['invokeApp'] = _invokeApp;
+
 	//<? transactors
 		function _td_hidePages (iNapp,iNarray,iNtypeApp) {
 			V_VIEW.d_hidePages (iNapp,iNarray,iNtypeApp)
 		}
+		_['d_hidePages'] = _td_hidePages;
+
 		function _td_showPages (iNapp,iNarray,iNtypeApp) {
 			V_VIEW.d_showPages (iNapp,iNarray,iNtypeApp)
 		}
+		_['d_showPages'] = _td_showPages;
+
 		function _td_showApps (iNarray,iNtypeApp) {
 			V_VIEW.d_showApps (iNarray,iNtypeApp)
 		}
+		_['d_showApps'] = _td_showApps;
+
 		function _td_hideApps (iNarray,iNtypeApp) {
 			V_VIEW.d_hideApps (iNarray,iNtypeApp)
 		}
+		_['d_hideApps'] = _td_hideApps;
+
 		function _td_openPage (iNapp,iNpage,iNtype) {
 			VIEW.d_openPage (iNapp,iNpage,iNtype);
 		}
+		_['d_openPage'] = _td_openPage;
 	//>! transactors
 
 	//< lambda funtions
@@ -248,6 +379,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 			else 
 				return iNapp['isApp']();
 		}
+
 		function isPage (iNapp,iNpage) {
 			/*
 			 	@discr
@@ -506,7 +638,9 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 		// safe invoke passed function
 		if (typeof(iNfunction) == 'function')iNfunction();
 	}
+	_['readyChiefApp'] = _readyChiefApp;
 
+	
 	function _readyListApp (iNdata, iNapp,iNfunction) {
 		/*
 			@discr
@@ -574,6 +708,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 		}
 		if (typeof(iNfunction) == 'function')iNfunction();
 	}
+	_['readyListApp'] = _readyListApp;
 
 
 	//@< getter for pages from app funcitons
@@ -587,6 +722,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 			}
 			return false;
 		}
+
 		function getPageFuncitons (iNapp,iName) {
 			var page = getPage(iNapp,iName);
 			if( 
@@ -715,6 +851,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 			// VIEW.createLoader();
 		});
 	}
+	_['openChiefApp'] = _openChiefApp;
 
 	function _openListApp (iNdata,iNfunction) {
 		/*
@@ -745,6 +882,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 			VIEW.createLoader();
 		});
 	}
+	_['openListApp'] = _openListApp;
 	
 
 	// function _openApp ( iNdata, iNapp,iNtype) {
@@ -808,6 +946,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 		app.onDisappear();
 		app.onClose();
 	}
+	_['closeApp'] = _closeApp;
 
 	function _clone(obj) {
 	    if (null == obj || ( "object" != typeof obj && "array" != typeof obj )) return obj;
@@ -820,6 +959,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	    }
 	    return copy;
 	}
+	_['clone'] = _clone;
 
 
 
@@ -829,28 +969,36 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 			return false;
 		return window[prefixForGlobalApp_+iNname];
 	}
+	_['getGlobalApp'] = getGlobalApp;
+
 	function setGlobalApp(iNapp){
 
 		if( typeof window[prefixForGlobalVar+iNapp.name] == 'undefined' && typeof iNapp == 'object' && typeof iNapp.name == 'string') {
 			window[prefixForGlobalApp_+iNapp.name] = iNapp;
 		}
 	}
+	_['setGlobalApp'] = setGlobalApp;
+
 	function getGlobalVar (iNname) {
 		if( typeof window[prefixForGlobalVar+iNname] == 'undefined' )
 			return false;
 		return window[prefixForGlobalVar+iNname];
 	}
+	_['getGlobalVar'] = getGlobalVar;
+
 	function setGlobalVar(iNname,iNobject){
 		if( typeof window[prefixForGlobalVar+iNname] == 'undefined' && typeof iNobject == 'object' && typeof iNname == 'string') {
 			window[prefixForGlobalVar+iNname] = iNobject;
 		}
 	}
+	_['setGlobalVar'] = setGlobalVar;
 
 
 	//@< work with header
-		var _td_loadCSS  		= VIEW.d_loadCSS;
-		var _td_removeByClass  	= VIEW.d_removeByClass;
-		var _td_loadJS  		= VIEW.d_loadJS;
+		// var _td_loadCSS  		= VIEW.d_loadCSS;
+		// var _td_removeByClass  	= VIEW.d_removeByClass;
+		// var _td_loadJS  		= VIEW.d_loadJS;
+		// _['d_loadCSS'] = _td_loadCSS;
 	//@< work with header
 
 
@@ -864,69 +1012,72 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 		}
 		return false;
 	}
+	_['globalFunctions_invoke'] = globalFunctions_invoke;
 
 	function globalFunctions_create (iName, iNfunction) {
 		if(typeof window.GF != 'object') window.GF = {};
 		window.GF[iName] = iNfunction;
 		return true;
 	}
+	_['globalFunctions_create'] = globalFunctions_create;
 	//@> work with global functions
 
-	return {
-		'globalFunctions_invoke' : globalFunctions_invoke,
-		'globalFunctions_create' : globalFunctions_create,
+	return _;
+	// {
+	// 	'globalFunctions_invoke' : globalFunctions_invoke,
+	// 	'globalFunctions_create' : globalFunctions_create,
 
-	    'openChiefApp'  : _openChiefApp,
-	    'openListApp'   : _openListApp,
-	    'readyListApp'  : _readyListApp,
-	    'readyChiefApp' : _readyChiefApp,
-	    'invokeOpenApp' : _invokeOpenedApp,
-	    'invokeApp' 	: _invokeApp,
-	    'clone' 		: _clone,
+	//     'openChiefApp'  : _openChiefApp,
+	//     'openListApp'   : _openListApp,
+	//     'readyListApp'  : _readyListApp,
+	//     'readyChiefApp' : _readyChiefApp,
+	//     'invokeOpenApp' : _invokeOpenedApp,
+	//     'invokeApp' 	: _invokeApp,
+	//     'clone' 		: _clone,
 
-	    'setApp' 		: _setApp,
-	    'setPage' 		: _setPage,
-	    'thisApp' 		: _thisApp,
-	    'thisPage' 		: _thisPage, 
+	//     'setApp' 		: _setApp,
+	//     'setPage' 		: _setPage,
+	//     'thisApp' 		: _thisApp,
+	//     'thisPage' 		: _thisPage, 
 
-	    'd_hidePages'   : _td_hidePages,
-	    'd_showPages'   : _td_showPages,
-	    'd_hideApps'    : _td_hideApps,
-	    'd_showApps'    : _td_showApps,
-	    'd_openPage'    : _td_openPage,
+	//     'd_hidePages'   : _td_hidePages,
+	//     'd_showPages'   : _td_showPages,
+	//     'd_hideApps'    : _td_hideApps,
+	//     'd_showApps'    : _td_showApps,
+	//     'd_openPage'    : _td_openPage,
 
-	    //work with header
-	    'd_loadCSS' 		: _td_loadCSS,
-	    'd_loadJS' 			: _td_loadJS,
-	    'd_removeByClass' 	: _td_removeByClass,
-		'addScript' 		: _addScript,
+	//     //work with header
+	//     'd_loadCSS' 		: _td_loadCSS,
+	//     'd_loadJS' 			: _td_loadJS,
+	//     'd_removeByClass' 	: _td_removeByClass,
+	// 	'addScript' 		: _addScript,
 
-	    //  time functions
-	    'getSec' : _getSec,
-		'getTime' : _getTime,
+	//     //  time functions
+	//     'getSec' : _getSec,
+	// 	'getTime' : _getTime,
 
-		//  local storage
-		'save' : _save,
-		'get' : _get,
-		'del' : _del,
-		'clear' : _clear,
+	// 	//  local storage
+	// 	'save' : _save,
+	// 	'get' : _get,
+	// 	'del' : _del,
+	// 	'clear' : _clear,
 
-		//  object functions
-		'getJsonKey' : _getJsonKey,
-		'getJsonKeys' : _getJsonKeys,
-		'forEach' : _forEach,
+	// 	//  object functions
+	// 	'getJsonKey' : _getJsonKey,
+	// 	'getJsonKeys' : _getJsonKeys,
+	// 	'forEach' : _forEach,
 
-		//  audio functions
-		'playSound' : _playSound,
-			'addSource' : addSource,
+	// 	//  audio functions
+	// 	'playSound' : _playSound,
+	// 		'addSource' : addSource,
 
 
-		//  global resourse
-		'setGlobalApp' : setGlobalApp,
-		'setGlobalVar' : setGlobalVar,
-		'getGlobalVar' : getGlobalVar,
-		'getGlobalApp' : getGlobalApp,
+	// 	//  global resourse
+	// 	'setGlobalApp' : setGlobalApp,
+	// 	'setGlobalVar' : setGlobalVar,
+	// 	'getGlobalVar' : getGlobalVar,
+	// 	'getGlobalApp' : getGlobalApp,
 
-		'view' : VIEW
-	}
+	// 	'view' : VIEW
+	// }
 });

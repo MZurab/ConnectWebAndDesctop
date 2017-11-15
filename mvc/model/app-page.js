@@ -235,13 +235,13 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user','mediaStream
         if ( typeof obj['css']  == 'object' && obj['css'].length > 0 ) {
           // add css
           for ( var i in obj['css'] ) {
-            M_APP.d_loadCSS(obj['css'][i],c);
+            M_APP.view.d_loadCSS (obj['css'][i],c);
           }
         }
         if ( typeof obj['js']   == 'object' && obj['js'].length > 0 ) {
           // add js
           for ( var i in obj['js'] ) {
-            M_APP.d_loadJS(obj['js'][i],c);
+            M_APP.view.d_loadJS (obj['js'][i],c);
           }
         }
       }

@@ -1,5 +1,5 @@
 require2.config({
-    // baseUrl: 'https://ramman.net/files/', //https://cdn.ramman.net/web/',
+    baseUrl: 'https://ramman.net/files/', //https://cdn.ramman.net/web/',
     
     // packages: [{
     //     name: 'moment',
@@ -194,19 +194,31 @@ require2.config({
 
 require2(
     ['jquery','dictionary','m_engine','m_routing','m_app','m_push','m_synchronize','m_user'], 
-    function( $, DICTIONARY, ENGINE, ROUTING, M_APP, PUSH, SYNCHRONIZE,USER) {
+    function( $, DICTIONARY, ENGINE, ROUTING, M_APP, PUSH, SYNCHRONIZE, USER) {
     $(function() {
-        console.log('start!', localStorage,ROUTING);
+        console.log('start! 2');
+        // set global routing for use in m_app
+        M_APP.setGlobalVar('m_routing',ROUTING)
+
         // set browser || desktop
-            // ROUTING.setBrowser(); //#if browser
-            ROUTING.setDesktop(); //#if desktop
-            ROUTING.setDeviseName('Apple Mac');
+            ROUTING.setBrowser(); //#if browser
+            // ROUTING.setDesktop(); //#if desktop
+            // ROUTING.setDeviseName('Apple Mac');
         ENGINE.init();
         // PUSH.getPermission ( PUSH.getToken( ()=>console.log('PUSH.getToken') ) );
 
-        if( ROUTING.isBrowser() && ROUTING.getUserDomain() ) {
-            // if it is subdomain && it is browser -> y
-            SYNCHRONIZE.run();
+        // start synchronize func for use common localstorage, common user at sub and main domain
+        if( ROUTING.isBrowser() ) {
+                console.log('SYNCHRONIZE start');
+            if( ROUTING.getUserDomain() ) {
+                // if it is subdomain && it is browser -> we run syncronize for use common local storage
+                SYNCHRONIZE.runForSubDomain();
+                console.log('SYNCHRONIZE.runForSubDomain');
+            } else {
+                // if it is maindomain && it is browser -> we run syncronize for use same user at one time
+                SYNCHRONIZE.runForMainDomain();
+                console.log('SYNCHRONIZE.runForMainDomain');
+            }
         }
 
         DICTIONARY.autoChange(function () {

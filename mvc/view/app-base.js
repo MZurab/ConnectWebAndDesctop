@@ -12,7 +12,7 @@ define(['jquery','m_user','template7','v_view','v_app'],function($,USER,Template
 					<div class="appBase_ListHeader_dName">
 					 <a href="{{href}}" class="CML" {{#if nameDictionaryCode}}cmlk="{{nameDictionaryCode}}"{{/if}}>{{name}}</a>
 					</div>
-					<div class="appBase_ListHeader_login">@{{login}}</div>
+					{{if login}}<div class="appBase_ListHeader_login">@{{login}}</div>{{/if}}
 			   </div>
 			</div>
 			<div class="appBase_listHeaderButtonsBlock">
@@ -68,12 +68,29 @@ define(['jquery','m_user','template7','v_view','v_app'],function($,USER,Template
 		if( typeof iNtype != 'string' ) iNtype = 'end';
 		var objForAddHeader = {'app':CONST['name'],'page': CONST['pageIndex']};
 		// add user flag
-			objForAddHeader['content'] = getListHeaderForIndexPage (iNdata);
+		objForAddHeader['content'] = getListHeaderForIndexPage (iNdata);
 
-			
+
 		V_APP.safeViewMenuHeaderWithContent(objForAddHeader,iNtype);
 	}
 	_['addUserHeaderInList'] = addUserHeaderInList;
+
+
+	function getRealChatIdByUid (iNuid) {
+		// body...
+		var path 		= ".usersBlockContainerInMenusBlock .scrolBlockForChat .mix.usersBlockInMenusBlock[connect_uid='"+iNuid+"']";
+		var el 			= $(path);
+		console.log('getRealChatIdByUid path,el',path,el);
+		var chatId 		= el.attr('connect_chatid');
+		var userLogin 	= el.attr('connect_userlogin');
+		console.log('getRealChatIdByUid chatId,userLogin',chatId,userLogin);
+		if ( el && userLogin != chatId ) {
+			// 
+			return chatId;
+		}
+		return false;
+	}
+	_['getRealChatIdByUid'] = getRealChatIdByUid;
 	
 
 
