@@ -18,7 +18,7 @@ define(['jquery','m_user','template7','v_view','v_app'],function($,USER,Template
 			<div class="appBase_listHeaderButtonsBlock">
 				<div class="appBase_buttonOptions"></div>
 				<div class="appBase_buttonToHome connect_system_href" 		code_href="toHome"></div>
-				{{#if login}}
+				{{#if myLogin}}
 					<div class="appBase_buttonSignOut connect_system_href" 	code_href="signOut"></div>
 				{{else}}
 					<div class="appBase_buttonSignIn connect_system_href" 	code_href="signIn"></div>
@@ -66,6 +66,18 @@ define(['jquery','m_user','template7','v_view','v_app'],function($,USER,Template
 		*/
 		console.log('addUserHeaderInList iNdata,iNtype',iNdata,iNtype);
 		if( typeof iNtype != 'string' ) iNtype = 'end';
+
+
+		// if i am anonym user del him and del back btn
+		var myLogin = USER.getMyLogin();
+		if( !myLogin ) {
+			delete iNdata['myLogin'];
+			// delete back btn
+			delete iNdata['back'];
+		} else {
+			iNdata['myLogin'] = myLogin;
+		}
+
 		var objForAddHeader = {'app':CONST['name'],'page': CONST['pageIndex']};
 		// add user flag
 		objForAddHeader['content'] = getListHeaderForIndexPage (iNdata);

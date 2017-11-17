@@ -3,7 +3,7 @@ define(['v_view'],function(v_view){
 	const templates = {};
 	//< template for modal window
 		    templates['fullWindow'] = `
-				<div class="appModalFullWindow background {{#if attr}}{{attr}}{{/if}}">
+				<div class="appModalFullWindow background" {{#if attr}}{{attr}}{{/if}}>
 					{{#if defaultHeaderBlock}}
 					    <div class="headerForAppFullWindow background">
 							{{#if defaultCloseButton}}
@@ -61,7 +61,11 @@ define(['v_view'],function(v_view){
 								defaultHeader => bool
 								defaultCloseButton => bool
 			*/
+			// del other pages
+			$('.appModalFullWindow.background').remove();
+			// get content by template
 			var temp = Template7.compile(templates['fullWindow']), selector = 'body #container';
+			// add data to view
 			v_view.d_addDataToViewEl(selector,temp(iNdata));
 		}
 		_['addFullWindowByTemplate'] = addFullWindowByTemplate;

@@ -195,75 +195,77 @@ require2.config({
 require2(
     ['jquery','dictionary','m_engine','m_routing','m_app','m_push','m_synchronize','m_user'], 
     function( $, DICTIONARY, ENGINE, ROUTING, M_APP, PUSH, SYNCHRONIZE, USER) {
-    $(function() {
-        console.log('start! 2');
-        // set global routing for use in m_app
-        M_APP.setGlobalVar('m_routing',ROUTING)
+    $(document).ready( function() {
+            setTimeout( () => {
+            // set global routing for use in m_app
+            M_APP.setGlobalVar('m_routing',ROUTING)
 
-        // set browser || desktop
-            ROUTING.setBrowser(); //#if browser
-            // ROUTING.setDesktop(); //#if desktop
-            // ROUTING.setDeviseName('Apple Mac');
-        ENGINE.init();
-        // PUSH.getPermission ( PUSH.getToken( ()=>console.log('PUSH.getToken') ) );
+            // set browser || desktop
+                ROUTING.setBrowser(); //#if browser
+                // ROUTING.setDesktop(); //#if desktop
+                // ROUTING.setDeviseName('Apple Mac');
+            ENGINE.init();
+            // PUSH.getPermission ( PUSH.getToken( ()=>console.log('PUSH.getToken') ) );
 
-        // start synchronize func for use common localstorage, common user at sub and main domain
-        if( ROUTING.isBrowser() ) {
-                console.log('SYNCHRONIZE start');
-            if( ROUTING.getUserDomain() ) {
-                // if it is subdomain && it is browser -> we run syncronize for use common local storage
-                SYNCHRONIZE.runForSubDomain();
-                console.log('SYNCHRONIZE.runForSubDomain');
-            } else {
-                // if it is maindomain && it is browser -> we run syncronize for use same user at one time
-                SYNCHRONIZE.runForMainDomain();
-                console.log('SYNCHRONIZE.runForMainDomain');
-            }
-        }
-
-        DICTIONARY.autoChange(function () {
+            // start synchronize func for use common localstorage, common user at sub and main domain
             if( ROUTING.isBrowser() ) {
-                if( ROUTING.getUrlLength() > 0 ) {
-                    console.log('ROUTING.getUrlLength isBrowser 1', ROUTING.getUrlLength() );
-                    ENGINE.startUrl();
+                if( ROUTING.getUserDomain() ) {
+                    
+                    // set global m_synchronize for 
+                    M_APP.setGlobalVar('m_synchronize',SYNCHRONIZE);
 
+                    // if it is subdomain && it is browser -> we run syncronize for use common local storage
+                    SYNCHRONIZE.runForSubDomain();
                 } else {
-                    var userDomain  = ROUTING.getUserDomain();
-                    var userLogin   = USER.getMyLogin()||'anonym';
-                    var user        = userDomain||userLogin;
-                    var data        = [];
-                    console.log('ROUTING.getUrlLength isBrowser 2', ROUTING.getUrlLength() , userDomain );
-                    if( userDomain ) {
-                        if ( userDomain )   data.push ('uid='+userDomain);
-                                            data.push ('login='+userLogin);
-
-                        var dataString = data.join('&');
-                        console.log( 'ROUTING.getUrlLength isBrowser dataString, userDomain 3', dataString , userDomain );
-                        ENGINE.passToApp({'app':'base','page':'one','user':userDomain, 'data': dataString});
-                    } else {
-                        if ( userLogin == 'anonym' )
-                            ENGINE.passToApp({'app':'page','page':'fullWindow', 'data':'id=sign&uid=@system'});
-                        else
-                            ENGINE.passToApp({'app':'base','page':'index', 'data':''});
-                    }
+                    // if it is maindomain && it is browser -> we run syncronize for use same user at one time
+                    SYNCHRONIZE.runForMainDomain();
                 }
-                
-            } else if( ROUTING.isDesktop() ) {
-                var user = USER.getMyLogin()||'anonym';
-                console.log('ROUTING.getUrlLength isDesktop,user 0', ROUTING.getUrlLength(), user );
-                if( user != 'anonym' ) {
-                    console.log('ROUTING.getUrlLength isDesktop,user 1',  user );
-                    ENGINE.passToApp({'app':'base','page':'index', 'user':user,'data':''});
-                }
-                else{
-                    console.log('ROUTING.getUrlLength isDesktop,user 2',  user );
-                    ENGINE.passToApp({'app':'page','page':'fullWindow','data':'id=sign&uid=@system'});
-                }
-
             }
-        });
 
-        M_APP.setGlobalVar('engine',ENGINE);
+            DICTIONARY.autoChange(function () {
+                if( ROUTING.isBrowser() ) {
+                    if( ROUTING.getUrlLength() > 0 ) {
+                        ENGINE.startUrl();
+
+                    } else {
+                        // if we are open only domain (without path)
+                        var userDomain  = ROUTING.getUserDomain();
+                        var userLogin   = USER.getMyLogin()||'anonym';
+                        var user        = userDomain||userLogin;
+                        var data        = [];
+                        if( userDomain ) {
+                            // if we are in subdomain
+                            if ( userDomain )   data.push ('uid='+userDomain);
+                                                data.push ('login='+userLogin);
+
+                            var dataString = data.join('&');
+                            ENGINE.passToApp({'app':'base','page':'one','user':userDomain, 'data': dataString});
+                        } else {
+                            // if we are in main domain
+                            if ( userLogin && userLogin == 'anonym' ) {
+                                // 
+                                ENGINE.passToApp({'app':'page', 'user':'anonym', 'page':'fullWindow', 'data':'id=sign&uid=@system'});
+                            } else {
+
+                                ENGINE.passToApp({'app':'base', 'user': userLogin, 'page':'index', 'data':''});
+                            }
+                        }
+                    }
+                    
+                } else if( ROUTING.isDesktop() ) {
+                    var user = USER.getMyLogin()||'anonym';
+                    if( user != 'anonym' ) {
+                        ENGINE.passToApp({'app':'base','page':'index', 'user':user,'data':''});
+                    }
+                    else{
+                        ENGINE.passToApp({'app':'page','page':'fullWindow','data':'id=sign&uid=@system'});
+                    }
+
+                }
+            });
+
+            M_APP.setGlobalVar('engine',ENGINE);
+        },3000)
     });
 });
 

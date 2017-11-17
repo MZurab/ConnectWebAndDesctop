@@ -58,12 +58,14 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 		function _save ( name, value ) {
 			if ( getGlobalVar('m_routing').getUserDomain() ) {
 				//if we are in subdomain
-				return _saveTempStorage( name, value );
-			} else {
+				 _saveTempStorage( name, value );
+			} 
 				//if we are in chief site
 		    	return _saveLocalStorage ( name , value );
 
-			}
+			
+			// 		_saveLocalStorage ( name , value );
+			// return _saveTempStorage( name, value );
 		}
 		_['save'] = _save;
 
@@ -1004,9 +1006,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 
 	//@< work with global functions
 	function globalFunctions_invoke (iName) {
-		console.log('globalFunctions_invoke iName',iName);
 		if(typeof window.GF == 'object' && typeof window.GF[iName] == 'function') {
-			console.log('globalFunctions_invoke window.GF[iName]',window.GF[iName]);
 			window.GF[iName]();
 			return true;
 		}

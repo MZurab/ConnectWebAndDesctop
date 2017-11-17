@@ -22,29 +22,38 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
     	_['saveUserLang'] = saveUserLang;
 	//@@@>>> USER
 	function signOut (inSuccess,iNerror){
+		if( getMyId() ) {
+			// invoke global function for deleted note from fb db 
+			M_APP.globalFunctions_invoke('devise_removeNoteFromDatabase');
+		}
+		// clear local storage
+	    M_APP.clear();
+
 		// sign out from fb auth
 	    FIREBASE.auth().signOut().then( 
     	() =>  {
-    		// invoke global function for deleted note from fb db 
-			M_APP.globalFunctions_invoke('devise_removeNoteFromDatabase');
-			// clear local storage
-		    M_APP.clear();
 
 		    // if we are in subdomain we also have sign out from main domain
 		    var ROUTING = M_APP.getGlobalVar('m_routing');
-	    	if ( ROUTING.getUserDomain() ) {
-				//add flag @connectFlagForSyncUserOuted -> with this flag we pass signOut command to main domain from this subdomain in synchronize.js
-				M_APP.saveTempStorage ( '@connectFlagForSync_UserSignOut', 1 );
+			if ( ROUTING.getUserDomain() ) {
+	    		//off interval function
+	    		M_APP.getGlobalVar('m_synchronize').subDomain_clearIntervalFunction();
+
+	    		// view loader
+	    		M_APP.view.createLoader();
+				
+				// send sign out comman to main domain  //synchronize with main domain oure temp storage
+				M_APP.getGlobalVar('m_synchronize').subDomain_sendCommandForSignOut();
 			}
 	    	if (typeof (inSuccess) == 'function') inSuccess();
 	    }, (error) => {
+    		console.warn('signOut error', error ); 
 	    	if (typeof (iNerror) == 'function') iNerror(error);
 	    });
 	}
     _['signOut'] = signOut;
 
 	function signIn (token,iNfuntion) {
-    	console.log('signIn start');
 	    FIREBASE.auth().signInWithCustomToken(token).then( 
 	    (user) => {
 	    	// save new user id
@@ -63,13 +72,21 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	        if(typeof(iNfuntion) != 'undefined') {
 	        	iNfuntion(); 
 	        } else {
-	        	// pass to index page
-	        	M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index','user': getMyLogin(),'data':''});
+	        	if ( ROUTING.getUserDomain() ) {
+		        	// pass to chief subdomain
+		        	M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index','data':''});
+
+	        	} else {
+		        	// pass to sub chiefdomain
+		        	M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index','user': getMyLogin(),'data':''});
+
+	        	}
 	        }
 
 
 	    	
 		}).catch(function(error) {
+		  console.warn('signOut error', error ); 
 	      var errorCode = error.code;
 	      var errorMessage = error.message;
 	    });
@@ -109,13 +126,12 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 
     function getMyFirebaseUid () {
 		var result = checkSignIn();
-    	console.log(' getMyFirebaseUid result checkSignIn',result);
     	if(result){
     		result = FIREBASE.auth().currentUser.uid;
-    		console.log(' getMyFirebaseUid result firabase.auth().currentUser.uid',result);
     	}
         return result;
     }
+    window.getMyFirebaseUid = getMyFirebaseUid;
 
     function getMyToken () {
     	return M_APP.get('token');
@@ -126,14 +142,13 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
     	var uidType = M_APP.get('uidType');
     	if(uidType != null) {
     		if (uidType == '?' ) {
-    			console.log('getMyLogin anonym');
     			return 'anonym';
     		} else if( getMyId() ){
-    			console.log("getMyLogin M_APP.get('user')",M_APP.get('user'));
     			return M_APP.get('user');
 			}
     	}
     }
+    window.getMyLogin = getMyLogin;
     _['getMyLogin'] = getMyLogin;
 
     	function  checkSignIn () {
@@ -193,7 +208,6 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	        },
 	        dataType: 'json',
 	        success: function(iNdate2) {
-	            console.log(iNdate2);
 	            var status = iNdate2.status;
 	            if(status == 1) {
 	                setMyIcon(iNdate2.info.icon);
@@ -250,7 +264,7 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	                    M_VIEW.error(DICTIONARY.get('error-wrongCode'));
 	                }
 	            },
-	            error: function (){M_VIEW.closeLoader(); }
+	            error: function (){ M_VIEW.closeLoader(); }
 	        });
 	        return false;
 	    }
@@ -281,7 +295,6 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	        },
 	        dataType: 'json',
 	        success: function(iNdate2) {
-	            console.log(iNdate2);
 	            var status = iNdate2.status;
 	            if(status == 1) {
 	                setMyIcon(iNdate2.info.icon);
@@ -341,28 +354,7 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	}
     _['getMyToken'] = getMyToken;
 
-	function startTimer (iNid,iNendTime,enfFunction){
-	    // $(iNid)
-	    // .countdown(iNendTime)
-	    // .on('update.countdown', function(event) {
-	    //   var format = '%M:%S';//%H:
-	    //   if(event.offset.totalDays > 0) {
-	    //     format = '%-d day%!d ' + format;
-	    //   }
-	    //   if(event.offset.totalDays > 0) {
-	    //     format = '%-d day%!d ' + format;
-	    //   }
-	    //   if(event.offset.weeks > 0) {
-	    //     format = '%-w week%!w ' + format;
-	    //   }
-	    //   $(this).html(event.strftime(format));
-	    // }).on('finish.countdown', 
-	    //     function(event) {
-	    //         if ( typeof(enfFunction) != 'undefined' ) enfFunction();
-	    //     }
-	    // );
-	    console.log('startTimer iNendTime',iNendTime);
-	    
+	function startTimer (iNid,iNendTime,enfFunction){	    
 	    $(iNid).countdown ( 'destroy' );
 	    $(iNid)
 	    .countdown (
@@ -380,8 +372,10 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
     _['startTimer'] = startTimer;
 
 	function startSmsTimer (iNtype) {
+		
 	    var sentSmsTime = parseInt(M_APP.get('sentSmsTime'));
 	    var nowSec = M_APP.getTime();
+
 	    if( typeof(sentSmsTime) != 'undefined' & (sentSmsTime + 300000) > nowSec ) {
 	        $('.page-reSendSms').hide();
 	        $('.page-LastTimeForExpireSms').show();

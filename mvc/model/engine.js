@@ -51,15 +51,33 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 		}
 
 		function systemHrefSignOut () {
-			console.log('systemHrefSignOut start');
-			USER.signOut(systemHrefSignIn());
-			;
+			// sign out if we in main domain
+			// if ( !ROUTING.getUserDomain () ) {
+				USER.signOut(
+					() => {
+						M_APP.getGlobalVar('engine').passToApp ( 
+							{ 
+								'app'	: 'page', 
+								'page'	: 'fullWindow', 
+								'user'	: 'anonym', 
+								'data'	: 'id=sign&uid=@system' 
+							} 
+						);
+					}
+				);
+			// }
 		}
 
 		function systemHrefToHome () {
-			let user = USER.getMyLogin();
-			let obj = {'app':'base', 'page':'index', 'user': user, 'data': '' } ;
-			// _passToApp({'app':'base', 'page':'index', 'user': user, 'data': '' } );
+			var user = USER.getMyLogin(), obj;
+			if ( !ROUTING.getUserDomain () ) {
+				// if main domain
+				obj = {'app':'base', 'page':'index', 'user': user, 'data': '' } ;
+			} else {
+				// if subdomain
+				obj = {'app':'base', 'page':'index', 'data': '' } ;
+
+			}
 
 			M_APP.getGlobalVar('engine').passToApp(obj);
 		}
@@ -110,6 +128,16 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 							data
 							user
 			*/
+			// if we are in subdomain and subdomain == user we delete it
+			if ( 
+				( typeof iNdata['user'] != 'undefined' && ROUTING.getUserDomain () == iNdata['user']) || 
+				( typeof iNdata['user'] == 'string' && iNdata['user'] == 'anonym'  && ROUTING.getUserDomain ()) 
+				
+			) {
+	        	// delete user
+	        	delete iNdata['user'];
+			}
+
 			let thisObject = this;
 			if (typeof iNthis != 'undefined') thisObject = iNthis;
 			ROUTING.prepareUrl(iNdata);

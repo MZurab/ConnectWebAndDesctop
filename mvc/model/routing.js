@@ -43,14 +43,6 @@ define([ 'jquery', 'm_user', 'platform' ],function( $, USER, PLATFORM){
 
 		function prepareUrl (iNobj) {
 			var r, userDomain  = getUserDomain();
-			console.log('prepareUrl iNobj 1',iNobj);
-			console.log('prepareUrl userDomain',userDomain);
-
-			// if( typeof iNobj == 'object' &&  ( iNobj['user'] == USER.getMyLogin() || iNobj['user'].length < 1 ) ) {
-			// 	// delete user if it isset && it's user me
-			// 	delete iNobj['user'];
-			// }
-			console.log('prepareUrl iNobj 2',iNobj);
 			if(typeof iNobj != 'object') iNobj= {}; 
 			
 			setUser(iNobj['user']);
@@ -73,11 +65,8 @@ define([ 'jquery', 'm_user', 'platform' ],function( $, USER, PLATFORM){
 				}
 				// we want to pass in this user field
 				newUrl = getUrl(iNobj);
-
-				console.log('prepareUrl newUrl',newUrl);
 				urlSet(newUrl);				
 			} else {
-				console.log('desktop prepareUrl');
 			}
 			return true;
 		} _['prepareUrl'] = prepareUrl;
@@ -118,7 +107,7 @@ define([ 'jquery', 'm_user', 'platform' ],function( $, USER, PLATFORM){
 				// if we dont back or top in app path
 				addAppToPath(objectForEngine);
 			}
-			console.log('openApp objectForEngine,dataForApp',objectForEngine,dataForApp);
+
             iNengine.openApp(objectForEngine,dataForApp);
 		} _['startUrl'] = startUrl;
 
@@ -141,21 +130,18 @@ define([ 'jquery', 'm_user', 'platform' ],function( $, USER, PLATFORM){
 				@example
 					urlSet('/zurab')
 			*/
-			console.log('urlSet iNurl0',iNurl);
 			var urlDomain = getUserDomain();
 			if(urlDomain) {
 				iNurl = protocol + urlDomain + '.' + chiefDomain  + iNurl;
 			} else {
 				iNurl = protocol + chiefDomain  + iNurl;
-			}
-			console.log('urlSet iNurl2',iNurl);
-			
+			}			
 
 		    try {
 		      history.pushState(null, null, iNurl);
 		      return;
 		    } catch(e) {
-		    	console.log('urlSet e, iNurl',e , iNurl);
+		    	console.warn('urlSet e',e , iNurl);
 		    }
 		    // location.hash = '#' + iNurl;
 		} _['setUrl'] = urlSet;
@@ -201,11 +187,7 @@ define([ 'jquery', 'm_user', 'platform' ],function( $, USER, PLATFORM){
 					r = urlGetPath(1);
 			} else if (typeof(window['ConnectUrlObject']['user']) == 'string')
 				r = window['ConnectUrlObject']['user'];
-			console.log('getUser r,USER.getMyLogin() 1 -', r,USER.getMyLogin());
-			console.log('getUser r||USER.getMyLogin() 1 -', r||USER.getMyLogin() );
 			if( typeof r == 'string' && r.length < 2 )	r = false;
-			console.log('getUser r,USER.getMyLogin() 2 -', r,USER.getMyLogin());
-			console.log('getUser r||USER.getMyLogin() 2 -', r||USER.getMyLogin() );
 			return r||USER.getMyLogin();
 		} _['getUser'] = getUser;
 
@@ -327,7 +309,6 @@ define([ 'jquery', 'm_user', 'platform' ],function( $, USER, PLATFORM){
 						@return -> { key : 'value', key2 : value2 }
 			*/
 		  if ( typeof iNstr != 'string' ) iNstr ='';
-		  console.log('getObjectFromString iNstr', iNstr);
 		  var result = {};
 		  let res = iNstr.split('&');
 		  if(res.length > 0 ) {

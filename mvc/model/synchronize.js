@@ -3,7 +3,6 @@ define(['jquery','m_user','m_app','m_firebase'],function( $, USER, M_APP, FIREBA
 	const _ = {}; // 'view':VIEW
 	// const MESSAGING = FIREBASE.messaging();
 	const CONST 	= {};
-		CONST['flagUserSignOut'] 	= '@connectFlagForSync_UserSignOut';
 		CONST['flagUserSignIn'] 	= '@connectFlagForSync_UserSignIn';
 		CONST['flagReloadPage'] 	= '@connectFlagForSync_reload';
 
@@ -23,7 +22,19 @@ define(['jquery','m_user','m_app','m_firebase'],function( $, USER, M_APP, FIREBA
 		// restart interval
 		startIntervalForSubDomain(event);
 
-		if ( inputObj['command'] == 'getLocalStorage' ) {
+		console.log('listenerForRunInSubdomain inputObj',inputObj);
+		if (inputObj['command'] == 'mainDomainSignedOut' ) {
+			// our main domain signed outed -> we open sign in page
+			M_APP.getGlobalVar('engine').passToApp ( 
+				{ 
+					'app'	: 'page', 
+					'page'	: 'fullWindow', 
+					'user'	: 'anonym', 
+					'data'	: 'id=sign&uid=@system' 
+				} 
+			);
+
+		} else if ( inputObj['command'] == 'getLocalStorage' ) {
 		  /* DISABLE 
 
 		  let lStorage = getLocalStorage();
@@ -105,8 +116,23 @@ define(['jquery','m_user','m_app','m_firebase'],function( $, USER, M_APP, FIREBA
 			if(typeof inputObj != 'object') return false;
 
 
-
-			if(inputObj['command'] == 'getLocalStorage') {
+			console.log ('synchronizeFile_listener inputObj',inputObj);
+			if ( inputObj['command'] == 'signOut' ) {
+				console.log ('synchronizeFile_listener signOut');
+				FIREBASE.auth().signOut().then( 
+					() =>  {
+						// clear local storage
+						M_APP.clear();
+						// for reload main domain
+						M_APP.saveLocalStorage ( CONST['flagReloadPage'], true );
+						// send to sub domain command that main domain signed out
+						synchronizeFile_sendDataToSubDomain({'command':'mainDomainSignedOut'});
+						// funcOnSuccess();
+					}, (error) => {
+						console.warn('synchronizeFile_listener $error',error);
+					}
+				);
+			} else if (inputObj['command'] == 'getLocalStorage') {
 				//
 				let lStorage = M_APP.getStringOfLocalStorage();
 				// save last copy
@@ -125,28 +151,12 @@ define(['jquery','m_user','m_app','m_firebase'],function( $, USER, M_APP, FIREBA
 				//check flags
 					//flag
 					var inputObjectOfStringContent = JSON.parse(inputObj['content']);
-					if( typeof inputObjectOfStringContent[ CONST['flagUserSignOut'] ] != 'undefined' ) {
-						//if user sign outed in subdomain -> we sined out from firebase 
-						// if ( USER.getMyId() ) {
-				  	  	 	FIREBASE.auth().signOut().then( 
-								() =>  {
-									// clear local storage
-									M_APP.clear();
-									// for reload main domain
-									M_APP.saveLocalStorage ( CONST['flagReloadPage'], true );
-									// invoke success function
-									// funcOnSuccess();
-								}, (error) => {
-									console.warn('synchronizeFile_listener $error',error);
-								}
-							);
-				  	  	 // } else {
-							// invoke success function
-				  	  	 	// funcOnSuccess();
-				  	  	 // }
-
-					} else if( typeof inputObjectOfStringContent[ CONST['flagUserSignIn'] ] != 'undefined' ) {
+					if( typeof inputObjectOfStringContent[ CONST['flagUserSignIn'] ] != 'undefined' ) {
 						//if user signIned in subdomain -> we add reload flag
+							// del flag
+							delete inputObjectOfStringContent[ CONST['flagUserSignIn'] ];
+							// save for add to local storage later
+							inputObj['content'] =  JSON.stringify(inputObjectOfStringContent);
 							if ( USER.getMyId() ) {
 					  	  	 	FIREBASE.auth().signOut().then( 
 									() =>  {
@@ -176,14 +186,16 @@ define(['jquery','m_user','m_app','m_firebase'],function( $, USER, M_APP, FIREBA
 			}
 		}
 
-		function synchronizeFile_startInterval (iNsubdomain) {
+		function synchronizeFile_sendDataToSubDomain (iNdata) {
+			let subdomain = synchronizeFile_getSubDomain();
+			parent.postMessage( iNdata, subdomain );
+		}
+
+		function synchronizeFile_startInterval () {
 			/*
 				@discr
 					send to parent window localstorage when we change
 				@inputs
-					iNsubdomain -> string
-
-
 			*/
 		    clearInterval ( synchronizeFile_getIntervalId() );
 			let intervalId = setInterval (
@@ -191,15 +203,11 @@ define(['jquery','m_user','m_app','m_firebase'],function( $, USER, M_APP, FIREBA
 			    // spy for changing local storage -> for send to subDomain
 			    let lStorage    = getLastSentLocalStorage();
 			    let realStorage = M_APP.getStringOfLocalStorage();
-			    if(lStorage != realStorage) {
-			      //send
+			    if ( lStorage != realStorage ) {
+			      //save last localstorage
 			      setLastSentLocalStorage(realStorage);
-			      parent.postMessage(
-			        {
-			          'command':'saveLocalStorage', 'content':realStorage
-			        }, 
-			        iNsubdomain //event.origin
-			      );
+			      //send to subdomain our local storage
+			      synchronizeFile_sendDataToSubDomain ( { 'command': 'saveLocalStorage', 'content': realStorage } );
 			    }
 			  }
 			  ,
@@ -226,12 +234,12 @@ define(['jquery','m_user','m_app','m_firebase'],function( $, USER, M_APP, FIREBA
 	    }
 
 		function synchronizeFile_run (iNsubdomain) {
-
-	    	//when this frame ready
-	    	synchronizeFile_startInterval(iNsubdomain);
-
 			// set subdomain
 			synchronizeFile_setSubDomain(iNsubdomain);
+
+	    	//when this frame ready
+	    	synchronizeFile_startInterval();
+
 
 			// init listener
 			synchronizeFile_initListener();
@@ -306,9 +314,10 @@ define(['jquery','m_user','m_app','m_firebase'],function( $, USER, M_APP, FIREBA
 	function sendMessageToFrame (iNobject) {
 		$('#frameSynchronize').get(0).contentWindow.postMessage(iNobject, "https://ramman.net");
 	}
-	function setOnEventLoadFrameFunc (iNfunction) {
-		$('#frameSynchronize').on('load',iNfunction);
-	}
+	_['sendMessageToFrame'] = sendMessageToFrame;
+	// function setOnEventLoadFrameFunc (iNfunction) {
+	// 	$('#frameSynchronize').on('load',iNfunction);
+	// }
 
 
 	function getLocalStorageFromFrame () {
@@ -320,11 +329,11 @@ define(['jquery','m_user','m_app','m_firebase'],function( $, USER, M_APP, FIREBA
 		// attach events
 		attachMessageOnEvent ();
 		// get local storage for start interval function at him when fram loaded
-		setOnEventLoadFrameFunc (
-			() => {
-				getLocalStorageFromFrame ();
-			}
-		);
+		// setOnEventLoadFrameFunc (
+		// 	() => {
+		// 		getLocalStorageFromFrame ();
+		// 	}
+		// );
 		// start interval
 		startIntervalForSubDomain();
 	}
@@ -353,27 +362,50 @@ define(['jquery','m_user','m_app','m_firebase'],function( $, USER, M_APP, FIREBA
 	}
 	_['runForMainDomain'] = runForMainDomain;
 
+	function subDomain_synchronizeLocalStorage () {
+		var tempStorage = M_APP.getTempStorage();
+        if( typeof tempStorage == 'object' && Object.keys(tempStorage).length > 0 ) {
+          //send
+          // setLastSentLocalStorage(realStorage);
+          sendMessageToFrame( { 'command':'saveLocalStorage', 'content': JSON.stringify(tempStorage) });
+
+          // clear temp storage
+          M_APP.clearTempStorage();
+        }
+	}
+	_['subDomain_synchronizeLocalStorage'] = subDomain_synchronizeLocalStorage;
+
+	function subDomain_sendCommandForSignOut () {
+		/*
+			@discr
+				Send to synchronize file signOut command
+		*/
+		console.log('subDomain_sendCommandForSignOut start');
+		sendMessageToFrame ( { 'command':'signOut' } );
+	}
+	_['subDomain_sendCommandForSignOut'] = subDomain_sendCommandForSignOut;
+
 	function startIntervalForSubDomain () {
 		// attach listenerForRunInSubdomain to on message
-		clearInterval(CONST['intervalIdForSubdomain']);
+
+		subDomain_clearIntervalFunction();
+
 	    CONST['intervalIdForSubdomain'] = setInterval (
 	      () => {
 	        // spy for changing local storage -> for send to subDomain
 	        // var lStorage    = getLastSentLocalStorage();
-	        var tempStorage = M_APP.getTempStorage();
-	        if( typeof tempStorage == 'object' && Object.keys(tempStorage).length > 0 ) {
-	          //send
-	          // setLastSentLocalStorage(realStorage);
-	          sendMessageToFrame( { 'command':'saveLocalStorage', 'content': JSON.stringify(tempStorage) });
-
-	          // clear temp storage
-	          M_APP.clearTempStorage();
-	        }
+	        subDomain_synchronizeLocalStorage();
 	      }
 	    ,
 	    500
 	    );
 	}
+
+	function subDomain_clearIntervalFunction () {
+		clearInterval(CONST['intervalIdForSubdomain']);
+		// body...
+	}
+	_['subDomain_clearIntervalFunction'] = subDomain_clearIntervalFunction;
 
 	return _;
 });
