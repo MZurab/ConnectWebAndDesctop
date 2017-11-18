@@ -138,7 +138,7 @@ define(['jquery'],function($) {
 						function : getLocale
 					@return void
 				*/
-				changeLang(getLocale(),'html',iNfuntion);
+				changeLang ( getLocale(), 'html', iNfuntion );
 			}
 
 
@@ -153,6 +153,11 @@ define(['jquery'],function($) {
 					@return void
 				*/
 				var userLang = navigator.language || navigator.userLanguage; 
+
+				// for firefox and safari
+				if(userLang == 'ru-RU') userLang = 'ru';
+				if(userLang == 'en-US') userLang = 'en';
+				
 				return userLang;
 			}
 

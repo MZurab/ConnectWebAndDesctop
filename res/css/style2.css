@@ -17,6 +17,7 @@ input, textarea {
 			
 #page-window {
     position: absolute;
+    min-width: 785px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
