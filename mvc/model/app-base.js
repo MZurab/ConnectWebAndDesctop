@@ -1,9 +1,9 @@
 define( 
   [
-    'jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictionary','v_app-base','m_user','m_routing', 'm_database', 'sweetalert2',
+    'jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictionary','v_app-base','m_routing', 'm_database', 'sweetalert2',
     'jquery.autocomplete'
   ] , 
-  function ($ , FIREBASE , M_CATEGORY , M_APP , M_VIEW,USER, DICTIONARY, VIEW , USER, ROUTING, M_DATABASE,SWEETALERT) {
+  function ($ , FIREBASE , M_CATEGORY , M_APP , M_VIEW,USER, DICTIONARY, VIEW , ROUTING, M_DATABASE,SWEETALERT) {
 
   const _ = {}; _['name'] = 'base';
   const CONST = {};

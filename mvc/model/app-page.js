@@ -66,11 +66,6 @@ define( 'APP_PAGE',['jquery','dictionary','m_view','v_app-page','m_app','m_user'
             'onHide'  : function () {
               return true;
             },
-            'onOut'  : function () {
-              // dell app header
-              // dell app view
-              return true;
-            },
             'onCreate' : function () {
 
               return true;
