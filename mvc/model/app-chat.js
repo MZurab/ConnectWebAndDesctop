@@ -36,8 +36,8 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
 		            // 'onHide'  : function () { return true;},
 		            // 'setPage' : function () {return true;},
 		            'onInit' 		: function () {
-
-	        			M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index'});
+		            	
+	        			M_APP.getGlobalVar('engine').passToApp( {'app':'base','page':'index'} );
 		            	M_MESSAGE.view.initApp( { 
 		            		// for send simpleTextMessage when click
 		            		'simpleMsgText_onClickSendBtn' : M_MESSAGE.simpleMsgText_onClickSendBtn , 
@@ -84,7 +84,7 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
 			_['onIn'] = onIn; 
 				//@required
 				function onAppear () {
-					M_VIEW.closeLoader();
+					M_VIEW.view.closeLoader();
 
 				}
 				_['onAppear'] = onAppear; 

@@ -1,15 +1,15 @@
 define(['jquery','dictionary','v_view','sweetalert2'], 
-	function ($,Dictionary,v_view,swal) {
+	function ( $, DICTIONARY, VIEW, SWAL ) {
 	//<? transactor methods
 		function _t_issetDomEl (iNdomElement) {
-			return v_view.d_issetDomEl(iNdomElement,iNaddedData,iNwhere);
+			return VIEW.d_issetDomEl(iNdomElement,iNaddedData,iNwhere);
 		}
 		
 		function _t_addDataToViewEl (iNdomElement,iNaddedData,iNwhere) {
-			v_view.d_addDataToViewEl(iNdomElement,iNaddedData,iNwhere)
+			VIEW.d_addDataToViewEl(iNdomElement,iNaddedData,iNwhere)
 		}
 		function _td_setTextInLoader (iNtext) {
-			v_view.setTextInLoader(iNtext)
+			VIEW.setTextInLoader(iNtext)
 		}
 		
 	//>! transactor methods
@@ -27,14 +27,14 @@ define(['jquery','dictionary','v_view','sweetalert2'],
 			*/
 			_t_addDataToViewEl(
 					'body',
-					v_view.initWithObj(
+					VIEW.initWithObj(
 						{
 							'arrListApps' : ArrForTemplate_appsForListApps
 						}
 					),
 					'change'
 			);
-			Dictionary.start();
+			DICTIONARY.start();
 		}
 
 	
@@ -43,14 +43,14 @@ define(['jquery','dictionary','v_view','sweetalert2'],
 
 		//<? work with modal windows sweetalert
 			function _modalWindow_vError(iName,iNtext){
-			    swal (
+			    SWAL (
 			      iName,
 			      iNtext,
 			      'error'
 			    )
 			}
 			function _modalWindow_vSuccess(iName,iNtext){
-			    swal (
+			    SWAL (
 			      iName,
 			      iNtext,
 			      'success'
@@ -84,18 +84,18 @@ define(['jquery','dictionary','v_view','sweetalert2'],
     	];
     	//methods
 			function getViewListApps() {
-        		return v_view.getViewListApps(ArrForTemplate_appsForListApps);
+        		return VIEW.getViewListApps(ArrForTemplate_appsForListApps);
 			}	
 	//>! View_listApps 
 
 	//<? work with loader
 		// for view loader [optional with determine view by path to output loader]
 			function _showLoader (iNid) {
-				v_view.d_showLoader(iNid);
-				Dictionary.start('.rcontent_loader');
+				VIEW.d_showLoader(iNid);
+				DICTIONARY.start('.rcontent_loader');
 			}
 			function _t_closeLoader (iNid) {
-				v_view.d_closeLoader(iNid);
+				VIEW.d_closeLoader(iNid);
 			}
 			function _d_setTextInLoaderByKey (iNkey) {
 				/*
@@ -105,11 +105,11 @@ define(['jquery','dictionary','v_view','sweetalert2'],
 						@required
 							iNtext -> string
 					@deps
-						function: Dictionary -> withString
+						function: DICTIONARY -> withString
 						function: _t_setTextInLoader
 
 				*/
-				var text = Dictionary.withString(iNkey);
+				var text = DICTIONARY.withString(iNkey);
 				_t_setTextInLoader(text);
 			}
 
@@ -118,8 +118,8 @@ define(['jquery','dictionary','v_view','sweetalert2'],
 	//>! work with loader
 	return {
 		
-		showLoader 		: _showLoader,
-		closeLoader 	: _t_closeLoader,
+		// showLoader 		: _showLoader,
+		// closeLoader 	: _t_closeLoader,
 
 		isset 			: _t_issetDomEl,
 		add 			: _t_addDataToViewEl,
@@ -130,8 +130,9 @@ define(['jquery','dictionary','v_view','sweetalert2'],
 		// checkAppInChief : _checkAppInChief,
 
 		init 					: _init,
-		d_setTextInLoader 		: _td_setTextInLoader,
-		d_setTextInLoaderByKey 	: _d_setTextInLoaderByKey,
+		view 			: VIEW,
+		// d_setTextInLoader 		: _td_setTextInLoader,
+		// d_setTextInLoaderByKey 	: _d_setTextInLoaderByKey,
 
 		/* private
 			getViewListApps

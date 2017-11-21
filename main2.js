@@ -1,6 +1,9 @@
 require2.config({
     baseUrl: 'https://ramman.net/files/', //https://cdn.ramman.net/web/',
-    
+    waitSeconds: 59,
+
+
+
     // packages: [{
     //     name: 'moment',
     //     // This location is relative to baseUrl. Choose bower_components
@@ -11,50 +14,50 @@ require2.config({
     paths: {
     	'firebase'             : ['https://www.gstatic.com/firebasejs/4.6.0/firebase'             ], // , 'res/js/firebase/firebase' https://www.gstatic.com/firebasejs/4.2.0/firebase
         'firestore'            : ['https://www.gstatic.com/firebasejs/4.6.0/firebase-firestore' ], // , 'res/js/firebase/firestore' https://www.gstatic.com/firebasejs/4.2.0/firestore
-        'template7'            : 'res/js/template7/template7',
+        'template7'            : 'https://cdn.ramman.net/web/res/js/template7/template7',
         //algolia service
         'algolia'              : ["https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min", "res/js/algolia/algoliasearch.min"],
 
         "yametrika"            : ["//mc.yandex.ru/metrika/watch","res/js/analytics/yandex/metrika"],
         // A BEAUTIFUL, RESPONSIVE, CUSTOMIZABLE, ACCESSIBLE (WAI-ARIA) REPLACEMENT FOR JAVASCRIPT'S POPUP BOXES
-        "sweetalert2"          : "res/js/sweetalert2/sweetalert2",
+        "sweetalert2"          : "https://cdn.ramman.net/web/res/js/sweetalert2/sweetalert2",
         // A high-performance, dependency-free library for animated filtering, sorting, insertion, removal and more
-        "mixitup"              : 'res/js/mixitup/mixitup.min',
+        "mixitup"              : 'https://cdn.ramman.net/web/res/js/mixitup/mixitup.min',
         
         //@< jquery
             //sourse library
-            'jquery'               : 'res/js/jquery/jquery',
+            'jquery'               : 'https://cdn.ramman.net/web/res/js/jquery/jquery',
             // for algolia autocomplete
             "jquery.autocomplete"  : ["https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.jquery.min","res/js/algolia/autocomplete.jquery.min"],
 
             //timer block
-            'jquery.countdown'     : 'res/js/jquery/countdown/jquery.countdown.min',
-            'jquery.plugin'        : 'res/js/jquery/countdown/jquery.plugin.min',
+            'jquery.countdown'     : 'https://cdn.ramman.net/web/res/js/jquery/countdown/jquery.countdown.min',
+            'jquery.plugin'        : 'https://cdn.ramman.net/web/res/js/jquery/countdown/jquery.plugin.min',
 
             //text effects
-            'jquery.appear'        : 'res/js/jquery/jquery.appear',
-            "jquery.textillate"    : "res/js/jquery/jquery.textillate",
-            "jquery.lettering"     : "res/js/jquery/jquery.lettering",
+            'jquery.appear'        : 'https://cdn.ramman.net/web/res/js/jquery/jquery.appear',
+            "jquery.textillate"    : "https://cdn.ramman.net/web/res/js/jquery/jquery.textillate",
+            "jquery.lettering"     : "https://cdn.ramman.net/web/res/js/jquery/jquery.lettering",
         //@> jquery
-        'lazyload'             : 'res/js/lazyload/lazyload',
-        'rx'                   : 'res/js/rxjs/rx.min',
+        'lazyload'             : 'https://cdn.ramman.net/web/res/js/lazyload/lazyload',
+        'rx'                   : 'https://cdn.ramman.net/web/res/js/rxjs/rx.min',
         // Parse, validate, manipulate, and display dates and times in JavaScript.
-        'moment'               : 'res/js/moment/moment',
+        'moment'               : 'https://cdn.ramman.net/web/res/js/moment/moment',
         // A platform detection library
-        'platform'             : 'res/js/platform/platform',
+        'platform'             : 'https://cdn.ramman.net/web/res/js/platform/platform',
         // A audio player
         // 'Howl'              : 'res/js/players/audio/howler/howler.min',
 
         // A progresbar library
-        'progressbar'         : 'res/js/progressbar/progressbar.min',
+        'progressbar'         : 'https://cdn.ramman.net/web/res/js/progressbar/progressbar.min',
 
 
 
         // Audio and Video recorder
-        'mediaStreamRecorder'  : 'res/js/recorder/mediaStreamRecorder/MediaStreamRecorder',
-        'WebAudioRecorder'     : 'res/js/recorder/webAudioRecorder/lib/WebAudioRecorder',
+        'mediaStreamRecorder'  : 'https://cdn.ramman.net/web/res/js/recorder/mediaStreamRecorder/MediaStreamRecorder',
+        'WebAudioRecorder'     : 'https://cdn.ramman.net/web/res/js/recorder/webAudioRecorder/lib/WebAudioRecorder',
         // 'WebAudioRecorder'     : 'res/js/recorder/webAudioRecorder/lib/WebAudioRecorder',
-        'Recorder'             : 'res/js/recorder/OggOpusRecorder/dist/recorder.min',
+        'Recorder'             : 'https://cdn.ramman.net/web/res/js/recorder/OggOpusRecorder/dist/recorder.min',
 
         // 'MediaRecorderWrapper' : 'res/js/recorder/mediaStreamRecorder/MediaRecorderWrapper',
 
@@ -204,6 +207,7 @@ require2(
                 ROUTING.setBrowser(); //#if browser
                 // ROUTING.setDesktop(); //#if desktop
                 // ROUTING.setDeviseName('Apple Mac');
+                
             ENGINE.init();
             // PUSH.getPermission ( PUSH.getToken( ()=>console.log('PUSH.getToken') ) );
 
@@ -225,7 +229,13 @@ require2(
             DICTIONARY.autoChange(function () {
                 if( ROUTING.isBrowser() ) {
                     if( ROUTING.getUrlLength() > 0 ) {
-                        ENGINE.startUrl();
+                        // if we are in main domain
+                        if ( ROUTING.getUser() == 'sign' ) {
+                            // if ramman.net/sign -> reload to 
+                            ENGINE.passToApp({'app':'page', 'user': userLogin, 'page':'fullWindow', 'data':'id=sign&uid=@system'});
+                        } else {
+                            ENGINE.startUrl();
+                        }
 
                     } else {
                         // if we are open only domain (without path)
@@ -241,9 +251,8 @@ require2(
                             var dataString = data.join('&');
                             ENGINE.passToApp({'app':'base','page':'one','user':userDomain, 'data': dataString});
                         } else {
-                            // if we are in main domain
                             if ( userLogin && userLogin == 'anonym' ) {
-                                // 
+                                // if ramman.net/sign
                                 ENGINE.passToApp({'app':'page', 'user':'anonym', 'page':'fullWindow', 'data':'id=sign&uid=@system'});
                             } else {
 
@@ -268,22 +277,3 @@ require2(
         },3000)
     });
 });
-
-/*
-
-    view -
-    `http://etp.kartoteka.ru/trade/view/purchase/general.html?id=100791615
-
-    <noscript><div><img src="https://mc.yandex.ru/watch/44940067" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
-
-
-      "pack:osx":   "electron-packager . $npm_package_productName --out=dist/osx --platform=darwin --arch=x64 --icon=assets/build/osx/icon.icns && npm run codesign",
-  "pack:win32": "electron-packager . $npm_package_productName --out=dist/win --platform=win32 --arch=ia32",
-  "pack:win64": "electron-packager . $npm_package_productName --out=dist/win --platform=win32 --arch=x64 --version=0.36.2 app-version=1.0 --icon=assets/build/win/icon.ico",
-  "build": "npm run pack:osx && npm run pack:win32 && npm run pack:win64"
-  https://stackoverflow.com/questions/36941605/electron-packager-set-app-icons-for-osx-windows
-  https://www.christianengvall.se/electron-packager-tutorial/
-  https://www.christianengvall.se/electron-app-icons/
-
-*/

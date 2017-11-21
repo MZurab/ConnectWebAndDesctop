@@ -493,8 +493,6 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 			*/
 			var selector = CONST['pathAppView']; 
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
-			console.log('_d_createChiefApp selector',selector);
-			console.log('_d_createChiefApp iNdata',iNdata);
         	V_VIEW.d_addDataToViewEl(selector, _getChiefApp(iNdata) ,'change')
         }
         //< app headers
@@ -937,7 +935,6 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 	        	var selector = CONST['pathMenuHeader'] + ' .' + CONST['nameInMenuHeader'] + '[app-name="'+iNdata['app']+'"]';
 	        	if ( typeof iNdata['page'] == 'string' )
 	        		selector += '.' + CONST['pageNameInMenuHeader'] + '[page-name="'+ iNdata['page'] +'"]';
-	        	console.log('_d_getLengthMenuHeader selector , $(selector).length',selector,$(selector).length);
 	        	return $(selector).length;
 	        }
 
@@ -1312,19 +1309,19 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 
 		//@< LODADER
 			function _createLoaderInAppView () {
-				V_VIEW.d_showLoader('#viewBlock');
+				V_VIEW.showLoader('#viewBlock');
 			}
 
 			function _delLoaderInAppView () {
-				V_VIEW.d_closeLoader('#viewBlock');
+				V_VIEW.closeLoader('#viewBlock');
 			}
 
 			function _createLoaderInMenuView () {
-				V_VIEW.d_showLoader('#menusBlock');
+				V_VIEW.showLoader('#menusBlock');
 			}
 			
 			function _delLoaderInMenuView () {
-				V_VIEW.d_closeLoader('#menusBlock');
+				V_VIEW.closeLoader('#menusBlock');
 			}
 
 		//@> LODADER
@@ -1335,8 +1332,8 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 		  	createLoaderInMenuView 	: _createLoaderInMenuView,
 		  	delLoaderInAppView 		: _delLoaderInAppView,
 		  	createLoaderInAppView 	: _createLoaderInAppView,
-		  	delLoader 				: V_VIEW.d_closeLoader,
-		  	createLoader 			: V_VIEW.d_showLoader,
+		  	delLoader 				: V_VIEW.closeLoader,
+		  	createLoader 			: V_VIEW.showLoader,
 
     	  // functions for work with template
     	  	'getAppTemplate'		: _getAppTemplate,

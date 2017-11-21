@@ -64,7 +64,6 @@ define(['jquery','m_user','template7','v_view','v_app'],function($,USER,Template
 					iNtype -> string 
 						in [end,begin, after, before, change]
 		*/
-		console.log('addUserHeaderInList iNdata,iNtype',iNdata,iNtype);
 		if( typeof iNtype != 'string' ) iNtype = 'end';
 
 
@@ -92,10 +91,8 @@ define(['jquery','m_user','template7','v_view','v_app'],function($,USER,Template
 		// body...
 		var path 		= ".usersBlockContainerInMenusBlock .scrolBlockForChat .mix.usersBlockInMenusBlock[connect_uid='"+iNuid+"']";
 		var el 			= $(path);
-		console.log('getRealChatIdByUid path,el',path,el);
 		var chatId 		= el.attr('connect_chatid');
 		var userLogin 	= el.attr('connect_userlogin');
-		console.log('getRealChatIdByUid chatId,userLogin',chatId,userLogin);
 		if ( el && userLogin != chatId ) {
 			// 
 			return chatId;

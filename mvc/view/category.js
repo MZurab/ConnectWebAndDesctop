@@ -334,7 +334,6 @@ define(
 	  	// ser order 
 	  	var orderList = ['chat','market','dock','sharepay','onepay','page']; // chat menu program create
 
-	  	console.log('getUserMenuContainerByCats orderList',orderList);
     	for(var iKey in orderList) {
     		var appKey = orderList[iKey];
     		if(!data[appKey])continue;
@@ -813,7 +812,6 @@ define(
                 if(iNdata.liveType == 1) {
                     // 
                     $(chatObject + ' .aCpAll_msgSimpleText_flashBlock').show();
-                    console.log("$(chatObject + ' .aCpAll_msgSimpleText_flashBlock')",$(chatObject + ' .aCpAll_msgSimpleText_flashBlock'));
                     // $(chatObject + ' .aCpAll_msgSimpleText_flashIcon').show();
                 }else{
                     // del this later
@@ -837,7 +835,6 @@ define(
             var chatObject = getPathToDomElByChatId(iNchatId);
             var currentValue = $(chatObject + ' .aCpAll_msgLiveAudio_animateContainer .current').text();
             if(currentValue != iNdata.liveData){
-	            console.log('flash_msgLiveAudio_activeFlashEffect iNdata',iNdata);
 	            flash_hideAllFlashBlocks(iNchatId);
                 if(iNdata.liveType == 20){
                     // 
@@ -864,7 +861,6 @@ define(
             var chatObject = getPathToDomElByChatId(iNchatId);
             var currentValue = $(chatObject + ' .aCpAll_msgLiveVideo_animateContainer .current').text();
             if(currentValue != iNdata.liveData){
-	            console.log('flash_msgLiveVideo_activeFlashEffect iNdata',iNdata);
 	            flash_hideAllFlashBlocks(iNchatId);
 
                 if(iNdata.liveType == 21) {

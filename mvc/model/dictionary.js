@@ -45,7 +45,7 @@ define(['jquery'],function($) {
 						@optional
 							iNparentElement -> string
 					@deps
-						function : _transByString
+						function : withString
 					@return void
 				*/
 				  if(typeof(iNparentElement)=='undefined')iNparentElement = 'html';
@@ -59,11 +59,43 @@ define(['jquery'],function($) {
 				     	val = $(this).html();
 				    	$(this).attr('CMLK',val);
 				    }
-				    $(this).html( _transByString(val) );
+				    $(this).html( withString(val) );
 				  });
 			}
 
-			function _transByString (iNstring) {
+			function withLanguageObject (iNobject) {
+				/*
+					@inputs
+						@required
+							iNobject -> object <- object
+								{
+									'ru' 	: 'рус',
+									'*' 	: 'all',
+									'en' 	: 'english some text'
+								}
+				*/
+				// if we are not object we add 
+				if( typeof iNobject != 'object' ) 
+					if( typeof iNobject != 'undefined' ) 
+						iNobject = { '*': iNobject };
+					else
+						iNobject = { '*': '' };
+
+				let ourLocale = getLocale();
+				var content; 
+				if ( iNobject[ourLocale]) {
+					// if isset client language
+					content = iNobject[ourLocale];
+				} else if (iNobject['*'] ) {
+					// if NOT isset client language -> we get all language
+					content = iNobject['*'];
+				} else {
+					return '';
+				}
+				return withString(content);
+			}
+
+			function withString (iNstring) {
 				/*
 					@discr
 						convert input string var (iNstring) to value from dictionary array by function
@@ -97,6 +129,7 @@ define(['jquery'],function($) {
 				*/
 				$.getScript(iNhref, iNfuntion );//( data, textStatus, jqxhr )
 			}
+
 			function changeLang (iNlang,iNpath,iNfuntion) {
 				/*
 					@discr
@@ -142,6 +175,8 @@ define(['jquery'],function($) {
 			}
 
 
+
+
 			function getLocale () {
 				/*
 					@discr
@@ -157,7 +192,19 @@ define(['jquery'],function($) {
 				// for firefox and safari
 				if(userLang == 'ru-RU') userLang = 'ru';
 				if(userLang == 'en-US') userLang = 'en';
-				
+
+				switch ( userLang ) {
+					case "en":
+						// if language English
+						userLang = 'en';
+					break;
+
+					default:
+						// default language Russian
+						userLang = 'ru';
+				} 
+
+				// return language
 				return userLang;
 			}
 
@@ -177,12 +224,13 @@ define(['jquery'],function($) {
 		//@@@>>> DICTIONARY 
 
 		return {
-			getLocale 		: getLocale,
-			autoChange		: _dictionaryAutoChange,
-			changeLang 		: changeLang,
-			start 			: _startDictionary,
-			get 			: getFromDictionary,
-			withString      : _transByString,
+			getLocale 			: getLocale,
+			autoChange			: _dictionaryAutoChange,
+			changeLang 			: changeLang,
+			start 				: _startDictionary,
+			get 				: getFromDictionary,
+			withString      	: withString,
+			withLanguageObject  : withLanguageObject
 		}
 	//@>>> URL FUNCTIONS
 });

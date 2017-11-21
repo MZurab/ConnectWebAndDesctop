@@ -357,8 +357,10 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 					if( typeof iNapp.getTemplate == 'function' ) 
 						iNapp.getTemplate(objectForCreateApp);
 					VIEW.d_createChiefApp(objectForCreateApp);
-				} else
-					iNapp.onCreate(iNdataForApp,objectForCreateApp);
+				} else {
+					iNapp.onCreate ( iNdataForApp, objectForCreateApp );
+				}
+
 				//then invoke app init method
 				iNapp.onInit(iNdataForApp);
 		} else if ( _thisPage(objectForCreateApp['app']) != objectForCreateApp['page']) {
@@ -576,7 +578,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 					#4 [- create page] [with $content if isset] -> [did function] -> end
 				#2 [did function] -> end
 		*/
-		if (typeof iNapp != 'object' ) {
+		if ( typeof iNapp != 'object' ) {
 			return false;
 		}
 
@@ -595,7 +597,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 		var dataForCheckApp, issetApps, objectForCreateApp,intIssetPages,objectForCreatePage;
 		// create obj for check for isset app
 		dataForCheckApp = {'app':iNdata['app'],'page':iNdata['page']};
-		if(typeof(iNdata['extra']) == 'string') dataForCheckApp['extra'] = iNdata['extra'];
+		if ( typeof(iNdata['extra']) == 'string' ) dataForCheckApp['extra'] = iNdata['extra'];
 		// create app if is not isset
 		objectForCreateApp  = _clone(dataForCheckApp);
 		objectForCreatePage = _clone(dataForCheckApp);
@@ -605,7 +607,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 		if(typeof(iNdata['page']) 		== 'string') 	objectForCreateApp['page'] 		= iNdata['page'];
 
 		//creating app or invoke on update
-		createOrUpdateApp (objectForCreateApp,iNapp,iNdataForApp);
+		createOrUpdateApp ( objectForCreateApp, iNapp, iNdataForApp );
 
 		// safe right closed app another app what is opening now or close open page
 		rightCloseLastAppOrAnotherPageFromThisApp (iNapp,iNdata);
@@ -619,14 +621,14 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 			iNapp['onView'](iNdataForApp,objectForCreateApp);
 
 		// set this app as openinig if this app inited
-		if(typeof iNapp['setApp'] != 'function')
-			_setApp (iNapp);
+		if ( typeof iNapp['setApp'] != 'function' )
+			_setApp ( iNapp );
 		else
-			iNapp['setApp'](iNdataForApp,iNdata);
+			iNapp['setApp']( iNdataForApp , iNdata );
 
 
 		// invoke app on appear functions
-		iNapp['onAppear'](iNdataForApp,iNdataForApp);
+		iNapp['onAppear'] ( iNdataForApp , iNdataForApp );
 
 		// right functions OnInit OnUpdate OnDisappear
 		rightInvokePageFunctions (iNapp,iNdata,objectForCreatePage,iNdataForApp);

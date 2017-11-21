@@ -1,4 +1,4 @@
-define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user','mediaStreamRecorder'] , function ($,M_VIEW,VIEW,M_APP,M_USER,MEDIA) {
+define( 'APP_PAGE',['jquery','dictionary','m_view','v_app-page','m_app','m_user','mediaStreamRecorder'] , function ($,DICTIONARY, M_VIEW,VIEW,M_APP,M_USER,MEDIA) {
 
   // init result const
   const _ = {};
@@ -31,9 +31,7 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user','mediaStream
             'isPage'  : function () {return true;},
             'onOut'  : function () { return true;},
             'onView'  : function (inputData,inputApp) {
-              console.log('app-page  fullWindow onView', inputData, inputApp);
               addPageToFullWindow({'id':inputData['id'],'uid':inputData['uid']});
-              // console.log('MEDIA',MEDIA);
               // VIEW.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
               return true;
             },
@@ -62,7 +60,6 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user','mediaStream
                 create app view with page 
                 create header view with page
               */
-              console.log('miniPage onView iNdata,iNobject',iNdata,iNobject);
               addMiniPageToAppView({'id':iNdata['id'],'uid':iNdata['uid']});
               return true;
             },
@@ -204,13 +201,10 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user','mediaStream
       @algoritm
         1 - get page object from server 
     */
-    console.log( 'getPage  iNdata', iNdata );
-    console.log( 'getPage  url_getPage', url_getPage );
     $.get (
       url_getPage, 
       iNdata,
       function (iNcontent) {
-        console.log('getPage  iNcontent',iNcontent);
         iNfunction(iNcontent);
       },
       'json'
@@ -250,51 +244,68 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user','mediaStream
         getPage ( 
           iNdata,
           function (iNresult){ 
+            // translate content
+            var content = DICTIONARY.withLanguageObject(iNresult['content']);
             //add content
-            VIEW.addFullWindowByTemplate( { 'content' : iNresult['content'] } );
+            VIEW.addFullWindowByTemplate( { 'content' : content } );
             //add headers
-            console.log('addFullWindowByTemplate  iNresult[content]',iNresult['content']);
             processingData(iNresult);
-            console.log('addFullWindowByTemplate  iNresult',iNresult);
             //add events default pages
             addActionForEvents(iNdata['id']);
             //hide loader
-            M_VIEW.closeLoader(); 
+            M_VIEW.view.closeLoader(); 
           }
         );
     }
+
+
+
     function addMiniPageToAppView (iNdata) {
         getPage ( 
           iNdata,
           function (iNresult){ 
             //add content head
-            M_APP.view.safeViewAppHeaderWithContent ({
-              app : 'page',
-              page : 'miniPage',
-              content : VIEW.getMiniPageHeader(iNresult['head'])
-            },'change');
-            console.log('addMiniPageToAppView iNresult[head]',iNresult['head']);
+            var head = iNresult['head'];
+            if(typeof head == 'object')
+              var objForAddHeader = {
+                'title' : DICTIONARY.withLanguageObject(head['title']),
+                'text'  : DICTIONARY.withLanguageObject(head['text']),
+                'icon'  : DICTIONARY.withLanguageObject(head['icon'])
+              }
+            M_APP.view.safeViewAppHeaderWithContent (
+              {
+                app       : 'page',
+                page      : 'miniPage',
+                content   : VIEW.getMiniPageHeader(objForAddHeader)
+              },
+              'change'
+            );
 
             //@< add content body 
-            M_APP.view.d_createChiefApp({
-              app : 'page'
-            });
+            M_APP.view.d_createChiefApp(
+              {
+                app       : 'page'
+              }
+            );
 
-            M_APP.view.d_createPageInChiefApp({
-              app : 'page',
-              page : 'miniPage',
-              content : iNresult['content']
-            });
-            console.log('addMiniPageToAppView iNresult[content]',iNresult['content']);
+            // translate content
+            var content = DICTIONARY.withLanguageObject(iNresult['content']);
+
+            M_APP.view.d_createPageInChiefApp(
+              {
+                app       : 'page',
+                page      : 'miniPage',
+                content   : content
+              }
+            );
             //@> add content body 
 
             //add headers
             processingData(iNresult);
-            console.log('addMiniPageToAppView processingData iNresult',iNresult);
 
             //add events default pages
             //hide loader
-            M_VIEW.closeLoader(); 
+            M_VIEW.view.closeLoader(); 
           }
         );
     }
@@ -336,7 +347,7 @@ define( 'APP_PAGE',['jquery','m_view','v_app-page','m_app','m_user','mediaStream
 
       function addActionsForEventsPageSign () {
         $('.appPageCloseButton').click(function(){
-          M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index','data':''}); // 'user':'',
+          M_APP.getGlobalVar('engine').passToApp({'app':'base', 'page':'index', 'data': '' }); // 'user':'',
         });
       }
 

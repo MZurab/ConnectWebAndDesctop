@@ -1,0 +1,53 @@
+<div id="page-window">
+   <!-- https://cdn.ramman.net/images/backs/phones.png --><img class="page-bphones" src="https://cdn.ramman.net/images/backs/bphones.jpg"> 
+   <div id="page-container">
+      <div class="page-logo_box">
+         <img class="page-logo_file" src="https://cdn.ramman.net/images/icons/logo300_300.png"> 
+         <div class="page-logo_text">Connect</div>
+         <div class="page-logo_mini_text">it's simple</div>
+      </div>
+      <div class="page-view">
+         <form class="page-formSignIn CML">
+            <input type="text" name="user" class="page-log_input" placeholder="[dictionary-phone]">
+            <input type="password" name="pswd" class="page-log_pswd" placeholder="[dictionary-pswd]"> 
+            <div class="page-input_select_block"> <label> <input type="checkbox" id="page-moveType" name="moveType" value="1" checked="">[system-passData]</label> </div>
+            <div class="page-loader "><i class="fa fa-spinner fa-spin" aria-hidden="true"></i><span class="page-loading-text CML">[system-waitSms]</span></div>
+            <input type="hidden" name="type" value="signin"> <input type="submit" name="t" class="page-log_submit" value="[system-signIn]"> 
+         </form>
+         <form class="page-formSmsCode CML" style="display:none">
+            <div class="page-informBlock">[text-sendSmsCode]</div>
+            <div class="page-smsCode">
+               <div class="page-LastTimeForExpireSms"> <a href="#" class="page-">[text-sendAgain]</a> </div>
+               <div class="page-reSendSms">[text-sendAgain]</div>
+               <input type="text" name="code" class="page-input_smsCode" placeholder="[dictionary-code]"> 
+            </div>
+            <input type="hidden" name="codeType" id="page-codeType"> <input type="submit" name="t" class="page-log_submit" value="[dictionary-continue]"> 
+         </form>
+         <form class="page-formSignUp CML" style="display:none">
+            <input type="text" name="login" class="page-log_input" placeholder="[dictionary-login]"> <input type="text" name="firstname" class="page-log_input" placeholder="[dictionary-firtname]"> <input type="text" name="lastname" class="page-log_input" placeholder="[dictionary-lastname]"> 
+            <div class="page-phone_input_box">
+               <div class="page-phoneCode">+7</div>
+               <input type="text" name="phone" class="page-log_input log_phone" placeholder="[dictionary-phone]"> 
+            </div>
+            <input type="hidden" name="lang" value="ru">
+            <input type="password" name="pswd" class="page-log_pswd" placeholder="[dictionary-pswd]">
+            <input type="hidden" name="type" value="signup">
+            <input type="submit" name="t" class="page-log_submit" value="[system-signUp]"> 
+         </form>
+      </div>
+      <div class="page-view signBlock">
+         <div class="page-signUpBlock signBlock"> 
+         	<span class="page-CML">[questions-haveNotAcc]</span>
+         	<a href="#" class="page-signup_link sign_link CML">[system-signUp]</a> 
+         </div>
+         <div class="page-signInBlock signBlock"> 
+         	<span class="page-CML">[questions-haveYouAcc]</span> 
+         	<a href="#" class="page-signin_link sign_link CML">[system-signIn]</a>
+         </div>
+      </div>
+      <div class="page-downloadBox">
+         <p class="page-CML">[text-soonAllDevices]</p>
+         <div> <img class="page-dAppStore" src="https://cdn.ramman.net/images/icons/appStore.png"> <img class="page-dGooglePlay" src="https://cdn.ramman.net/images/icons/googlePlay.png"> </div>
+      </div>
+   </div>
+</div>

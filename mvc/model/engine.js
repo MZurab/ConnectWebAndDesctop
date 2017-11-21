@@ -5,7 +5,6 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 	}
 	var THIS = this;
 	function setInitEvents () {
-		console.log('connect_system_href setInitEvents start ');
 		$('body').on( "click", ".connect_href", function() {
 			if ( $(this).hasClass('appHref') == true ) {
 				var app 	= $(this).attr('app-name'),
@@ -19,8 +18,6 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 		$('body').on( "click", ".connect_system_href", function (event)  {
 			var thisDom = event.currentTarget;
 			var code_href = $(thisDom).attr('code_href');
-			console.log('connect_system_href click thisDom ', thisDom );
-			console.log('connect_system_href click code_href - ', code_href );
 			switch (code_href) {
 				case "signOut":
 					systemHrefSignOut();
@@ -37,7 +34,6 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 		});
 	}
 		function systemHrefSignIn () {
-			console.log('systemHrefSignIn start');
 			let user = USER.getMyLogin();
 			
           	M_APP.getGlobalVar('engine').passToApp ( 
@@ -213,9 +209,7 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 
 				case "page":
 					if(typeof APP_PAGE_INSTANCE != 'object') {
-						console.log('APP_PAGE_INSTANCE before',typeof APP_PAGE_INSTANCE);
 						APP_PAGE_INSTANCE = APP_PAGE.init();
-						console.log('APP_PAGE_INSTANCE after',typeof APP_PAGE_INSTANCE );
 					}
 					return APP_PAGE_INSTANCE;
 				break;

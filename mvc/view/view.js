@@ -1,16 +1,9 @@
 define(['jquery','template7','dictionary'], function ($,Template7, DICTIONARY) {
 
-	function _d_showLoader (iNid) {
-		if(typeof(iNid) != 'string') iNid = 'body';
 
-		_d_closeLoader(iNid);
-		$(iNid).append(DICTIONARY.withString(_v_html_loader));
-	}
 
-	function _d_closeLoader(iNid) {
-		if(typeof(iNid) != 'string') iNid = 'body';
-		$(iNid + ' .rcontent_loader').remove();
-	}
+
+
 
 	function _d_issetDomEl (iNdomElement) {
 		/*
@@ -202,13 +195,41 @@ define(['jquery','template7','dictionary'], function ($,Template7, DICTIONARY) {
     //>! View_listApps 
 	
     //<? work with loader
-			var _v_html_loader = `
-			<div class="rcontent_loader" style="width: 100%; height: 100%;">
-				<div class="connect_centerPosition">
-					<img id="rcontent_loader_image" src="https://cdn.ramman.net/images/gif/loader.min.gif">
-					<div class ="CML operationName" style=" font-size: 1.5rem;">[system-load]</div>
-				</div> 
-			</div>`;
+    		const loader_timeoutid = {};
+    		function loader_clearTimeout ( iNloaderKey, iNloaderCode ) {
+    			if ( typeof loader_timeoutid[iNloaderKey] == 'object' && typeof loader_timeoutid[iNloaderKey][iNloaderCode] != 'undefined' )
+					clearTimeout ( loader_timeoutid[iNloaderKey][iNloaderCode]);
+    		}
+
+    		function loader_saveTimeout  ( iNloaderKey, iNloaderCode , iNtimeout ) {
+    			// create object if its not
+    			if ( typeof loader_timeoutid[iNloaderKey] != 'object' ) loader_timeoutid[iNloaderKey] = {};
+    			// save timeout to object 
+    			loader_timeoutid[iNloaderKey][iNloaderCode] = iNtimeout;
+    		}
+
+
+
+
+    		const loader_templates = {}; // var _v_html_loader 
+			loader_templates ['default'] = `
+				<div class="rcontent_loader rConnectLoaderKey_{{loader_key}}" rconnect_loader_code="{{loader_code}}" style="width: 100%; height: 100%;">
+					<div class="connect_centerPosition">
+						<img id="rcontent_loader_image" src="https://cdn.ramman.net/images/gif/loader.min.gif">
+						<div class ="CML operationName" style=" font-size: 1.5rem;">[system-load]</div>
+					</div>
+				</div>
+			`;
+			loader_templates ['forMenuListKey'] = `
+				<div class="rcontent_loader rConnectLoaderKey_default" rconnect_loader_code="indexCodeOfLoader" style="width: 100%; height: 100%; background: #f2f2f2; color: rgba(0, 0, 0, 0.75); border: 1px dashed rgba(0, 179, 211, 0.5);">
+				   <div class="connect_centerPosition">
+				      <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+				      <div class="CML operationName" style=" font-size: 1.5rem;">Загрузка</div>
+				   </div>
+				</div>
+			`;
+
+
 			function setTextInLoader (iNtext) {
 				/*
 					@discr
@@ -220,7 +241,122 @@ define(['jquery','template7','dictionary'], function ($,Template7, DICTIONARY) {
 				*/
 				$('.rcontent_loader .operationName').text(iNtext);
 			}
+
+			function setTextInLoaderWithDictionary (iNtext) {
+				/*
+					@discr
+						set text in loader
+					@inputs
+						@required
+							iNtext -> string
+
+				*/
+				$('.rcontent_loader .operationName').text( DICTIONARY.withString(iNtext) );
+			}
 			
+			function showLoader ( iNid, iNloaderKey, iNloaderCode ) {
+				// get loader key for get template from object {$loader_templates}
+				if(typeof iNloaderKey != 'string')  iNloaderKey = loader_getDefaultKey();
+				// get loader code for get template from object {$loader_templates}
+				if(typeof iNloaderCode != 'string')  iNloaderCode = loader_getDefaultCode();
+				// get loader container
+				if(typeof(iNid) != 'string') 		iNid = loader_getDefaultSelector();
+
+				// closer other loader if they isset
+				closeLoader(iNid, iNloaderKey, iNloaderCode);
+				// get loader template by its key
+				let loaderContent = loader_getContentByTemplate (iNloaderKey, iNloaderCode);// loader_templates[iNloaderKey];
+				// add to dom our loader
+				$(iNid).append( loaderContent );
+			}
+
+			function closeLoader (iNid, iNloaderKey, iNloaderCode) {
+				// get dom path to loader
+				let loaderPathToDom = loader_getPathToLoader(iNid, iNloaderKey, iNloaderCode);
+				console.log('loaderPathToDom - iNid, iNloaderKey, iNloaderCode',iNid, iNloaderKey, iNloaderCode);
+				console.log('loaderPathToDom - loaderPathToDom', loaderPathToDom);
+				// remove loader
+				$(loaderPathToDom).remove();
+			}
+
+			function closeLoaderByTimeout (iNms, iNid, iNloaderKey, iNloaderCode) {
+				console.log('closeLoaderByTimeout start - ',iNms, iNid, iNloaderKey, iNloaderCode);
+
+				// clear timeout if its isset
+				loader_clearTimeout ( iNloaderKey, iNloaderCode );
+
+              	// get time
+				let second = iNms || 1000;
+				
+				// get timeout id
+				let timeout = setTimeout(
+					() => {
+						console.log('closeLoaderByTimeout in - iNid, iNloaderKey, iNloaderCode',iNid, iNloaderKey, iNloaderCode);
+						closeLoader (iNid, iNloaderKey, iNloaderCode)
+					}, 
+					second
+				);
+
+				// save timeout
+				loader_saveTimeout  ( iNloaderKey, iNloaderCode , timeout );
+			}
+
+
+
+			function loader_getPathToLoader (iNid, iNloaderKey, iNloaderCode ) {
+				//loader key
+				if(typeof iNloaderKey != 'string') 	iNloaderKey 	= loader_getDefaultKey();
+				//loader code
+				if(typeof iNloaderCode != 'string') iNloaderCode 	= loader_getDefaultCode();
+				//loader selector
+				if(typeof iNid != 'string') 		iNid 			= loader_getDefaultSelector();
+
+				let baseSelectorForLoaders = loader_getBaseClassForLoaders();
+
+				let loaderPathToDom = `${iNid} ${baseSelectorForLoaders}.rConnectLoaderKey_${iNloaderKey}[rconnect_loader_code='${iNloaderCode}']`;
+				// loaderPathToDom @example "body .rcontent_loader.rConnectLoaderKey_default[rconnect_loader_code='default']"
+
+				return loaderPathToDom;
+			}
+
+			function loader_getContentByTemplate (iNloaderKey, iNloaderCode) {
+
+				//loader key
+				let loader_key = iNloaderKey;
+				//loader code
+				let loader_code = iNloaderCode;
+
+
+				// get loader template by its key
+				let loaderTemplate = loader_templates[loader_key];
+
+				// get loader box
+				let loaderTemplateBox = Template7.compile( loaderTemplate );
+				let objForGetBox = {
+					'loader_key' 		: loader_key,
+					'loader_code' 		: loader_code
+				};
+				let loaderBox = loaderTemplateBox(objForGetBox);
+
+				return DICTIONARY.withString ( loaderBox );
+
+			}
+			function loader_getBaseClassForLoaders () {
+				let defaultSelector = '.rcontent_loader';
+				return defaultSelector;
+			}
+			function loader_getDefaultKey () {
+				let defaultKey = 'default';
+				return defaultKey;//loader_templates[defaultKey] 
+			}
+			function loader_getDefaultCode () {
+				let defaultCode = 'default';
+				return defaultCode; 
+			}
+			function loader_getDefaultSelector () {
+				let defaultSelector = 'body';
+				return defaultSelector; 
+			}
 	//>! work with loader
 	
 	
@@ -236,11 +372,14 @@ define(['jquery','template7','dictionary'], function ($,Template7, DICTIONARY) {
 
 	  //p 'getListApps'            : 'getListApps',
 	    '_getViewListApps'      : _getViewListApps,
-	    'v_html_loader'         : _v_html_loader,
 
 	  // functions for loader
-	    'd_showLoader'          : _d_showLoader,
-	    'd_closeLoader'         : _d_closeLoader,
+	    'showLoader'          			: showLoader,
+	    'closeLoader'         			: closeLoader,
+	    'setTextInLoaderWithDictionary' : setTextInLoaderWithDictionary,
+	    'loader_clearTimeout' 			: loader_clearTimeout,
+    	'loader_saveTimeout' 			: loader_saveTimeout,
+    	'closeLoaderByTimeout' 			: closeLoaderByTimeout
 
 	}
 });

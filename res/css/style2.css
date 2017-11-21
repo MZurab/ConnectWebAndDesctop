@@ -108,10 +108,27 @@ input, textarea {
 .page-formSignIn {
     display: block
 }
+    .page-loader {
+        display: none;
+        /*display: block;*/
+
+        height: 1.75rem;
+        float: left;
+        font-size: 1.5rem;
+        margin-left: 3.5%;
+        padding-top: 0.25rem;
+    }
+        .page-loading-text {
+            font-size: 0.9rem;
+            position: relative;
+            left: 0.5rem;
+            bottom: 0.1rem;
+        }
 .page-input_select_block {
     text-align: left;
     margin: .25rem 9px
 }
+
 input[type=text],
 input[type=password] {
     display: block;
@@ -137,7 +154,8 @@ input[type=password] {
     font-size: 1rem;
     width: 13%;
     text-align: right;
-    font-weight: 900
+    font-weight: 900;
+    display: none;
 }
 .page-log_phone {
     width: 80% !important;
@@ -157,10 +175,10 @@ input[type=password] {
     border-radius: .25rem;
     cursor: pointer
 }
-.page-log_submit:hover {
-    background: #00c3f0 !important;
-    color: white
-}
+    .page-log_submit:hover:enabled {
+        background: #00c3f0 !important;
+        color: white
+    }
 .page-logo_box {
     position: relative;
     font-family: 'Open Sans', sans-serif;

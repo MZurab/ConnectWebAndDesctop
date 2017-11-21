@@ -65,7 +65,10 @@ define(
                },
               'onAppear'  : function () {
                   console.log('onAppear index');
-                  M_VIEW.closeLoader(); 
+                  M_VIEW.view.closeLoader(); 
+
+
+                  M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
               },
               'onDisappear'  : function () {
                   console.log('onDisappear index');
@@ -114,7 +117,7 @@ define(
                 },
                 'onAppear'  : function () {
                     console.log('onAppear one');
-                  M_VIEW.closeLoader(); 
+                  M_VIEW.view.closeLoader(); 
                 },
                 'onDisappear'  : function () {
                     console.log('onDisappear one');
@@ -606,6 +609,9 @@ define(
             },
             
             'functionOnAdd' : (memberData) => {
+              //cloase loader after 5 second
+              M_VIEW.view.closeLoaderByTimeout(5000, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
+
               var memberBlock   = memberData.data();
               var chatId        = memberData.id;
               var user2         = M_APP.getJsonKey(memberBlock);
@@ -671,9 +677,6 @@ define(
       //check chat list for exist
       var  chatId           = iNchatId,
            myUid            = USER.getMyId();
-           // chatsRef         = FIREBASE.database().ref('chats/' + chatId + '/info');
-      
-       console.log('safeAttachLiveLinkToChatElement myUid, chatId',myUid, chatId);
 
        M_DATABASE.getRealtimeDataFromFirestoreDb (
           'chats',
@@ -698,11 +701,12 @@ define(
 
             },
             'functionOnAdd' : (chatData) => {
+                    //cloase loader after 5 second
+                    M_VIEW.view.closeLoaderByTimeout(5000, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
+
                    var  chatId    = chatData.id,
                         chatBlock = chatData.data(),
                         chatType  = chatBlock.type;
-
-                        console.log('safeAttachLiveLinkToChatElement functionOnAdd chatId,chatBlock',chatId,chatBlock);
 
                    //@< creating chat
                       if (chatType == 1) {

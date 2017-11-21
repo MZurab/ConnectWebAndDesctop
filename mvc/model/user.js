@@ -86,9 +86,7 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 
 	    	
 		}).catch(function(error) {
-		  console.warn('signOut error', error ); 
-	      var errorCode = error.code;
-	      var errorMessage = error.message;
+			console.warn('signIn error', error ); 
 	    });
 	}
     _['signIn'] = signIn;
@@ -160,7 +158,7 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 
 	function  authByAnonym( iNfuntion,iNloader ) {
 		if ( typeof ( iNloader ) == 'undefined' ) iNloader=true;
-		if ( iNloader == true  ) M_VIEW.showLoader ();
+		if ( iNloader == true  ) M_VIEW.view.showLoader ();
 	    $.ajax(
 	    {
 	        url: 'https://ramman.net/api/web/sign',
@@ -188,10 +186,10 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	            } else {                                        
 	                M_VIEW.error ( DICTIONARY.get('error-wrongLogin') );
 	            }
-	            if( iNloader==true ) M_VIEW.closeLoader();
+	            if( iNloader==true ) M_VIEW.view.closeLoader();
 	        },
 	        error: function () {
-	        	if( iNloader==true ) M_VIEW.closeLoader();
+	        	if( iNloader==true ) M_VIEW.view.closeLoader();
 	        }
 
 	    });
@@ -199,6 +197,12 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	_['authByAnonym'] = authByAnonym;
 
 	function authByUserAndPswd (iNdata) {
+		// view loader
+		$('.page-loader').show();
+		// disbaled signIn btn while we get answer for request
+		$('.page-log_submit').prop( "disabled", true );
+
+
 	    $.ajax({
 	        url: 'https://ramman.net/api/web/sign',
 	        type: 'POST',
@@ -208,6 +212,12 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	        },
 	        dataType: 'json',
 	        success: function(iNdate2) {
+				// hide loader
+				$('.page-loader').hide();
+				// enable signIn btn we get answer
+				$('.page-log_submit').prop( "disabled", false );
+
+
 	            var status = iNdate2.status;
 	            if(status == 1) {
 	                setMyIcon(iNdate2.info.icon);
@@ -242,7 +252,7 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	        iNdata.type 		= 'checkCode';
 	        iNdata.code 		= formBlock.code;
 	        iNdata['codeType'] 	= formBlock['codeType'];
-	        M_VIEW.showLoader ();
+	        M_VIEW.view.showLoader ();
 	        $.ajax({
 	            url: 'https://ramman.net/api/web/sign',
 	            type: 'POST',
@@ -260,11 +270,11 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	                    M_APP.save('uidType','@');
 	                    signIn(fkey);
 	                } else {                                        // Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð²Ñ…Ð¾Ð´Ð° Ð½Ðµ Ð²ÐµÑ€Ð½Ñ‹
-	                	M_VIEW.closeLoader(); 
+	                	M_VIEW.view.closeLoader(); 
 	                    M_VIEW.error(DICTIONARY.get('error-wrongCode'));
 	                }
 	            },
-	            error: function (){ M_VIEW.closeLoader(); }
+	            error: function (){ M_VIEW.view.closeLoader(); }
 	        });
 	        return false;
 	    }
@@ -284,7 +294,7 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
     _['checkToken'] = checkToken;
 
 	function  signUpByUserAndPswd (Obj) {
-		M_VIEW.showLoader();
+		M_VIEW.view.showLoader();
 	    var formBlock = $(Obj).serializeObject();
 	    $.ajax({
 	        url: 'https://ramman.net/api/web/sign',
@@ -308,10 +318,10 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	            } else {                                        // Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð²Ñ…Ð¾Ð´Ð° Ð½Ðµ Ð²ÐµÑ€Ð½Ñ‹
 	                M_VIEW.error(DICTIONARY.get('error-issetUser'));
 	            }
-	            M_VIEW.closeLoader();
+	            M_VIEW.view.closeLoader();
 	        },
 	        error: function () {
-	        	M_VIEW.closeLoader();
+	        	M_VIEW.view.closeLoader();
 	        }
 	    });
 	    return false;
@@ -354,7 +364,7 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	}
     _['getMyToken'] = getMyToken;
 
-	function startTimer (iNid,iNendTime,enfFunction){	    
+	function startTimer ( iNid, iNendTime, enfFunction ) {	    
 	    $(iNid).countdown ( 'destroy' );
 	    $(iNid)
 	    .countdown (
@@ -363,7 +373,7 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 				description: '',
 				onExpiry: function () { 
 					// $(this).hide();
-        			if ( typeof(enfFunction) != 'undefined' ) enfFunction();
+        			if ( typeof(enfFunction) == 'function' ) enfFunction();
 				}, 
 				layout: '{mnn}:{snn}' // NOT 03 to 3
 			}
@@ -382,7 +392,7 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	        $('.page-formSignIn,.formSignUp').hide();
 	        $('.page-formSmsCode').show();
 	        if(typeof(iNtype) == 'string') $('#codeType').val(iNtype);
-	        startTimer('.page-LastTimeForExpireSms',300/*sentSmsTime + 300000*/,function (){$('.reSendSms').show();$('.LastTimeForExpireSms').hide()});
+	        startTimer('.page-LastTimeForExpireSms',300/*sentSmsTime + 300000*/,function (){$('.page-reSendSms').show();$('.page-LastTimeForExpireSms').hide()});
 	    }
 	}
     _['startSmsTimer'] = startSmsTimer;
@@ -419,7 +429,7 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	    var st = parseInt( M_APP.get('sentSmsTime') )+ 300000;
 	    var nowSec = M_APP.getTime();
 	    if(st<nowSec) {
-	    	M_VIEW.showLoader();
+	    	M_VIEW.view.showLoader();
 	        $.ajax({
 	            url: 'https://ramman.net/api/web/sign',
 	            type: 'POST',
@@ -438,10 +448,10 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	                }else {
 	                    M_VIEW.error(DICTIONARY.get('error-needUpdatePage'));
 	                }
-	                M_VIEW.closeLoader();
+	                M_VIEW.view.closeLoader();
 	            },
 	            error: function () {
-	            	M_VIEW.closeLoader();
+	            	M_VIEW.view.closeLoader();
 	            }
 	        });
 	    } else M_VIEW.error(DICTIONARY.get('error-smsCodeIsNotExpired'));
