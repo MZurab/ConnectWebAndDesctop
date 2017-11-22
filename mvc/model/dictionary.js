@@ -75,7 +75,7 @@ define(['jquery'],function($) {
 								}
 				*/
 				// if we are not object we add 
-				if( typeof iNobject != 'object' ) 
+				if( typeof iNobject != 'object' )  
 					if( typeof iNobject != 'undefined' ) 
 						iNobject = { '*': iNobject };
 					else
@@ -83,7 +83,7 @@ define(['jquery'],function($) {
 
 				let ourLocale = getLocale();
 				var content; 
-				if ( iNobject[ourLocale]) {
+				if ( iNobject[ourLocale] ) {
 					// if isset client language
 					content = iNobject[ourLocale];
 				} else if (iNobject['*'] ) {

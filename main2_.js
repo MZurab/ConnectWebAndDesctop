@@ -1,4 +1,4 @@
-require2.config({
+require.config({
     // baseUrl: 'https://ramman.net/files/', //',
     waitSeconds: 59,
 
@@ -195,18 +195,21 @@ require2.config({
     }
 });
 
-require2(
+require(
     ['jquery','dictionary','m_engine','m_routing','m_app','m_push','m_synchronize','m_user'], 
     function( $, DICTIONARY, ENGINE, ROUTING, M_APP, PUSH, SYNCHRONIZE, USER) {
+    // do Jquery global
+    window['$'] = $;
+    
     $(document).ready( function() {
             setTimeout( () => {
             // set global routing for use in m_app
             M_APP.setGlobalVar('m_routing',ROUTING)
 
             // set browser || desktop
-                // ROUTING.setBrowser(); //#if browser
-                ROUTING.setDesktop(); //#if desktop
-                ROUTING.setDeviseName('Apple Mac');
+                ROUTING.setBrowser(); //#if browser
+                // ROUTING.setDesktop(); //#if desktop
+                // ROUTING.setDeviseName('Apple Mac');
                 
             ENGINE.init();
             // PUSH.getPermission ( PUSH.getToken( ()=>console.log('PUSH.getToken') ) );

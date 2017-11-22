@@ -1,7 +1,7 @@
 ({
-    baseUrl :   ".",
-    mainConfigFile    :   "main2test.js",
-    name    :   "main2test",
-    out     :   "main-require-optimizer-built3.js",
+    baseUrl             :   ".",
+    mainConfigFile      :   "main2_.js",
+    name                :   "main2_",
+    out                 :   "main2.js",
     
 })
