@@ -110,6 +110,8 @@ define(
                   // add header with back btn for this list app
                   // addHeaderWithBackBtnInListView();
 
+                  //clear other chats
+                  $('.mix.usersBlockInMenusBlock').remove();
                   
 
                   createChatByGetUrlUserInfo(d['uid']);
@@ -117,7 +119,8 @@ define(
                 },
                 'onAppear'  : function () {
                     console.log('onAppear one');
-                  M_VIEW.view.closeLoader(); 
+                    M_VIEW.view.closeLoader(); 
+                    M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
                 },
                 'onDisappear'  : function () {
                     console.log('onDisappear one');
@@ -396,15 +399,16 @@ define(
 
     /*< USER INFO */
       function createChatByGetUrlUserInfo (iNlogin) {
+
+        M_VIEW.view.closeLoaderByTimeout(5000, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
         const objectForAjax = {};
               objectForAjax['userId']     = USER.getMyId();
               objectForAjax['token']      = USER.getMyToken();
               objectForAjax['uid']        = iNlogin;
         getByGetRequest_userInfo(objectForAjax,
           function (resultOfAjax) {
-            console.log('createChatByGetUrlUserInfo resultOfAjax',resultOfAjax);
-            console.log('app-base.js createChatByGetUrlUserInfo',USER.getMyLogin() );
-            console.log('resultOfAjax[chat]', resultOfAjax['chat'] );
+
+            M_VIEW.view.closeLoaderByTimeout(2500, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
 
 
             var icon        = 'https://cdn.ramman.net/images/icons/apps/app_sharepay.png';
@@ -438,6 +442,7 @@ define(
             } else {
               // create chat static
               console.log('createChatByGetUrlUserInfo viewThisChatFromFDB');
+              M_VIEW.view.closeLoaderByTimeout(2500, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
               viewThisChatFromFDB (resultOfAjax['chat'],resultOfAjax);
             }
           }
@@ -485,7 +490,6 @@ define(
           function (resultOfAjax) {
             if(typeof resultOfAjax == 'object' && resultOfAjax['status'] == 1 ) {
               // create chat if it did not exist
-              console.log('createChat viewThisChatFromFDB');
               viewThisChatFromFDB(resultOfAjax['chat'],iNuserData);
             }
           }
@@ -516,11 +520,9 @@ define(
             M_CATEGORY.view.effShowChatList(objForCreatChat['chatId']);
         }
           function addServiceMenu ( objForCreatChat, iNuserData ) {
-            console.log ( 'addServiceMenu $iNuserData, $objForCreatChat', iNuserData, objForCreatChat );
-
+              M_VIEW.view.closeLoaderByTimeout(2500, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
             // add chat if we has chat
             var chatId = VIEW.getRealChatIdByUid(objForCreatChat['userId']);
-            console.log ( 'addServiceMenu chatId', chatId );
             if ( chatId ) {
               // we has chatId
               M_CATEGORY.addChatBlockToCategory (iNuserData,chatId,objForCreatChat['userId']);
@@ -609,8 +611,8 @@ define(
             },
             
             'functionOnAdd' : (memberData) => {
-              //cloase loader after 5 second
-              M_VIEW.view.closeLoaderByTimeout(5000, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
+              //cloase loader after 2.5 second
+              M_VIEW.view.closeLoaderByTimeout(2500, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
 
               var memberBlock   = memberData.data();
               var chatId        = memberData.id;
@@ -701,8 +703,8 @@ define(
 
             },
             'functionOnAdd' : (chatData) => {
-                    //cloase loader after 5 second
-                    M_VIEW.view.closeLoaderByTimeout(5000, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
+                    //cloase loader after 2.5 second
+                    M_VIEW.view.closeLoaderByTimeout(2500, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
 
                    var  chatId    = chatData.id,
                         chatBlock = chatData.data(),

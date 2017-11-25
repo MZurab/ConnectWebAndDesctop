@@ -2,15 +2,18 @@
   <head>
     <meta charset="UTF-8">
     <title>Connect - it's simple.</title>
-    <!-- <base href="https://ramman.net/files/"> -->
+    <base href="https://cdn.ramman.net/web/">
+    <meta name="description"  content="Connect - it' simple"> 
+    <meta name="Keywords"     content="Connect - соединиться просто">
 
-    <!-- <link rel="manifest" href="/manifest.json"> async -->
-    <script src="res/js/jquery/jquery.js"></script>
+    <!--@< push service -->
+      <link   rel="manifest"    href="https://ramman.net/manifest.json" async> 
+      <!-- <script src="https://ramman.net/files/res/js/onesignal/OneSignalSDK.js" async></script> -->
+      <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
+    <!--@> push service -->
 
 
-    <meta name="description" content="Connect - it' simple"> 
-    <meta name="Keywords" content="Connect - соединиться просто">
-
+    <!-- fonts push service -->
     <link href="res/fonts/fonts.css" rel="stylesheet">
     <!-- <link href="res/fonts/fontawesome/css/font-awesome.min.css" rel="stylesheet"> -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -21,6 +24,11 @@
     <link rel="stylesheet" href='res/css/sweetalert2/sweetalert2.min.css'>
   </head>
   <body>
+    {{#if subDomain}}
+      <iframe id="frameSynchronize" class="frameSynchronize frames" src="https://ramman.net/api/service/synchronize/subdomain/{{subDomain}}"></iframe>
+    {{/if}}
+    <div id="push-button" class="fa fa-bell-o" aria-hidden="true"></div>
+
     <div class="rcontent_loader rConnectLoaderKey_default" rconnect_loader_code="default" style="width: 100%;height: 100%;">
       <div class="connect_centerPosition">
         <img id="rcontent_loader_image" src="https://cdn.ramman.net/images/gif/loader.min.gif">

@@ -1723,4 +1723,24 @@ input,textarea {outline:none;}
 			}
 /*> app Base Search Autocomplete style */
 
+
+/*> app Base Search Autocomplete style */
+#push-button {
+    width: 2rem;
+    height: 2rem;
+    position: fixed;
+    background: #f0f1f1;
+    border-radius: 100%;
+    z-index: 1;
+    line-height: 2rem;
+    text-align: center;
+    padding: 0.25rem;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    font-size: 1.25rem;
+    cursor: pointer;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+/*> app Base Search Autocomplete style */
+
 /*----------------*/

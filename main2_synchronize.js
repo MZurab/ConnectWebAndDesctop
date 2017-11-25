@@ -21487,8 +21487,6 @@ define(
                   // add header with back btn for this list app
                   // addHeaderWithBackBtnInListView();
 
-                  //clear other chats
-                  $('.mix.usersBlockInMenusBlock').remove();
                   
 
                   createChatByGetUrlUserInfo(d['uid']);
@@ -22986,15 +22984,14 @@ define('m_engine',['jquery','m_routing','v_view','m_app','m_app-chat','m_app-bas
 		ROUTING.startUrl(this);
 	}
 	var THIS = this;
-	var setInitEvents = () => {
-		$('body').on( "click", ".connect_href", function () {
-					console.log(".connect_href .appHref click 1 ");
+	function setInitEvents () {
+		$('body').on( "click", ".connect_href", function() {
 			if ( $(this).hasClass('appHref') == true ) {
 				var app 	= $(this).attr('app-name'),
 					page 	= $(this).attr('page-name'),
 					data 	= $(this).attr('data');
-					console.log(".connect_href .appHref click 2 ");
-		        	M_APP.getGlobalVar('engine').passToApp({'app': app ,'page': page ,'data': data });
+				prepareUrl({'app':app,'page':page,'data':data});
+	            startUrl();
 			} 
 		});
 
@@ -23061,7 +23058,7 @@ define('m_engine',['jquery','m_routing','v_view','m_app','m_app-chat','m_app-bas
 			M_APP.getGlobalVar('engine').passToApp(obj);
 		}
 
-	var init = () => {
+	function init () {
 		setInitEvents();
 	}
 
@@ -23649,8 +23646,8 @@ define('m_synchronize',['jquery','m_user','m_app','m_firebase'],function( $, USE
 
 	return _;
 });
-require2.config({
-    baseUrl: 'https://ramman.net/files/', //',
+require.config({
+    // baseUrl: 'https://ramman.net/files/', //',
     waitSeconds: 59,
 
 
@@ -23738,7 +23735,7 @@ require2.config({
             'm_category'       : 'mvc/model/category',
             'm_firebase'       : 'mvc/model/firebase', // https://ramman.net/res/
             'm_user'           : 'mvc/model/user',
-            'm_routing'        : 'mvc/model/routing',
+            'm_routing'       : 'mvc/model/routing',
             'm_moment'         : 'mvc/model/moment',
             'dictionary'       : 'mvc/model/dictionary',
             'log'              : 'mvc/model/log',
@@ -23846,112 +23843,24 @@ require2.config({
     }
 });
 
-require2 (
-    ['jquery','dictionary','m_engine','m_routing','m_app','m_synchronize','m_user', 'm_push'], 
-    function( $, DICTIONARY, ENGINE, ROUTING, M_APP, SYNCHRONIZE, USER , PUSH) {
+require (
+          ['jquery','dictionary','m_engine','m_routing','m_app','m_synchronize','m_user'], 
+          function( $, DICTIONARY, ENGINE, ROUTING, M_APP, SYNCHRONIZE, USER) {
+              $(function() {
+                  console.log('start! syncronize');
+                  // set global routing for use in m_app
+                  M_APP.setGlobalVar('m_routing',ROUTING)
 
 
+                  ROUTING.setBrowser(); //#if browser
+
+                  
+                  SYNCHRONIZE.synchronizeFile_run('https://sharepay.ramman.net');
 
 
-    // do Jquery global
-    window['$'] = $;
-
-    console.log('window.isSynchronizeFile',window.isSynchronizeFile)
-    if ( window.isSynchronizeFile ) {
-        console.log('window.isSynchronizeFile is true');
-      // set global routing for use in m_app
-      M_APP.setGlobalVar('m_routing',ROUTING)
-
-
-      ROUTING.setBrowser(); //#if browser
-
-      
-      SYNCHRONIZE.synchronizeFile_run('https://sharepay.ramman.net');
-      
-      M_APP.setGlobalVar('engine',ENGINE);
-
-      return;
-    } else {
-        console.log('window.isSynchronizeFile is false');
-        $(document).ready( function() {
-                setTimeout( () => {
-                // set global routing for use in m_app
-                M_APP.setGlobalVar('m_routing',ROUTING)
-
-                // set browser || desktop
-                    ROUTING.setBrowser(); //#if browser
-                    // ROUTING.setDesktop(); //#if desktop
-                    // ROUTING.setDeviseName('Apple Mac');
-                    
-                // PUSH.getPermission ( PUSH.getToken( ()=>console.log('PUSH.getToken') ) );
-
-                // start synchronize func for use common localstorage, common user at sub and main domain
-                if( ROUTING.isBrowser() ) {
-                    if( ROUTING.getUserDomain() ) {
-                        
-                        // set global m_synchronize for 
-                        M_APP.setGlobalVar('m_synchronize',SYNCHRONIZE);
-
-                        // if it is subdomain && it is browser -> we run syncronize for use common local storage
-                        SYNCHRONIZE.runForSubDomain();
-                    } else {
-                        // if it is maindomain && it is browser -> we run syncronize for use same user at one time
-                        SYNCHRONIZE.runForMainDomain();
-                    }
-                }
-
-                ENGINE.init();
-                DICTIONARY.autoChange(function () {
-                    if( ROUTING.isBrowser() ) {
-                        if( ROUTING.getUrlLength() > 0 ) {
-                            // if we are in main domain
-                            if ( ROUTING.getUser() == 'sign' ) {
-                                // if ramman.net/sign -> reload to 
-                                ENGINE.passToApp({'app':'page', 'user': userLogin, 'page':'fullWindow', 'data':'id=sign&uid=@system'});
-                            } else {
-                                ENGINE.startUrl();
-                            }
-
-                        } else {
-                            // if we are open only domain (without path)
-                            var userDomain  = ROUTING.getUserDomain();
-                            var userLogin   = USER.getMyLogin()||'anonym';
-                            var user        = userDomain||userLogin;
-                            var data        = [];
-                            if( userDomain ) {
-                                // if we are in subdomain
-                                if ( userDomain )   data.push ('uid='+userDomain);
-                                                    data.push ('login='+userLogin);
-
-                                var dataString = data.join('&');
-                                ENGINE.passToApp({'app':'base','page':'one','user':userDomain, 'data': dataString});
-                            } else {
-                                if ( userLogin && userLogin == 'anonym' ) {
-                                    // if ramman.net/sign
-                                    ENGINE.passToApp({'app':'page', 'user':'anonym', 'page':'fullWindow', 'data':'id=sign&uid=@system'});
-                                } else {
-
-                                    ENGINE.passToApp({'app':'base', 'user': userLogin, 'page':'index', 'data':''});
-                                }
-                            }
-                        }
-                        
-                    } else if( ROUTING.isDesktop() ) {
-                        var user = USER.getMyLogin()||'anonym';
-                        if( user != 'anonym' ) {
-                            ENGINE.passToApp({'app':'base','page':'index', 'user':user,'data':''});
-                        }
-                        else{
-                            ENGINE.passToApp({'app':'page','page':'fullWindow','data':'id=sign&uid=@system'});
-                        }
-
-                    }
-                });
-
-                M_APP.setGlobalVar('engine',ENGINE);
-            },3000)
-        });
-    }    
-});
-define("main2_", function(){});
+                  M_APP.setGlobalVar('engine',ENGINE);
+              });
+          }
+);
+define("main2_synchronize_", function(){});
 

@@ -221,7 +221,7 @@ define(['jquery','template7','dictionary'], function ($,Template7, DICTIONARY) {
 				</div>
 			`;
 			loader_templates ['forMenuListKey'] = `
-				<div class="rcontent_loader rConnectLoaderKey_default" rconnect_loader_code="indexCodeOfLoader" style="width: 100%; height: 100%; background: #f2f2f2; color: rgba(0, 0, 0, 0.75); border: 1px dashed rgba(0, 179, 211, 0.5);">
+				<div class="rcontent_loader rConnectLoaderKey_{{loader_key}}" rconnect_loader_code="{{loader_code}}" style="width: 100%; height: 100%; background: #f2f2f2; color: rgba(0, 0, 0, 0.75); border: 1px dashed rgba(0, 179, 211, 0.5);">
 				   <div class="connect_centerPosition">
 				      <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
 				      <div class="CML operationName" style=" font-size: 1.5rem;">Загрузка</div>
@@ -256,11 +256,11 @@ define(['jquery','template7','dictionary'], function ($,Template7, DICTIONARY) {
 			
 			function showLoader ( iNid, iNloaderKey, iNloaderCode ) {
 				// get loader key for get template from object {$loader_templates}
-				if(typeof iNloaderKey != 'string')  iNloaderKey = loader_getDefaultKey();
+				if ( typeof iNloaderKey != 'string' )  iNloaderKey = loader_getDefaultKey();
 				// get loader code for get template from object {$loader_templates}
-				if(typeof iNloaderCode != 'string')  iNloaderCode = loader_getDefaultCode();
+				if ( typeof iNloaderCode != 'string' )  iNloaderCode = loader_getDefaultCode();
 				// get loader container
-				if(typeof(iNid) != 'string') 		iNid = loader_getDefaultSelector();
+				if ( typeof(iNid) != 'string' ) 		iNid = loader_getDefaultSelector();
 
 				// closer other loader if they isset
 				closeLoader(iNid, iNloaderKey, iNloaderCode);
@@ -272,16 +272,12 @@ define(['jquery','template7','dictionary'], function ($,Template7, DICTIONARY) {
 
 			function closeLoader (iNid, iNloaderKey, iNloaderCode) {
 				// get dom path to loader
-				let loaderPathToDom = loader_getPathToLoader(iNid, iNloaderKey, iNloaderCode);
-				console.log('loaderPathToDom - iNid, iNloaderKey, iNloaderCode',iNid, iNloaderKey, iNloaderCode);
-				console.log('loaderPathToDom - loaderPathToDom', loaderPathToDom);
+				let loaderPathToDom = loader_getPathToLoader (iNid, iNloaderKey, iNloaderCode);
 				// remove loader
 				$(loaderPathToDom).remove();
 			}
 
 			function closeLoaderByTimeout (iNms, iNid, iNloaderKey, iNloaderCode) {
-				console.log('closeLoaderByTimeout start - ',iNms, iNid, iNloaderKey, iNloaderCode);
-
 				// clear timeout if its isset
 				loader_clearTimeout ( iNloaderKey, iNloaderCode );
 
@@ -291,7 +287,6 @@ define(['jquery','template7','dictionary'], function ($,Template7, DICTIONARY) {
 				// get timeout id
 				let timeout = setTimeout(
 					() => {
-						console.log('closeLoaderByTimeout in - iNid, iNloaderKey, iNloaderCode',iNid, iNloaderKey, iNloaderCode);
 						closeLoader (iNid, iNloaderKey, iNloaderCode)
 					}, 
 					second
@@ -320,7 +315,6 @@ define(['jquery','template7','dictionary'], function ($,Template7, DICTIONARY) {
 			}
 
 			function loader_getContentByTemplate (iNloaderKey, iNloaderCode) {
-
 				//loader key
 				let loader_key = iNloaderKey;
 				//loader code

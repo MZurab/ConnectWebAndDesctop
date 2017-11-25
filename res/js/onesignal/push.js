@@ -1,6 +1,4 @@
-define([],function() {
-	
-});define(['jquery','v_push','m_firebase','platform'],function($,VIEW,FIREBASE,PLATFOTM) {
+define(['jquery','v_push','m_firebase','platform'],function($,VIEW,FIREBASE,PLATFOTM) {
 	//'m_moment','m_user','m_app' ++ MOMENT,USER,M_APP
 	const _ = {'view':VIEW};
 	// const MESSAGING = FIREBASE.messaging();
@@ -24,15 +22,15 @@ define([],function() {
 			    }
 		    ]
 	    );
-		console.log( 'init OneSignal 3 ', OneSignal );
+		console.log( 'init OneSignal', OneSignal );
 
 		getPermission();
 	}
 
 	function getPermission (iNsuccessFunction) {
-	   console.log( 'getPermission 3 OneSignal', OneSignal );
+	   console.log( 'getPermission 0 OneSignal', OneSignal );
 	   OneSignal.push(function() {
-	   	  console.log( 'getPermission 3 registerForPushNotifications OneSignal', OneSignal );
+	   	  console.log( 'getPermission registerForPushNotifications OneSignal', OneSignal );
 		  OneSignal.registerForPushNotifications({
 		    modalPrompt: true
 		  });

@@ -1,3 +1,3 @@
-define(['jquery', 'template7'],function( $, Template7 ){
-	
+define([],function(){
+	return {};
 });

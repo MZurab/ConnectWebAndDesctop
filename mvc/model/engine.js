@@ -4,14 +4,15 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 		ROUTING.startUrl(this);
 	}
 	var THIS = this;
-	function setInitEvents () {
-		$('body').on( "click", ".connect_href", function() {
+	var setInitEvents = () => {
+		$('body').on( "click", ".connect_href", function () {
+					console.log(".connect_href .appHref click 1 ");
 			if ( $(this).hasClass('appHref') == true ) {
 				var app 	= $(this).attr('app-name'),
 					page 	= $(this).attr('page-name'),
 					data 	= $(this).attr('data');
-				prepareUrl({'app':app,'page':page,'data':data});
-	            startUrl();
+					console.log(".connect_href .appHref click 2 ");
+		        	M_APP.getGlobalVar('engine').passToApp({'app': app ,'page': page ,'data': data });
 			} 
 		});
 
@@ -78,7 +79,7 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 			M_APP.getGlobalVar('engine').passToApp(obj);
 		}
 
-	function init () {
+	var init = () => {
 		setInitEvents();
 	}
 
