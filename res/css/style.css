@@ -418,16 +418,23 @@ input,textarea {outline:none;}
 								    margin-top: 2.5%;
 								}
 							.usersBlockInMenusBlock .typeInUserBlock {
-								display: table;
-								margin: auto;
-								margin-top: 0.1rem; 
-								background: #1ca4d6;
-								color: white;
-								border-radius:5px;
-								padding: 0px 5px;
-								font-size: 0.9rem;
-
+							    display: table;
+							    margin: auto;
+							    margin-top: 0.1rem;
+							    border-radius: 5px;
+							    padding: 1px 4px;
+							    font-size: 0.9rem;
 							}
+								.usersBlockInMenusBlock .typeInUserBlock.typeService {
+									background: #db6075;
+								    color: white;
+							    	border: 1px solid rgba(0, 0, 0, 0.1);
+								}
+								.usersBlockInMenusBlock .typeInUserBlock.typeBusiness {
+								    background: #fee846;
+								    color: black;
+								    border: 1px solid rgba(0, 0, 0, 0.1);
+								}
 						.usersBlockInMenusBlock .firstLineInUserBlock {
 						    position: absolute;
 						    font-size: 1rem;

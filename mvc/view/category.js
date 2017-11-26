@@ -43,13 +43,20 @@ define(
     `;
 
     templates['UserList'] = `
-		<div class="mix usersBlockInMenusBlock" connect_uid="{{userId}}" connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" connect_userType='{{userType}}' connect_userLogin='{{login}}'>
+		<div class="mix usersBlockInMenusBlock" connect_uid="{{userId}}" {{if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" connect_userType='{{userType}}' connect_userLogin='{{login}}'>
 			<div class='chatDataInUsersBlock'>
 				<div class="iconBlockInUserBlock">
 			      <div class="iconInUserBlock">
 			      	<img class="lazy" data-original="{{icon}}" src="{{icon}}">
 			      </div>
-			      <div class="typeInUserBlock"></div>
+			      	
+			      	{{#js_compare "this.userType == 2"}}
+			      		<div class="typeInUserBlock typeBusiness">[dictionary-business]</div>
+			      	{{/js_compare}}
+
+			      	{{#js_compare "this.userType == 3"}}
+			      		<div class="typeInUserBlock typeService">[dictionary-service]</div>
+			      	{{/js_compare}}
 			    </div>
 
 		   		<div class="firstLineInUserBlock">
@@ -371,7 +378,7 @@ define(
 						lastMsgTimeText
 						lastMsgTime
 		*/
-		var content = getUserListTemplate ( iNdata );
+		var content = DICTIONARY.withString ( getUserListTemplate ( iNdata ) );
 		$(vars['pathToChatList']).prepend( content );
 	}
 	_['createChatList'] = createChatList;
@@ -411,6 +418,8 @@ define(
 						printing
 						lastMsgTimeText
 						lastMsgTime
+
+						type
             @return 
             	string: coung of chat list element
         */

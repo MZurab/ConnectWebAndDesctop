@@ -276,6 +276,180 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
     }
     _['getDataFromRealtimeDb'] = getDataFromRealtimeDb;
 
+    function getDataFromFirestoreDb (iNcollection,iNpath, iNdata) {
+        /*
+            @inputs
+                @required
+                    iNcollection    -> string
+                    iNpath          -> string
+                @optional
+                    iNdata -> object
+                        limitToLast -> number
+                        order       -> array
+
+                        functionOnGetEmpty 
+                        functionOnGetData
+
+        */
+         var path    = iNcollection, ref, where, type, counterForTypeDoc = 0;
+            if(typeof(iNpath) == 'string' &&  iNpath.length > 0) 
+                path = path + '/' +  iNpath;
+
+            if(path.split('/').length % 2 == 0) {
+                // its document
+                    ref = Datebase2().doc(path);
+                    type = 'document';
+            } else {
+                // its collection
+                    ref = Datebase2().collection(path);
+                    type = 'collection';
+            }
+                
+        console.log('getRealtimeDataFromFirestoreDb path',path);
+
+        iNdata['where'] = iNdata['where'] || [];
+
+        //@<ORDER
+            if( typeof iNdata['order'] != 'undefined' || typeof iNdata['orderByAsc'] != 'undefined') {
+                var order = iNdata['order']||iNdata['orderByAsc'];
+                if ( !Array.isArray(order)  ) order = [order];
+                for (var iKey in order ) {
+                    ref = ref.orderBy( order[iKey] );
+                }
+            }
+
+            if( typeof iNdata['orderByDesc'] != 'undefined' ) {
+                var order = iNdata['orderByDesc'];
+                if ( !Array.isArray(order)  ) order = [order];
+                for (var iKey in order ) {
+                    ref = ref.orderBy ( order[iKey] , "desc" );
+                }
+            }
+        //@ORDER>
+
+        //@<WHERE
+            console.log( 'whereEquilTo', typeof iNdata['whereEquilTo'] , Array.isArray( iNdata['whereEquilTo'] ) );
+            if( typeof iNdata['whereEquilTo'] == 'object' && Array.isArray(iNdata['whereEquilTo']) ) {   // ==
+                    where = iNdata['whereEquilTo'];
+                    console.log('whereEquilTo', where);
+                    for(var iKey in where) {
+                        let key     = Object.keys( where[iKey] )[0],
+                            value   = where[iKey][key];
+                        iNdata['where'].push(
+                            {
+                                'key'   : key,
+                                'value' : value,
+                                'mark'  : '==',
+                            }
+                        );
+                    }
+                    console.log('whereEquilTo where',iNdata['where']);
+            }
+            if( typeof iNdata['whereMore'] == 'object' ) {      // ==
+                    where = iNdata['whereMore'];
+                    for(var iKey in where) {
+                        let key     = Object.keys( where[iKey] )[0],
+                            value   = where[iKey][key];
+                        iNdata['where'].push(
+                            {
+                                'key'   : key,
+                                'value' : value,
+                                'mark'  : ">"
+                            }
+                        );
+                    }
+            }
+            if( typeof iNdata['whereMoreOrEquil'] == 'object' ) { // ==
+                    where = iNdata['whereMoreOrEquil'];
+                    for(var iKey in where) {
+                        let key     = Object.keys( where[iKey] )[0],
+                            value   = where[iKey][key];
+                        iNdata['where'].push(
+                            {
+                                'key'   : key,
+                                'value' : value,
+                                'mark'  : ">="
+                            }
+                        );
+                    }
+            }
+
+            if( typeof iNdata['whereLess'] == 'object' ) { // ==
+                    where = iNdata['whereLess'];
+                    for(var iKey in where) {
+                        iNdata['where'].push(
+                            {
+                                'key'   : iKey,
+                                'value' : where[iKey],
+                                'mark'  : "<"
+                            }
+                        );
+                    }
+            }
+            if( typeof iNdata['whereLessOrEquil'] == 'object' ) { // ==
+                    where = iNdata['whereLessOrEquil'];
+                    for(var iKey in where) {
+                        iNdata['where'].push(
+                            {
+                                'key'   : iKey,
+                                'value' : where[iKey],
+                                'mark'  : "<="
+                            }
+                        );
+                    }
+            }
+
+            //add all
+            if( typeof iNdata['where'] == 'object' ) {
+                var where = iNdata['where'];
+                    console.log("getRealtimeDataFromFirestoreDb where", JSON.stringify(where) );
+
+                for(var iKey in where) {
+                    var thisWhere = where[iKey];
+                    console.log("getRealtimeDataFromFirestoreDb iNdata['where']",thisWhere['key'], thisWhere['mark'], thisWhere['value'])
+                    ref = ref.where(thisWhere['key'], thisWhere['mark'], thisWhere['value'])
+                }
+            }
+        //@WHERE>
+
+        //@<LIMIT
+            if( typeof iNdata['limit'] == 'number' ) {
+                var limit = iNdata['limit'];
+                ref = ref.limit( limit );
+            }
+                //
+                if( typeof iNdata['limitToLast'] == 'number' ) {
+                    var limit = iNdata['limitToLast'];
+                    ref = ref.orderBy("time", "desc")
+                    ref = ref.limit( limit );
+                }
+                //
+                if( typeof iNdata['limitToFirst'] == 'number' ) {
+                    var limit = iNdata['limitToFirst'];
+                    ref = ref.orderBy("time", "asc")
+                    ref = ref.limit( limit );
+                }
+        //@LIMIT>
+
+        ref.get( 
+        (doc) => {
+            if(type == 'collection') {
+                    // if collection
+                    if ( !doc.empty ) {
+                        if(typeof iNdata['functionOnGetData'] == 'function') iNdata['functionOnGet'](doc,type);
+                    } else {
+                        if(typeof iNdata['functionOnGetEmpty'] == 'function') iNdata['functionOnGetEmpty'](type);
+                    }
+            } else {
+                if (doc.exists) {
+                    if(typeof iNdata['functionOnGetData'] == 'function') iNdata['functionOnGet']([doc],type);
+                } else {
+                    if(typeof iNdata['functionOnGetEmpty'] == 'function') iNdata['functionOnGetEmpty'](type);
+                }
+            }
+        });
+    }
+    _['getDataFromFirestoreDb'] = getDataFromFirestoreDb;
     function getRealtimeDataFromFirestoreDb (iNcollection,iNpath, iNdata) {
         /*
             @inputs

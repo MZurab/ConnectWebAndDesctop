@@ -10399,6 +10399,58 @@ define('m_routing',[ 'jquery', 'm_user', 'platform' ],function( $, USER, PLATFOR
 
 		/*?<<< APP PATCH  */
 
+
+		function yandexMetrika_fixOpenPage (iNurl) {
+			console.log('yandexMetrika_fixOpenPage start',iNurl);
+			const ycounter = window.yaCounter46784811;
+			if(  ycounter ) {
+				const extraParamsForWriteEvent = {};
+				if( !isBrowser()) {
+					extraParamsForWriteEvent['device'] 		= 'desktop';
+					extraParamsForWriteEvent['deviceName'] 	= getDeviseName;
+				} else {
+					extraParamsForWriteEvent['device'] 		= 'browser';
+				}
+				// get start domain (host)
+				if( getUserDomain() ) {
+					var host = 'https://'+getUserDomain()+'.ramman.net';
+				} else {
+					var host = 'https://ramman.net';
+				}
+				var thisUrl = host + iNurl;
+				console.log('yandexMetrika_fixOpenPage - thisUrl',thisUrl);
+				ycounter.hit(thisUrl, {params: extraParamsForWriteEvent});//'Контакты', referer: 'http://example.com/#main'
+			}
+		} _['yandexMetrika_fixOpenPage'] = yandexMetrika_fixOpenPage;
+
+		function googleAnalytics_fixOpenPage (iNurl) {
+			console.log('googleAnalytics_fixOpenPage start',iNurl);
+			const gcounter = window.ga;
+			if(  gcounter ) {
+				// const extraParamsForWriteEvent = {};
+				// if( !isBrowser()) {
+				// 	extraParamsForWriteEvent['device'] 		= 'desktop';
+				// 	extraParamsForWriteEvent['deviceName'] 	= getDeviseName;
+				// } else {
+				// 	extraParamsForWriteEvent['device'] 		= 'browser';
+				// }
+				// get start domain (host)
+				if( getUserDomain() ) {
+					var host = 'https://'+getUserDomain()+'.ramman.net';
+				} else {
+					var host = 'https://ramman.net';
+				}
+				var thisUrl = host + iNurl;
+				console.log('googleAnalytics_fixOpenPage - thisUrl',thisUrl);
+				gcounter('set', 'page', thisUrl);//'/new-page.html'
+			}
+		} _['googleAnalytics_fixOpenPage'] = googleAnalytics_fixOpenPage;
+
+		function writeForAnalytics (iNurl) {
+			yandexMetrika_fixOpenPage (iNurl);
+			googleAnalytics_fixOpenPage (iNurl);
+		} _['writeForAnalytics'] = writeForAnalytics;
+
 		function prepareUrl (iNobj) {
 			var r, userDomain  = getUserDomain();
 			if(typeof iNobj != 'object') iNobj= {}; 
@@ -10423,7 +10475,10 @@ define('m_routing',[ 'jquery', 'm_user', 'platform' ],function( $, USER, PLATFOR
 				}
 				// we want to pass in this user field
 				newUrl = getUrl(iNobj);
-				urlSet(newUrl);				
+				// set this url
+				urlSet(newUrl);
+				// write for analytics google && yandex
+				writeForAnalytics(newUrl);				
 			} else {
 			}
 			return true;
@@ -14415,13 +14470,20 @@ define(
     `;
 
     templates['UserList'] = `
-		<div class="mix usersBlockInMenusBlock" connect_uid="{{userId}}" connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" connect_userType='{{userType}}' connect_userLogin='{{login}}'>
+		<div class="mix usersBlockInMenusBlock" connect_uid="{{userId}}" {{if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" connect_userType='{{userType}}' connect_userLogin='{{login}}'>
 			<div class='chatDataInUsersBlock'>
 				<div class="iconBlockInUserBlock">
 			      <div class="iconInUserBlock">
 			      	<img class="lazy" data-original="{{icon}}" src="{{icon}}">
 			      </div>
-			      <div class="typeInUserBlock"></div>
+			      	
+			      	{{#js_compare "this.userType == 2"}}
+			      		<div class="typeInUserBlock typeBusiness">[dictionary-business]</div>
+			      	{{/js_compare}}
+
+			      	{{#js_compare "this.userType == 3"}}
+			      		<div class="typeInUserBlock typeService">[dictionary-service]</div>
+			      	{{/js_compare}}
 			    </div>
 
 		   		<div class="firstLineInUserBlock">
@@ -14743,7 +14805,7 @@ define(
 						lastMsgTimeText
 						lastMsgTime
 		*/
-		var content = getUserListTemplate ( iNdata );
+		var content = DICTIONARY.withString ( getUserListTemplate ( iNdata ) );
 		$(vars['pathToChatList']).prepend( content );
 	}
 	_['createChatList'] = createChatList;
@@ -14783,6 +14845,8 @@ define(
 						printing
 						lastMsgTimeText
 						lastMsgTime
+
+						type
             @return 
             	string: coung of chat list element
         */
@@ -15324,7 +15388,7 @@ define('m_category',['jquery','v_category','m_view','m_app','m_user','dictionary
         			objForCreateChat['userId'] 		= uuid;
         			objForCreateChat['chatType'] 	= chatType;
 
-
+                // create chat
                 VIEW.createChatList (objForCreateChat);
                 VIEW.setEffectsForChatList(chatId);
                 VIEW.onClickToChatList(objForCreateChat['chatId'],function (iNobj,iNthis) {
@@ -19366,6 +19430,180 @@ define('m_database',['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
     }
     _['getDataFromRealtimeDb'] = getDataFromRealtimeDb;
 
+    function getDataFromFirestoreDb (iNcollection,iNpath, iNdata) {
+        /*
+            @inputs
+                @required
+                    iNcollection    -> string
+                    iNpath          -> string
+                @optional
+                    iNdata -> object
+                        limitToLast -> number
+                        order       -> array
+
+                        functionOnGetEmpty 
+                        functionOnGetData
+
+        */
+         var path    = iNcollection, ref, where, type, counterForTypeDoc = 0;
+            if(typeof(iNpath) == 'string' &&  iNpath.length > 0) 
+                path = path + '/' +  iNpath;
+
+            if(path.split('/').length % 2 == 0) {
+                // its document
+                    ref = Datebase2().doc(path);
+                    type = 'document';
+            } else {
+                // its collection
+                    ref = Datebase2().collection(path);
+                    type = 'collection';
+            }
+                
+        console.log('getRealtimeDataFromFirestoreDb path',path);
+
+        iNdata['where'] = iNdata['where'] || [];
+
+        //@<ORDER
+            if( typeof iNdata['order'] != 'undefined' || typeof iNdata['orderByAsc'] != 'undefined') {
+                var order = iNdata['order']||iNdata['orderByAsc'];
+                if ( !Array.isArray(order)  ) order = [order];
+                for (var iKey in order ) {
+                    ref = ref.orderBy( order[iKey] );
+                }
+            }
+
+            if( typeof iNdata['orderByDesc'] != 'undefined' ) {
+                var order = iNdata['orderByDesc'];
+                if ( !Array.isArray(order)  ) order = [order];
+                for (var iKey in order ) {
+                    ref = ref.orderBy ( order[iKey] , "desc" );
+                }
+            }
+        //@ORDER>
+
+        //@<WHERE
+            console.log( 'whereEquilTo', typeof iNdata['whereEquilTo'] , Array.isArray( iNdata['whereEquilTo'] ) );
+            if( typeof iNdata['whereEquilTo'] == 'object' && Array.isArray(iNdata['whereEquilTo']) ) {   // ==
+                    where = iNdata['whereEquilTo'];
+                    console.log('whereEquilTo', where);
+                    for(var iKey in where) {
+                        let key     = Object.keys( where[iKey] )[0],
+                            value   = where[iKey][key];
+                        iNdata['where'].push(
+                            {
+                                'key'   : key,
+                                'value' : value,
+                                'mark'  : '==',
+                            }
+                        );
+                    }
+                    console.log('whereEquilTo where',iNdata['where']);
+            }
+            if( typeof iNdata['whereMore'] == 'object' ) {      // ==
+                    where = iNdata['whereMore'];
+                    for(var iKey in where) {
+                        let key     = Object.keys( where[iKey] )[0],
+                            value   = where[iKey][key];
+                        iNdata['where'].push(
+                            {
+                                'key'   : key,
+                                'value' : value,
+                                'mark'  : ">"
+                            }
+                        );
+                    }
+            }
+            if( typeof iNdata['whereMoreOrEquil'] == 'object' ) { // ==
+                    where = iNdata['whereMoreOrEquil'];
+                    for(var iKey in where) {
+                        let key     = Object.keys( where[iKey] )[0],
+                            value   = where[iKey][key];
+                        iNdata['where'].push(
+                            {
+                                'key'   : key,
+                                'value' : value,
+                                'mark'  : ">="
+                            }
+                        );
+                    }
+            }
+
+            if( typeof iNdata['whereLess'] == 'object' ) { // ==
+                    where = iNdata['whereLess'];
+                    for(var iKey in where) {
+                        iNdata['where'].push(
+                            {
+                                'key'   : iKey,
+                                'value' : where[iKey],
+                                'mark'  : "<"
+                            }
+                        );
+                    }
+            }
+            if( typeof iNdata['whereLessOrEquil'] == 'object' ) { // ==
+                    where = iNdata['whereLessOrEquil'];
+                    for(var iKey in where) {
+                        iNdata['where'].push(
+                            {
+                                'key'   : iKey,
+                                'value' : where[iKey],
+                                'mark'  : "<="
+                            }
+                        );
+                    }
+            }
+
+            //add all
+            if( typeof iNdata['where'] == 'object' ) {
+                var where = iNdata['where'];
+                    console.log("getRealtimeDataFromFirestoreDb where", JSON.stringify(where) );
+
+                for(var iKey in where) {
+                    var thisWhere = where[iKey];
+                    console.log("getRealtimeDataFromFirestoreDb iNdata['where']",thisWhere['key'], thisWhere['mark'], thisWhere['value'])
+                    ref = ref.where(thisWhere['key'], thisWhere['mark'], thisWhere['value'])
+                }
+            }
+        //@WHERE>
+
+        //@<LIMIT
+            if( typeof iNdata['limit'] == 'number' ) {
+                var limit = iNdata['limit'];
+                ref = ref.limit( limit );
+            }
+                //
+                if( typeof iNdata['limitToLast'] == 'number' ) {
+                    var limit = iNdata['limitToLast'];
+                    ref = ref.orderBy("time", "desc")
+                    ref = ref.limit( limit );
+                }
+                //
+                if( typeof iNdata['limitToFirst'] == 'number' ) {
+                    var limit = iNdata['limitToFirst'];
+                    ref = ref.orderBy("time", "asc")
+                    ref = ref.limit( limit );
+                }
+        //@LIMIT>
+
+        ref.get( 
+        (doc) => {
+            if(type == 'collection') {
+                    // if collection
+                    if ( !doc.empty ) {
+                        if(typeof iNdata['functionOnGetData'] == 'function') iNdata['functionOnGet'](doc,type);
+                    } else {
+                        if(typeof iNdata['functionOnGetEmpty'] == 'function') iNdata['functionOnGetEmpty'](type);
+                    }
+            } else {
+                if (doc.exists) {
+                    if(typeof iNdata['functionOnGetData'] == 'function') iNdata['functionOnGet']([doc],type);
+                } else {
+                    if(typeof iNdata['functionOnGetEmpty'] == 'function') iNdata['functionOnGetEmpty'](type);
+                }
+            }
+        });
+    }
+    _['getDataFromFirestoreDb'] = getDataFromFirestoreDb;
     function getRealtimeDataFromFirestoreDb (iNcollection,iNpath, iNdata) {
         /*
             @inputs
@@ -21798,7 +22036,7 @@ define(
             if (resultOfAjax['chat'] == false ) {
               if ( USER.getMyLogin() ) {
                 // if we signed -> create chat
-                createChat( iNlogin , resultOfAjax );
+                createPrivateChat( iNlogin , resultOfAjax );
 
               } else {
                 // if we does not signed
@@ -21858,7 +22096,7 @@ define(
     /*> USER INFO */
 
     /*< CHAT */
-      function createChat (iNuid,iNuserData) {
+      function createPrivateChat (iNuid,iNuserData) {
         const objectForAjax = {};
               objectForAjax['uid']     = USER.getMyId();
               objectForAjax['token']   = USER.getMyToken();
@@ -21866,26 +22104,33 @@ define(
         getByGetRequest_ChatDataBySafeCreate(objectForAjax,
           function (resultOfAjax) {
             if(typeof resultOfAjax == 'object' && resultOfAjax['status'] == 1 ) {
+              //SUCCESS we  created chat
               // create chat if it did not exist
               viewThisChatFromFDB(resultOfAjax['chat'],iNuserData);
+            }else {
+              //ERROR we cannpt create chats
+
             }
           }
         );
       }
        
         function viewThisChatFromFDB (iNchat,iNuserData) {
+            console.log('viewThisChatFromFDB iNchat,iNuserData',iNchat,iNuserData);
             const objForCreatChat = {};
             objForCreatChat['chatId']   = iNchat || ('noneChat_'+iNuserData['user']['uid']);
             objForCreatChat['userId']   = iNuserData['user']['uid'];
             objForCreatChat['chatName'] = iNuserData['user']['name'];
             objForCreatChat['icon_min'] = iNuserData['user']['icon'];
             // if(iNchat) {
+              console.log('viewThisChatFromFDB objForCreatChat',objForCreatChat);
               M_CATEGORY.userForPrivateChat(objForCreatChat['chatId'],objForCreatChat['userId']);
 
               // M_CATEGORY.view.safeAddChatList(objForCreatChat);
               // attach link with chat db
               safeAttachLiveLinkToChatElement(objForCreatChat['chatId'], 
                 () => {
+                  console.log('safeAttachLiveLinkToChatElement callbackobjForCreatChat - objForCreatChat , iNuserData',objForCreatChat , iNuserData);
                   // add service category
                   addServiceMenu (objForCreatChat,iNuserData);
 
@@ -21943,7 +22188,7 @@ define(
           );
         };
           function getUrl_createChat (iNuid) {
-            var type = 'createChat';
+            var type = 'createPrivateChat';
             return CONST['url_createChat'] +'/' + iNuid +'/' + type;
           }
     /*> CHAT */
@@ -21974,7 +22219,6 @@ define(
     var myUid       = M_APP.get('uid');
     // membersRef      = FIREBASE.database().ref('members/'+myUid);
 
-
     M_DATABASE.getRealtimeDataFromFirestoreDb (
           'users',
           myUid + '/members',
@@ -21993,6 +22237,7 @@ define(
 
               var memberBlock   = memberData.data();
               var chatId        = memberData.id;
+              console.log('M_DATABASE.getRealtimeDataFromFirestoreDb chatId, memberBlock',chatId, memberBlock);
               var user2         = M_APP.getJsonKey(memberBlock);
               M_CATEGORY.userForPrivateChat(chatId,user2);
                    
@@ -22029,7 +22274,10 @@ define(
 
   function startNewMsgCounter (iNdata, iNchatId,iNmyUid) {
 
-    let number = iNdata['member'][iNmyUid]['newMsg']||0;
+    let number = 
+(typeof iNdata == 'object') ? ( (typeof iNdata['member'] == 'object') ? ( (typeof iNdata['member'][iNmyUid] == 'object' ) ? iNdata['member'][iNmyUid]['newMsg']||0 : 0) : 0  ) : 0;
+    ////// let number =  iNdata['member'][iNmyUid]['newMsg']||0;
+    
     // save in local storage in db
     if(number == 0) return false; 
     setMyNewMessagesCountByChatId(iNchatId,number);
@@ -22068,6 +22316,7 @@ define(
                     var chatId           = chatData.id;
                     var chatKey          = 'info'; //chatData.id;
                     var chatDataValue    = chatData.data();
+                    console.log('safeAttachLiveLinkToChatElement functionOnChangeFromServer - chatId, chatDataValue',chatId, chatDataValue);
                     var chatObject      = {}; 
                       chatObject[chatKey] = chatDataValue.info;
                       var chatBlock     = chatDataValue.info;
@@ -22086,6 +22335,8 @@ define(
                    var  chatId    = chatData.id,
                         chatBlock = chatData.data(),
                         chatType  = chatBlock.type;
+
+                    console.log('safeAttachLiveLinkToChatElement functionOnAdd - chatId, chatBlock',chatId, chatBlock);
 
                    //@< creating chat
                       if (chatType == 1) {
@@ -22174,7 +22425,38 @@ define(
     
     M_CATEGORY.safeUpdateChatBlock(changeObject);
   }
+  function checkUserForHasMenuForMe (iNoptions) {
+    /*
+      @discr
+        check user for has menu
+      @inputs
+        @optional
+          iNoptions -> object
+            @enum
+              hasMenuForAuth -> number
+              hasMenuForNoneAuth -> number
+              hasMenuForAll -> number
+    */
+    console.log('checkUserForHasMenuForMe - iNoptions',iNoptions);
+    if(typeof iNoptions == 'object') {
+      // check menu for all
+      if( typeof iNoptions.hasMenuForAll == 'number' && iNoptions.hasMenuForAll > 0) {
+        return true;
+      } else {
+        // check menu for authUser (@) or nonAuth (-) or anonym (?)
+        if( USER.getMyId() ) {
+          // if we authed user
+          if( typeof iNoptions.hasMenuForAuth == 'number' && iNoptions.hasMenuForAuth > 0) return true;
+        } else {
+          // if we non authed user
+          if( typeof iNoptions.hasMenuForNoneAuth == 'number' && iNoptions.hasMenuForNoneAuth > 0) return true;
 
+        }
+
+      }
+    }
+    return false;
+  }
   function safeUpdatePrivateChatBlockFromUserDb (iNchatId,iNobject,iNchatType,iNsuccessFunction) {
       /*
           @inputs
@@ -22197,14 +22479,16 @@ define(
 
       var user2       = M_CATEGORY.userForPrivateChat(iNchatId);
 
-      var usersRef    = firebase.database().ref('users/'+user2);
+      var usersRef    = firebase.database().ref( 'users/' + user2 );
 
+      console.log('safeUpdatePrivateChatBlockFromUserDb - user2', user2);
+      console.log('safeUpdatePrivateChatBlockFromUserDb - path', 'users/'+user2);
+      console.log('safeUpdatePrivateChatBlockFromUserDb - iNchatId,iNobject,iNchatType',iNchatId,iNobject,iNchatType);
 
-      usersRef.on('value', function(usersData) { 
-          // change date if change userDate
+      function functWhenGet (usersData) {
           var objForCreate  = {};
-          var user2id       = usersData.key;
-          var user2Object   = usersData.val();
+          var user2id       = usersData.id;
+          var user2Object   = usersData.data();
 
           var chatId = iNchatId; // M_CATEGORY.view.getChatIdByUid(user2id);
 
@@ -22215,6 +22499,8 @@ define(
           var userType    = user2Object.info.data.type;
           var userOnline  = user2Object.info.live.online;
 
+          
+          // create object for create chat
           var objForCreateChat = {}; // objForCreate;
               objForCreateChat['uuid']      = user2id,
               objForCreateChat['chatId']    = chatId,
@@ -22222,13 +22508,25 @@ define(
               objForCreateChat['userPhone'] = user2Phone,
               objForCreateChat['icon']      = user2Icon,
               objForCreateChat['login']     = login;
+              // user type (business (2) or user(1) or app of system (3) )
               objForCreateChat['userType']  = userType;
               objForCreateChat['userOnline']  = userOnline;
 
+          // add user options
+          if(typeof user2Object.info.options == 'object') {
+            // check has menu
+            var userHasMenu = checkUserForHasMenuForMe(user2Object.info.options);
+            console.log('safeUpdatePrivateChatBlockFromUserDb userHasMenu',userHasMenu);
+            if(userHasMenu) {
+              // add
+              objForCreateChat['userHasMenu'] = 1;
+            }
+          }
 
-
+          console.log('safeUpdatePrivateChatBlockFromUserDb objForCreateChat',objForCreateChat);
           delete objForCreateChat.liveData;
           M_CATEGORY.safeUpdateChatBlock (objForCreateChat,iNchatType);
+          //getContatct 
           activeContactChangeInChatBlock(user2Phone);
 
           // safe invoke once iNsuccessFunction just one
@@ -22236,14 +22534,72 @@ define(
             iNsuccessFunction();
             iNsuccessFunction = false;
           }
-      });
+      }
+
+      M_DATABASE.getRealtimeDataFromFirestoreDb (
+            'users',
+            user2,
+            {
+              'functionOnOther' : () => {
+
+              },
+              
+              'functionOnChangeFromServer' : (dataFromDb) => {
+                functWhenGet (dataFromDb);
+              
+              },
+              
+              'functionOnAdd' : (dataFromDb) => {
+                functWhenGet (dataFromDb);
+              }
+            }
+      );
+
+      // usersRef.on('value', function(usersData) { 
+          // change date if change userDate 
+          // var objForCreate  = {};
+          // var user2id       = usersData.key;
+          // var user2Object   = usersData.val();
+
+          // var chatId = iNchatId; // M_CATEGORY.view.getChatIdByUid(user2id);
+
+          // var chatName    = user2Object.info.data.name;
+          // var login       = user2Object.info.data.login;
+          // var user2Phone  = user2Object.info.data.phone;
+          // var user2Icon   = user2Object.info.data.icon;
+          // var userType    = user2Object.info.data.type;
+          // var userOnline  = user2Object.info.live.online;
+
+          // var objForCreateChat = {}; // objForCreate;
+          //     objForCreateChat['uuid']      = user2id,
+          //     objForCreateChat['chatId']    = chatId,
+          //     objForCreateChat['chatName']  = chatName,
+          //     objForCreateChat['userPhone'] = user2Phone,
+          //     objForCreateChat['icon']      = user2Icon,
+          //     objForCreateChat['login']     = login;
+          //     objForCreateChat['userType']  = userType;
+          //     objForCreateChat['userOnline']  = userOnline;
+
+
+
+          // delete objForCreateChat.liveData;
+          // M_CATEGORY.safeUpdateChatBlock (objForCreateChat,iNchatType);
+          // activeContactChangeInChatBlock(user2Phone);
+
+          // // safe invoke once iNsuccessFunction just one
+          // if (typeof iNsuccessFunction == 'function') {
+          //   iNsuccessFunction();
+          //   iNsuccessFunction = false;
+          // }
+      // });
   }
 
   function activeContactChangeInChatBlock (user2Phone){
       var myUid       = firebase.auth().currentUser.uid;
-      var contactsRef = firebase.database().ref('contacts/' + myUid + '/' + user2Phone);
-      contactsRef.on('value', function(contactData) {
-          var contactBlock    = contactData.val();
+    // var contactsRef = firebase.database().ref('contacts/' + myUid + '/' + user2Phone);
+
+      var functWhenGet = function function_name(argument) {
+        var contactBlock    = contactData.val();
           if(contactBlock != null && typeof contactBlock == 'object') {
             var chatName        = contactBlock.name;
             var userPhone       = contactBlock.phone;
@@ -22259,7 +22615,32 @@ define(
                 },1//CHANGE IT
             );
         }
-      });
+      }
+      // get contact by phone
+      M_DATABASE.getRealtimeDataFromFirestoreDb (
+            'users' , myUid  + '/contacts'  ,
+            {
+              'whereEquilTo' : {
+                'phone' : user2Phone
+              },
+              'functionOnOther' : () => {
+
+              },
+              
+              'functionOnChangeFromServer' : (dataFromDb) => {
+                functWhenGet (dataFromDb);
+              
+              },
+              
+              'functionOnAdd' : (dataFromDb) => {
+                functWhenGet (dataFromDb);
+              }
+            }
+      );
+
+      // contactsRef.on('value', function(contactData) {
+          
+      // });
   }
 
 
@@ -23649,8 +24030,8 @@ define('m_synchronize',['jquery','m_user','m_app','m_firebase'],function( $, USE
 
 	return _;
 });
-require2.config({
-    baseUrl: 'https://ramman.net/files/', //',
+require.config({
+    // baseUrl: 'https://ramman.net/files/', //',
     waitSeconds: 59,
 
 
@@ -23846,7 +24227,7 @@ require2.config({
     }
 });
 
-require2 (
+require(
     ['jquery','dictionary','m_engine','m_routing','m_app','m_synchronize','m_user', 'm_push'], 
     function( $, DICTIONARY, ENGINE, ROUTING, M_APP, SYNCHRONIZE, USER , PUSH) {
 
@@ -23879,9 +24260,9 @@ require2 (
                 M_APP.setGlobalVar('m_routing',ROUTING)
 
                 // set browser || desktop
-                    ROUTING.setBrowser(); //#if browser
-                    // ROUTING.setDesktop(); //#if desktop
-                    // ROUTING.setDeviseName('Apple Mac');
+                    // ROUTING.setBrowser(); //#if browser
+                    ROUTING.setDesktop(); //#if desktop
+                    ROUTING.setDeviseName('Apple Mac');
                     
                 // PUSH.getPermission ( PUSH.getToken( ()=>console.log('PUSH.getToken') ) );
 

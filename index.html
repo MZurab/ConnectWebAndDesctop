@@ -2,7 +2,7 @@
   <head>
     <meta charset="UTF-8">
     <title>Connect - it's simple.</title>
-    <base href="https://cdn.ramman.net/web/">
+    <!-- <base href="https://cdn.ramman.net/web/"> -->
     <meta name="description"  content="Connect - it' simple"> 
     <meta name="Keywords"     content="Connect - соединиться просто">
 
@@ -12,6 +12,15 @@
       <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
     <!--@> push service -->
 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-110143782-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-110143782-1');
+    </script>
 
     <!-- fonts push service -->
     <link href="res/fonts/fonts.css" rel="stylesheet">
@@ -24,9 +33,6 @@
     <link rel="stylesheet" href='res/css/sweetalert2/sweetalert2.min.css'>
   </head>
   <body>
-    {{#if subDomain}}
-      <iframe id="frameSynchronize" class="frameSynchronize frames" src="https://ramman.net/api/service/synchronize/subdomain/{{subDomain}}"></iframe>
-    {{/if}}
     <div id="push-button" class="fa fa-bell-o" aria-hidden="true"></div>
 
     <div class="rcontent_loader rConnectLoaderKey_default" rconnect_loader_code="default" style="width: 100%;height: 100%;">
@@ -101,6 +107,9 @@
 
       </div>
     </div>
+    <!-- Yandex.Metrika counter --> <script type="text/javascript" > (function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter46784811 = new Ya.Metrika({ id:46784811, clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true, trackHash:true }); } catch(e) { } }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = "https://mc.yandex.ru/metrika/watch.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); } })(document, window, "yandex_metrika_callbacks"); </script> <noscript><div><img src="https://mc.yandex.ru/watch/46784811" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+    
     <script data-main="main2" type="text/javascript" src="require.js"></script>
   </body>
 </html>

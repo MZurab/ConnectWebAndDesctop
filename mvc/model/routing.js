@@ -41,6 +41,58 @@ define([ 'jquery', 'm_user', 'platform' ],function( $, USER, PLATFORM){
 
 		/*?<<< APP PATCH  */
 
+
+		function yandexMetrika_fixOpenPage (iNurl) {
+			console.log('yandexMetrika_fixOpenPage start',iNurl);
+			const ycounter = window.yaCounter46784811;
+			if(  ycounter ) {
+				const extraParamsForWriteEvent = {};
+				if( !isBrowser()) {
+					extraParamsForWriteEvent['device'] 		= 'desktop';
+					extraParamsForWriteEvent['deviceName'] 	= getDeviseName;
+				} else {
+					extraParamsForWriteEvent['device'] 		= 'browser';
+				}
+				// get start domain (host)
+				if( getUserDomain() ) {
+					var host = 'https://'+getUserDomain()+'.ramman.net';
+				} else {
+					var host = 'https://ramman.net';
+				}
+				var thisUrl = host + iNurl;
+				console.log('yandexMetrika_fixOpenPage - thisUrl',thisUrl);
+				ycounter.hit(thisUrl, {params: extraParamsForWriteEvent});//'Контакты', referer: 'http://example.com/#main'
+			}
+		} _['yandexMetrika_fixOpenPage'] = yandexMetrika_fixOpenPage;
+
+		function googleAnalytics_fixOpenPage (iNurl) {
+			console.log('googleAnalytics_fixOpenPage start',iNurl);
+			const gcounter = window.ga;
+			if(  gcounter ) {
+				// const extraParamsForWriteEvent = {};
+				// if( !isBrowser()) {
+				// 	extraParamsForWriteEvent['device'] 		= 'desktop';
+				// 	extraParamsForWriteEvent['deviceName'] 	= getDeviseName;
+				// } else {
+				// 	extraParamsForWriteEvent['device'] 		= 'browser';
+				// }
+				// get start domain (host)
+				if( getUserDomain() ) {
+					var host = 'https://'+getUserDomain()+'.ramman.net';
+				} else {
+					var host = 'https://ramman.net';
+				}
+				var thisUrl = host + iNurl;
+				console.log('googleAnalytics_fixOpenPage - thisUrl',thisUrl);
+				gcounter('set', 'page', thisUrl);//'/new-page.html'
+			}
+		} _['googleAnalytics_fixOpenPage'] = googleAnalytics_fixOpenPage;
+
+		function writeForAnalytics (iNurl) {
+			yandexMetrika_fixOpenPage (iNurl);
+			googleAnalytics_fixOpenPage (iNurl);
+		} _['writeForAnalytics'] = writeForAnalytics;
+
 		function prepareUrl (iNobj) {
 			var r, userDomain  = getUserDomain();
 			if(typeof iNobj != 'object') iNobj= {}; 
@@ -65,7 +117,10 @@ define([ 'jquery', 'm_user', 'platform' ],function( $, USER, PLATFORM){
 				}
 				// we want to pass in this user field
 				newUrl = getUrl(iNobj);
-				urlSet(newUrl);				
+				// set this url
+				urlSet(newUrl);
+				// write for analytics google && yandex
+				writeForAnalytics(newUrl);				
 			} else {
 			}
 			return true;

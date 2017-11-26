@@ -62,7 +62,7 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary'], function 
         			objForCreateChat['userId'] 		= uuid;
         			objForCreateChat['chatType'] 	= chatType;
 
-
+                // create chat
                 VIEW.createChatList (objForCreateChat);
                 VIEW.setEffectsForChatList(chatId);
                 VIEW.onClickToChatList(objForCreateChat['chatId'],function (iNobj,iNthis) {

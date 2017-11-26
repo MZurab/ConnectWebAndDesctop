@@ -1,5 +1,5 @@
 require.config({
-    baseUrl: 'https://ramman.net/files/', //',
+    // baseUrl: 'https://ramman.net/files/', //',
     waitSeconds: 59,
 
 
@@ -228,9 +228,9 @@ require(
                 M_APP.setGlobalVar('m_routing',ROUTING)
 
                 // set browser || desktop
-                    ROUTING.setBrowser(); //#if browser
-                    // ROUTING.setDesktop(); //#if desktop
-                    // ROUTING.setDeviseName('Apple Mac');
+                    // ROUTING.setBrowser(); //#if browser
+                    ROUTING.setDesktop(); //#if desktop
+                    ROUTING.setDeviseName('Apple Mac');
                     
                 // PUSH.getPermission ( PUSH.getToken( ()=>console.log('PUSH.getToken') ) );
 

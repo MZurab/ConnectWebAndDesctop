@@ -421,7 +421,7 @@ define(
             if (resultOfAjax['chat'] == false ) {
               if ( USER.getMyLogin() ) {
                 // if we signed -> create chat
-                createChat( iNlogin , resultOfAjax );
+                createPrivateChat( iNlogin , resultOfAjax );
 
               } else {
                 // if we does not signed
@@ -481,7 +481,7 @@ define(
     /*> USER INFO */
 
     /*< CHAT */
-      function createChat (iNuid,iNuserData) {
+      function createPrivateChat (iNuid,iNuserData) {
         const objectForAjax = {};
               objectForAjax['uid']     = USER.getMyId();
               objectForAjax['token']   = USER.getMyToken();
@@ -489,26 +489,33 @@ define(
         getByGetRequest_ChatDataBySafeCreate(objectForAjax,
           function (resultOfAjax) {
             if(typeof resultOfAjax == 'object' && resultOfAjax['status'] == 1 ) {
+              //SUCCESS we  created chat
               // create chat if it did not exist
               viewThisChatFromFDB(resultOfAjax['chat'],iNuserData);
+            }else {
+              //ERROR we cannpt create chats
+
             }
           }
         );
       }
        
         function viewThisChatFromFDB (iNchat,iNuserData) {
+            console.log('viewThisChatFromFDB iNchat,iNuserData',iNchat,iNuserData);
             const objForCreatChat = {};
             objForCreatChat['chatId']   = iNchat || ('noneChat_'+iNuserData['user']['uid']);
             objForCreatChat['userId']   = iNuserData['user']['uid'];
             objForCreatChat['chatName'] = iNuserData['user']['name'];
             objForCreatChat['icon_min'] = iNuserData['user']['icon'];
             // if(iNchat) {
+              console.log('viewThisChatFromFDB objForCreatChat',objForCreatChat);
               M_CATEGORY.userForPrivateChat(objForCreatChat['chatId'],objForCreatChat['userId']);
 
               // M_CATEGORY.view.safeAddChatList(objForCreatChat);
               // attach link with chat db
               safeAttachLiveLinkToChatElement(objForCreatChat['chatId'], 
                 () => {
+                  console.log('safeAttachLiveLinkToChatElement callbackobjForCreatChat - objForCreatChat , iNuserData',objForCreatChat , iNuserData);
                   // add service category
                   addServiceMenu (objForCreatChat,iNuserData);
 
@@ -566,7 +573,7 @@ define(
           );
         };
           function getUrl_createChat (iNuid) {
-            var type = 'createChat';
+            var type = 'createPrivateChat';
             return CONST['url_createChat'] +'/' + iNuid +'/' + type;
           }
     /*> CHAT */
@@ -597,7 +604,6 @@ define(
     var myUid       = M_APP.get('uid');
     // membersRef      = FIREBASE.database().ref('members/'+myUid);
 
-
     M_DATABASE.getRealtimeDataFromFirestoreDb (
           'users',
           myUid + '/members',
@@ -616,6 +622,7 @@ define(
 
               var memberBlock   = memberData.data();
               var chatId        = memberData.id;
+              console.log('M_DATABASE.getRealtimeDataFromFirestoreDb chatId, memberBlock',chatId, memberBlock);
               var user2         = M_APP.getJsonKey(memberBlock);
               M_CATEGORY.userForPrivateChat(chatId,user2);
                    
@@ -652,7 +659,10 @@ define(
 
   function startNewMsgCounter (iNdata, iNchatId,iNmyUid) {
 
-    let number = iNdata['member'][iNmyUid]['newMsg']||0;
+    let number = 
+(typeof iNdata == 'object') ? ( (typeof iNdata['member'] == 'object') ? ( (typeof iNdata['member'][iNmyUid] == 'object' ) ? iNdata['member'][iNmyUid]['newMsg']||0 : 0) : 0  ) : 0;
+    ////// let number =  iNdata['member'][iNmyUid]['newMsg']||0;
+    
     // save in local storage in db
     if(number == 0) return false; 
     setMyNewMessagesCountByChatId(iNchatId,number);
@@ -691,6 +701,7 @@ define(
                     var chatId           = chatData.id;
                     var chatKey          = 'info'; //chatData.id;
                     var chatDataValue    = chatData.data();
+                    console.log('safeAttachLiveLinkToChatElement functionOnChangeFromServer - chatId, chatDataValue',chatId, chatDataValue);
                     var chatObject      = {}; 
                       chatObject[chatKey] = chatDataValue.info;
                       var chatBlock     = chatDataValue.info;
@@ -709,6 +720,8 @@ define(
                    var  chatId    = chatData.id,
                         chatBlock = chatData.data(),
                         chatType  = chatBlock.type;
+
+                    console.log('safeAttachLiveLinkToChatElement functionOnAdd - chatId, chatBlock',chatId, chatBlock);
 
                    //@< creating chat
                       if (chatType == 1) {
@@ -797,7 +810,38 @@ define(
     
     M_CATEGORY.safeUpdateChatBlock(changeObject);
   }
+  function checkUserForHasMenuForMe (iNoptions) {
+    /*
+      @discr
+        check user for has menu
+      @inputs
+        @optional
+          iNoptions -> object
+            @enum
+              hasMenuForAuth -> number
+              hasMenuForNoneAuth -> number
+              hasMenuForAll -> number
+    */
+    console.log('checkUserForHasMenuForMe - iNoptions',iNoptions);
+    if(typeof iNoptions == 'object') {
+      // check menu for all
+      if( typeof iNoptions.hasMenuForAll == 'number' && iNoptions.hasMenuForAll > 0) {
+        return true;
+      } else {
+        // check menu for authUser (@) or nonAuth (-) or anonym (?)
+        if( USER.getMyId() ) {
+          // if we authed user
+          if( typeof iNoptions.hasMenuForAuth == 'number' && iNoptions.hasMenuForAuth > 0) return true;
+        } else {
+          // if we non authed user
+          if( typeof iNoptions.hasMenuForNoneAuth == 'number' && iNoptions.hasMenuForNoneAuth > 0) return true;
 
+        }
+
+      }
+    }
+    return false;
+  }
   function safeUpdatePrivateChatBlockFromUserDb (iNchatId,iNobject,iNchatType,iNsuccessFunction) {
       /*
           @inputs
@@ -820,14 +864,16 @@ define(
 
       var user2       = M_CATEGORY.userForPrivateChat(iNchatId);
 
-      var usersRef    = firebase.database().ref('users/'+user2);
+      var usersRef    = firebase.database().ref( 'users/' + user2 );
 
+      console.log('safeUpdatePrivateChatBlockFromUserDb - user2', user2);
+      console.log('safeUpdatePrivateChatBlockFromUserDb - path', 'users/'+user2);
+      console.log('safeUpdatePrivateChatBlockFromUserDb - iNchatId,iNobject,iNchatType',iNchatId,iNobject,iNchatType);
 
-      usersRef.on('value', function(usersData) { 
-          // change date if change userDate
+      function functWhenGet (usersData) {
           var objForCreate  = {};
-          var user2id       = usersData.key;
-          var user2Object   = usersData.val();
+          var user2id       = usersData.id;
+          var user2Object   = usersData.data();
 
           var chatId = iNchatId; // M_CATEGORY.view.getChatIdByUid(user2id);
 
@@ -838,6 +884,8 @@ define(
           var userType    = user2Object.info.data.type;
           var userOnline  = user2Object.info.live.online;
 
+          
+          // create object for create chat
           var objForCreateChat = {}; // objForCreate;
               objForCreateChat['uuid']      = user2id,
               objForCreateChat['chatId']    = chatId,
@@ -845,13 +893,25 @@ define(
               objForCreateChat['userPhone'] = user2Phone,
               objForCreateChat['icon']      = user2Icon,
               objForCreateChat['login']     = login;
+              // user type (business (2) or user(1) or app of system (3) )
               objForCreateChat['userType']  = userType;
               objForCreateChat['userOnline']  = userOnline;
 
+          // add user options
+          if(typeof user2Object.info.options == 'object') {
+            // check has menu
+            var userHasMenu = checkUserForHasMenuForMe(user2Object.info.options);
+            console.log('safeUpdatePrivateChatBlockFromUserDb userHasMenu',userHasMenu);
+            if(userHasMenu) {
+              // add
+              objForCreateChat['userHasMenu'] = 1;
+            }
+          }
 
-
+          console.log('safeUpdatePrivateChatBlockFromUserDb objForCreateChat',objForCreateChat);
           delete objForCreateChat.liveData;
           M_CATEGORY.safeUpdateChatBlock (objForCreateChat,iNchatType);
+          //getContatct 
           activeContactChangeInChatBlock(user2Phone);
 
           // safe invoke once iNsuccessFunction just one
@@ -859,14 +919,72 @@ define(
             iNsuccessFunction();
             iNsuccessFunction = false;
           }
-      });
+      }
+
+      M_DATABASE.getRealtimeDataFromFirestoreDb (
+            'users',
+            user2,
+            {
+              'functionOnOther' : () => {
+
+              },
+              
+              'functionOnChangeFromServer' : (dataFromDb) => {
+                functWhenGet (dataFromDb);
+              
+              },
+              
+              'functionOnAdd' : (dataFromDb) => {
+                functWhenGet (dataFromDb);
+              }
+            }
+      );
+
+      // usersRef.on('value', function(usersData) { 
+          // change date if change userDate 
+          // var objForCreate  = {};
+          // var user2id       = usersData.key;
+          // var user2Object   = usersData.val();
+
+          // var chatId = iNchatId; // M_CATEGORY.view.getChatIdByUid(user2id);
+
+          // var chatName    = user2Object.info.data.name;
+          // var login       = user2Object.info.data.login;
+          // var user2Phone  = user2Object.info.data.phone;
+          // var user2Icon   = user2Object.info.data.icon;
+          // var userType    = user2Object.info.data.type;
+          // var userOnline  = user2Object.info.live.online;
+
+          // var objForCreateChat = {}; // objForCreate;
+          //     objForCreateChat['uuid']      = user2id,
+          //     objForCreateChat['chatId']    = chatId,
+          //     objForCreateChat['chatName']  = chatName,
+          //     objForCreateChat['userPhone'] = user2Phone,
+          //     objForCreateChat['icon']      = user2Icon,
+          //     objForCreateChat['login']     = login;
+          //     objForCreateChat['userType']  = userType;
+          //     objForCreateChat['userOnline']  = userOnline;
+
+
+
+          // delete objForCreateChat.liveData;
+          // M_CATEGORY.safeUpdateChatBlock (objForCreateChat,iNchatType);
+          // activeContactChangeInChatBlock(user2Phone);
+
+          // // safe invoke once iNsuccessFunction just one
+          // if (typeof iNsuccessFunction == 'function') {
+          //   iNsuccessFunction();
+          //   iNsuccessFunction = false;
+          // }
+      // });
   }
 
   function activeContactChangeInChatBlock (user2Phone){
       var myUid       = firebase.auth().currentUser.uid;
-      var contactsRef = firebase.database().ref('contacts/' + myUid + '/' + user2Phone);
-      contactsRef.on('value', function(contactData) {
-          var contactBlock    = contactData.val();
+    // var contactsRef = firebase.database().ref('contacts/' + myUid + '/' + user2Phone);
+
+      var functWhenGet = function function_name(argument) {
+        var contactBlock    = contactData.val();
           if(contactBlock != null && typeof contactBlock == 'object') {
             var chatName        = contactBlock.name;
             var userPhone       = contactBlock.phone;
@@ -882,7 +1000,32 @@ define(
                 },1//CHANGE IT
             );
         }
-      });
+      }
+      // get contact by phone
+      M_DATABASE.getRealtimeDataFromFirestoreDb (
+            'users' , myUid  + '/contacts'  ,
+            {
+              'whereEquilTo' : {
+                'phone' : user2Phone
+              },
+              'functionOnOther' : () => {
+
+              },
+              
+              'functionOnChangeFromServer' : (dataFromDb) => {
+                functWhenGet (dataFromDb);
+              
+              },
+              
+              'functionOnAdd' : (dataFromDb) => {
+                functWhenGet (dataFromDb);
+              }
+            }
+      );
+
+      // contactsRef.on('value', function(contactData) {
+          
+      // });
   }
 
 
