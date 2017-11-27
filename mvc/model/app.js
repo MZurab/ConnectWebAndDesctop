@@ -362,7 +362,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 				}
 
 				//then invoke app init method
-				iNapp.onInit(iNdataForApp);
+				iNapp.onInit(iNdataForApp,objectForCreateApp);
 		} else if ( _thisPage(objectForCreateApp['app']) != objectForCreateApp['page']) {
 			// we safe invoke app onUpdate method
 			if ( typeof(iNapp['onUpdate']) == 'function' ) iNapp.onUpdate(iNdataForApp);

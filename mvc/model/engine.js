@@ -127,14 +127,17 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 			*/
 			// if we are in subdomain and subdomain == user we delete it
 			if ( 
-				( typeof iNdata['user'] != 'undefined' && ROUTING.getUserDomain () == iNdata['user']) || 
-				( typeof iNdata['user'] == 'string' && iNdata['user'] == 'anonym'  && ROUTING.getUserDomain ()) 
-				
+				ROUTING.isBrowser() && (
+					( typeof iNdata['user'] != 'undefined' && ROUTING.getUserDomain () == iNdata['user']) || 
+					( typeof iNdata['user'] == 'string' && iNdata['user'] == 'anonym'  && ROUTING.getUserDomain ()) 
+				)
 			) {
+				console.log('_passToApp isBrowser del user');
 	        	// delete user
 	        	delete iNdata['user'];
 			}
 
+			console.log('_passToApp iNdata',iNdata);
 			let thisObject = this;
 			if (typeof iNthis != 'undefined') thisObject = iNthis;
 			ROUTING.prepareUrl(iNdata);

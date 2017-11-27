@@ -4,7 +4,8 @@
     name                :   "main2_" 	,
     out                 :   "main2.js" 	, 
     paths 				: {
-				 m_push : "empty:"
+				 m_push : "empty:",
+				 v_push : "empty:"
     }
     
 })

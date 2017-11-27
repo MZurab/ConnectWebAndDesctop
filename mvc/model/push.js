@@ -30,13 +30,13 @@ define([],function() {
 	}
 
 	function getPermission (iNsuccessFunction) {
-	   console.log( 'getPermission 3 OneSignal', OneSignal );
-	   OneSignal.push(function() {
+	   console.log( 'getPermission 3 OneSignal', OneSignal ); OneSignal.push(function() {
 	   	  console.log( 'getPermission 3 registerForPushNotifications OneSignal', OneSignal );
 		  OneSignal.registerForPushNotifications({
 		    modalPrompt: true
 		  });
 		});
+	  
 
 		// MESSAGING.requestPermission()
 		// .then(function() {

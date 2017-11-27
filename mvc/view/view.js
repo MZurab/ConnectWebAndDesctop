@@ -255,6 +255,7 @@ define(['jquery','template7','dictionary'], function ($,Template7, DICTIONARY) {
 			}
 			
 			function showLoader ( iNid, iNloaderKey, iNloaderCode ) {
+				console.log('showLoader - iNid, iNloaderKey, iNloaderCode',iNid, iNloaderKey, iNloaderCode);
 				// get loader key for get template from object {$loader_templates}
 				if ( typeof iNloaderKey != 'string' )  iNloaderKey = loader_getDefaultKey();
 				// get loader code for get template from object {$loader_templates}
@@ -271,8 +272,10 @@ define(['jquery','template7','dictionary'], function ($,Template7, DICTIONARY) {
 			}
 
 			function closeLoader (iNid, iNloaderKey, iNloaderCode) {
+				console.log('closeLoader - iNid, iNloaderKey, iNloaderCode',iNid, iNloaderKey, iNloaderCode);
 				// get dom path to loader
 				let loaderPathToDom = loader_getPathToLoader (iNid, iNloaderKey, iNloaderCode);
+				console.log('closeLoader - loaderPathToDom - ',loaderPathToDom);
 				// remove loader
 				$(loaderPathToDom).remove();
 			}

@@ -64,18 +64,10 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary'], function 
 
                 // create chat
                 VIEW.createChatList (objForCreateChat);
+                // set animation effect (eg. scroll )
                 VIEW.setEffectsForChatList(chatId);
-                VIEW.onClickToChatList(objForCreateChat['chatId'],function (iNobj,iNthis) {
-                	var hrefForOpenApp = 'chatName='+iNobj['chatName']+'&chatId='+iNobj['chatId']+'&chatIcon='+iNobj['chatIcon']+'&userLogin='+iNobj['login']+'&uid='+iNobj['uid'];
-
-                	//< safe add online
-	                	let thisOnline = $(iNthis).closest('.mix.usersBlockInMenusBlock').attr('connect_online');
-	                	if(typeof thisOnline == 'string' && thisOnline.length > 0) {
-	            			hrefForOpenApp += '&online='+thisOnline
-	                	}
-                	//> safe add online
-                	M_APP.getGlobalVar('engine').passToApp({'app':'chat','page':'index','data': hrefForOpenApp});
-                });
+                // add on click for this chat event
+                VIEW.addOnClickActionForChatList ( objForCreateChat['chatId']);
 		} 
         domChangeChatBlock (chatId,iNdata);
     }
@@ -203,16 +195,32 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary'], function 
 
     function addDisabledChatBlockToCategory (iNuserData,iNuserId) {
         // chatType does not work - CHANGE
-        var objForCreateChat = {
-           'app'            : 'chat', 
-           'code'           : 'chiefChat',
-           'page'           : 'index',
-           'name'           : DICTIONARY.withString('[app-chat]'),
-           'id'             : iNuserId,
-           'classForATeg'   : 'viewError',
-           'attrForATeg'    : "errorText='[phrase-needSignForChat]'",
+        if ( USER.getMyId() ) {
+            // if we are auth user -> we created link for create chat
+            var objForCreateChat = {
+               'app'            : 'chat', 
+               'code'           : 'chiefChat',
+               'page'           : 'index',
+               'name'           : DICTIONARY.withString('[app-chat]'),
+               'id'             : iNuserId,
+               'classForATeg'   : 'connect_href appHref',
+               'attrForATeg'    : `app-name='page' page-name='createPrivateChat' data='uid=${iNuserId}'`,
 
-        };
+            };
+        } else {
+            // if we are NON authed user -> we created link for view error
+            var objForCreateChat = {
+               'app'            : 'chat', 
+               'code'           : 'chiefChat',
+               'page'           : 'index',
+               'name'           : DICTIONARY.withString('[app-chat]'),
+               'id'             : iNuserId,
+               'classForATeg'   : 'viewError',
+               'attrForATeg'    : "errorText='[phrase-needSignForChat]'",
+
+            };
+        }
+        
         iNuserData['categories']['chat'] = {};
         iNuserData['categories']['chat'][iNuserId] = objForCreateChat;
         return true;

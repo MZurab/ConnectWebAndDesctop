@@ -6,6 +6,8 @@
     <meta name="description"  content="Connect - it' simple"> 
     <meta name="Keywords"     content="Connect - соединиться просто">
 
+    <script type="text/javascript" src='res/js/jquery/jquery.js'></script>
+
     <!--@< push service -->
       <link   rel="manifest"    href="https://ramman.net/manifest.json" async> 
       <!-- <script src="https://ramman.net/files/res/js/onesignal/OneSignalSDK.js" async></script> -->
@@ -33,8 +35,7 @@
     <link rel="stylesheet" href='res/css/sweetalert2/sweetalert2.min.css'>
   </head>
   <body>
-    <div id="push-button" class="fa fa-bell-o" aria-hidden="true"></div>
-
+    
     <div class="rcontent_loader rConnectLoaderKey_default" rconnect_loader_code="default" style="width: 100%;height: 100%;">
       <div class="connect_centerPosition">
         <img id="rcontent_loader_image" src="https://cdn.ramman.net/images/gif/loader.min.gif">
@@ -49,24 +50,29 @@
                 <img src='https://cdn.ramman.net/images/buttons/bTopInAppsBlock.png'>
             </div>
             <div class='AppsContainerInAppBlock'>
-                <div class="appsInAppBlock">
-                  <img src="https://cdn.ramman.net/images/icons/apps/app_chat.png">
+                <div class="appsInAppBlock connect_href appHref" app-name="base" page-name="one" data="uid=ramman">
+                  <img src="res/images/icons/apps/app_chat.png">
                   <div class="appsNameInAppsBlock CML" cmlk="[app-chat]"></div>
                 </div>
 
-                <div class="appsInAppBlock">
-                  <img src="https://cdn.ramman.net/images/icons/apps/app_market.png">
+                <div class="appsInAppBlock connect_href appHref" app-name="base" page-name="one" data="uid=market">
+                  <img src="res/images/icons/apps/app_market.png">
                   <div class="appsNameInAppsBlock CML" cmlk="[app-market]"></div>
                 </div>
 
-                <div class="appsInAppBlock">
-                  <img src="https://cdn.ramman.net/images/icons/apps/app_onepay.png">
+                <div class="appsInAppBlock connect_href appHref" app-name="base" page-name="one" data="uid=onepay">
+                  <img src="res/images/icons/apps/app_onepay.png">
                   <div class="appsNameInAppsBlock CML" cmlk="[app-onepay]"></div>
                 </div>
 
-                <div class="appsInAppBlock">
-                  <img src="https://cdn.ramman.net/images/icons/apps/app_sharepay.png">
+                <div class="appsInAppBlock connect_href appHref" app-name="base" page-name="one" data="uid=sharepay">
+                  <img src="res/images/icons/apps/app_sharepay.png">
                   <div class="appsNameInAppsBlock CML" cmlk="[app-sharepay]"></div>
+                </div>
+
+                <div class="appsInAppBlock connect_href appHref" app-name="base" page-name="one" data="uid=edocument">
+                  <img src="res/images/icons/apps/app_edocument.png">
+                  <div class="appsNameInAppsBlock CML" cmlk="[app-edocument]"></div>
                 </div>
             </div>
             <div class='bBottomInAppsBlock'>
@@ -107,9 +113,10 @@
 
       </div>
     </div>
-    <!-- Yandex.Metrika counter --> <script type="text/javascript" > (function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter46784811 = new Ya.Metrika({ id:46784811, clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true, trackHash:true }); } catch(e) { } }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = "https://mc.yandex.ru/metrika/watch.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); } })(document, window, "yandex_metrika_callbacks"); </script> <noscript><div><img src="https://mc.yandex.ru/watch/46784811" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- Yandex.Metrika counter --> <script type="text/javascript" > (function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter46784811 = new Ya.Metrika({ id:46784811, clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true, trackHash:true }); } catch(e) { } }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = "https://mc.yandex.ru/metrika/watch.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); } })(document, window, "yandex_metrika_callbacks"); </script > <noscript><div><img src="https://mc.yandex.ru/watch/46784811" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
     <!-- /Yandex.Metrika counter -->
-    
-    <script data-main="main2" type="text/javascript" src="require.js"></script>
+
+    <script data-main="main2" type="text/javascript" src="require.js" crossorigin="anonymous"></script>
+    <!-- crossorigin="anonymous" -->
   </body>
 </html>

@@ -1,6 +1,6 @@
 define(
-	['sweetalert2', 'm_app','v_message','v_view','jquery','mixitup','dictionary','m_moment','jquery.textillate','jquery.lettering'], 
-	function(SWEETALERT, M_APP,V_MESSAGE, V_VIEW, $, mixitup, DICTIONARY , MOMENT ) 
+	['sweetalert2','m_user', 'm_app','v_message','v_view','jquery','mixitup','dictionary','m_moment','jquery.textillate','jquery.lettering'], 
+	function(SWEETALERT, USER,  M_APP,V_MESSAGE, V_VIEW, $, mixitup, DICTIONARY , MOMENT ) 
 {//'m_view','m_app'
 				
 	const _ = {};
@@ -135,27 +135,70 @@ define(
 
 
 
-	function onClickToChatList (iNchatId,iNfunction) {
+	function addOnClickActionForChatList (iNchatId) {
+		/*
+			@discr
+				add action for open chat by click to this chat
+			@inputs
+				@required
+					iNchatId -> string
+
+		*/
 		var pathToThisChat = getPathToDomElByChatId(iNchatId);
-		$(pathToThisChat + ' .iconInUserBlock img, ' + pathToThisChat + ' .userNameInChatList').off();
-		$(pathToThisChat + ' .iconInUserBlock img, ' + pathToThisChat + ' .userNameInChatList').click(function(e) {
-			e.preventDefault();
-			var obj = {};
-			let chatId 		= iNchatId;//$(this).attr('connect_chatid');
+
+		//prepare object
+		var obj = {};
+			var chatId 		= iNchatId;//$(pathToThisChat).attr('connect_chatid');
 				obj['chatId'] 	= chatId;
-				obj['userType'] = $(this).closest('.mix.usersBlockInMenusBlock').attr('connect_userType');;
-				obj['login'] 	= $(this).closest('.mix.usersBlockInMenusBlock').attr('connect_userLogin');
-				obj['uid'] 		= $(this).closest('.mix.usersBlockInMenusBlock').attr('connect_uid');;
+				obj['userType'] = $(pathToThisChat).attr('connect_userType');;
+				obj['login'] 	= $(pathToThisChat).attr('connect_userlogin');
+				obj['uid'] 		= $(pathToThisChat).attr('connect_uid');
 				obj['chatIcon'] = getChatIcon(chatId);
 				obj['chatName'] = getChatName(chatId);
-				if(typeof iNfunction == 'function')iNfunction(obj,this);
 
-		});
+		// check has menu
+		var attrHasMenu = $(pathToThisChat).attr('connect_userhasmenu');
+		if(attrHasMenu){
+			// if this chat hasmenu -> open app 'chat' page 'index'
+			var dataForOpenApp = 'uid='+obj['login']+'&login='+USER.getMyLogin();
+
+        	// conversion to link for open app -> we add need classes
+        	var selector = pathToThisChat + ' .iconInUserBlock img, ' + pathToThisChat + ' .userNameInChatList',
+        		objForCreateLink = {
+        			'appName' 	: 'base',
+        			'pageName' 	: 'one',
+        			'data' 		: dataForOpenApp
+        		};
+        	M_APP.view.convertDomElementToAppLink (selector,objForCreateLink);
+		}else {
+			// if this has not menu -> open app 'chat' page 'index'
+			var dataForOpenApp = 'chatName='+obj['chatName']+'&chatId='+obj['chatId']+'&chatIcon='+obj['chatIcon']+'&userLogin='+obj['login']+'&uid='+obj['uid'];
+
+        	//< safe add online
+            	let thisOnline = $(iNthis).attr('connect_online');
+            	if(typeof thisOnline == 'string' && thisOnline.length > 0) {
+        			dataForOpenApp += '&online='+thisOnline
+            	}
+        	//> safe add online
+
+        	// conversion to link for open app -> we add need classes
+        	var selector = pathToThisChat + ' .iconInUserBlock img, ' + pathToThisChat + ' .userNameInChatList',
+        		objForCreateLink = {
+        			'appName' 	: 'chat',
+        			'pageName' 	: 'index',
+        			'data' 		: dataForOpenApp
+        		};
+        	M_APP.view.convertDomElementToAppLink (selector,objForCreateLink);
+		}
 	}
-	_['onClickToChatList'] = onClickToChatList;
+	_['addOnClickActionForChatList'] = addOnClickActionForChatList;
 
 
-
+	function hideUserMenus () {
+		var selector = '#menusBlock .menusInUsersBlock';
+		$(selector).hide();
+	}
+	_['hideUserMenus'] = hideUserMenus;
 
 	function addUserMenuChildN (iNmenu,iNdataBlockN) {
 	   	var newData = getUserMenuChildN(iNmenu);

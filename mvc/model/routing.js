@@ -42,6 +42,56 @@ define([ 'jquery', 'm_user', 'platform' ],function( $, USER, PLATFORM){
 		/*?<<< APP PATCH  */
 
 
+		function errorJsHandlerForGoogleAnalyticsAndYandexMetric () {
+			/*
+			*/
+			window.onerror = function handler(msg, file, line, col, err) {
+			    if (!window.JSON || handler.count > 5) { return; }
+
+			    var counterId = 46784811, // Ваш номер счётчика Метрики.
+			        siteInfo = {},
+			        pointer = siteInfo,
+			        stack = err && err.stack,
+			        path = [
+			            // Укажите в регулярном выражении домены, с которых загружаются ваши скрипты и сайт.
+			            'JS ' + (!file || /ramman\.net|cdn\.ramman\.net/.test(file) ? 'in' : 'ex') + 'ternal errors',
+			            'message: ' + msg,
+			            stack ?
+			                'stack: ' + stack :
+			                (file ? 'file: ' + file + ':' + line + ':' + col : 'nofile'),
+			            'href: ' + location.href
+			        ];
+
+			    for (var i = 0; i < path.length - 1; i++) {
+			        var item = path[i];
+			        pointer[item] = {};
+			        pointer = pointer[item];
+			    }
+
+			    pointer[path[i]] = 1;
+
+			    // send error for google analytics
+				googleAnalytics_sendError(JSON.stringify(siteInfo));
+
+				// send error for yandex metrika
+			    var url = 'https://mc.yandex.ru/watch/' + counterId + '/' +
+			            '?site-info=' + encodeURIComponent(JSON.stringify(siteInfo)) +
+			            '&rn=' + Math.random();
+
+			    if (typeof navigator.sendBeacon === 'function') {
+			        navigator.sendBeacon(url, ' ');
+			    } else {
+			        new Image().src = url;
+			    }
+
+			    if (handler.count) {
+			        handler.count++;
+			    } else {
+			        handler.count = 1;
+			    }
+			};
+		} _['errorJsHandlerForGoogleAnalyticsAndYandexMetric'] = errorJsHandlerForGoogleAnalyticsAndYandexMetric;
+
 		function yandexMetrika_fixOpenPage (iNurl) {
 			console.log('yandexMetrika_fixOpenPage start',iNurl);
 			const ycounter = window.yaCounter46784811;
@@ -65,6 +115,17 @@ define([ 'jquery', 'm_user', 'platform' ],function( $, USER, PLATFORM){
 			}
 		} _['yandexMetrika_fixOpenPage'] = yandexMetrika_fixOpenPage;
 
+		function googleAnalytics_sendError (message) {
+			console.log('googleAnalytics_sendError start',iNurl);
+			const gcounter = window.ga;
+			if(  gcounter ) {
+				ga('send', 'exception', {
+				    'exDescription': message,
+				    'exFatal': false
+		 		});
+			}
+		} _['googleAnalytics_sendError'] = googleAnalytics_sendError;
+
 		function googleAnalytics_fixOpenPage (iNurl) {
 			console.log('googleAnalytics_fixOpenPage start',iNurl);
 			const gcounter = window.ga;
@@ -77,14 +138,14 @@ define([ 'jquery', 'm_user', 'platform' ],function( $, USER, PLATFORM){
 				// 	extraParamsForWriteEvent['device'] 		= 'browser';
 				// }
 				// get start domain (host)
-				if( getUserDomain() ) {
-					var host = 'https://'+getUserDomain()+'.ramman.net';
-				} else {
-					var host = 'https://ramman.net';
-				}
-				var thisUrl = host + iNurl;
-				console.log('googleAnalytics_fixOpenPage - thisUrl',thisUrl);
-				gcounter('set', 'page', thisUrl);//'/new-page.html'
+				// if( getUserDomain() ) {
+				// 	var host = 'https://'+getUserDomain()+'.ramman.net';
+				// } else {
+				// 	var host = 'https://ramman.net';
+				// }
+				// var thisUrl = host + iNurl;
+				console.log('googleAnalytics_fixOpenPage - thisUrl',iNurl);
+				gcounter('set', 'page', iNurl);//'/new-page.html'
 			}
 		} _['googleAnalytics_fixOpenPage'] = googleAnalytics_fixOpenPage;
 

@@ -48,6 +48,23 @@ define(['jquery','m_user','template7','v_view','v_app'],function($,USER,Template
 		return temp(iNdata);
 	}
 
+	function hideAllChats (argument) {
+		$('.mix.usersBlockInMenusBlock').hide();
+	} _['hideAllChats'] = hideAllChats;
+
+	function showAllChats (argument) {
+		$('.mix.usersBlockInMenusBlock').show();
+	} _['showAllChats'] = showAllChats;
+
+	function getAppContent (iNdata) {
+		return `
+		<div class="view " view-name="index">
+		  	<div class="scrolBlockForChat" style="" id="MixItUp81681F"></div>
+		</div>
+		`;
+	}
+	_['getAppContent'] = getAppContent; 
+
 	function addUserHeaderInList (iNdata,iNtype) {
 		/*
 			@inputs

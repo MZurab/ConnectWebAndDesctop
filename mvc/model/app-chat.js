@@ -19,7 +19,7 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
 	  var thisPageName; 
 
 	  //< init pages const
-		    //< page fullWindow
+		    //@< page 'index'
 		    	thisPageName = 'index';
 		        pages[thisPageName]  = {'attr':{'id' : 'leftBlockInViewWindow'},'menus':{}};
 		          pages[thisPageName]['functions'] = {
@@ -59,7 +59,49 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
  					},
 		            'onDisappear' 	: function () { return true;},
 		          };
-		    //> page fullWindow
+		    //@> page 'index'
+
+		    //@< page 'createPrivateChat'
+		    	thisPageName = 'createPrivateChat';
+		        pages[thisPageName]  = {'attr':{'id' : 'leftBlockInViewWindow'},'menus':{}};
+		          pages[thisPageName]['functions'] = {
+		            // 'isPage'  : function () {    return true;},
+		            'getTemplate' : function (iNdata) {
+
+		            },
+		            'onOut'  : function () {   return true;},
+		            // 'onView'  : function () {
+		            //   addPageToFullWindow({'id':'sign','uid':'@system'});
+		            //   // V_APP_PAGE.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
+		            //   return true;
+		            // },
+		            // 'onHide'  : function () { return true;},
+		            // 'setPage' : function () {return true;},
+		            'onInit' 		: function () {
+		            	
+	        			M_APP.getGlobalVar('engine').passToApp( {'app':'base','page':'index','data':''} );
+		            	M_MESSAGE.view.initApp( { 
+		            		// for send simpleTextMessage when click
+		            		'simpleMsgText_onClickSendBtn' : M_MESSAGE.simpleMsgText_onClickSendBtn , 
+		            		// for send flash data for simpleTextMessage
+		            		'simpleMsgText_printing' : M_MESSAGE.msgSimpleText_flashSending } 
+	            		);
+
+
+		            	//
+		            	M_MESSAGE.controller_msgLiveVideo_record_run ();
+		            	M_MESSAGE.controller_msgLiveAudio_record_run ();
+
+		            	return true;
+		            },
+		            'onAppear' 		: function (d1,d2) {
+		            	// M_MESSAGE.view.startAppearObserver();
+		            	pageIndex_openChatByChatId(d1);
+ 						return true;
+ 					},
+		            'onDisappear' 	: function () { return true;},
+		          };
+		    //@> page 'createPrivateChat'
 
 	  //> init pages const
 	_['pages'] = pages; 

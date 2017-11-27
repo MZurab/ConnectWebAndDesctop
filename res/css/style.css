@@ -394,6 +394,9 @@ input,textarea {outline:none;}
 							.chatDataInUsersBlock:hover {
 								background: #e9ebeb !important;
 							}
+							.chatDataInUsersBlock.selected {
+								background: #e9ebeb !important;
+							}
 						.menusInUsersBlock {
 
 						}
@@ -1130,7 +1133,17 @@ input,textarea {outline:none;}
 					#viewAndChatBlockInViewBlock .viewesInWindow.app .view {
 						overflow-y: auto;
     					overflow-x: hidden;
-					} 
+    					max-height: 100%;
+					    padding-right: 10%;
+					    margin-right: -8%;
+					}
+					/* space in  */
+					#viewAndChatBlockInViewBlock .viewesInWindow.app .view:after {
+					    display: block;
+					    height: 100px;
+					    content: '';
+					}
+
 				#subViewInViewAndChatBlock {
 					position: relative;
 					height: 100%;
