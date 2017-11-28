@@ -643,7 +643,7 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 	        		selector += '.' + CONST['pageNameInAppHeader'] + '[page-name="'+ iNdata['page'] +'"]';
 	        	return $(selector).length;
 	        } _.d_getLengthAppHeader = d_getLengthAppHeader;
-	        
+
 
 	       	function getAppHeader (iNdata) {
 	        	/*
@@ -1427,6 +1427,57 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 			_.createLoader 	= V_VIEW.showLoader;
 
 		//@> LODADER
+
+		//@< SIDE BUTTONS
+			function sideButtons_disableSelectedEffects () {
+				/*
+					@discr
+						deleted selected class from all side buttons
+					@inputs
+						@required
+				*/
+				$('.appsBpxInAppBlock').removeClass('selected');
+			} _.sideButtons_disableSelectedEffects = sideButtons_disableSelectedEffects;
+
+			function sideButtons_addSelectedEffectsByFilter (iNfilter) {
+				/*
+					@discr
+						add select class for show effects by filter (service id)
+					@inputs
+						@required
+						@optional
+							iNfilter -> string
+				*/
+				
+				// remove selected class from all btn
+				sideButtons_disableSelectedEffects();
+
+				var baseClass = '.appsBpxInAppBlock';
+
+				switch(iNfilter) {
+
+					case "market":
+						$(baseClass + '.filterMarket').addClass('selected');
+					break;
+					
+					case "onepay":
+						$(baseClass + '.filterOnepay').addClass('selected');
+					break;
+					
+					case "sharepay":
+						$(baseClass + '.filterSharepay').addClass('selected');
+					break;
+					
+					case "edocument":
+						$(baseClass + '.filterEdocument').addClass('selected');
+					break;
+
+					default :
+						$(baseClass + '.filterAll').addClass('selected');
+					break;
+				}
+			} _.sideButtons_addSelectedEffectsByFilter = sideButtons_addSelectedEffectsByFilter;
+		//@> SIDE BUTTONS
 
 
 		return _;

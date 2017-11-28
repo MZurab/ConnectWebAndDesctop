@@ -83,7 +83,7 @@ input,textarea {outline:none;}
 				top:55px;
 				bottom: 55px;
 				width: 92%;
-				left: 4%;
+				left: 10%;
 				right: 4%;
 			}
 				.appBlockInAppBlock {
@@ -97,33 +97,66 @@ input,textarea {outline:none;}
 					.appBlockInAppBlock.opened {
 						border-color: rgb(224, 84, 84);
 					}
-						.appsInAppBlock {
-						    width: 80%;
-						    min-height: 90px;
-						    cursor: pointer;
-						    border-radius: 1rem;
+						.appsBpxInAppBlock {
+					        border-left: 0.3rem solid transparent;
 						    position: relative;
-						    /* overflow: hidden; */
-						    margin: auto;
-		    				margin-bottom: 0.25rem;
+						    left: -0.8rem;
+						    background: transparent;
+						    padding-left: 0.6rem;
+						    padding-right: 0.3rem;
+						    padding-top: 0.7rem;
+						    border-radius: 0px 0.5rem 0.5rem 0px;
+						    cursor: pointer;
+						    margin-top: 0.25rem;
 						}
-							.appsInAppBlock img{
-								width: 100%;
+						.appsBpxInAppBlock.filterAll.selected, .appsBpxInAppBlock.filterAll:hover {
+							border-left: 0.3rem solid rgba(0, 181, 213, 0.15);
+						    background: rgba(0, 181, 213, 0.15);
+						}
+						.appsBpxInAppBlock.filterMarket.selected, .appsBpxInAppBlock.filterMarket:hover {
+							border-left: 0.3rem solid rgba(255, 83, 83, 0.2);
+						    background: rgba(255, 83, 83, 0.2);
+						}
+						.appsBpxInAppBlock.filterOnepay.selected, .appsBpxInAppBlock.filterOnepay:hover {
+							border-left: 0.3rem solid rgba(0, 207, 254, 0.2);
+						    background: rgba(0, 207, 254, 0.2);
+						}
+						.appsBpxInAppBlock.filterSharepay.selected, .appsBpxInAppBlock.filterSharepay:hover {
+							border-left: 0.3rem solid rgba(156, 146, 53, 0.2);
+						    background: rgba(156, 146, 53, 0.2);
+						}
+						.appsBpxInAppBlock.filterEdocument.selected, .appsBpxInAppBlock.filterEdocument:hover {
+							border-left: 0.3rem solid rgba(0, 176, 255, 0.2);
+						    background: rgba(0, 176, 255, 0.2);
+						}
+
+							.appsInAppBlock {
+							    width: 80%;
+							    min-height: 90px;
+							    cursor: pointer;
 							    border-radius: 1rem;
+							    position: relative;
+							    /* overflow: hidden; */
+							    margin: auto;
+			    				margin-bottom: 0.25rem;
 							}
-							.appsNameInAppsBlock {
-							    font-size: 0.8rem;
-							    font-weight: 800;
-							    text-align: center;
-							    padding-top: 0.05rem;
-							}
-							.blackTransparentBlockInAppsBlock {
-							    position: absolute;
-							    width: 100%;
-							    height: 100%;
-							    background: rgba(255, 255, 255, 0.47);
-							    border-radius: 1rem;
-							}
+								.appsInAppBlock img{
+									width: 100%;
+								    border-radius: 1rem;
+								}
+								.appsNameInAppsBlock {
+								    font-size: 0.8rem;
+								    font-weight: 800;
+								    text-align: center;
+								    padding-top: 0.05rem;
+								}
+								.blackTransparentBlockInAppsBlock {
+								    position: absolute;
+								    width: 100%;
+								    height: 100%;
+								    background: rgba(255, 255, 255, 0.47);
+								    border-radius: 1rem;
+								}
 			
 		#menusBlock {
 			width: 28%;

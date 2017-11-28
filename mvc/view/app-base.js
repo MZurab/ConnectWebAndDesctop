@@ -48,13 +48,7 @@ define(['jquery','m_user','template7','v_view','v_app'],function($,USER,Template
 		return temp(iNdata);
 	}
 
-	function hideAllChats (argument) {
-		$('.mix.usersBlockInMenusBlock').hide();
-	} _['hideAllChats'] = hideAllChats;
-
-	function showAllChats (argument) {
-		$('.mix.usersBlockInMenusBlock').show();
-	} _['showAllChats'] = showAllChats;
+	
 
 	function getAppContent (iNdata) {
 		return `

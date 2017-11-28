@@ -31,37 +31,59 @@ define(
                 return i;
               },
               'onCreate': function (iNojbectData,iNojbectApp) {
-                // body...
-                console.log('page index -iNojbectData,iNojbectApp',iNojbectData,iNojbectApp)
+                console.log('page index onCreate -iNojbectData,iNojbectApp',iNojbectData,iNojbectApp)
+
+                // show loader
+                M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
 
                 // get chat list
                 if ( USER.getMyId() ) {
-                  getMyChats();
+                  getAllMyChats();
                 }
               },
               'onView'  : function (iNojbectData,iNojbectApp) { 
                 console.log('onView index iNojbectData,iNojbectApp',iNojbectData,iNojbectApp);
+
 
                 // close loader from first html page
                 M_VIEW.view.closeLoader(); 
 
                 if(iNojbectData['back']) {
                   // add header with back btn for this list app - if we from page 'one'
+
+                  // hide all menus 
+                  M_CATEGORY.view.chat_offSelectEffects();
+
                 } else {
                   // clear user menus if we come from 'one' page by click btn
-                  $('.usersBlockContainerInMenusBlock .app[app-name="base"] .view[view-name="index"] .scrolBlockForChat').html('');
+                  // $('.usersBlockContainerInMenusBlock .app[app-name="base"] .view[view-name="index"] .scrolBlockForChat').html('');
                   
                   // view loader
-                  M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
+                  // M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
                 }
+
+                if(iNojbectData['filter']) {
+                  // if clicked side buttons - setGlobalSetFilterForGetChats
+                  M_APP.view.sideButtons_addSelectedEffectsByFilter(iNojbectData['filter']);
+
+                  // set global filter for sort
+                  M_CATEGORY.view.chat_setGlobalFilter(iNojbectData['filter']);
+                }
+
+                // sort all chats
+                M_CATEGORY.view.startEffSortChats();
+
                 // show all chats
-                VIEW.showAllChats();
+                // VIEW.showAllChats();
 
                 // add standart header for this list app
                 addStandartHeaderForListView();
 
                 // hide user of menus (we open in page 'one')
-                M_CATEGORY.view.hideUserMenus();
+                M_CATEGORY.view.chat_hideUserMenus();
+
+                // show all chats 
+                // M_CATEGORY.view.chat_showAllChats();
 
                 // hide all app in list
                 M_APP.view.d_hideApps('all','list');
@@ -70,7 +92,7 @@ define(
                 M_APP.view.d_showApps('base','list');
 
 
-                // getMyChats();
+                // getAllMyChats();
 
                 // get chat if we auth user
                 
@@ -182,9 +204,9 @@ define(
                   // add header with back btn for this list app
                   // addHeaderWithBackBtnInListView();
 
-                  // hide all chats
-                  VIEW.hideAllChats();
-                  
+                  // hide all menus
+                  // M_CATEGORY.view.chat_hideUserMenus();
+
                   // create chat
                   createChatByGetUrlUserInfo(d['uid']);
                   return true;
@@ -192,7 +214,7 @@ define(
                 'onAppear'  : function () {
                     console.log('onAppear one');
                     M_VIEW.view.closeLoader(); 
-                    M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
+                    M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader'); 
                 },
                 'onDisappear'  : function () {
                     console.log('onDisappear one');
@@ -229,17 +251,21 @@ define(
   // function overided onInit
   function onInit (iNstring,iNobject) {
     console.log('onInit - iNstring,iNobject',iNstring,iNobject);
+    M_CATEGORY.view.initSort();
     //ddd
     controller_devise_run();
     // get chat list
     if ( USER.getMyId() ) {
-      getMyChats();
+      getAllMyChats();
     }
   }
   _['onInit'] = onInit;
 
   // function overided onCreate
   function onCreate (iNstring,iNobject) {
+    // init global filter for sort
+    M_CATEGORY.view.chat_initGlobalFilter();
+
 
     // create app block in list
     M_APP.view.d_createListApp({app:'base','other':VIEW.getAppContent()} ); 
@@ -249,7 +275,7 @@ define(
 
     // get chat if we auth user
     if ( USER.getMyId() ) {
-      // getMyChats();
+      // getAllMyChats();
     }
 
   }
@@ -505,7 +531,7 @@ define(
             var userLogin     = resultOfAjax['user']['login'];
             
             // add header with back btn for this list app
-            addHeaderWithBackBtnInListView(icon,userName,userLogin);
+            addHeaderWithBackBtnInListView (icon,userName,userLogin);
 
             if (resultOfAjax['chat'] == false ) {
               if ( false/*USER.getMyLogin()*/ ) {
@@ -527,10 +553,24 @@ define(
                   console.log('createChatByGetUrlUserInfo objForCreateChat',objForCreateChat);
 
                   // created chat
-                  M_CATEGORY.view.createChatList(objForCreateChat);
+                  M_CATEGORY.view.createChatListIfNotExist(objForCreateChat);
+
+                  // set select effects for this chat
+                  M_CATEGORY.view.chat_setSelectOnlyThisChat(objForCreateChat['chatId'],1); 
+
+                  //resort this chat (up this to top)
+                  M_CATEGORY.view.chatPosition_annihilateForSort ();
+                  M_CATEGORY.view.chatPosition_setByChatIdForSort (objForCreateChat['chatId'],1); 
+                  M_CATEGORY.view.startEffSortChats ();
+                  // show only this chat
+                  M_CATEGORY.view.chat_showOnlyThisChatByChatId(objForCreateChat['chatId']);
 
                   // add user menu  
                   addServiceMenu (objForCreateChat,resultOfAjax);
+
+
+                  // show this chat menu
+                  M_CATEGORY.view.chat_showOnlyThisChatMenu(objForCreateChat['chatId']);
               }
             } else {
               // create chat static
@@ -642,7 +682,8 @@ define(
               // attach link with chat db
               safeAttachLiveLinkToChatElement(objForCreatChat['chatId'], 
                 () => {
-                  console.log('safeAttachLiveLinkToChatElement callbackobjForCreatChat - objForCreatChat , iNuserData',objForCreatChat , iNuserData);
+                  console.log('safeAttachLiveLinkToChatElement callbackobjForCreatChat - objForCreatChat',objForCreatChat );
+                  console.log('safeAttachLiveLinkToChatElement callbackobjForCreatChat -  iNuserData',iNuserData);
                   // add service category
                   addServiceMenu (objForCreatChat,iNuserData);
 
@@ -656,7 +697,7 @@ define(
           function addServiceMenu ( objForCreatChat, iNuserData ) {
               M_VIEW.view.closeLoaderByTimeout(2500, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
             // add chat if we has chat
-            var chatId = VIEW.getRealChatIdByUid(objForCreatChat['userId']);
+            var chatId = objForCreatChat['chatId']||VIEW.getRealChatIdByUid(objForCreatChat['userId']);
             if ( chatId ) {
               // we has chatId
               M_CATEGORY.addChatBlockToCategory (iNuserData,chatId,objForCreatChat['userId']);
@@ -693,16 +734,19 @@ define(
 
 
 
-  function getMyChats () {
+  function getAllMyChats () {
     /*
         ovbserver for user chats list
         @depends
             domSortChatsBlock() - for create sort or check
     */
-    M_CATEGORY.view.startEffSortChats();
-    var myUid       = M_APP.get('uid');
-    // membersRef      = FIREBASE.database().ref('members/'+myUid);
 
+    // start effects for chats
+    M_CATEGORY.view.startEffSortChats();
+    // get my user id
+    var myUid       = M_APP.get('uid');
+
+    // get data from DB
     M_DATABASE.getRealtimeDataFromFirestoreDb (
           'users',
           myUid + '/members',
@@ -741,7 +785,7 @@ define(
     //       safeAttachLiveLinkToChatElement(chatId);
     // });
   }
-  _['getMyChats'] = getMyChats;
+  _['getAllMyChats'] = getAllMyChats;
 
 
 
@@ -941,6 +985,7 @@ define(
     }
     return false;
   }
+
   function safeUpdatePrivateChatBlockFromUserDb (iNchatId,iNobject,iNchatType,iNsuccessFunction) {
       /*
           @inputs
@@ -993,19 +1038,26 @@ define(
               objForCreateChat['icon']      = user2Icon,
               objForCreateChat['login']     = login;
               // user type (business (2) or user(1) or app of system (3) )
-              objForCreateChat['userType']  = userType;
+              objForCreateChat['userType']    = userType;
               objForCreateChat['userOnline']  = userOnline;
 
           // add user options
           if(typeof user2Object.info.options == 'object') {
             // check has menu
             var userHasMenu = checkUserForHasMenuForMe(user2Object.info.options);
-            console.log('safeUpdatePrivateChatBlockFromUserDb userHasMenu',userHasMenu);
             if(userHasMenu) {
               // add
               objForCreateChat['userHasMenu'] = 1;
             }
+          } else {
+            user2Object.info.options = {};
           }
+          // add app for filter by side buttons
+          if (typeof user2Object.info.options.apps == 'object') {
+            // add user apps for filter
+            objForCreateChat['appsForFilter'] = user2Object.info.options.apps.join(' ');
+          }
+
 
           console.log('safeUpdatePrivateChatBlockFromUserDb objForCreateChat',objForCreateChat);
           delete objForCreateChat.liveData;
@@ -1245,6 +1297,7 @@ define(
         let path = "devises/" + uid + '/' + token;
         return path;
     }
+
     function devise_removeNoteFromDatabase () {
         /*
           @discr
