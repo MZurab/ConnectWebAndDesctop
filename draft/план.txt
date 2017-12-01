@@ -35,3 +35,21 @@ Get download url - (3-4ч)
 	Выдача фото для чатов
 	Выдача фото для пользователей
 	Выдача фото для 
+
+
+// sharepay
+chatId=sharepay&userId=sharepay&login=sharepay&icon=https://cdn.ramman.net/web/res/images/icons/apps/app_sharepay.png&chatName=SharePay&userHasMenu=1&chatType=1 
+
+// onepay
+chatId=onepay&userId=onepay&login=onepay&icon=https://cdn.ramman.net/web/res/images/icons/apps/app_onepay.png&chatName=OnePay&userHasMenu=1&chatType=1 
+
+// market
+chatId=market&userId=market&login=market&icon=https://cdn.ramman.net/web/res/images/icons/apps/app_market.png&chatName=Market&userHasMenu=1&chatType=1
+
+
+// edocument
+chatId=edocument&userId=edocument&login=edocument&icon=https://cdn.ramman.net/web/res/images/icons/apps/app_edocument.png&chatName=eDocument&userHasMenu=1&chatType=1 
+
+
+// ramman
+chatId=ramman&userId=ramman&login=ramman&icon=https://cdn.ramman.net/web/res/images/icons/apps/app_chat.png&chatName=Ramman&userHasMenu=1&chatType=1 

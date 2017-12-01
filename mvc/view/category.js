@@ -42,7 +42,7 @@ define(
 	  	{{/each}}
     `;
     templates['UserList'] = `
-		<div class="mix usersBlockInMenusBlock {{appsForFilter}} {{class}}" connect_uid="{{userId}}" {{if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" data-position-of-chat='{{chatPosition}}' connect_userType='{{userType}}' connect_userLogin='{{login}}'>
+		<div class="mix usersBlockInMenusBlock {{appsForFilter}} {{class}}" connect_uid="{{userId}}" {{if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" data-position-of-chat='{{chatPosition}}' connect_userType='{{userType}}' connect_userType='{{chatType}}' connect_userLogin='{{login}}'>
 			<div class='chatDataInUsersBlock'>
 				<div class="iconBlockInUserBlock">
 			      <div class="iconInUserBlock">
@@ -221,7 +221,7 @@ define(
 					iNchatId -> string
 
 		*/
-		let pathToThisChat = getPathToDomElByChatId(iNchatId);
+		let pathToThisChat = getPathToChatByChatId(iNchatId);
 		$(pathToThisChat).find('.chatDataInUsersBlock').addClass('selected');
 
 	} _.chat_addSelectEffectsByChatId = chat_addSelectEffectsByChatId;
@@ -249,7 +249,7 @@ define(
 					iNchatId -> string
 
 		*/
-		let pathToThisChat = getPathToDomElByChatId(iNchatId);
+		let pathToThisChat = getPathToChatByChatId(iNchatId);
 		$(pathToThisChat).find('.chatDataInUsersBlock').addClass('selected');
 
 	} _.chat_addSelectEffectsByChatId = chat_addSelectEffectsByChatId;
@@ -261,9 +261,13 @@ define(
 			@inputs
 				@required
 		*/
-		let selector = '.mix.usersBlockInMenusBlock';
+		// let selector = '.mix.usersBlockInMenusBlock';
 		console.log('chat_hideAllChats - selector',selector)
-		$().hide();
+		// $().hide();
+
+
+		let mixer = output['sortMixitUpObject'];
+		if(typeof mixer == 'object') mixer.filter("none");
 
 	} _['chat_hideAllChats'] = chat_hideAllChats;
 
@@ -274,7 +278,9 @@ define(
 			@inputs
 				@required
 		*/
-		$('.mix.usersBlockInMenusBlock').show();
+		// $('.mix.usersBlockInMenusBlock').show();
+		let mixer = output['sortMixitUpObject'];
+		if(typeof mixer == 'object') mixer.filter("all");
 	} _['chat_showAllChats'] = chat_showAllChats;
 
 	function chat_showChatByChatId (iNchatId) {
@@ -285,26 +291,11 @@ define(
 				@required
 					iNchatId -> string
 		*/
-		var pathToThisChat = getPathToDomElByChatId(iNchatId);
-		console.log('chat_showChatByChatId - pathToThisChat, iNchatId',pathToThisChat, iNchatId );
-		$(pathToThisChat).show();
-	} _['chat_showChatByChatId'] = chat_showChatByChatId;
 
-	function chat_showOnlyThisChatByChatId (iNchatId) {
-		/*
-			@discr
-				show only this chat by his chatId
-			@inputs
-				@required
-					iNchatId -> string
-		*/
-		console.log('chat_showOnlyThisChatByChatId - typeof , iNchatId',typeof iNchatId ,iNchatId );
-		if(typeof iNchatId != 'string') return;
-		// hide all chats
-		chat_hideAllChats();
-		// show this chat
-		chat_showChatByChatId (iNchatId);
-	} _['chat_showOnlyThisChatByChatId'] = chat_showOnlyThisChatByChatId;
+		let mixer = output['sortMixitUpObject'];
+		if(typeof mixer == 'object')
+			mixer.filter("[connect_chatid='"+iNchatId+"']");
+	} _['chat_showChatByChatId'] = chat_showChatByChatId;
 
 
 	function chat_hideUserMenus () {
@@ -345,7 +336,7 @@ define(
 					iNchatId -> string
 
 		*/
-		var pathToThisChat = getPathToDomElByChatId(iNchatId);
+		var pathToThisChat = getPathToChatByChatId(iNchatId);
 		$(pathToThisChat + ' .menusInUsersBlock').show();
 	} _['chat_showChatMenuByChatId'] = chat_showChatMenuByChatId;
 
@@ -359,7 +350,7 @@ define(
 					iNchatId -> string
 
 		*/
-		var pathToThisChat = getPathToDomElByChatId(iNchatId);
+		var pathToThisChat = getPathToChatByChatId(iNchatId);
 		
 		// selected thi chat -> we remove selected class from all
 		chat_setSelectOnlyThisChat(iNchatId);
@@ -395,13 +386,13 @@ define(
         			'data' 		: dataForOpenApp
         		};
         	M_APP.view.convertDomElementToAppLink (selector,objForCreateLink);
-		}else {
+		} else {
 			// if this has not menu -> open app 'chat' page 'index'
 			var dataForOpenApp = 'chatName='+obj['chatName']+'&chatId='+obj['chatId']+'&chatIcon='+obj['chatIcon']+'&userLogin='+obj['login']+'&uid='+obj['uid'];
 
         	//< safe add online
-            	let thisOnline = $(iNthis).attr('connect_online');
-            	if(typeof thisOnline == 'string' && thisOnline.length > 0) {
+            	let thisOnline 			= $(pathToThisChat).attr('connect_online');
+            	if (typeof thisOnline == 'string' && thisOnline.length > 0) {
         			dataForOpenApp += '&online='+thisOnline
             	}
         	//> safe add online
@@ -474,6 +465,7 @@ define(
 		activeActionsForMenuEvents();
 	}
 	_['addMenuByCategoryList'] = addMenuByCategoryList;
+	
 		function activeActionsForMenuEvents () {
 	    	$('.appUserMenu.flagMenuLevel1 > a, .appUserMenu.flagMenuLevel1 > div.userMenuParentButton').click(clickToMenuFirstLevel);
 	    	$('.appUserMenu.flagMenuLevel2 > a, .appUserMenu.flagMenuLevel2 > div.userMenuParentButton').click(clickToMenuSecondLevel);
@@ -632,20 +624,65 @@ define(
 			@inputs
 				@required
 					iNdata -> object
-						chatId
-						userId
-						icon_big
-						icon_min
-						chatName
-						printing
-						lastMsgTimeText
-						lastMsgTime
+						@required
+							chatId
+							userId
+							icon (icon_big,icon_min)
+							chatName
+							login
+							userType
+							chatType
+							chatPosition
+						@optional
+							userHasMenu -> boolean
+							printing
+							lastMsgTimeText
+							lastMsgTime
 		*/
 		if(typeof iNdata != 'object') iNdata = {};
-		let chatSelector = getPathToDomElByChatId(iNdata['chatId']);
+
+		var chatType = iNdata.chatType ? parseInt(iNdata.chatType) : 2;
+		console.log('createChatListIfNotExist - chatType, iNdata', chatType, iNdata);
+		if( chatType == 1 ) {
+			// if private chat
+			var chatSelector = getPathToChatByUserId(iNdata['userId']);
+		} else {
+			// if group chat
+			var chatSelector = getPathToChatByChatId(iNdata['chatId']);
+
+		}
+
+		if($(chatSelector).length < 1) createChatList(iNdata);
+
+		// create if not exist
+	} _.createChatListIfNotExist = createChatListIfNotExist;
+
+	function createPrivateChatListIfNotExist (iNdata) {
+		/*
+			@inputs
+				@required
+					iNdata -> object
+						@required
+							chatId
+							userId
+							icon (icon_big,icon_min)
+							chatName
+							login
+							userType
+							chatType
+							chatPosition
+						@optional
+							userHasMenu -> boolean
+							printing
+							lastMsgTimeText
+							lastMsgTime
+		*/
+		if(typeof iNdata != 'object') iNdata = {};
+		let chatSelector = getPathToChatByUserId(iNdata['userId']);
 		// create if not exist
 		if($(chatSelector).length < 1) createChatList(iNdata);
-	} _.createChatListIfNotExist = createChatListIfNotExist;
+
+	} _.createPrivateChatListIfNotExist = createPrivateChatListIfNotExist;
 
 	function createChatList (iNdata) {
 		/*
@@ -730,15 +767,19 @@ define(
 		_['getPathToDomChatHeader'] = getPathToDomChatHeader;
 	//chat
 		function findChatBlock (iNchatId) {
-			return $( getPathToDomElByChatId(iNchatId) ).length;
+			return $( getPathToChatByChatId(iNchatId) ).length;
 		}
 		_['findChatBlock'] = findChatBlock;
 
-			function getPathToDomElByChatId (iNchatId) {
-				return '.usersBlockInMenusBlock[connect_chatid="'+iNchatId+'"]';
+			function getPathToChatByChatId (iNchatId) {
+				return '.usersBlockInMenusBlock[connect_chatid="'+iNchatId+'"]';//[chatType="2"]
 			}
-			_['getPathToDomElByChatId'] = getPathToDomElByChatId;
-		
+			_['getPathToChatByChatId'] = getPathToChatByChatId;
+
+			function getPathToChatByUserId (iNchatId) {
+				return '.usersBlockInMenusBlock[connect_uid="'+iNchatId+'"]';
+			}
+			_['getPathToChatByChatId'] = getPathToChatByChatId;
 
 		function getChatIdByUid (iNuid) {
 			return $('.usersBlockInMenusBlock[connect_uid="'+iNuid+'"]').attr('connect_chatid');;
@@ -756,31 +797,38 @@ define(
 		_['effShowChatList'] = effShowChatList;
 
 			function getChatIcon (iNchatId) {
-				var pathToIcon = getPathToDomElByChatId(iNchatId) + ' .iconBlockInUserBlock img';
+				var pathToIcon = getPathToChatByChatId(iNchatId) + ' .iconBlockInUserBlock img';
 				return $(pathToIcon).attr('src');
 			}
 			_['getChatIcon'] = getChatIcon;
 
 			function getChatName (iNchatId) {
-				var pathToIcon = getPathToDomElByChatId(iNchatId) + ' .userNameInChatList';
+				var pathToIcon = getPathToChatByChatId(iNchatId) + ' .userNameInChatList';
 				return $(pathToIcon).text();
 			}
 			_['getChatName'] = getChatName;
 
 			function getUserLoginFromPrivateChat (iNchatId) {
-				var pathTo = getPathToDomElByChatId(iNchatId);
+				var pathTo = getPathToChatByChatId(iNchatId);
 				return $(pathToIcon).attr('connect_userLogin');
 			}
 			_['getUserLoginFromPrivateChat'] = getUserLoginFromPrivateChat;
 
 			function getUserTypeFromPrivateChat (iNchatId) {
-				var pathTo = getPathToDomElByChatId(iNchatId);
+				var pathTo = getPathToChatByChatId(iNchatId);
 				return $(pathToIcon).attr('connect_userType');
 			}
 			_['getUserTypeFromPrivateChat'] = getUserTypeFromPrivateChat;
 
 	//effects
-		function initSort (argument) {
+		function initSort () {
+		    /*
+		    	@discr
+		        	create object for sort chats block
+		        @inputs
+					@required
+					@optional
+		    */
 			 if(typeof(output['sortMixitUpObject']) != 'undefined') output['sortMixitUpObject'].destroy();
 
 		    output['sortMixitUpObject'] = mixitup(vars['pathToChatList']);
@@ -805,9 +853,6 @@ define(
 							sort
 		    */
 
-		    console.log('startEffSortChats start - iNdata',iNdata);
-		    console.log('startEffSortChats start',output['sortMixitUpObject']);
-
 		    if(typeof(output['sortMixitUpObject']) != 'undefined') {
 		    	var mixer = output['sortMixitUpObject'],block = {};
 		    	if( typeof(iNdata) != 'object' ) iNdata = {};
@@ -821,37 +866,11 @@ define(
 				    if( typeof(iNdata.sort)  == 'string' )       
 				    	sort 		=  iNdata.sort;
 				    else {
-				    	console.log('startEffSortChats sort', 'position-of-chat:asc lastmsgtime:desc' );
 				    	sort 		=  'position-of-chat:asc lastmsgtime:desc';
 				    }
-
-				    	console.log('startEffSortChats filter, sort',filter, sort);
-				    	mixer.sort(sort)
-				    	mixer.filter(filter)
-				window.mixer1 = mixer;
-		    	// mixer.multimix(block);
-				// mixer.forceRefresh();
+			    	mixer.sort(sort)
+			    	mixer.filter(filter)
 			}
-
-
-
-		    // output['sortMixitUpObject'] = mixitup(vars['pathToChatList']);
-		    
-		   
-			
-
-
-
-		    //  if(typeof(output['sortMixitUpObject']) != 'undefined') output['sortMixitUpObject'].destroy();
-
-		    // output['sortMixitUpObject'] = mixitup(vars['pathToChatList']);
-		    // var block = {};
-		    
-		    // if( typeof(iNdata) != 'object' )         	 iNdata={};
-		    // if( typeof(iNdata.filter) != 'string' )      block.filter 		=  chat_getGlobalFilter();//'.usersBlockInMenusBlock';
-		    // if( typeof(iNdata.sort)  != 'string' )       block.sort 		=  'position-of-chat:asc lastmsgtime:desc';
-		    // console.log('startEffSortChats block',chat_getGlobalFilter(),block);
-		    // output['sortMixitUpObject'].multimix(block);
 		}
 		_['startEffSortChats'] = startEffSortChats;
 
@@ -877,7 +896,7 @@ define(
 
 			*/
 			if (typeof iNnumber != 'number') iNnumber = 1;
-			$(getPathToDomElByChatId(iNchatId)).attr('data-position-of-chat',iNnumber);
+			$(getPathToChatByChatId(iNchatId)).attr('data-position-of-chat',iNnumber);
 		} _.chatPosition_setByChatIdForSort = chatPosition_setByChatIdForSort;
 
 		function flash_msgSimpleText_init (iNchatId) {
@@ -891,7 +910,7 @@ define(
 							filter
 							sort
 		    */
-            var chatObject = getPathToDomElByChatId(iNchatId);
+            var chatObject = getPathToChatByChatId(iNchatId);
 	    	$(chatObject +' '+ vars['pathForFlashMsgSimpleText']).textillate({ autoStart:false, in: {effect: 'wobble',delay:10 } });
 		}
 		_['flash_msgSimpleText_init'] = flash_msgSimpleText_init;
@@ -907,7 +926,7 @@ define(
 							filter
 							sort
 		    */
-            var chatObject = getPathToDomElByChatId(iNchatId);
+            var chatObject = getPathToChatByChatId(iNchatId);
 	    	$(chatObject +' '+ vars['pathForFlashMsgLiveAudio']).textillate({ autoStart:false, in: {effect: 'wobble',delay:10 } });
 		}
 		_['flash_msgLiveAudio_init'] = flash_msgLiveAudio_init;
@@ -923,7 +942,7 @@ define(
 							filter
 							sort
 		    */
-            var chatObject = getPathToDomElByChatId(iNchatId);
+            var chatObject = getPathToChatByChatId(iNchatId);
 	    	$(chatObject +' '+ vars['pathForFlashMsgLiveVideo']).textillate({ autoStart:false, in: {effect: 'wobble',delay:10 } });
 		}
 		_['flash_msgLiveVideo_init'] = flash_msgLiveVideo_init;
@@ -939,7 +958,7 @@ define(
 							filter
 							sort
 		    */
-            var chatObject = getPathToDomElByChatId(iNchatId);
+            var chatObject = getPathToChatByChatId(iNchatId);
 			$(chatObject +' '+ vars['pathForEffectsLastMsg']).textillate({ autoStart:false, in: {effect: 'fadeInLeftBig',delay:30 }, out: {effect: 'fadeOutRightBig', delay:15, callback: function () { $(chatObject + ' .lastMessageInThirdLine').textillate('start');} }, minDisplayTime:150 }).textillate('start');
 		}
 		_['startEffLastMsgByChatId'] = startEffLastMsgByChatId;
@@ -958,7 +977,7 @@ define(
 		    if( typeof(iNtime) != 'number' ) iNtime = 2500; 
 		    if( typeof(output['objectTimeoutForHideLiveInChatsList']) != 'undefined') clearTimeout(output['objectTimeoutForHideLiveInChatsList'])
 		    output['objectTimeoutForHideLiveInChatsList'] = setTimeout(function () {
-            	var chatObject = getPathToDomElByChatId(iNchatId);
+            	var chatObject = getPathToChatByChatId(iNchatId);
 		        $(chatObject + ' .aCpAll_flashBLocks').hide();
 		    }, iNtime);
 		}
@@ -972,29 +991,12 @@ define(
                     defined chat object
                 2 - iNnumber (int)
                 @depends
-                    getPathToDomElByChatId
+                    getPathToChatByChatId
             */
-            var chatObject = getPathToDomElByChatId(iNchatId);
+            var chatObject = getPathToChatByChatId(iNchatId);
             $(chatObject + ' .newMsgInSecondLine').html(iNnumber);
 		}
 		_['domChangeCountMessages'] = domChangeCountMessages;
-
-		// function domPlusCountMessages ( iNchatId, newMsg ) {
-  //           /*
-  //               increase new msg count by $newMsg variable
-  //               1 - chatObject (String)
-  //                   defined chat object
-  //               2 - newMsg (int)
-  //               @depends
-  //                   domShowNewMsgCountInChatBlock
-  //           */
-  //           var chatObject = getPathToDomElByChatId(iNchatId);
-  //           if(typeof(newMsg) == 'undefined') newMsg = 1;
-  //           var count_msg = parseInt($(chatObject + ' .newMsgInSecondLine').text()) + newMsg;
-  //           $(chatObject + ' .newMsgInSecondLine').change(count_msg);
-  //           domShowNewMsgCountInChatBlock(chatObject);
-  //       }
-		// _['domPlusCountMessages'] = domPlusCountMessages;
 
 			function domSafeShowNewMsgCountInChatBlock (iNchatId,iNnumber) {
                 /*
@@ -1013,7 +1015,7 @@ define(
                     1 - chatObject (String)
                         defined chat object
                 */
-                var chatObject = getPathToDomElByChatId(iNchatId);
+                var chatObject = getPathToChatByChatId(iNchatId);
                 $(chatObject + ' .newMsgInSecondLine').html(iNnumber);
             }
 			_['domChangeNewMsgCountInChatBlock'] = domChangeNewMsgCountInChatBlock;
@@ -1024,7 +1026,7 @@ define(
                     1 - chatObject (String)
                         defined chat object
                 */
-                var chatObject = getPathToDomElByChatId(iNchatId);
+                var chatObject = getPathToChatByChatId(iNchatId);
                 $(chatObject + ' .newMsgInSecondLine').css('display','inline-block');
             }
 			_['domShowNewMsgCountInChatBlock'] = domShowNewMsgCountInChatBlock;
@@ -1037,7 +1039,7 @@ define(
                     @depends
                         domClearNewMsgCountInChatBloc()
                 */
-                var chatObject = getPathToDomElByChatId(iNchatId);
+                var chatObject = getPathToChatByChatId(iNchatId);
                 $(chatObject + ' .newMsgInSecondLine').hide();
             }
 			_['domHideNewMsgCountInChatBlock'] = domHideNewMsgCountInChatBlock;
@@ -1075,7 +1077,7 @@ define(
             	@inputs
 	                iNchatId -> stirng
             */
-            var chatObject = getPathToDomElByChatId(iNchatId) + ' .chatDataInUsersBlock';
+            var chatObject = getPathToChatByChatId(iNchatId) + ' .chatDataInUsersBlock';
             $(chatObject).addClass('flagUserOnline');
             $(chatObject).attr('connect_online',1);
         }
@@ -1088,7 +1090,7 @@ define(
             	@inputs
 	                iNchatId -> stirng
             */
-            var chatObject = getPathToDomElByChatId(iNchatId) + ' .chatDataInUsersBlock';
+            var chatObject = getPathToChatByChatId(iNchatId) + ' .chatDataInUsersBlock';
             $(chatObject).removeClass('flagUserOnline');
             $(chatObject).attr('connect_online',iNtime);
         }
@@ -1102,7 +1104,7 @@ define(
                 2 - icon (String)
                     new icon src
             */
-            var chatObject = getPathToDomElByChatId(iNchatId);
+            var chatObject = getPathToChatByChatId(iNchatId);
             $(chatObject+" .iconInUserBlock img").attr('src',icon);
         }
 		_['domChangeIconInChatBlock'] = domChangeIconInChatBlock;
@@ -1116,7 +1118,7 @@ define(
                     new user Name
 
             */
-            var chatObject = getPathToDomElByChatId(iNchatId);
+            var chatObject = getPathToChatByChatId(iNchatId);
             $(chatObject+" .userNameInChatList").text(chatName);
         }
 		_['domChangeChatNameInChatBlock'] = domChangeChatNameInChatBlock;
@@ -1131,7 +1133,7 @@ define(
                     new user Name
 
             */
-            var chatObject = getPathToDomElByChatId(iNchatId);
+            var chatObject = getPathToChatByChatId(iNchatId);
             $(chatObject).attr('cLogin',userLogin);
         }
 		_['domChangeLoginInChatBlock'] = domChangeLoginInChatBlock;
@@ -1145,7 +1147,7 @@ define(
                     lmsgText (String)
                     lmsgTime (String)
             */
-            var chatObject = getPathToDomElByChatId(iNchatId);
+            var chatObject = getPathToChatByChatId(iNchatId);
             var lastMsgText = V_MESSAGE.msg_getLastMsg (iNdata);
             if($(chatObject + ' .lastMessageInThirdLine .current').text() != lastMsgText) {
                 var NowTime = getTodayTime( iNdata.lmsgTime );
@@ -1167,7 +1169,7 @@ define(
 
 		function flash_hideAllFlashBlocks (iNchatId) {
 			// body...
-            var chatObject = getPathToDomElByChatId(iNchatId);
+            var chatObject = getPathToChatByChatId(iNchatId);
 			$(chatObject + ' .aCpAll_flashBLocks').hide();
 		}
 
@@ -1180,7 +1182,7 @@ define(
 
             */
 
-            var chatObject = getPathToDomElByChatId(iNchatId);
+            var chatObject = getPathToChatByChatId(iNchatId);
             var currentValue = $(chatObject + ' .aCpAll_msgSimpleText_animateContainer .current').text();
             if(currentValue != iNdata.liveData){
 
@@ -1209,7 +1211,7 @@ define(
 
             */
 
-            var chatObject = getPathToDomElByChatId(iNchatId);
+            var chatObject = getPathToChatByChatId(iNchatId);
             var currentValue = $(chatObject + ' .aCpAll_msgLiveAudio_animateContainer .current').text();
             if(currentValue != iNdata.liveData){
 	            flash_hideAllFlashBlocks(iNchatId);
@@ -1235,7 +1237,7 @@ define(
 
             */
             
-            var chatObject = getPathToDomElByChatId(iNchatId);
+            var chatObject = getPathToChatByChatId(iNchatId);
             var currentValue = $(chatObject + ' .aCpAll_msgLiveVideo_animateContainer .current').text();
             if(currentValue != iNdata.liveData){
 	            flash_hideAllFlashBlocks(iNchatId);

@@ -12,8 +12,8 @@ define(
     //< page menu
 
         //< page index
-          var thisPageName = 'index';
-          pages[thisPageName]  = {'attr':{},'menus':{},'functions':{}};
+          var thisPageName      = 'index';
+          pages[thisPageName]   = {'attr':{},'menus':{},'functions':{}};
             pages[thisPageName]['attr'] = {
               'id2' : '2',
               'id3' : '3',
@@ -68,6 +68,9 @@ define(
 
                   // set global filter for sort
                   M_CATEGORY.view.chat_setGlobalFilter(iNojbectData['filter']);
+
+                  //create service chat list and move position to top
+                  chat_openChatWithCreateIfNotExist(iNojbectData);
                 }
 
                 // sort all chats
@@ -496,20 +499,29 @@ define(
     // });
   }
 
-
-  function pageOne_getUserInfo (iNuid) {
-    const objectForAjax = {};
-          objectForAjax['userId'] = USER.getMyId();
-          objectForAjax['token']  = USER.getMyToken();
-          objectForAjax['uid']    = iNuid;
-    createChatByGetUrlUserInfo(objectForAjax,
-      function (resultOfAjax) {
-
-      }
-    );
-  }
     CONST['url_getUser']    = 'https://ramman.net/api/user';
 
+
+
+    function chat_openChatWithCreateIfNotExist (iNobjectForCreateChat) {
+      // body...
+      var objForCreateChat = iNobjectForCreateChat;
+
+      // created chat
+      M_CATEGORY.view.createChatListIfNotExist(objForCreateChat);
+
+      // set select effects for this chat
+      M_CATEGORY.view.chat_setSelectOnlyThisChat(objForCreateChat['chatId'],1); 
+
+      //resort this chat (up this to top)
+      M_CATEGORY.view.chatPosition_annihilateForSort ();
+      M_CATEGORY.view.chatPosition_setByChatIdForSort (objForCreateChat['chatId'],1); 
+      M_CATEGORY.view.startEffSortChats ();
+      // show only this chat
+      M_CATEGORY.view.chat_showChatByChatId(objForCreateChat['chatId']);
+      // add on click for this chat event
+      M_CATEGORY.view.addOnClickActionForChatList ( objForCreateChat['chatId']);
+    }
 
 
     /*< USER INFO */
@@ -523,61 +535,56 @@ define(
         getByGetRequest_userInfo(objectForAjax,
           function (resultOfAjax) {
 
-            M_VIEW.view.closeLoaderByTimeout(2500, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
 
 
-            var icon          = 'https://cdn.ramman.net/images/icons/apps/app_sharepay.png';
-            var userName      = resultOfAjax['user']['name'];
-            var userLogin     = resultOfAjax['user']['login'];
+            var icon          = 'https://cdn.ramman.net/images/icons/apps/app_sharepay.png',
+                userName      = resultOfAjax['user']['name'],
+                userLogin     = resultOfAjax['user']['login'],
+                userId        = resultOfAjax['user']['uid'],
+                chatType      = 1; // private chat
             
             // add header with back btn for this list app
             addHeaderWithBackBtnInListView (icon,userName,userLogin);
 
-            if (resultOfAjax['chat'] == false ) {
-              if ( false/*USER.getMyLogin()*/ ) {
-                // if we signed -> for create chat
+           // if we does not signed
+            var objForCreateChat = {};
+              // get chatId if we has chat with this user
+              objForCreateChat['chatId']      = resultOfAjax['chat'];//||userLogin; //because we dont have chat
+              objForCreateChat['userId']      = userId;
+              // objForCreateChat['userHasMenu'] = 1;
+              objForCreateChat['login']       = userLogin;//resultOfAjax['user']['login'];
+              objForCreateChat['icon']        = icon;//'https://cdn.ramman.net/images/icons/apps/app_sharepay.png';
+              objForCreateChat['chatName']    = userName;//resultOfAjax['user']['name'];
+              objForCreateChat['chatType']    = chatType;//resultOfAjax['user']['name'];
 
-                // we open chat
-
-                // 
-                // createPrivateChat( iNlogin , resultOfAjax );
-
-              } else {
-                // if we does not signed
-                var objForCreateChat = {};
-                  objForCreateChat['chatId']      = resultOfAjax['user']['login']; //because we dont have chat
-                  objForCreateChat['userId']      = resultOfAjax['user']['uid'];
-                  objForCreateChat['login']       = userLogin;//resultOfAjax['user']['login'];
-                  objForCreateChat['icon']        = icon;//'https://cdn.ramman.net/images/icons/apps/app_sharepay.png';
-                  objForCreateChat['chatName']    = userName;//resultOfAjax['user']['name'];
-                  console.log('createChatByGetUrlUserInfo objForCreateChat',objForCreateChat);
-
-                  // created chat
-                  M_CATEGORY.view.createChatListIfNotExist(objForCreateChat);
-
-                  // set select effects for this chat
-                  M_CATEGORY.view.chat_setSelectOnlyThisChat(objForCreateChat['chatId'],1); 
-
-                  //resort this chat (up this to top)
-                  M_CATEGORY.view.chatPosition_annihilateForSort ();
-                  M_CATEGORY.view.chatPosition_setByChatIdForSort (objForCreateChat['chatId'],1); 
-                  M_CATEGORY.view.startEffSortChats ();
-                  // show only this chat
-                  M_CATEGORY.view.chat_showOnlyThisChatByChatId(objForCreateChat['chatId']);
-
-                  // add user menu  
-                  addServiceMenu (objForCreateChat,resultOfAjax);
-
-
-                  // show this chat menu
-                  M_CATEGORY.view.chat_showOnlyThisChatMenu(objForCreateChat['chatId']);
+              // check for has menu
+              if(typeof resultOfAjax['categories'] == 'object') {
+                // if this user has categories we add userHasMenuFlag
+                objForCreateChat['userHasMenu']    = 1;
               }
-            } else {
-              // create chat static
-              console.log('createChatByGetUrlUserInfo viewThisChatFromFDB');
-              M_VIEW.view.closeLoaderByTimeout(2500, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
-              viewThisChatFromFDB (resultOfAjax['chat'],resultOfAjax);
-            }
+
+              // created chat
+              M_CATEGORY.view.createChatListIfNotExist(objForCreateChat);
+
+              // set select effects for this chat
+              M_CATEGORY.view.chat_setSelectOnlyThisChat(objForCreateChat['chatId'],1); 
+
+              //resort this chat (up this to top)
+              M_CATEGORY.view.chatPosition_annihilateForSort ();
+              M_CATEGORY.view.chatPosition_setByChatIdForSort (objForCreateChat['chatId'],1); 
+              M_CATEGORY.view.startEffSortChats ();
+              // show only this chat
+              M_CATEGORY.view.chat_showChatByChatId(objForCreateChat['chatId']);
+
+              // add user menu  
+              addServiceMenu (objForCreateChat,resultOfAjax);
+
+              // show this chat menu
+              M_CATEGORY.view.chat_showOnlyThisChatMenu(objForCreateChat['chatId']);
+
+
+              // M_VIEW.view.closeLoaderByTimeout(2500, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
+              M_VIEW.view.closeLoader ('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
           }
         );
       }
@@ -765,7 +772,6 @@ define(
 
               var memberBlock   = memberData.data();
               var chatId        = memberData.id;
-              console.log('M_DATABASE.getRealtimeDataFromFirestoreDb chatId, memberBlock',chatId, memberBlock);
               var user2         = M_APP.getJsonKey(memberBlock);
               M_CATEGORY.userForPrivateChat(chatId,user2);
                    
@@ -773,17 +779,6 @@ define(
             }
           }
     );
-
-
-
-    // membersRef.on('child_added', function(memberData) { 
-    //       var memberBlock   = memberData.val();
-    //       var chatId    = memberData.key;
-    //       var user2     = M_APP.getJsonKey(memberBlock);
-    //       M_CATEGORY.userForPrivateChat(chatId,user2);
-               
-    //       safeAttachLiveLinkToChatElement(chatId);
-    // });
   }
   _['getAllMyChats'] = getAllMyChats;
 
@@ -810,19 +805,6 @@ define(
     if(number == 0) return false; 
     setMyNewMessagesCountByChatId(iNchatId,number);
     M_CATEGORY.view.domSafeShowNewMsgCountInChatBlock( iNchatId, number );
-
-
-
-    // let chatsMyNewMsgRef = FIREBASE.database().ref('chats/' + iNchatId + '/member/' + iNmyUid + '/newMsg');
-    // chatsMyNewMsgRef.on('value', 
-    //   (iNdata) => {
-    //     let number = iNdata.val()||0;
-    //     // save in local storage in db
-    //     if(number == 0) return false; 
-    //     setMyNewMessagesCountByChatId(iNchatId,number);
-    //     M_CATEGORY.view.domSafeShowNewMsgCountInChatBlock( iNchatId, number );
-    //   }
-    // );
   }
 
 

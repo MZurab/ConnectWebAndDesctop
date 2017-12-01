@@ -401,6 +401,7 @@ input,textarea {outline:none;}
 				min-height: 80px;
 				background: white;
 				position: relative;
+   				width: 105%;
 			}
 			.flagUserOnline {
 				border-left: 0.25rem solid rgba(30, 247, 30, 0.5);
