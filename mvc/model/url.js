@@ -27,18 +27,24 @@ define([],function () {
 
 		//@< api > chat
 			const APICHAT 		= {}; API['chat'] = APICHAT;
-			APICHAT['create'] 	= URL['main'] + '/api/chat'; // https://ramman.net/api/chat 					(api > chat > create)
+			APICHAT['create'] 	= URL['main'] + '/api/chat';
 		//@> api > chat
 
       	//@< api > page
 			const APIPAGE 		= {}; API['page'] = APIPAGE;
-			APIPAGE['get'] 		= URL['main'] + '/api/service/page';// https://ramman.net/api/service/page 		(api > page > get)
+			APIPAGE['get'] 		= URL['main'] + '/api/service/page';
 		//@> api > page
 
 		//@< api > user
 			const APIUSER 		= {}; API['user'] = APIUSER;
 			APIUSER['sign']		= URL['main'] + '/api/web/sign';
 		//@> api > user
+
+
+		//@< api > getUrl
+			const APIGETURL 		= {}; API['getUrl'] = APIGETURL;
+			APIGETURL['forChat']	= URL['main'] + '/api/geturl/chat';
+		//@> api > getUrl
 
 	//@> api 
 

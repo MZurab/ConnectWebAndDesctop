@@ -7917,6 +7917,17 @@ define('v_app',['jquery','template7','v_view'],function($,Template7,V_VIEW){
 			} _.sideButtons_addSelectedEffectsByFilter = sideButtons_addSelectedEffectsByFilter;
 		//@> SIDE BUTTONS
 
+		function clear () {
+			// right header
+			$('#menusBlock .topBlockInMenusBlock').html('');
+			// right body
+	        $('#menusBlock .usersBlockContainerInMenusBlock').html('');
+
+			// left header
+	        $('#viewBlock .topBlockInViewBlock').html('');
+			// left body
+	        $('#viewBlock #viewAndChatBlockInViewBlock').html('');
+		} _.clear = clear;
 
 		return _;
   //       return {
@@ -9204,18 +9215,24 @@ define('url',[],function () {
 
 		//@< api > chat
 			const APICHAT 		= {}; API['chat'] = APICHAT;
-			APICHAT['create'] 	= URL['main'] + '/api/chat'; // https://ramman.net/api/chat 					(api > chat > create)
+			APICHAT['create'] 	= URL['main'] + '/api/chat';
 		//@> api > chat
 
       	//@< api > page
 			const APIPAGE 		= {}; API['page'] = APIPAGE;
-			APIPAGE['get'] 		= URL['main'] + '/api/service/page';// https://ramman.net/api/service/page 		(api > page > get)
+			APIPAGE['get'] 		= URL['main'] + '/api/service/page';
 		//@> api > page
 
 		//@< api > user
 			const APIUSER 		= {}; API['user'] = APIUSER;
 			APIUSER['sign']		= URL['main'] + '/api/web/sign';
 		//@> api > user
+
+
+		//@< api > getUrl
+			const APIGETURL 		= {}; API['getUrl'] = APIGETURL;
+			APIGETURL['forChat']	= URL['main'] + '/api/geturl/chat';
+		//@> api > getUrl
 
 	//@> api 
 
@@ -9279,6 +9296,9 @@ define('m_user',['jquery','m_firebase','dictionary','m_view','m_app','url','jque
     	_['saveUserLang'] = saveUserLang;
 	//@@@>>> USER
 	function signOut (inSuccess,iNerror){
+		// clear app
+    	M_APP.view.clear();
+
 		if( getMyId() ) {
 			// invoke global function for deleted note from fb db 
 			M_APP.globalFunctions_invoke('devise_removeNoteFromDatabase');
@@ -9311,8 +9331,12 @@ define('m_user',['jquery','m_firebase','dictionary','m_view','m_app','url','jque
     _['signOut'] = signOut;
 
 	function signIn (token,iNfuntion) {
+    	// clear app
+    	M_APP.view.clear();
+    	
 	    FIREBASE.auth().signInWithCustomToken(token).then( 
 	    (user) => {
+
 	    	// save new user id
 	        M_APP.save('uid', FIREBASE.auth().currentUser.uid );
 	        
@@ -12694,10 +12718,18 @@ define(
 	    /* EXTENCION */
 	});
 
+  	// tagForTracking
+  	// 	templates['tag_forTracking'] = `
+  	// 		<div id='tagId{{tagId}}' class='tagForTracking'></div>
+  	// 	`;
+  	// 	function getTagForTracking () {
+  	// 		let temp 		= Template7.compile(templates['tag_forTracking']);
+			// let domElement 	=  temp(iNdata);
+  	// 	} _.getTagForTracking = getTagForTracking;
 	
 	//@< chief msg container
 		templates['msg_boxForMessage'] = `
-			<div id='msgId{{msgId}}' class="messagesInChatView {{class}} {{#if appearClass}}connect-appear{{/if}} {{#if fromMe}}fromMeMessageInChatView{{/if}}{{#if toMe}}toMeMessageInChatView{{/if}} {{#if note}}noteMessage{{/if}}"  {{#if timeSent}}time-sent="{{timeSent}}"{{/if}}  {{#if timeRead}}time-read="{{timeRead}}"{{/if}} {{#if timeDelivered}}time-delivered="{{timeDelivered}}"{{/if}}  connect_msg="{{msgId}}" connect-appear-scroll-parent='#leftBlockInViewWindow' connect-appear-my-parent='.ChatViewInAppWindow'>
+			<div id='msgId{{msgId}}' class="messagesInChatView {{class}} {{#if hide}}hide{{/if}}{{#if appearClass}}connect-appear{{/if}} {{#if fromMe}}fromMeMessageInChatView{{/if}}{{#if toMe}}toMeMessageInChatView{{/if}} {{#if note}}noteMessage{{/if}}"  {{#if timeSent}}time-sent="{{timeSent}}"{{/if}}  {{#if timeRead}}time-read="{{timeRead}}"{{/if}} {{#if timeDelivered}}time-delivered="{{timeDelivered}}"{{/if}}  connect_msg="{{msgId}}" connect-appear-scroll-parent='#leftBlockInViewWindow' connect-appear-my-parent='.ChatViewInAppWindow'>
 				{{boxContent}}
 			</div>
 		`;
@@ -12857,6 +12889,14 @@ define(
 					_['msg_getDomAttrByNameMessageTimeDelivered'] = msg_getDomAttrByNameMessageTimeDelivered;
 		//@SECTION> common time
 
+
+		function msg_dellHideClassByMsgId (iNmsgId) {
+			var id = '#msgId' + iNmsgId;
+			$(id+'.messagesInChatView').removeClass('hide');
+		} _.msg_dellHideClassByMsgId = msg_dellHideClassByMsgId;
+
+
+
 		function msg_getTemplateByNameBoxForMsg (iNdata) {
     		/*
     			@inputs
@@ -12895,24 +12935,21 @@ define(
 		}
 	    _['msg_getPathToDomForMsg'] = msg_getPathToDomForMsg;
 
-
-		function msg_createMsgByItsType ( iNtype, iNobjectForCreateMessage, iNmyUID, iNchatId ) {
-    		switch(iNtype) {
+	    function msg_getNameOfTypeByType (iNtype) {
+	    	switch(iNtype) {
     			//@< text messages
     			case 1: 	// simpleText 
-					msgSimpleText_createMsg( iNobjectForCreateMessage, iNmyUID, iNchatId );
+					return 'simpleText';
     			break;
     			//@> text messages
 
     			//@< live messages
 	    			case 20: 	// liveAudio 
-						// msgLiveAudio_createMsg( iNobjectForCreateMessage, iNmyUID, iNchatId );
-						msgLiveAudio_safeReplace( iNobjectForCreateMessage, iNmyUID, iNchatId  );
+						return 'liveAudio';
 	    			break;
 
-	    			case 21: 	// liveAudio
-						// msgLiveVideo_createMsg( iNobjectForCreateMessage, iNmyUID, iNchatId );
-						msgLiveVideo_safeReplace( iNobjectForCreateMessage, iNmyUID, iNchatId  );
+	    			case 21: 	// liveVideo
+						return 'liveVideo';
 	    			break;
     			//@> live messages
 
@@ -12922,8 +12959,8 @@ define(
 				//@< documents messages
     			//@< documents messages
     		}
-		}
-	    _['msg_createMsgByItsType'] = msg_createMsgByItsType;
+    		return false;
+	    } _.msg_getNameOfTypeByType = msg_getNameOfTypeByType;
 
 	    function msg_replaceMsgByItsType ( iNtype, iNobjectForCreateMessage, iNmyUID, iNchatId ) {
 	    	console.log('msg_replaceMsgByItsType' , iNtype, iNobjectForCreateMessage, iNmyUID, iNchatId);
@@ -13108,7 +13145,7 @@ define(
 		         <div class="aCpI_msgLiveAudio_controllPlayInAudioMessage" onclick="aCpI_msgLiveAudio_playAudioOnClickBtnPlay(this,event)"></div>
 		         <div class="aCpI_msgLiveAudio_controllPauseInAudioMessage" onclick="aCpI_msgLiveAudio_pauseAudioOnClickBtnPause(this,event)"></div>
 		         <div class="aCpI_msgLiveAudio_hideAudioBlock">
-		            <audio class="audioSrc flagAudioOrVideoElement" onplay="aCpI_msgLiveAudio_onEventPlay(this)" onpause="aCpI_msgLiveAudio_onEventPause(this)" preload="auto" src="{{content}}" onloadeddata="aCpI_msgLiveAudio_onEventLoadedAudio(this)" ontimeupdate="aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl(this)"></audio>
+		            <audio class="audioSrc flagAudioOrVideoElement" onplay="aCpI_msgLiveAudio_onEventPlay(this)" onpause="aCpI_msgLiveAudio_onEventPause(this)" preload="metadata" src="{{url}}" onloadeddata="aCpI_msgLiveAudio_onEventLoadedAudio(this)" ontimeupdate="aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl(this)"></audio>
 		         </div>
 		         <div class="aCpI_msgLiveAudio_timeNowInAudioMessage aCpI_msgLiveAudio_timeInAudioMsg"></div>
 		         <div class="aCpI_msgLiveAudio_timeAllInAudioMessage aCpI_msgLiveAudio_timeInAudioMsg"></div>
@@ -13131,7 +13168,7 @@ define(
 		         <div class="aCpI_msgLiveAudio_controllPlayInAudioMessage" onclick="aCpI_msgLiveAudio_playAudioOnClickBtnPlay(this,event)"></div>
 		         <div class="aCpI_msgLiveAudio_controllPauseInAudioMessage" onclick="aCpI_msgLiveAudio_pauseAudioOnClickBtnPause(this,event)"></div>
 		         <div class="aCpI_msgLiveAudio_hideAudioBlock">
-		            <audio class="audioSrc flagAudioOrVideoElement" onplay="aCpI_msgLiveAudio_onEventPlay(this)" onpause="aCpI_msgLiveAudio_onEventPause(this)" preload="auto" src="{{content}}" onloadeddata="aCpI_msgLiveAudio_onEventLoadedAudio(this)" ontimeupdate="aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl(this)"></audio>
+		            <audio class="audioSrc flagAudioOrVideoElement" onplay="aCpI_msgLiveAudio_onEventPlay(this)" onpause="aCpI_msgLiveAudio_onEventPause(this)" preload="metadata" src="{{url}}" onloadeddata="aCpI_msgLiveAudio_onEventLoadedAudio(this)" ontimeupdate="aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl(this)"></audio>
 		         </div>
 		         <div class="aCpI_msgLiveAudio_timeNowInAudioMessage aCpI_msgLiveAudio_timeInAudioMsg"></div>
 		         <div class="aCpI_msgLiveAudio_timeAllInAudioMessage aCpI_msgLiveAudio_timeInAudioMsg"></div>
@@ -13141,6 +13178,10 @@ define(
 
 		function  msgLiveAudio_createMsg ( iNdata, iNmyUid, iNchatId ) {
 	        var iNneedView = msg_getPathToDomForChat(iNchatId);
+
+	        // add hide class if we has no url
+	        if(iNdata['url'])iNdata['hide'] = 1;
+
 	        $( iNneedView ).append( msgLiveAudio_getMsg ( iNdata, iNmyUid ) );
 		}
 	    _['msgLiveAudio_createMsg'] = msgLiveAudio_createMsg;
@@ -13219,17 +13260,35 @@ define(
 		    _['msgLiveAudio_safeReplace'] = msgLiveAudio_safeReplace;
 		    
 			    function msgLiveAudio_replace ( iNdata, iNmyUid, iNchatId ) {
+			    	/*
+			    		если нет src то не видимый
+
+			    		первый раз мы добавляем без url - мы должны скрыть
+			    		потом при добавление url мы показываем
+			    	*/
 		        	// update common time
 		        	msg_updateDomCommonTimeBlock (iNchatId,iNdata['msgId'],iNdata);
 
-		        	// update content NOT NEED -> we never change src 
-		        	// msgLiveAudio_updateContent (iNchatId, iNdata, iNmyUid);
+		        	if ( iNdata['url'] ) {
+		        		//if we has url we show 
+		        		msg_dellHideClassByMsgId(iNdata['msgId'])
+
+		        		//if we have not url => we add
+		        		if ( !msgLiveAudio_getUrl(iNchatId, iNdata['msgId']) ) {
+		        			msgLiveAudio_setUrl(iNchatId, iNdata['msgId'], iNdata['url'] );
+		        		}
+		        	}
 				}
 			    _['msgLiveAudio_replace'] = msgLiveAudio_replace;
 
-			    	function msgLiveAudio_getUrl (iNchatId, iNmsgId) {
+			    	function msgLiveAudio_getUrl ( iNchatId, iNmsgId ) {
 			        	var fullPath = msg_getPathToDomForMsg(iNchatId, iNmsgId);
 			        	return $(fullPath + ' audio').attr('src');
+			    	}
+
+			    	function msgLiveAudio_setUrl ( iNchatId, iNmsgId, iNurl ) {
+			        	var fullPath = msg_getPathToDomForMsg(iNchatId, iNmsgId);
+			        	return $(fullPath + ' audio').attr('src',iNurl);
 			    	}
 
 
@@ -13314,7 +13373,7 @@ define(
 		      	 <div class='aCpI_msgLiveVideo_msgNowVideoTime'></div>
 		         <div class="aCpI_msgLiveVideo_backgroundPlayVideoOnHover aCpI_msgLiveVideo_backgroundVideoOnHover" onclick='aCpI_msgLiveVideo_onEventClickForBackground(this)'></div>
 		         <!-- <div class="aCpI_msgLiveVideo_backgroundPauseVideoOnHover aCpI_msgLiveVideo_backgroundVideoOnHover"></div> -->
-		         <video ontimeupdate='aCpI_msgLiveVideo_onEventTimeUpdateVideo(this)' onloadeddata='aCpI_msgLiveVideo_onEventLoadedDataVideo(this)' onplay='aCpI_msgLiveVideo_onEventPlayVideo(this)' onpause='aCpI_msgLiveVideo_onEventPauseVideo(this)' src="{{content}}" class="liveVideoSrc"></video>
+		         <video preload="metadata" ontimeupdate='aCpI_msgLiveVideo_onEventTimeUpdateVideo(this)' onloadeddata='aCpI_msgLiveVideo_onEventLoadedDataVideo(this)' onplay='aCpI_msgLiveVideo_onEventPlayVideo(this)' onpause='aCpI_msgLiveVideo_onEventPauseVideo(this)' src="{{url}}" class="liveVideoSrc"></video>
 		      </div>
 		   </div>
 		`;
@@ -13328,13 +13387,17 @@ define(
 		      	 <div class='aCpI_msgLiveVideo_msgNowVideoTime'></div>
 		         <div class="aCpI_msgLiveVideo_backgroundPlayVideoOnHover aCpI_msgLiveVideo_backgroundVideoOnHover" onclick='aCpI_msgLiveVideo_onEventClickForBackground(this)'></div>
 		         <!-- <div class="aCpI_msgLiveVideo_backgroundPauseVideoOnHover aCpI_msgLiveVideo_backgroundVideoOnHover"></div> -->
-		         <video ontimeupdate='aCpI_msgLiveVideo_onEventTimeUpdateVideo(this)' onloadeddata='aCpI_msgLiveVideo_onEventLoadedDataVideo(this)' onplay='aCpI_msgLiveVideo_onEventPlayVideo(this)' onpause='aCpI_msgLiveVideo_onEventPauseVideo(this)' src="{{content}}" class="liveVideoSrc"></video>
+		         <video preload="metadata" ontimeupdate='aCpI_msgLiveVideo_onEventTimeUpdateVideo(this)' onloadeddata='aCpI_msgLiveVideo_onEventLoadedDataVideo(this)' onplay='aCpI_msgLiveVideo_onEventPlayVideo(this)' onpause='aCpI_msgLiveVideo_onEventPauseVideo(this)' src="{{url}}" class="liveVideoSrc"></video>
 		      </div>
 		   </div>
 		`;
 
 		function  msgLiveVideo_createMsg ( iNdata, iNmyUid, iNchatId ) {
-	        var iNneedView = msg_getPathToDomForChat(iNchatId);//"#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
+	        var iNneedView = msg_getPathToDomForChat(iNchatId);
+
+	        // add hide class if we has no url
+	        if(iNdata['url'])iNdata['hide'] = 1;
+
 	        $( iNneedView ).append( msgLiveVideo_getMsg ( iNdata, iNmyUid ) );
 		}
 	    _['msgLiveVideo_createMsg'] = msgLiveVideo_createMsg;
@@ -13401,8 +13464,6 @@ define(
 
     		function msgLiveVideo_safeReplace ( iNdata, iNmyUid, iNchatId ) {
 		        var thisIssetLength = msg_getLength(iNdata, iNchatId);
-		        console.log('msgLiveVideo_safeReplace thisIssetLength',thisIssetLength);
-		        console.log('msgLiveVideo_safeReplace iNdata, iNmyUid, iNchatId',iNdata, iNmyUid, iNchatId);
 		        if (thisIssetLength > 0) {
 		        	// create message
 		        	msgLiveVideo_replace ( iNdata, iNmyUid, iNchatId );
@@ -13414,7 +13475,20 @@ define(
 		    
 			    function msgLiveVideo_replace ( iNdata, iNmyUid, iNchatId ) {
 		        	// update common time
-		        	msg_updateDomCommonTimeBlock (iNchatId,iNdata['msgId'],iNdata);
+		        	msg_updateDomCommonTimeBlock (iNchatId, iNdata['msgId'], iNdata);
+
+
+					console.log("msgLiveVideo_replace - iNdata['url']", iNdata['url'] );
+		        	if ( iNdata['url'] ) {
+						//if we has url we show 
+						msg_dellHideClassByMsgId(iNdata['msgId'])
+
+						//if we have not url => we add
+						console.log("msgLiveVideo_replace - msgLiveVideo_getUrl(iNchatId, iNdata['msgId'])",msgLiveVideo_getUrl(iNchatId, iNdata['msgId']));
+						if ( !msgLiveVideo_getUrl(iNchatId, iNdata['msgId']) ) {
+							msgLiveVideo_setUrl(iNchatId, iNdata['msgId'], iNdata['url'] );
+						}
+					}
 
 		        	// update content NOT NEED -> we never change src of video el
 		        	// msgLivVideo_updateContent (iNchatId, iNdata, iNmyUid);
@@ -13425,6 +13499,10 @@ define(
 			        	var fullPath = msg_getPathToDomForMsg(iNchatId, iNmsgId);
 			        	return $(fullPath + ' video').attr('src');
 			    	}
+			    	function msgLiveVideo_setUrl (iNchatId, iNmsgId, iNurl) {
+						var fullPath = msg_getPathToDomForMsg(iNchatId, iNmsgId);
+						return $(fullPath + ' video').attr('src',iNurl);
+					}
 
 
 		    function msgLiveVideo_showUploadBlock (iNchatId,iNmsgId) {
@@ -14431,8 +14509,7 @@ define(
 		    			
 		    		},500);
 		    	}
-			}
-			window.aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl = aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl;
+			} window.aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl = aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl;
 
 		  	function aCpI_msgLiveAudio_playAudioOnClickBtnPlay (iNobject,iNevent) {
 		  		/*
@@ -14452,8 +14529,7 @@ define(
 		  		var thisAudioEl = thisPlayBtn.nextAll('.aCpI_msgLiveAudio_hideAudioBlock').children('audio').get(0);
 
 		  		thisAudioEl.play();
-		  	}
-			window.aCpI_msgLiveAudio_playAudioOnClickBtnPlay = aCpI_msgLiveAudio_playAudioOnClickBtnPlay;
+		  	} window.aCpI_msgLiveAudio_playAudioOnClickBtnPlay = aCpI_msgLiveAudio_playAudioOnClickBtnPlay;
 
 					
 
@@ -14468,8 +14544,7 @@ define(
 				  		$(iNthis)
 				  			.addClass('flagForSearchPlayingAudioOrVideo')
 				  			.addClass('flagForSearchPlayingLiveAudio');
-					}
-					_['msgLiveAudio_addPlayingFlags'] = aCpI_msgLiveAudio_addPlayingFlags;
+					} _['msgLiveAudio_addPlayingFlags'] = aCpI_msgLiveAudio_addPlayingFlags;
 
 		  	function aCpI_msgLiveAudio_pauseAudioOnClickBtnPause (iNobject,iNevent) {
 		  		/*
@@ -14489,8 +14564,7 @@ define(
 		  		var thisAudio = thisPauseBtn.nextAll('.aCpI_msgLiveAudio_hideAudioBlock').children('audio').get(0);
 
 		  		thisAudio.pause();
-		  	}
-			window.aCpI_msgLiveAudio_pauseAudioOnClickBtnPause = aCpI_msgLiveAudio_pauseAudioOnClickBtnPause;
+		  	} window.aCpI_msgLiveAudio_pauseAudioOnClickBtnPause = aCpI_msgLiveAudio_pauseAudioOnClickBtnPause;
 				
 				function aCpI_msgLiveAudio_onEventPause (iNobject) {
 					// del flag
@@ -14498,9 +14572,9 @@ define(
 
 						var parent = $(iNobject).closest('.aCpI_msgLiveAudio_blockInAudioMsg');
 					aCpI_msgLiveAudio_smartViewBtnPlayAudio(parent)
-				}
-				window.aCpI_msgLiveAudio_onEventPause = aCpI_msgLiveAudio_onEventPause;
-						function aCpI_msgLiveAudio_delPlayingFlags (iNthis) {
+				} window.aCpI_msgLiveAudio_onEventPause = aCpI_msgLiveAudio_onEventPause;
+
+					function aCpI_msgLiveAudio_delPlayingFlags (iNthis) {
 						/*
 				  			@discr
 				  				delete flag by removeClass 'flagForSearchPlayingAudioOrVideo' && 'flagForSearchPlayingLiveAudio'
@@ -14559,8 +14633,7 @@ define(
 		  					iNthis -> object (this)
 		  		*/
 		  		$(iNthis).children('.aCpI_msgLiveVideo_backgroundVideoOnHover').show();
-			}
-			window.aCpI_msgLiveVideo_onEventMouseEnter = aCpI_msgLiveVideo_onEventMouseEnter;	
+			} window.aCpI_msgLiveVideo_onEventMouseEnter = aCpI_msgLiveVideo_onEventMouseEnter;	
 
 			function aCpI_msgLiveVideo_onEventMouseLeave (iNthis) {
 				/*
@@ -14571,8 +14644,7 @@ define(
 		  					iNthis -> object (this)
 		  		*/
 		  		$(iNthis).children('.aCpI_msgLiveVideo_backgroundVideoOnHover').hide();
-			}
-			window.aCpI_msgLiveVideo_onEventMouseLeave = aCpI_msgLiveVideo_onEventMouseLeave;	
+			} window.aCpI_msgLiveVideo_onEventMouseLeave = aCpI_msgLiveVideo_onEventMouseLeave;	
 
 			
 
@@ -14588,8 +14660,7 @@ define(
 			  		$(iNthis)
 			  			.addClass('flagForSearchPlayingAudioOrVideo')
 			  			.addClass('flagForSearchPlayingLiveVideo');
-				}
-				_['msgLiveVideo_addPlayingFlags'] = msgLiveVideo_addPlayingFlags;
+				} _['msgLiveVideo_addPlayingFlags'] = msgLiveVideo_addPlayingFlags;
 
 			function aCpI_msgLiveVideo_onEventPauseVideo (iNthis) {
 				/*
@@ -14608,8 +14679,7 @@ define(
 
 		  		// dell flag by removeClass 'flagForSearchPlayingAudioOrVideo' && 'flagForSearchPlayingLiveVideo'
 		  		aCpI_msgLiveVideo_delPlayingFlags(iNthis);
-			}
-			window.aCpI_msgLiveVideo_onEventPauseVideo = aCpI_msgLiveVideo_onEventPauseVideo;	
+			} window.aCpI_msgLiveVideo_onEventPauseVideo = aCpI_msgLiveVideo_onEventPauseVideo;	
 
 				function aCpI_msgLiveVideo_delPlayingFlags (iNthis) {
 					/*
@@ -14623,6 +14693,7 @@ define(
 			  			.removeClass('flagForSearchPlayingAudioOrVideo')
 			  			.removeClass('flagForSearchPlayingLiveVideo');
 				}
+
 			function aCpI_msgLiveVideo_onEventLoadedDataVideo (iNthis) {
 				/*
 		  			@discr
@@ -14632,8 +14703,7 @@ define(
 		  					iNthis -> object (this)
 		  		*/
 		  		let loadingEl = $(iNthis).closest('.aCpI_msgLiveVideo_videoMsgContent').find('.aCpI_msgLiveVideo_viewWhenLoadingVideoLiveMsg').hide();
-			}
-			window.aCpI_msgLiveVideo_onEventLoadedDataVideo = aCpI_msgLiveVideo_onEventLoadedDataVideo;	
+			} window.aCpI_msgLiveVideo_onEventLoadedDataVideo = aCpI_msgLiveVideo_onEventLoadedDataVideo;	
 
 			function aCpI_msgLiveVideo_onEventTimeUpdateVideo (iNthis) {
 				/*
@@ -14648,8 +14718,7 @@ define(
 		  		var currentTime 	= (iNthis.currentTime * 1000) || 0;
 		  		var textCurrentTime = moment(currentTime).format('mm:ss');
 		  		let parent = $(iNthis).closest('.aCpI_msgLiveVideo_videoMsgContent').find('.aCpI_msgLiveVideo_msgNowVideoTime').html(textCurrentTime);
-			}
-			window.aCpI_msgLiveVideo_onEventTimeUpdateVideo = aCpI_msgLiveVideo_onEventTimeUpdateVideo;	
+			} window.aCpI_msgLiveVideo_onEventTimeUpdateVideo = aCpI_msgLiveVideo_onEventTimeUpdateVideo;	
 
 
 			function aCpI_msgLiveVideo_onEventClickForBackground (iNthis) {
@@ -14670,22 +14739,9 @@ define(
 		  			videoEl.play()
 
 		  		}
-			}
-			window.aCpI_msgLiveVideo_onEventClickForBackground = aCpI_msgLiveVideo_onEventClickForBackground;	
+			} window.aCpI_msgLiveVideo_onEventClickForBackground = aCpI_msgLiveVideo_onEventClickForBackground;	
 
 		//@> codeKey = appChatPageIndex - aCpI 'videoLiveMsg'
-
-
-
-
-
-	///
-	///
-
-
-
-
-
 
 	return _;
 
@@ -15121,7 +15177,7 @@ define(
 	  	{{/each}}
     `;
     templates['UserList'] = `
-		<div class="mix usersBlockInMenusBlock {{appsForFilter}} {{class}}" connect_uid="{{userId}}" {{if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" data-sortable="1" data-position-of-chat='{{chatPosition}}' connect_userType='{{userType}}' connect_chatType='{{chatType}}' connect_userLogin='{{login}}'>
+		<div class="mix usersBlockInMenusBlock {{appsForFilter}} {{class}}" connect_uid="{{userId}}" {{#if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" data-sortable="1" data-position-of-chat='{{chatPosition}}' connect_userType='{{userType}}' connect_chatType='{{chatType}}' connect_userLogin='{{login}}'>
 			<div class='chatDataInUsersBlock'>
 				<div class="iconBlockInUserBlock">
 			      <div class="iconInUserBlock">
@@ -16734,6 +16790,17 @@ define('m_storage',['m_firebase'],function( FIREBASE ) {
 
 	// set firebase framework
     const STORAGE = FIREBASE.storage().ref();
+
+    function getDownloadURL (iNpatch, iNfunction) {
+    	STORAGE.child(iNpatch).getDownloadURL().then(function(url) {
+		  // `url` is the download URL for 'images/stars.jpg'
+		  iNfunction(null,url);
+		 
+		}).catch(function(error) {
+		  // Handle any errors
+		  iNfunction(error,null);
+		});
+    } _.getDownloadURL = getDownloadURL;
 
 	function upload ( iNdata , iNfunctions) { 
 		/*
@@ -21139,8 +21206,8 @@ _['printObject'] = printObject;
 return _;
 });
 define(
-    'm_message',['jquery', 'v_message', 'm_moment', 'm_user', 'm_app', 'm_category', 'm_storage', 'm_record', 'm_progressbar', 'm_database', 'log'],
-    function($, VIEW, MOMENT, USER, M_APP, M_CATEGORY, M_STORAGE, M_RECORD, M_PROGRESSBAR, M_DATABASE, LOG) {
+    'm_message',['jquery', 'v_message', 'm_moment', 'm_user', 'm_app', 'm_category', 'm_storage', 'm_record', 'm_progressbar', 'm_database', 'log', 'url'],
+    function($, VIEW, MOMENT, USER, M_APP, M_CATEGORY, M_STORAGE, M_RECORD, M_PROGRESSBAR, M_DATABASE, LOG, M_URL) {
         const _ = {
             'view': VIEW
         };
@@ -21155,11 +21222,6 @@ define(
         function annihilateNewMsgCounterFDB(iNchatId) {
             var chatId = iNchatId; //msg_getCurrentChatId();
             var myUID = USER.getMyId();
-            // var baseKey = 'chats/' + chatId + '/member/' + myUID + '/newMsg';
-            // var updateArray = {};
-            // updateArray[baseKey] = 0;
-            // FIREBASE.database().ref().update(updateArray);
-
             let collection = 'chats',
                 pathToDb =  chatId + '/member/' + myUID + '/newMsg';
             M_DATABASE.addRealtimeDb ( collection, pathToDb, 0 )
@@ -21236,7 +21298,7 @@ define(
         }
         _['synchronizeWithMessageDb'] = synchronizeWithMessageDb;
 
-        function getMessagesFromDb(iNchatId, iNtype, iNobject) {
+        function getMessagesFromDb (iNchatId, iNtype, iNobject) {
             /*
                     @inputs
                         @required
@@ -21251,27 +21313,8 @@ define(
                 */
 
             if (typeof iNobject != 'object') iNobject = {};
-
-            // var messagesRef = FIREBASE.database().ref('messages/' + iNchatId);
-            // messagesRef.orderByChild("time").limitToLast(40).on(iNtype, (messagesData) => {
-            //     callbackAddOrChangeMessageForDb(messagesData, iNchatId, iNtype, iNobject);
-            // });
-
-            // M_DATABASE.getDataFromRealtimeDb ('messages', iNchatId, 
-            //     {
-            //         'order' : 'time',
-            //         limitToLast : 40,
-            //         type : iNtype,
-            //         functionOnSuccess : (messagesData) => {
-            //             callbackAddOrChangeMessageForDb(messagesData, iNchatId, iNtype, iNobject);
-            //         }
-            //     }
-            // )
             LOG.on();
 
-            // var iKey = 'member.769b72df-6e67-465c-9334-b1a8bfb95a1a2.status';
-            // var whereEquilTo = {};
-            //     whereEquilTo[iKey] = 1;
             var iNobject = {
                 'limitToFirst' : 40,
                 'functionOnAdd':    (messagesData) => {
@@ -21296,7 +21339,7 @@ define(
                     );
 
 
-                }//(d) => { console.log('getRealtimeDataFromFirestoreDb functionOnAdd',d); },
+                }
             };
 
             M_DATABASE.getRealtimeDataFromFirestoreDb('chats', iNchatId +'/messages' , iNobject);
@@ -21304,17 +21347,17 @@ define(
 
         function callbackAddOrChangeMessageForDb(iNdataFromFB, iNchatId, iNtype, iNobject) {
             /*
-                        @inputs
-                            @required
-                                iNdataFromFB (result from firebase db)
-                                iNchatId -> string
-                                iNtype -> string 
-                                    child_changed || child_added
-                                iNobject -> object
-                                    @optional
-                                        functionOnChildChanged
-                                        functionOnChildAdded
-                    */
+                @inputs
+                    @required
+                        iNdataFromFB (result from firebase db)
+                        iNchatId -> string
+                        iNtype -> string 
+                            child_changed || child_added
+                        iNobject -> object
+                            @optional
+                                functionOnChildChanged
+                                functionOnChildAdded
+            */
 
 
             var messagesData = iNdataFromFB;
@@ -21353,8 +21396,10 @@ define(
                 msgSimpleText_safeCreateCenterMessageByPassedTime(objectForCreateMessage, fullData, iNchatId, myUID);
 
 
+                // create message
+                msg_createMsgByItsType ( msgType, fullData, iNchatId, objectForCreateMessage['msgId'] );
 
-                VIEW.msg_createMsgByItsType(msgType, objectForCreateMessage, myUID, iNchatId)
+                // VIEW.msg_createMsgByItsType(msgType, objectForCreateMessage, myUID, iNchatId)
                 // VIEW.msgSimpleText_createMsg ( objectForCreateMessage, myUID, iNchatId );
 
                 VIEW.effChatViewScrollToBotWithTimeOut(
@@ -21370,11 +21415,57 @@ define(
                 );
 
                 msg_setObserverForAppearMessageInVisualScrollByChatId(iNchatId,msgType);
-            }
-            // ser observer for income non read message to me
+            } // ser observer for income non read message to me
         }
 
-        function msg_setObserverForAppearMessageInVisualScrollByChatId(iNchatId,iNMsgType) {
+        function msg_createMsgByItsType (msgType, iNmsgObject, iNchatId, iNmsgId ) {
+            // body...
+            console.log('msg_createMsgByItsType - msgType, iNmsgObject, iNchatId, iNmsgId',msgType, iNmsgObject, iNchatId, iNmsgId);
+            var myUID = USER.getMyId();
+            switch (msgType) {
+                //@< text messages
+                case 1:     // simpleText 
+                    msgType = VIEW.msg_getNameOfTypeByType(1);
+                    VIEW.msgSimpleText_createMsg( iNmsgObject['info'], myUID, iNchatId );
+                break;
+                //@> text messages
+
+                //@< live messages
+                    case 20:    // liveAudio 
+                        msgType = VIEW.msg_getNameOfTypeByType(20);
+                        // msgLiveAudio_createMsg( iNobjectForCreateMessage, myUID, iNchatId );
+                        if (iNmsgObject['uid'] == myUID) {
+                            // if msg from me
+                            msgLiveAudio_createFromMe (iNchatId, iNmsgId,  iNmsgObject )
+                        } else {
+                            // if msg to me
+                            msgLiveAudio_createToMe  (iNchatId, iNmsgId,  iNmsgObject );
+                        }
+                    break;
+
+                    case 21:    // liveVideo
+                        msgType = VIEW.msg_getNameOfTypeByType(21);
+                        // msgLiveVideo_createMsg( iNobjectForCreateMessage, myUID, iNchatId );
+                        // VIEW.msgLiveVideo_safeReplace( iNmsgObject['info'], myUID, iNchatId  );
+                        if (iNmsgObject['uid'] == myUID) {
+                            // if msg from me
+                            msgLiveVideo_createFromMe (iNchatId, iNmsgId,  iNmsgObject )
+                        } else {
+                            // if msg to me
+                            msgLiveVideo_createToMe  (iNchatId, iNmsgId,  iNmsgObject );
+                        }
+                    break;
+                //@> live messages
+
+                //@< file messages
+                //@< file messages
+
+                //@< documents messages
+                //@< documents messages
+            }
+        }
+
+        function msg_setObserverForAppearMessageInVisualScrollByChatId(iNchatId, iNMsgType) {
             /*
                 @discr
                     set read state when some messages watch in for user
@@ -21413,6 +21504,93 @@ define(
 
         }
 
+        function msgLiveAudio_createFromMe (iNchatId, iNmsgId,  iNmsgObject ) {
+            /*
+                @discr
+                    create liveAudio (from me) message with get M_URL 
+                @inputs
+                    @required
+                        iNchatId    -> string
+                        iNmsgId     -> string
+                        iNmsgObject -> object
+            */
+            var msgType     = VIEW.msg_getNameOfTypeByType(iNmsgObject.type),
+                thisUserId  = iNmsgObject.uid,
+                src         = iNmsgObject.info.src,
+                myUID       = USER.getMyId(),
+                path = `chats/${iNchatId}/${thisUserId}/${msgType}/${iNmsgId}/${src}`,
+                msgForCreateObject  = iNmsgObject['info'];
+
+                // create msg live auio for fix position
+                VIEW.msgLiveAudio_safeReplace( msgForCreateObject, myUID, iNchatId  );
+
+            console.log( 'msgLiveAudio_createFromMe - iNchatId, iNmsgId,  iNmsgObject',iNchatId, iNmsgId,  iNmsgObject );
+            console.log( 'msgLiveAudio_createFromMe - myUID, src,  thisUserId', myUID, src,  thisUserId );
+            console.log( 'msgLiveAudio_createFromMe - msgType, path', msgType, path );
+            M_STORAGE.getDownloadURL (path, 
+                (errUrl, dataUrl) => {
+                    console.log( 'msgLiveAudio_createFromMe - dataUrl', dataUrl );
+                    console.log( 'msgLiveAudio_createFromMe - errUrl', errUrl );
+                    if (errUrl) {
+                        // ERROR we can not get url
+
+                        return;
+                    }
+                    var url                 = dataUrl;
+
+                    msgForCreateObject['url'] = url;
+                    // create msg live auio
+                    VIEW.msgLiveAudio_safeReplace( msgForCreateObject, myUID, iNchatId  );
+
+                }
+            );
+        } _.msgLiveAudio_createFromMe = msgLiveAudio_createFromMe;
+
+        function msgLiveAudio_createToMe (iNchatId, iNmsgId,  iNmsgObject) {
+            /*
+                @discr
+                    create liveAudio (to me) message with get M_URL 
+                @inputs
+                    @required
+                        iNchatId    -> string
+                        iNmsgId     -> string
+                        iNmsgObject -> object
+            */
+            var myUID               = USER.getMyId(),
+                path                = M_URL.db.api.getUrl.forChat,
+                msgForCreateObject  = iNmsgObject['info'];
+
+            // create msg live auio for fix position
+            VIEW.msgLiveAudio_safeReplace( msgForCreateObject, myUID, iNchatId  );
+
+            console.log( 'msgLiveAudio_createToMe   - path'     , path  );
+            console.log( 'msgLiveAudio_createToMe   - myUID'    , myUID );
+            console.log( 'msgLiveAudio_createToMe   - iNmsgObject'     , iNmsgObject  );
+            $.getJSON (
+                path,
+                {
+                    'token'     : USER.getMyToken(),
+                    'chatId'    : iNchatId,
+                    'msgId'     : iNmsgId,
+                    'uid'       : myUID,
+                },
+                (dataFromServer) => {
+                    console.log( 'msgLiveAudio_createToMe - dataFromServer', dataFromServer );
+                    if(typeof dataFromServer != 'object' || dataFromServer.status != 1) {
+                        // ERROR we can not get M_URL
+                        return;
+                    }
+                    var url = dataFromServer.link;
+                    console.log( 'msgLiveAudio_createToMe - url', url );
+                    console.log( 'msgLiveAudio_createToMe - msgForCreateObject', msgForCreateObject );
+                    //attach this url to this object    
+                    msgForCreateObject['url'] = url;
+                    // create msg live auio
+                    VIEW.msgLiveAudio_safeReplace( msgForCreateObject, myUID, iNchatId  );
+
+                } 
+            );
+        } _.msgLiveAudio_createToMe = msgLiveAudio_createToMe;
 
         function msgLiveAudio_safeSetReadState () {
             var msgSelectorText = msg_getPathToDomForMsg (  iNchatId, iNmsgId );
@@ -21447,12 +21625,20 @@ define(
             }
         }
 
-        function getTimeForToMeMessages(iNobject, iNfullBlock, iNchatId, iNmyUid) {
+        function getTimeForToMeMessages ( iNobject, iNfullBlock, iNchatId, iNmyUid ) {
+            /*
+                @inputs
+                    @required
+                        iNobject    -> object
+                        iNfullBlock -> object
+                        iNchatId    -> string
+                        iNmyUid     -> string
+            */
             //get status by timestamp read,delivered,sent
             var myState = msgFromMe_getTimesOfState(iNfullBlock, iNmyUid);
-            console.log('getTimeForToMeMessages myState',myState);
-            console.log('getTimeForToMeMessages iNfullBlock',iNfullBlock);
-            console.log('getTimeForToMeMessages iNmyUid',iNmyUid);
+            console.log ( 'getTimeForToMeMessages myState',       myState     );
+            console.log ( 'getTimeForToMeMessages iNfullBlock',   iNfullBlock );
+            console.log ( 'getTimeForToMeMessages iNmyUid',       iNmyUid     );
             if ( typeof myState == 'object' ) {
                 var states = myState;
                 console.log('timestamp states',states);
@@ -21564,11 +21750,6 @@ define(
                 'type'  : iNdata['type']
             }
 
-            var baseKey = 'chats/' + chatId + '/info/live';
-            // let collection = 'chats',
-            //     pathToDb = chatId + '/info/live';
-            // M_DATABASE.addRealtimeDb ( collection, pathToDb, objForSendToDb )
-
             let objForSafeUpdate = {
                 'info' : {
                     'live' : objForSendToDb
@@ -21642,19 +21823,16 @@ define(
                     var dataForCheck, dateForAddLength, dataForUpdate;
                     const firestoreDb       = M_DATABASE.getFirestoreDb();
                     const firestoreBatch    = M_DATABASE.getBatchFirestoreDb (firestoreDb );
-
-                    console.log('<------------------------START---------------------------->');
-                    console.log('msg_stateSendToDb prepare for batch',window['connecVar_storageForMsgState']);
                     
                     for (var chatId in connecVar_storageForMsgState) {
                         try {
                             // for check for prepare operations
-                            dataForCheck = window['connecVar_storageForMsgState'][iNchatId][iNmsgId]['member'][iNmyUid]['state'];
+                            dataForCheck        = window['connecVar_storageForMsgState'][iNchatId][iNmsgId]['member'][iNmyUid]['state'];
                             // for add to Queue
-                            dataForUpdate = window['connecVar_storageForMsgState'][iNchatId][iNmsgId];
+                            dataForUpdate       = window['connecVar_storageForMsgState'][iNchatId][iNmsgId];
                             // get length for last check for update to msg in db
-                            dateForAddLength = Object.keys(dataForCheck).length;
-                            if(dateForAddLength > 0) {
+                            dateForAddLength    = Object.keys(dataForCheck).length;
+                            if ( dateForAddLength > 0 ) {
 
                                 console.log('add to batch', 'chats', iNchatId + '/messages/' + iNmsgId, dataForUpdate);
                                 // add to queqe
@@ -21673,10 +21851,6 @@ define(
                             'onSuccess' : () => { console.log('msg_stateSendToDb added to db',window['connecVar_storageForMsgState']); window['connecVar_storageForMsgState'] = {}; }
                         }
                     );
-
-                    //clear for add
-
-                    console.log('<------------------------END---------------------------->');
                 }, 250
             );
 
@@ -21713,7 +21887,7 @@ define(
             msg_stateAddToQueue ('delivered',myUID , iNchatId, iNmsgId);
         }
 
-        function msg_addToDb(iNdata, iNchatId, iNmsgId) {
+        function msg_addToDb (iNdata, iNchatId, iNmsgId) {
             /*
         @discr
             send msg to firebase realtime db
@@ -21723,6 +21897,7 @@ define(
                     @required
                         content
                     @optional
+                        src
                         block
                         fire
                         group
@@ -21736,24 +21911,20 @@ define(
       */
             //default message type
             iNdata.type = iNdata.type || 1;
+
+
             // get my user id
             let myUid = USER.getMyId();//FIREBASE.auth().currentUser.uid;
             // get right object for add to msg db
             let objForSentToDb = prepareObjectForSentToMsgBase(iNdata, myUid);
 
-            let collection = 'messages';
+            let collection  = 'messages', pathToDb, msgId;
 
-            let msgId = iNmsgId || msg_generateMsgIdByChatId(iNchatId); //   FIREBASE.database().ref().child('messages/'+iNchatId).push().key;
+                msgId       = iNmsgId || msg_generateMsgIdByChatId(iNchatId);
+                collection  = 'chats';
 
-            let pathToDb = iNchatId + '/' + msgId;
-            // M_DATABASE.addRealtimeDb(collection, pathToDb, objForSentToDb);
-
-
-
-
-            collection = 'chats';
             pathToDb = iNchatId + '/messages/' + msgId;
-            M_DATABASE.addFirestoreDb(collection, pathToDb, objForSentToDb);
+            M_DATABASE.addFirestoreDb ( collection, pathToDb, objForSentToDb );
 
 
         }
@@ -21776,6 +21947,7 @@ define(
                         @required
                             content
                         @optional
+                            src
                             block
                             fire
                             group
@@ -21800,6 +21972,10 @@ define(
             };
 
             if (typeof(iNdata.type) != 'undefined') objForSentToDb['info']['type'] = iNdata.type; // default text key
+            if (typeof(iNdata.src) == 'string') objForSentToDb['info']['src'] = iNdata.src; // source for messages with files
+
+
+
             if (typeof(iNdata.block) == 'undefined') objForSentToDb['info']['options']['base']['block'] = 0; // default block disable
             if (typeof(iNdata.fire) == 'undefined') objForSentToDb['info']['options']['base']['fire'] = 0; // default fire disable
             if (typeof(iNdata.group) == 'undefined') objForSentToDb['info']['options']['base']['group'] = 0; // default group dissable
@@ -21810,7 +21986,7 @@ define(
             return objForSentToDb;
         }
 
-        function updateChatLastMsgObject(iNobject, iNchatId) {
+        function updateChatLastMsgObject (iNobject, iNchatId) {
             /*
                 @discr
                     update last msg block in chat db for show in list menus for all users 
@@ -21838,7 +22014,7 @@ define(
             return M_DATABASE.addRealtimeDb ( collection, pathToDb, lastMessage );
         }
 
-        function msgSimpleText_createCenterDateText(iNchatId, iNtime) {
+        function msgSimpleText_createCenterDateText (iNchatId, iNtime) {
             var lastMsgTimeText = getLastMsgTimeByChatId(iNchatId);
             var lastMsgTime = parseInt(lastMsgTimeText);
             var isThisDay = MOMENT().isThisDay(iNtime);
@@ -21890,6 +22066,93 @@ define(
     //
 
     //@<SECTION 'msg live video' type = 21
+        function msgLiveVideo_createFromMe (iNchatId, iNmsgId,  iNmsgObject ) {
+            /*
+                @discr
+                    create liveAudio (from me) message with get M_URL 
+                @inputs
+                    @required
+                        iNchatId    -> string
+                        iNmsgId     -> string
+                        iNmsgObject -> object
+            */
+            var msgType             = VIEW.msg_getNameOfTypeByType(iNmsgObject.type),
+                thisUserId          = iNmsgObject.uid,
+                src                 = iNmsgObject.info.src,
+                myUID               = USER.getMyId(),
+                path                = `chats/${iNchatId}/${thisUserId}/${msgType}/${iNmsgId}/${src}`,
+                msgForCreateObject  = iNmsgObject['info'];
+
+            // create msg live auio for fix position
+                VIEW.msgLiveVideo_safeReplace( msgForCreateObject, myUID, iNchatId  );
+
+            console.log( 'msgLiveVideo_createFromMe - iNchatId, iNmsgId,  iNmsgObject',iNchatId, iNmsgId,  iNmsgObject );
+            console.log( 'msgLiveVideo_createFromMe - myUID, src,  thisUserId', myUID, src,  thisUserId );
+            console.log( 'msgLiveVideo_createFromMe - msgType, path', msgType, path );
+            M_STORAGE.getDownloadURL (path, 
+                (errUrl, dataUrl) => {
+                    console.log( 'msgLiveVideo_createFromMe - dataUrl', dataUrl );
+                    console.log( 'msgLiveVideo_createFromMe - errUrl', errUrl );
+                    if (errUrl) {
+                        // ERROR we can not get url
+
+                        return;
+                    }
+                    var url                 = dataUrl;
+
+                    msgForCreateObject['url'] = url;
+                    // create msg live auio
+                    VIEW.msgLiveVideo_safeReplace( msgForCreateObject, myUID, iNchatId  );
+
+                }
+            );
+        } _.msgLiveVideo_createFromMe = msgLiveVideo_createFromMe;
+
+        function msgLiveVideo_createToMe (iNchatId, iNmsgId,  iNmsgObject) {
+            /*
+                @discr
+                    create liveVideo (to me) message with get M_URL 
+                @inputs
+                    @required
+                        iNchatId    -> string
+                        iNmsgId     -> string
+                        iNmsgObject -> object
+            */
+            var myUID               = USER.getMyId(),
+                path                = M_URL.db.api.getUrl.forChat,
+                msgForCreateObject  = iNmsgObject['info'];
+
+            // create msg live auio for fix position
+                VIEW.msgLiveVideo_safeReplace( msgForCreateObject, myUID, iNchatId  );
+
+            console.log( 'msgLiveVideo_createToMe   - path'     , path  );
+            console.log( 'msgLiveVideo_createToMe   - myUID'    , myUID );
+            console.log( 'msgLiveVideo_createToMe   - iNmsgObject'     , iNmsgObject  );
+            $.getJSON (
+                path,
+                {
+                    'token'     : USER.getMyToken(),
+                    'chatId'    : iNchatId,
+                    'msgId'     : iNmsgId,
+                    'uid'       : myUID,
+                },
+                (dataFromServer) => {
+                    console.log( 'msgLiveVideo_createToMe - dataFromServer', dataFromServer );
+                    if(typeof dataFromServer != 'object' || dataFromServer.status != 1) {
+                        // ERROR we can not get M_URL
+                        return;
+                    }
+                    var url = dataFromServer.link;
+                    console.log( 'msgLiveVideo_createToMe - url', url );
+                    console.log( 'msgLiveVideo_createToMe - msgForCreateObject', msgForCreateObject );
+                    //attach this url to this object    
+                    msgForCreateObject['url'] = url;
+                    // create msg live auio
+                    VIEW.msgLiveVideo_safeReplace( msgForCreateObject, myUID, iNchatId  );
+
+                } 
+            );
+        } _.msgLiveVideo_createToMe = msgLiveVideo_createToMe;
 
         function msgLiveVideo_onEventPlayVideo (iNthis) {
             /*
@@ -21953,23 +22216,24 @@ define(
                 let path = ''
             }
 
-        function msgLiveVideo_createMsgFromMe(iNsrc, iNmyUid, iNchatId, iNmsgId) {
+        function msgLiveVideo_createMsgFromMe (iNsrc, iNmyUid, iNchatId, iNmsgId) {
             var iNdata = {};
-            iNdata['content'] = iNsrc;
-            iNdata['uid'] = iNmyUid;
-            iNdata['msgId'] = iNmsgId;
+            iNdata['url']       = iNsrc;
+            iNdata['content']   = '';
+            iNdata['uid']       = iNmyUid;
+            iNdata['msgId']     = iNmsgId;
             // create message element
             VIEW.msgLiveVideo_createMsg(iNdata, iNmyUid, iNchatId);
             // scroll to bot
             VIEW.effChatViewScrollToBotWithTimeOut();
         }
 
-        function msgLiveVideo_sendMsgFromMe(iNsrc, iNchatId, iNmsgId) {
-            var iNdata = {
-                'src': iNsrc,
-                'content' : ''
+        function msgLiveVideo_sendMsgFromMe (iNsrc, iNchatId, iNmsgId) {
+            var iNdata      = {
+                'src'       : iNsrc ,
+                'content'   : ''    ,
+                'type'      : 21
             };
-            iNdata['type'] = 21;
             // add to database
             msg_addToDb(iNdata, iNchatId, iNmsgId)
         }
@@ -22170,11 +22434,12 @@ define(
             //@> add read state for to me message if it need
         }
 
-        function msgLiveAudio_createMsgFromMe(iNsrc, iNmyUid, iNchatId, iNmsgId) {
+        function msgLiveAudio_createMsgFromMe ( iNsrc, iNmyUid, iNchatId, iNmsgId ) {
             var iNdata = {};
-            iNdata['content'] = iNsrc;
-            iNdata['uid'] = iNmyUid;
-            iNdata['msgId'] = iNmsgId;
+            iNdata['url']       = iNsrc;
+            iNdata['uid']       = iNmyUid;
+            iNdata['content']   = '';
+            iNdata['msgId']     = iNmsgId;
             // create message element
             VIEW.msgLiveAudio_createMsg(iNdata, iNmyUid, iNchatId);
             // scroll to bot
@@ -22196,15 +22461,14 @@ define(
                 'type': 20
             };
             msg_flashSending(objForSendToDb,iNchatId)
-        }
-        _['msgLiveAudio_flashSending'] = msgLiveAudio_flashSending;
+        } _['msgLiveAudio_flashSending'] = msgLiveAudio_flashSending;
 
-        function msgLiveAudio_sendMsgFromMe(iNsrc, iNchatId, iNmsgId) {
-            var iNdata = {
-                'src': iNsrc,
-                'content' : ''
+        function msgLiveAudio_sendMsgFromMe (iNsrc, iNchatId, iNmsgId) {
+            var iNdata      = {
+                'src'       : iNsrc,
+                'content'   : '',
+                'type'      : 20
             };
-            iNdata['type'] = 20;
             // add to database
             msg_addToDb(iNdata, iNchatId, iNmsgId)
         }

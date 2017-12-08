@@ -22,6 +22,9 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','url','jquery.countd
     	_['saveUserLang'] = saveUserLang;
 	//@@@>>> USER
 	function signOut (inSuccess,iNerror){
+		// clear app
+    	M_APP.view.clear();
+
 		if( getMyId() ) {
 			// invoke global function for deleted note from fb db 
 			M_APP.globalFunctions_invoke('devise_removeNoteFromDatabase');
@@ -54,8 +57,12 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','url','jquery.countd
     _['signOut'] = signOut;
 
 	function signIn (token,iNfuntion) {
+    	// clear app
+    	M_APP.view.clear();
+    	
 	    FIREBASE.auth().signInWithCustomToken(token).then( 
 	    (user) => {
+
 	    	// save new user id
 	        M_APP.save('uid', FIREBASE.auth().currentUser.uid );
 	        

@@ -142,12 +142,12 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
 		iNobject['login']	 	= iNobject['userLogin'];// 'sharepay';
 		iNobject['servise'] 	= (iNobject['userType'] == 2)?true:false;//true;
 
-		var chatId  = iNobject['chatId'];
-		var uid 	= iNobject['uid'];
-		var login 	= iNobject['login'];
-		var servise = iNobject['servise'];
-		var stateOnline 	= iNobject['online'];
-		var chatName  = iNobject['chatName'];
+		var chatId  		= iNobject['chatId'];
+			uid 			= iNobject['uid'],
+			login 			= iNobject['login'],
+			servise 		= iNobject['servise'],
+			stateOnline 	= iNobject['online'],
+			chatName  		= iNobject['chatName'];
 
 		// get chatIcon
 		var chatType 	= iNobject['chatIcon']||1;

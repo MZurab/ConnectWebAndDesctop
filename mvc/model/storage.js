@@ -6,6 +6,17 @@ define(['m_firebase'],function( FIREBASE ) {
 	// set firebase framework
     const STORAGE = FIREBASE.storage().ref();
 
+    function getDownloadURL (iNpatch, iNfunction) {
+    	STORAGE.child(iNpatch).getDownloadURL().then(function(url) {
+		  // `url` is the download URL for 'images/stars.jpg'
+		  iNfunction(null,url);
+		 
+		}).catch(function(error) {
+		  // Handle any errors
+		  iNfunction(error,null);
+		});
+    } _.getDownloadURL = getDownloadURL;
+
 	function upload ( iNdata , iNfunctions) { 
 		/*
 			@examplae

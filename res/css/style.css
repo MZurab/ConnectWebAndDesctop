@@ -7,6 +7,11 @@ a {
 	text-decoration: inherit;
 	color: inherit;
 }
+
+.hide {
+	display: none;
+}
+
 input,textarea {outline:none;}
 ._noneSelect {
 	-webkit-user-select: none;  /* Chrome all / Safari all */

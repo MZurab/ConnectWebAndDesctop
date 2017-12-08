@@ -42,7 +42,7 @@ define(
 	  	{{/each}}
     `;
     templates['UserList'] = `
-		<div class="mix usersBlockInMenusBlock {{appsForFilter}} {{class}}" connect_uid="{{userId}}" {{if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" data-sortable="1" data-position-of-chat='{{chatPosition}}' connect_userType='{{userType}}' connect_chatType='{{chatType}}' connect_userLogin='{{login}}'>
+		<div class="mix usersBlockInMenusBlock {{appsForFilter}} {{class}}" connect_uid="{{userId}}" {{#if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" data-sortable="1" data-position-of-chat='{{chatPosition}}' connect_userType='{{userType}}' connect_chatType='{{chatType}}' connect_userLogin='{{login}}'>
 			<div class='chatDataInUsersBlock'>
 				<div class="iconBlockInUserBlock">
 			      <div class="iconInUserBlock">

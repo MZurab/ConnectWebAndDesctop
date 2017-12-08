@@ -1479,6 +1479,17 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 			} _.sideButtons_addSelectedEffectsByFilter = sideButtons_addSelectedEffectsByFilter;
 		//@> SIDE BUTTONS
 
+		function clear () {
+			// right header
+			$('#menusBlock .topBlockInMenusBlock').html('');
+			// right body
+	        $('#menusBlock .usersBlockContainerInMenusBlock').html('');
+
+			// left header
+	        $('#viewBlock .topBlockInViewBlock').html('');
+			// left body
+	        $('#viewBlock #viewAndChatBlockInViewBlock').html('');
+		} _.clear = clear;
 
 		return _;
   //       return {
