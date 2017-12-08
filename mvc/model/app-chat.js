@@ -1,4 +1,4 @@
-define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_record'],function( VIEW, M_APP, M_VIEW, M_MESSAGE, USER, FIREBASE, M_RECORD) {
+define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_record','m_category'],function( VIEW, M_APP, M_VIEW, M_MESSAGE, USER, FIREBASE, M_RECORD, M_CATEGORY) {
 	//@< init
 		// init from app view templates
 	  const _ = {};
@@ -18,143 +18,7 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
 
 	  var thisPageName; 
 
-	  //< init pages const
-		    //@< page 'index'
-		    	thisPageName = 'index';
-		        pages[thisPageName]  = {'attr':{'id' : 'leftBlockInViewWindow'},'menus':{}};
-		          pages[thisPageName]['functions'] = {
-		            // 'isPage'  : function () {    return true;},
-		            'getTemplate' : function (iNdata) {
-
-		            },
-		            'onOut'  : function () {   return true;},
-		            // 'onView'  : function () {
-		            //   addPageToFullWindow({'id':'sign','uid':'@system'});
-		            //   // V_APP_PAGE.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
-		            //   return true;
-		            // },
-		            // 'onHide'  : function () { return true;},
-		            // 'setPage' : function () {return true;},
-		            'onInit' 		: function () {
-		            	
-	        			M_APP.getGlobalVar('engine').passToApp( {'app':'base','page':'index'} );
-		            	M_MESSAGE.view.initApp( { 
-		            		// for send simpleTextMessage when click
-		            		'simpleMsgText_onClickSendBtn' : M_MESSAGE.simpleMsgText_onClickSendBtn , 
-		            		// for send flash data for simpleTextMessage
-		            		'simpleMsgText_printing' : M_MESSAGE.msgSimpleText_flashSending } 
-	            		);
-
-
-		            	//
-		            	M_MESSAGE.controller_msgLiveVideo_record_run ();
-		            	M_MESSAGE.controller_msgLiveAudio_record_run ();
-
-		            	return true;
-		            },
-		            'onAppear' 		: function (d1,d2) {
-		            	// M_MESSAGE.view.startAppearObserver();
-		            	pageIndex_openChatByChatId(d1);
- 						return true;
- 					},
-		            'onDisappear' 	: function () { return true;},
-		          };
-		    //@> page 'index'
-
-		    //@< page 'createPrivateChat'
-		    	thisPageName = 'createPrivateChat';
-		        pages[thisPageName]  = {'attr':{'id' : 'leftBlockInViewWindow'},'menus':{}};
-		          pages[thisPageName]['functions'] = {
-		            // 'isPage'  : function () {    return true;},
-		            'getTemplate' : function (iNdata) {
-
-		            },
-		            'onOut'  : function () {   return true;},
-		            // 'onView'  : function () {
-		            //   addPageToFullWindow({'id':'sign','uid':'@system'});
-		            //   // V_APP_PAGE.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
-		            //   return true;
-		            // },
-		            // 'onHide'  : function () { return true;},
-		            // 'setPage' : function () {return true;},
-		            'onInit' 		: function () {
-		            	
-	        			M_APP.getGlobalVar('engine').passToApp( {'app':'base','page':'index','data':''} );
-		            	M_MESSAGE.view.initApp( { 
-		            		// for send simpleTextMessage when click
-		            		'simpleMsgText_onClickSendBtn' : M_MESSAGE.simpleMsgText_onClickSendBtn , 
-		            		// for send flash data for simpleTextMessage
-		            		'simpleMsgText_printing' : M_MESSAGE.msgSimpleText_flashSending } 
-	            		);
-
-
-		            	//
-		            	M_MESSAGE.controller_msgLiveVideo_record_run ();
-		            	M_MESSAGE.controller_msgLiveAudio_record_run ();
-
-		            	return true;
-		            },
-		            'onAppear' 		: function (d1,d2) {
-		            	// M_MESSAGE.view.startAppearObserver();
-		            	pageIndex_openChatByChatId(d1);
- 						return true;
- 					},
-		            'onDisappear' 	: function () { return true;},
-		          };
-		    //@> page 'createPrivateChat'
-
-	  //> init pages const
-	_['pages'] = pages; 
-
-	//@<<< APP BLOCK
-		//@override
-		function getTemplate (iNdata) {
-			iNdata['other'] = VIEW.getChatSenderBlock();
-		}
-		_['getTemplate'] = getTemplate; 
-
-		//@required
-		function onInit () {
-
-		}
-		_['onInit'] = onInit; 
-		
-			//@optional	
-			function onIn () {
-
-			}
-			_['onIn'] = onIn; 
-				//@required
-				function onAppear () {
-					M_VIEW.view.closeLoader();
-
-				}
-				_['onAppear'] = onAppear; 
-				//@required
-				function onDisappear () {
-					// here must be page disapear functions
-					/*
-						безопасно берем pages если есть
-						безопасно узнаем название открывшегося сейчась page +getPageName +setPageName
-						безопасно вызываем pages[openedPageName][onDisapear] функцию
-
-					*/
-
-				}
-			_['onDisappear'] = onDisappear; 
-
-			//@optional	
-			function onOut () {
-				// here must be page onOut functions
-
-			}
-			_['onOut'] = onOut; 
-		//@required
-		function onDeinit () {
-
-		}
-		_['onDeinit'] = onDeinit; 
-	//@>>> APP BLOCK
+	 
 
 
 
@@ -255,30 +119,39 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
 				@required
 					iNobject -> object
 						chatId
-						uid
+						userId
 						chatName
+
+
+						userLogin
+
+
 						chatIcon
 
 						userLogin
 						online
 						servise
+						chatType
 
 		*/
 
-
+		console.log('pageIndex_openChatByChatId start - iNobject',iNobject);
 
 		iNobject['chatIcon'] 	= iNobject['chatIcon'];//https://cdn.ramman.net/images/icons/apps/app_sharepay.png';
 		iNobject['chatName']	= iNobject['chatName'];//'SharePay';
 		iNobject['login']	 	= iNobject['userLogin'];// 'sharepay';
-		iNobject['servise'] = (iNobject['userType'] == 2)?true:false;//true;
+		iNobject['servise'] 	= (iNobject['userType'] == 2)?true:false;//true;
 
 		var chatId  = iNobject['chatId'];
 		var uid 	= iNobject['uid'];
 		var login 	= iNobject['login'];
 		var servise = iNobject['servise'];
 		var stateOnline 	= iNobject['online'];
-		var chatIcon  = iNobject['chatIcon'];
 		var chatName  = iNobject['chatName'];
+
+		// get chatIcon
+		var chatType 	= iNobject['chatIcon']||1;
+		var chatIcon  	= M_CATEGORY.getChatIconByType(chatType,iNobject);
 
 
 		// setPreviusChat 
@@ -309,6 +182,8 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
 
 
 		M_MESSAGE.setLastMsgTimeByChatId(chatId,0);
+		console.log('pageIndex_openChatByChatId VIEW.getCountsOfChatContainers(chatId)', VIEW.getCountsOfChatContainers(chatId));
+		console.log('pageIndex_openChatByChatId chatId', chatId);
         if ( VIEW.getCountsOfChatContainers(chatId) == 0 ) {
             // need chat isset open it
             VIEW.createChatContainer(chatId);
@@ -325,7 +200,7 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
         VIEW.showChatContainerByChatId(chatId);
         VIEW.effChatViewScrollToBot();
         // M_MESSAGE.setObserverForAppearMessageInVisualScrollByChatId(chatId);
-    }
+    } _.pageIndex_openChatByChatId = pageIndex_openChatByChatId;
 
     
 	//    

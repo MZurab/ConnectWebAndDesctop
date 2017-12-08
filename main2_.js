@@ -67,10 +67,7 @@ require.config({
 
             /*<? views */
                 'v_view'           : 'mvc/view/view',
-                'v_app-chat'       : 'mvc/view/app-chat',
                 'v_app'            : 'mvc/view/app',
-                'v_app-page'       : 'mvc/view/app-page',
-                'v_app-base'       : 'mvc/view/app-base',
                 'v_category'       : 'mvc/view/category',
 
                 'v_call'           : 'mvc/view/call',
@@ -78,14 +75,31 @@ require.config({
                 'v_contact'        : 'mvc/view/contact',
                 'v_push'           : 'https://ramman.net/files/mvc/view/push',
 
+
             /*>! views */
+
+
+            //@< APPS
+                // app base
+                    'v_app-base'       : 'mvc/view/app-base',
+                    'm_app-base'       : 'mvc/model/app-base',
+                    'c_app-base'       : 'mvc/controller/app-base',
+
+                // app page
+                    'v_app-page'       : 'mvc/view/app-page',
+                    'm_app-page'       : 'mvc/model/app-page',
+                    'c_app-page'       : 'mvc/controller/app-page',
+
+                // app chat
+                    'v_app-chat'       : 'mvc/view/app-chat',
+                    'm_app-chat'       : 'mvc/model/app-chat',
+                    'c_app-chat'       : 'mvc/controller/app-chat',
+            //@> APPS
+
 
              /*<? models */
                 'm_view'           : 'mvc/model/view',
-                'm_app-chat'       : 'mvc/model/app-chat',
                 'm_app'            : 'mvc/model/app',
-                'APP_PAGE'         : 'mvc/model/app-page',
-                'm_app-base'       : 'mvc/model/app-base',
 
                 'm_engine'         : 'mvc/model/engine',
                 'm_category'       : 'mvc/model/category',
@@ -106,6 +120,9 @@ require.config({
                 'm_database'       : 'mvc/model/database',
 
                 'm_progressbar'    : 'mvc/model/progressbar', // deps 'progressbar'
+
+                //url db
+                'url'              : 'mvc/model/url',
 
 
             /*>! models */

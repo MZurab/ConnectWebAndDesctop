@@ -583,6 +583,7 @@ define(
                     @required
                         content
                     @optional
+                        src
                         block
                         fire
                         group
@@ -596,6 +597,8 @@ define(
       */
             //default message type
             iNdata.type = iNdata.type || 1;
+
+
             // get my user id
             let myUid = USER.getMyId();//FIREBASE.auth().currentUser.uid;
             // get right object for add to msg db
@@ -636,6 +639,7 @@ define(
                         @required
                             content
                         @optional
+                            src
                             block
                             fire
                             group
@@ -660,6 +664,10 @@ define(
             };
 
             if (typeof(iNdata.type) != 'undefined') objForSentToDb['info']['type'] = iNdata.type; // default text key
+            if (typeof(iNdata.src) == 'string') objForSentToDb['info']['src'] = iNdata.src; // source for messages with files
+
+
+
             if (typeof(iNdata.block) == 'undefined') objForSentToDb['info']['options']['base']['block'] = 0; // default block disable
             if (typeof(iNdata.fire) == 'undefined') objForSentToDb['info']['options']['base']['fire'] = 0; // default fire disable
             if (typeof(iNdata.group) == 'undefined') objForSentToDb['info']['options']['base']['group'] = 0; // default group dissable
@@ -826,7 +834,8 @@ define(
 
         function msgLiveVideo_sendMsgFromMe(iNsrc, iNchatId, iNmsgId) {
             var iNdata = {
-                'content': iNsrc
+                'src': iNsrc,
+                'content' : ''
             };
             iNdata['type'] = 21;
             // add to database
@@ -849,7 +858,8 @@ define(
             var functionUploadBlob = () => {
                 // init loader
                 var progressBar     = VIEW.msgLiveVideo_initLoader(iNchatId, iNmsgId);
-                var pathForSaveFile = 'chats/'+iNchatId+'/'+iNmyUid+'/liveVideo/'+iNmsgId+'/1.webm';
+                var file = '1.webm';
+                var pathForSaveFile = 'chats/'+iNchatId+'/'+iNmyUid+'/liveVideo/'+iNmsgId+'/' + file;
                 M_STORAGE.uploadBlob(
                     iNblob, {
                         'pathForSaveFile': pathForSaveFile,
@@ -860,7 +870,7 @@ define(
                             VIEW.msgLiveVideo_hideUploadBlock(iNchatId, iNmsgId);
 
                             // send message to uplload
-                            msgLiveVideo_sendMsgFromMe(iNdownloadURL, iNchatId, iNmsgId);
+                            msgLiveVideo_sendMsgFromMe(file, iNchatId, iNmsgId);
                         },
                         'onProgress': (iNprogress) => {
                             let progress = iNprogress / 100;
@@ -1059,7 +1069,8 @@ define(
 
         function msgLiveAudio_sendMsgFromMe(iNsrc, iNchatId, iNmsgId) {
             var iNdata = {
-                'content': iNsrc
+                'src': iNsrc,
+                'content' : ''
             };
             iNdata['type'] = 20;
             // add to database
@@ -1082,7 +1093,8 @@ define(
             var functionUploadBlob = () => {
                 // init loader
                 var progressBar = VIEW.msgLiveAudio_initLoader(iNchatId, iNmsgId);
-                var pathForSaveFile = 'chats/'+iNchatId+'/'+iNmyUid+'/liveAudio/'+iNmsgId+'/1.ogg';
+                var file = '1.ogg';
+                var pathForSaveFile = 'chats/'+iNchatId+'/'+iNmyUid+'/liveAudio/'+iNmsgId+'/' + file;
                 M_STORAGE.uploadBlob (
                     iNblob, {
                         'pathForSaveFile': pathForSaveFile,
@@ -1093,7 +1105,7 @@ define(
                             VIEW.msgLiveAudio_hideUploadBlock(iNchatId, iNmsgId);
 
                             // send message to uplload
-                            msgLiveAudio_sendMsgFromMe(iNdownloadURL, iNchatId, iNmsgId);
+                            msgLiveAudio_sendMsgFromMe(file, iNchatId, iNmsgId);
                         },
                         'onProgress': (iNprogress) => {
                             let progress = iNprogress / 100;

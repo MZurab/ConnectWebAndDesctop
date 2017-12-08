@@ -1,4 +1,4 @@
-define(['jquery','v_category','m_view','m_app','m_user','dictionary'], function ( $, VIEW, M_VIEW, M_APP,USER, DICTIONARY) {
+define(['jquery','v_category','m_view','m_app','m_user','dictionary','sweetalert2', 'url'], function ( $, VIEW, M_VIEW, M_APP,USER, DICTIONARY, SWAL, URL) {
 	const _        = {'view':VIEW};
 	const CONST    = {};
 
@@ -32,7 +32,27 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary'], function 
 	}
     _['userForPrivateChat'] = userForPrivateChat;
 
+    function getChatIconByType (iNchaType,iNobject) {
+        /*
+            @inputs
+                iNchatType -> number
+                iNobject
+                    uid -> string
+                    chatId -> string
+        */
+        var chatType = iNchaType, result;
+        if (chatType == 1) {
+            // private chat
 
+            result =  URL.getUserIconByUid(iNobject['userId']);
+
+        } else if(chatType == 2) {
+            // group chat
+            result = URL.getChatIconByChatId(iNobject['chatId']);
+        }
+        console.log('getChatIconByType - chatType, result', chatType, result );
+        return result;
+    } _.getChatIconByType = getChatIconByType;
 
     function safeUpdateChatBlock (iNdata,chatType) {
         /*
@@ -54,7 +74,8 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary'], function 
         var  DomBloc, lmsg_text, lmsg_time, countNewMessages, newMsgBlock, verificate;
 
         var chatLength = VIEW.findChatBlock(chatId);
-        if(  chatLength < 1 ) {
+                console.log('safeUpdateChatBlock - iNdata', iNdata );
+        if (  chatLength < 1 ) {
         		//CHANGE STATIC PARAMS
                 // chatType = 'private';
                 uuid = userForPrivateChat(chatId);
@@ -62,12 +83,20 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary'], function 
         			objForCreateChat['userId'] 		= uuid;
         			objForCreateChat['chatType'] 	= chatType;
 
+                // get chat icon
+                var chatIcon    = getChatIconByType(chatType,objForCreateChat); objForCreateChat['icon'] = chatIcon;
+
                 // create chat
-                VIEW.createChatList (objForCreateChat);
-                // set animation effect (eg. scroll )
-                VIEW.setEffectsForChatList(chatId);
-                // add on click for this chat event
-                VIEW.addOnClickActionForChatList ( objForCreateChat['chatId']);
+                VIEW.createChatList (objForCreateChat, () => {
+                    // after add chat
+
+                    // set animation effect (eg. scroll )
+                    VIEW.setEffectsForChatList(chatId);
+                    // add on click for this chat event
+                    console.log('safeUpdateChatBlock - objForCreateChat',objForCreateChat);
+                    VIEW.addOnClickActionForChatList ( objForCreateChat['chatId']);
+
+                });
 		} 
         domChangeChatBlock (chatId,iNdata);
     }
@@ -183,8 +212,8 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary'], function 
            'page'           : 'index',
            'name'           : DICTIONARY.withString('[app-chat]'),
            'id'             : iNchatId,
-           'data'           : href
-
+           'data'           : href,
+           'classForATeg'   : 'privateChatBtn',//
         };
         iNuserData['categories']['chat'] = {};
         iNuserData['categories']['chat'][iNchatId] = objForCreateChat;
@@ -193,7 +222,7 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary'], function 
     }
     _['addChatBlockToCategory'] = addChatBlockToCategory;
 
-    function addDisabledChatBlockToCategory (iNuserData,iNuserId) {
+    function addDisabledChatBlockToCategory (iNuserData,iNuserId,iNuserLogin) {
         // chatType does not work - CHANGE
         if ( USER.getMyId() ) {
             // if we are auth user -> we created link for create chat
@@ -203,9 +232,8 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary'], function 
                'page'           : 'index',
                'name'           : DICTIONARY.withString('[app-chat]'),
                'id'             : iNuserId,
-               'classForATeg'   : 'connect_href appHref',
-               'attrForATeg'    : `app-name='page' page-name='createPrivateChat' data='uid=${iNuserId}'`,
-
+               'classForATeg'   : 'viewCategoryPrompt',//
+               'attrForATeg'    : `categoryUserId='${iNuserId}' categoryUserLogin='${iNuserLogin}'`,
             };
         } else {
             // if we are NON authed user -> we created link for view error
@@ -224,10 +252,9 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary'], function 
         iNuserData['categories']['chat'] = {};
         iNuserData['categories']['chat'][iNuserId] = objForCreateChat;
         return true;
-
     }
     _['addDisabledChatBlockToCategory'] = addDisabledChatBlockToCategory;
-
+    
     
 
 	return _;

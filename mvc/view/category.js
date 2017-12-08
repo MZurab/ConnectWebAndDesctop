@@ -1,6 +1,6 @@
 define(
 	['sweetalert2','m_user', 'm_app','v_message','v_view','jquery','mixitup','dictionary','m_moment','jquery.textillate','jquery.lettering'], 
-	function(SWEETALERT, USER,  M_APP,V_MESSAGE, V_VIEW, $, mixitup, DICTIONARY , MOMENT ) 
+	function(swal, USER,  M_APP,V_MESSAGE, V_VIEW, $, mixitup, DICTIONARY , MOMENT ) 
 {//'m_view','m_app'
 				
 	const _ = {};
@@ -42,7 +42,7 @@ define(
 	  	{{/each}}
     `;
     templates['UserList'] = `
-		<div class="mix usersBlockInMenusBlock {{appsForFilter}} {{class}}" connect_uid="{{userId}}" {{if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" data-position-of-chat='{{chatPosition}}' connect_userType='{{userType}}' connect_userType='{{chatType}}' connect_userLogin='{{login}}'>
+		<div class="mix usersBlockInMenusBlock {{appsForFilter}} {{class}}" connect_uid="{{userId}}" {{if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" data-sortable="1" data-position-of-chat='{{chatPosition}}' connect_userType='{{userType}}' connect_chatType='{{chatType}}' connect_userLogin='{{login}}'>
 			<div class='chatDataInUsersBlock'>
 				<div class="iconBlockInUserBlock">
 			      <div class="iconInUserBlock">
@@ -236,11 +236,11 @@ define(
 
 		*/
 		chat_offSelectEffects();
-		chat_addSelectEffectsByChatId(iNchatId);
+		chat_addSelectEffectsByUserId(iNchatId);
 
 	} _.chat_setSelectOnlyThisChat = chat_setSelectOnlyThisChat;
 
-	function chat_addSelectEffectsByChatId (iNchatId) {
+	function chat_addSelectEffectsByUserId (iNchatId) {
 		/*
 			@discr
 				add select effects by chatId
@@ -249,10 +249,10 @@ define(
 					iNchatId -> string
 
 		*/
-		let pathToThisChat = getPathToChatByChatId(iNchatId);
+		let pathToThisChat = getPathToChatByUserId(iNchatId);
 		$(pathToThisChat).find('.chatDataInUsersBlock').addClass('selected');
 
-	} _.chat_addSelectEffectsByChatId = chat_addSelectEffectsByChatId;
+	} _.chat_addSelectEffectsByUserId = chat_addSelectEffectsByUserId;
 	
 	function chat_hideAllChats () {
 		/*
@@ -261,11 +261,6 @@ define(
 			@inputs
 				@required
 		*/
-		// let selector = '.mix.usersBlockInMenusBlock';
-		console.log('chat_hideAllChats - selector',selector)
-		// $().hide();
-
-
 		let mixer = output['sortMixitUpObject'];
 		if(typeof mixer == 'object') mixer.filter("none");
 
@@ -283,6 +278,20 @@ define(
 		if(typeof mixer == 'object') mixer.filter("all");
 	} _['chat_showAllChats'] = chat_showAllChats;
 
+	function chat_showChatByUserId (iNuserId) {
+		/*
+			@discr
+				show chat by his userId
+			@inputs
+				@required
+					iNuserId -> string
+		*/
+
+		let mixer = output['sortMixitUpObject'];
+		if(typeof mixer == 'object') mixer.filter("[connect_uid='"+iNuserId+"']");
+	} _['chat_showChatByUserId'] = chat_showChatByUserId;
+
+
 	function chat_showChatByChatId (iNchatId) {
 		/*
 			@discr
@@ -293,8 +302,7 @@ define(
 		*/
 
 		let mixer = output['sortMixitUpObject'];
-		if(typeof mixer == 'object')
-			mixer.filter("[connect_chatid='"+iNchatId+"']");
+		if(typeof mixer == 'object') mixer.filter("[connect_chatid='"+iNchatId+"']");
 	} _['chat_showChatByChatId'] = chat_showChatByChatId;
 
 
@@ -310,7 +318,7 @@ define(
 	}
 	_['chat_hideUserMenus'] = chat_hideUserMenus;
 
-	function chat_showOnlyThisChatMenu (iNchatId) {
+	function chat_showOnlyThisChatMenu (iNuserId) {
 		/*
 			@discr
 				show only this chat menu by chatId
@@ -323,11 +331,11 @@ define(
 		chat_hideUserMenus();
 
 		//show this chat menu
-		chat_showChatMenuByChatId(iNchatId);
+		chat_showChatMenuByUserId(iNuserId);
 
 	} _['chat_showOnlyThisChatMenu'] = chat_showOnlyThisChatMenu;
 
-	function chat_showChatMenuByChatId (iNchatId) {
+	function chat_showChatMenuByUserId (iNchatId) {
 		/*
 			@discr
 				show chat menu by chatId
@@ -336,9 +344,9 @@ define(
 					iNchatId -> string
 
 		*/
-		var pathToThisChat = getPathToChatByChatId(iNchatId);
+		var pathToThisChat = getPathToChatByUserId(iNchatId);
 		$(pathToThisChat + ' .menusInUsersBlock').show();
-	} _['chat_showChatMenuByChatId'] = chat_showChatMenuByChatId;
+	} _['chat_showChatMenuByUserId'] = chat_showChatMenuByUserId;
 
 
 	function addOnClickActionForChatList (iNchatId) {
@@ -351,7 +359,8 @@ define(
 
 		*/
 		var pathToThisChat = getPathToChatByChatId(iNchatId);
-		
+		console.log('addOnClickActionForChatList - iNchatId, pathToThisChat',iNchatId, pathToThisChat);
+
 		// selected thi chat -> we remove selected class from all
 		chat_setSelectOnlyThisChat(iNchatId);
 
@@ -360,7 +369,8 @@ define(
 		var obj = {};
 			var chatId 		= iNchatId;//$(pathToThisChat).attr('connect_chatid');
 				obj['chatId'] 	= chatId;
-				obj['userType'] = $(pathToThisChat).attr('connect_userType');;
+				obj['userType'] = $(pathToThisChat).attr('connect_userType');
+				obj['chatType'] = $(pathToThisChat).attr('connect_chatType');
 				obj['login'] 	= $(pathToThisChat).attr('connect_userlogin');
 				obj['uid'] 		= $(pathToThisChat).attr('connect_uid');
 				obj['chatIcon'] = getChatIcon(chatId);
@@ -374,6 +384,8 @@ define(
 
 		// check has menu
 		var attrHasMenu = $(pathToThisChat).attr('connect_userhasmenu');
+		console.log('addOnClickActionForChatList - attrHasMenu',attrHasMenu);
+		console.log('addOnClickActionForChatList - $(pathToThisChat)',pathToThisChat, $(pathToThisChat));
 		if(attrHasMenu){
 			// if this chat hasmenu -> open app 'chat' page 'index'
 			var dataForOpenApp = 'uid='+obj['login']+'&login='+USER.getMyLogin();
@@ -385,10 +397,12 @@ define(
         			'pageName' 	: 'one',
         			'data' 		: dataForOpenApp
         		};
+			console.log('addOnClickActionForChatList 0 - selector', selector);
+			console.log('addOnClickActionForChatList 0 - objForCreateLink', objForCreateLink);
         	M_APP.view.convertDomElementToAppLink (selector,objForCreateLink);
 		} else {
 			// if this has not menu -> open app 'chat' page 'index'
-			var dataForOpenApp = 'chatName='+obj['chatName']+'&chatId='+obj['chatId']+'&chatIcon='+obj['chatIcon']+'&userLogin='+obj['login']+'&uid='+obj['uid'];
+			var dataForOpenApp = 'chatName='+obj['chatName']+'&chatId='+obj['chatId']+'&chatIcon='+obj['chatIcon']+'&userLogin='+obj['login']+'&uid='+obj['uid']+'&chatType=' + obj['chatType'];
 
         	//< safe add online
             	let thisOnline 			= $(pathToThisChat).attr('connect_online');
@@ -465,7 +479,7 @@ define(
 		activeActionsForMenuEvents();
 	}
 	_['addMenuByCategoryList'] = addMenuByCategoryList;
-	
+
 		function activeActionsForMenuEvents () {
 	    	$('.appUserMenu.flagMenuLevel1 > a, .appUserMenu.flagMenuLevel1 > div.userMenuParentButton').click(clickToMenuFirstLevel);
 	    	$('.appUserMenu.flagMenuLevel2 > a, .appUserMenu.flagMenuLevel2 > div.userMenuParentButton').click(clickToMenuSecondLevel);
@@ -480,7 +494,7 @@ define(
 			function clickToMenuForViewError (e) {
 				e.preventDefault();
 				var errorCode = $(this).attr('errorText');
-				SWEETALERT(
+				swal(
 				  DICTIONARY.withString('[error-value]') + '!',
 				  DICTIONARY.withString(errorCode),
 				  'error'
@@ -619,7 +633,7 @@ define(
 
 
 
-	function createChatListIfNotExist (iNdata) {
+	function createChatListIfNotExist (iNdata,iNfunction) {
 		/*
 			@inputs
 				@required
@@ -645,14 +659,20 @@ define(
 		console.log('createChatListIfNotExist - chatType, iNdata', chatType, iNdata);
 		if( chatType == 1 ) {
 			// if private chat
-			var chatSelector = getPathToChatByUserId(iNdata['userId']);
+			var chatSelector = getPathToChatByUserId (iNdata['userId']);
 		} else {
 			// if group chat
-			var chatSelector = getPathToChatByChatId(iNdata['chatId']);
+			var chatSelector = getPathToChatByChatId (iNdata['chatId']);
 
 		}
 
-		if($(chatSelector).length < 1) createChatList(iNdata);
+		console.log('createChatListIfNotExist - chatSelector',chatSelector)
+		console.log('createChatListIfNotExist - $(chatSelector).length',$(chatSelector).length);
+		console.log('createChatListIfNotExist - $(chatSelector)',$(chatSelector));
+		if($(chatSelector).length < 1) {
+			console.log('createChatListIfNotExist - create',$(chatSelector));
+			createChatList(iNdata,iNfunction);
+		}
 
 		// create if not exist
 	} _.createChatListIfNotExist = createChatListIfNotExist;
@@ -684,7 +704,7 @@ define(
 
 	} _.createPrivateChatListIfNotExist = createPrivateChatListIfNotExist;
 
-	function createChatList (iNdata) {
+	function createChatList (iNdata, iNfunction) {
 		/*
 			@inputs
 				@required
@@ -705,10 +725,31 @@ define(
         console.log('createChatList mixer', mixer , $(content));
 		mixer.insert($(content)).then(function(state) {
 	        console.log('createChatList - totalShow',state.totalShow);
+	        if(typeof iNfunction == 'function') iNfunction();
 	    });
 		// $(vars['pathToChatList']).prepend( content );
 	}
 	_['createChatList'] = createChatList;
+
+	function removeChatListByUserId (iNuserId, iNfunction) {
+		/*
+			@inputs
+				@required
+					iNuserId -> string
+		*/
+		var selectorForDel = getPathToChatByUserId (iNuserId);
+		let mixer = output['sortMixitUpObject'];
+
+        console.log('removeChatListByUserId mixer');
+		mixer.remove(selectorForDel).then(function(state) {
+	        console.log('removeChatListByUserId - totalShow',state.totalShow);
+	        if(typeof iNfunction == 'function') iNfunction();
+	    });
+		// $(vars['pathToChatList']).prepend( content );
+	}
+	_['removeChatListByUserId'] = removeChatListByUserId;
+
+	
 
 
 		function getUserListTemplate (iNdata) {
@@ -776,10 +817,10 @@ define(
 			}
 			_['getPathToChatByChatId'] = getPathToChatByChatId;
 
-			function getPathToChatByUserId (iNchatId) {
-				return '.usersBlockInMenusBlock[connect_uid="'+iNchatId+'"]';
+			function getPathToChatByUserId (iNuserId) {
+				return '.usersBlockInMenusBlock[connect_uid="'+iNuserId+'"]';
 			}
-			_['getPathToChatByChatId'] = getPathToChatByChatId;
+			_['getPathToChatByUserId'] = getPathToChatByUserId;
 
 		function getChatIdByUid (iNuid) {
 			return $('.usersBlockInMenusBlock[connect_uid="'+iNuid+'"]').attr('connect_chatid');;
@@ -831,14 +872,14 @@ define(
 		    */
 			 if(typeof(output['sortMixitUpObject']) != 'undefined') output['sortMixitUpObject'].destroy();
 
-		    output['sortMixitUpObject'] = mixitup(vars['pathToChatList']);
-		    var block = {};
-		    
-		    if( typeof(iNdata) != 'object' )         	 iNdata={};
-		    if( typeof(iNdata.filter) != 'string' )      block.filter 		=  chat_getGlobalFilter();//'.usersBlockInMenusBlock';
-		    if( typeof(iNdata.sort)  != 'string' )       block.sort 		=  'position-of-chat:asc lastmsgtime:desc';
-		    console.log('initSort block',chat_getGlobalFilter(),block);
-		    output['sortMixitUpObject'].multimix(block);
+		    output['sortMixitUpObject'] = mixitup (
+		    	vars['pathToChatList'],
+		    	{
+		    		load: {
+		    			'sort' : 'position-of-chat:asc lastmsgtime:desc',
+		    		}
+		    	}
+	    	);
 		} _['initSort'] = initSort;
 
 		function startEffSortChats (iNdata) {
@@ -856,7 +897,7 @@ define(
 		    if(typeof(output['sortMixitUpObject']) != 'undefined') {
 		    	var mixer = output['sortMixitUpObject'],block = {};
 		    	if( typeof(iNdata) != 'object' ) iNdata = {};
-		    		var sort,filter;
+		    		var sort, sortdefault, filter;
 				    if( typeof(iNdata.filter) == 'string' )      
 				    	filter 		=  iNdata.filter;
 				    else {
@@ -867,9 +908,12 @@ define(
 				    	sort 		=  iNdata.sort;
 				    else {
 				    	sort 		=  'position-of-chat:asc lastmsgtime:desc';
+				    	sortdefault 		= 'sortable position-of-chat:asc lastmsgtime:desc';
+					    mixer.sort(sortdefault);
+				    	mixer.sort(sort);
 				    }
-			    	mixer.sort(sort)
-			    	mixer.filter(filter)
+
+			    	mixer.filter(filter);
 			}
 		}
 		_['startEffSortChats'] = startEffSortChats;
@@ -898,6 +942,21 @@ define(
 			if (typeof iNnumber != 'number') iNnumber = 1;
 			$(getPathToChatByChatId(iNchatId)).attr('data-position-of-chat',iNnumber);
 		} _.chatPosition_setByChatIdForSort = chatPosition_setByChatIdForSort;
+
+		function chatPosition_setByUserIdForSort (iNchatId,iNnumber) {
+			/*
+				@discr 
+					set chat position for sort
+				@inputs
+					@required
+						iNchatId -> string
+					@optoinal
+						iNnumber -> number
+
+			*/
+			if (typeof iNnumber != 'number') iNnumber = 1;
+			$(getPathToChatByUserId(iNchatId)).attr('data-position-of-chat',iNnumber);
+		} _.chatPosition_setByUserIdForSort = chatPosition_setByUserIdForSort;
 
 		function flash_msgSimpleText_init (iNchatId) {
 		    /*
@@ -1262,8 +1321,69 @@ define(
                     defined chat object
             */
             $(chatObject + ' .usersNameInUserBlock').append("<span class=\"isVerificateinUserBlock\"></span>");
-        }
-		_['domAddVerificateStatusToChatBlock'] = domAddVerificateStatusToChatBlock;
+        } _['domAddVerificateStatusToChatBlock'] = domAddVerificateStatusToChatBlock;
 	//> effects
+
+
+	function onClickCategoryForCreateChat (iNsuccessFunc, iNerrorFunc) {
+        /*
+            @inputs
+                @required
+        */
+        var iNsuccessFunc = iNsuccessFunc;
+        var iNerrorFunc = iNerrorFunc;
+        (
+        	()=>{
+	        	$('.viewCategoryPrompt').click( 
+	        		(event) =>  {
+			            var thisUserId          = $(event.target).attr('categoryUserId'),
+			                thisUserLogin       = $(event.target).attr('categoryUserLogin');
+
+			            if( thisUserId && thisUserLogin ) {
+			                // SUCCESS we has login and uid for create chat
+			                showPromptQuestionForCreateChat ( iNsuccessFunc, iNerrorFunc, thisUserId , thisUserLogin);
+			            } else {
+			                // ERROR we has NOT  login and uid
+			                if (typeof iNerrorFunc == 'function') iNerrorFunc ();
+
+			            }
+	        		}
+	        	);
+	        }
+        )()
+        
+    } _['onClickCategoryForCreateChat'] = onClickCategoryForCreateChat;
+
+
+    function showPromptQuestionForCreateChat ( iNsuccessFunc, iNerrorFunc, iNuid, iNulogin) {
+        (()=>{
+
+        	swal({
+	          title: 'Создать чат с этим пользователем?',
+	          text: "Чат необходим для общения!",
+	          type: 'warning',
+	          showCancelButton: true,
+	          confirmButtonColor: '#3085d6',
+	          cancelButtonColor: '#d33',
+	          confirmButtonText: 'Да, создать чат!',
+	          cancelButtonText: 'Нет, отмена!',
+	          confirmButtonClass: 'btn btn-success',
+	          cancelButtonClass: 'btn btn-danger',
+	          buttonsStyling: false
+	        }).then(
+		        (result) => {
+		          if (result.value) {
+		            if (typeof iNsuccessFunc == 'function') iNsuccessFunc(iNuid,iNulogin);
+		            // result.dismiss can be 'cancel', 'overlay',
+		            // 'close', and 'timer'
+		          } else if (result.dismiss === 'cancel') {
+		            if (typeof iNerrorFunc == 'function') iNerrorFunc(iNuid,iNulogin);
+		          }
+		        }
+	        )
+        })()
+        
+    } // _['showPromptQuestionForCreateChat'] = showPromptQuestionForCreateChat;
+
 	return _;
 });

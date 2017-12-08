@@ -1,173 +1,14 @@
-define( 'APP_PAGE',['jquery','dictionary','m_view','v_app-page','m_app','m_user','mediaStreamRecorder'] , function ($,DICTIONARY, M_VIEW,VIEW,M_APP,M_USER,MEDIA) {
+define( ['jquery','dictionary','m_view','v_app-page','m_app','m_user','mediaStreamRecorder', 'url'] , function ($,DICTIONARY, M_VIEW,VIEW,M_APP,M_USER,MEDIA, URL) {
 
   // init result const
   const _ = {};
-  const name = 'page';
-  _['name'] = name;  
 
-
-  
-  var thisPageName;
-  //
-  // function _ () {
-
-  // }
-
-  // init pages const
-  const pages = {}; _['pages'] = pages;
-    //< page fullWindow
-        pages['fullWindow']  = {'attr':{},'menus':{},'functions':{}};
-          pages['fullWindow']['attr'] = {
-            'id2' : '2',
-            'id3' : '3',
-          };
-          pages['fullWindow']['menus'] = {
-            'attr' : {
-              'id1' : 'id2',
-              'id3' : 'id4'
-            }
-          };
-          pages['fullWindow']['functions'] = {
-            'isPage'  : function () {return true;},
-            'onOut'  : function () { return true;},
-            'onView'  : function (inputData,inputApp) {
-              addPageToFullWindow({'id':inputData['id'],'uid':inputData['uid']});
-              // VIEW.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
-              return true;
-            },
-            'onHide'  : function () {  return true;},
-            // 'setPage' : function () { return true;},
-            'onCreate' : function () {  return true;},
-            'onDisappear' : function () {return true;},
-          };
-    //> page fullWindow
-
-    //< page miniPage
-        thisPageName = 'miniPage';
-        pages[thisPageName]  = {'attr':{},'menus':{},'functions':{}};
-          pages[thisPageName]['attr'] = {};
-          pages[thisPageName]['menus'] = {};
-          pages[thisPageName]['functions'] = {
-            'isPage'  : function () {
-              return true;
-            },
-            'onOut'  : function () {
-              return true;
-            },
-            'onView'  : function (iNdata, iNobject) {
-              /*
-                getPage -> checkData
-                create app view with page 
-                create header view with page
-              */
-              addMiniPageToAppView({'id':iNdata['id'],'uid':iNdata['uid']});
-              return true;
-            },
-            'onHide'  : function () {
-              return true;
-            },
-            'onCreate' : function () {
-
-              return true;
-            },
-            'onDisappear' : function () { return true;},
-          };
-    //> page miniPage
-  
-
-  const options = {
-    'attr'  : {
-      'attr' : {
-        'id2' : '2',
-        'id3' : '3',
-      }
-    },
-    // options for list app menus
-    'menus': {
-      'attr' : {
-        'id2' : '2',
-        'id3' : '3',
-      }
-    }
-  };
-  _['options'] = options;
-
-
-  // function setApp
-  // function setApp (iNstring,iNobject) {
-
-  // }
-  // _['setApp'] = setApp;
-
-  //@overide
-  function onHide (iNstring,iNobject) {
-    clearFullWindow();
-
-  }
-  _['onHide'] = onHide;
-
-
-    //@overide
-  function onView (iNstring,iNobject) {
-
-  }
-  _['onView'] = onView;
-
-
-  // function onCreate
-  function onCreate (iNstring,iNobject) {
-
-  }
-  _['onCreate'] = onCreate;
-
-  // function isApp
-  function isApp (iNstring,iNobject) {
-    return true;
-  }
-  _['isApp'] = isApp;
-
-
-  // function onInit
-  function onInit (iNstring,iNobject) {
-
-  }
-  _['onInit'] = onInit;
-
-    // function onIn
-    function onIn (iNstring,iNobject) {
-    }
-    _['onIn'] = onIn;
-
-      // function onAppear
-      function onAppear (iNstring,iNobject) {
-
-      }
-      _['onAppear'] = onAppear;
-
-      // function onDisappear
-      function onDisappear (iNstring,iNobject) {
-      }
-      _['onDisappear'] = onDisappear;
-
-    // function onOut
-    function onOut (iNstring,iNobject) {
-    }
-    _['onOut'] = onOut;
-
-  // function onDeinit
-  function onDeinit (iNstring,iNobject) {
-
-  }
-  _['onDeinit'] = onDeinit;
+ 
 
 
 
 
 
-
-
-  const baseSite  = 'https://ramman.net/';
-    const url_getPage   = baseSite + 'api/service/page';
   function openPage (iNuid,iNid) {
     /*
       @discr
@@ -197,7 +38,7 @@ define( 'APP_PAGE',['jquery','dictionary','m_view','v_app-page','m_app','m_user'
         1 - get page object from server 
     */
     $.get (
-      url_getPage, 
+      URL.db.api.page.get, 
       iNdata,
       function (iNcontent) {
         iNfunction(iNcontent);
@@ -235,6 +76,7 @@ define( 'APP_PAGE',['jquery','dictionary','m_view','v_app-page','m_app','m_user'
         }
       }
     }; 
+
     function addPageToFullWindow (iNdata) {
         getPage ( 
           iNdata,
@@ -251,7 +93,7 @@ define( 'APP_PAGE',['jquery','dictionary','m_view','v_app-page','m_app','m_user'
             M_VIEW.view.closeLoader(); 
           }
         );
-    }
+    } _.addPageToFullWindow = addPageToFullWindow;
 
 
 
@@ -303,7 +145,8 @@ define( 'APP_PAGE',['jquery','dictionary','m_view','v_app-page','m_app','m_user'
             M_VIEW.view.closeLoader(); 
           }
         );
-    }
+    } _.addMiniPageToAppView = addMiniPageToAppView;
+
     function clearMiniPage () {
       deleteHeaders();
       M_APP.view.d_removeAppHeader({'app':'page'});
@@ -323,16 +166,17 @@ define( 'APP_PAGE',['jquery','dictionary','m_view','v_app-page','m_app','m_user'
     */
     $('.headerFromPage').remove();
   }
+  
   function clearFullWindow () {
     deleteHeaders();
     $('.appModalFullWindow').remove();
-  }
+  } _.clearFullWindow = clearFullWindow;
 
   
-  _['init'] = function () {
-    M_APP.setGlobalApp(this);
-    return this;
-  }
+  // _['init'] = function () {
+  //   M_APP.setGlobalApp(this);
+  //   return this;
+  // }
 
   // ever
     function addActionForEvents (iNid) {

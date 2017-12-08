@@ -1,4 +1,5 @@
-define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAGE','m_user'], function ($,ROUTING,V_VIEW,M_APP,APP_CHAT,APP_BASE,APP_PAGE, USER) {
+define(['jquery','m_routing','v_view','m_app','c_app-chat','c_app-base','c_app-page','m_user'], function ($,ROUTING,V_VIEW,M_APP,APP_CHAT,APP_BASE,APP_PAGE, USER) {
+
 
 	function _startUrl () {
 		ROUTING.startUrl(this);
@@ -172,6 +173,10 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 			// get module name by app name
 			var app, page, objForOpenApp = iNdata, appName = objForOpenApp['app'], pageName = objForOpenApp['page'];
 			app = getAppByName(appName);
+			console.log('_openApp objForOpenApp',objForOpenApp);
+			console.log('_openApp app',app);
+			console.log('_openApp iNdata',iNdata);
+			console.log('_openApp iNstring',iNstring);
 			M_APP.openChiefApp (iNdata,app,iNstring,iNfunction);
 		}
 
@@ -189,6 +194,7 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 		}
 
 		var APP_PAGE_INSTANCE;
+		
 		function getAppByName(iName){
 			/*
 				@disc
@@ -212,10 +218,7 @@ define(['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAG
 				break;
 
 				case "page":
-					if(typeof APP_PAGE_INSTANCE != 'object') {
-						APP_PAGE_INSTANCE = APP_PAGE.init();
-					}
-					return APP_PAGE_INSTANCE;
+					return APP_PAGE;
 				break;
 
 				case "base":

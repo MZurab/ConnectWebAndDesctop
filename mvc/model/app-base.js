@@ -1,347 +1,15 @@
 define( 
   [
-    'jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictionary','v_app-base','m_routing', 'm_database', 'sweetalert2',
+    'jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictionary','v_app-base','m_routing', 'm_database', 'url', 'sweetalert2',
     'jquery.autocomplete'
   ] , 
-  function ($ , FIREBASE , M_CATEGORY , M_APP , M_VIEW,USER, DICTIONARY, VIEW , ROUTING, M_DATABASE,SWEETALERT) {
+  function ($ , FIREBASE , M_CATEGORY , M_APP , M_VIEW,USER, DICTIONARY, VIEW , ROUTING, M_DATABASE,URL,SWEETALERT) {
 
-  const _ = {}; _['name'] = 'base';
+  const _ = {};
   const CONST = {};
-  // init pages const
-  const pages = {}; _['pages'] = pages;
-    //< page menu
+  
 
-        //< page index
-          var thisPageName      = 'index';
-          pages[thisPageName]   = {'attr':{},'menus':{},'functions':{}};
-            pages[thisPageName]['attr'] = {
-              'id2' : '2',
-              'id3' : '3',
-            };
-            pages[thisPageName]['menus'] = {
-              'attr' : {
-                'id1' : 'id2',
-                'id3' : 'id4'
-              }
-            };
-            pages[thisPageName]['functions'] = {
-              'isPage'  : function () { 
-                let i =  ( M_APP.view.d_checkPageInListApp({app:'base','page':'index'}) > 0 ) ? true : false;
-                console.log('isPage index i',i); 
-                return i;
-              },
-              'onCreate': function (iNojbectData,iNojbectApp) {
-                console.log('page index onCreate -iNojbectData,iNojbectApp',iNojbectData,iNojbectApp)
-
-                // show loader
-                M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
-
-                // get chat list
-                if ( USER.getMyId() ) {
-                  getAllMyChats();
-                }
-              },
-              'onView'  : function (iNojbectData,iNojbectApp) { 
-                console.log('onView index iNojbectData,iNojbectApp',iNojbectData,iNojbectApp);
-
-
-                // close loader from first html page
-                M_VIEW.view.closeLoader(); 
-
-                if(iNojbectData['back']) {
-                  // add header with back btn for this list app - if we from page 'one'
-
-                  // hide all menus 
-                  M_CATEGORY.view.chat_offSelectEffects();
-
-                } else {
-                  // clear user menus if we come from 'one' page by click btn
-                  // $('.usersBlockContainerInMenusBlock .app[app-name="base"] .view[view-name="index"] .scrolBlockForChat').html('');
-                  
-                  // view loader
-                  // M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
-                }
-
-                if(iNojbectData['filter']) {
-                  // if clicked side buttons - setGlobalSetFilterForGetChats
-                  M_APP.view.sideButtons_addSelectedEffectsByFilter(iNojbectData['filter']);
-
-                  // set global filter for sort
-                  M_CATEGORY.view.chat_setGlobalFilter(iNojbectData['filter']);
-
-                  //create service chat list and move position to top
-                  chat_openChatWithCreateIfNotExist(iNojbectData);
-                }
-
-                // sort all chats
-                M_CATEGORY.view.startEffSortChats();
-
-                // show all chats
-                // VIEW.showAllChats();
-
-                // add standart header for this list app
-                addStandartHeaderForListView();
-
-                // hide user of menus (we open in page 'one')
-                M_CATEGORY.view.chat_hideUserMenus();
-
-                // show all chats 
-                // M_CATEGORY.view.chat_showAllChats();
-
-                // hide all app in list
-                M_APP.view.d_hideApps('all','list');
-
-                // show this app in list
-                M_APP.view.d_showApps('base','list');
-
-
-                // getAllMyChats();
-
-                // get chat if we auth user
-                
-
-                return true;
-              },
-              'onHide'  : function () { 
-                  console.log('onHide index');
-                  return true;
-               },
-              'onAppear'  : function () {
-                  console.log('onAppear index');
-              },
-              'onDisappear'  : function () {
-                  console.log('onDisappear index');
-              },
-              // 'setPage' : function () {console.log('app private','setPage'); return true;},
-              'onCreate' : function (d,d1) { 
-                M_APP.view.d_createPageInListApp({app:'base','page':'index','content': '<div class="scrolBlockForChat" style="" id="MixItUp81681F"></div>'}); 
-              },
-            };
-          //>page index
-
-
-          //< page createPrivateChat
-            var thisPageName = 'createPrivateChat';
-            pages[thisPageName]  = {'attr':{},'menus':{},'functions':{}};
-              pages[thisPageName]['attr'] = {
-                // 'id2' : '2',
-                // 'id3' : '3',
-              };
-              pages[thisPageName]['menus'] = {
-                'attr' : {
-                  // 'id1' : 'id2',
-                  // 'id3' : 'id4'
-                }
-              };
-              pages[thisPageName]['functions'] = {
-                'isPage'  : function () { 
-                  let i =  ( M_APP.view.d_checkPageInListApp({app:'base','page':'index'}) > 0 ) ? true : false; 
-                  console.log('isPage createPrivateChat i',i); 
-                  return i;
-                },
-                'onView'  : function (d,d1) { 
-                    console.log('onView createPrivateChat');
-                  // hide all app in list
-                  M_APP.view.d_hideApps('all','list');
-
-                  // show this app in list
-                  M_APP.view.d_showApps('base','list');
-
-                  // add header with back btn for this list app
-                  // addHeaderWithBackBtnInListView();
-
-                  //clear other chats
-                  $('.mix.usersBlockInMenusBlock').hide();
-                  
-
-                  createChatByGetUrlUserInfo(d['uid']);
-                  return true;
-                },
-                'onAppear'  : function () {
-                    console.log('onAppear createPrivateChat');
-                    M_VIEW.view.closeLoader(); 
-                    M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
-                },
-                'onDisappear'  : function () {
-                    console.log('onDisappear createPrivateChat');
-                },
-                'onHide'  : function () { 
-                  console.log('onHide createPrivateChat');
-                  return true;
-                },
-                // 'setPage' : function () {    return true;},
-                'onCreate' : function (d,d1) { 
-                  M_APP.view.d_createPageInListApp({app:'base','page':'index','content': '<div class="scrolBlockForChat" style="" id="MixItUp81681F"></div>'}); 
-                },
-              };
-          //>page createPrivateChat
-
-
-          //< page one
-            var thisPageName = 'one';
-            pages[thisPageName]  = {'attr':{},'menus':{},'functions':{}};
-              pages[thisPageName]['attr'] = {
-                // 'id2' : '2',
-                // 'id3' : '3',
-              };
-              pages[thisPageName]['menus'] = {
-                'attr' : {
-                  // 'id1' : 'id2',
-                  // 'id3' : 'id4'
-                }
-              };
-              pages[thisPageName]['functions'] = {
-                'isPage'  : function () { 
-                  let i =  ( M_APP.view.d_checkPageInListApp({app:'base','page':'index'}) > 0 ) ? true : false; 
-                  console.log('isPage one i',i); 
-                  return i;
-                },
-                'onView'  : function (d,d1) { 
-                    console.log('onView one');
-                  // hide all app in list
-                  M_APP.view.d_hideApps('all','list');
-
-                  // show this app in list
-                  M_APP.view.d_showApps('base','list');
-
-                  // add header with back btn for this list app
-                  // addHeaderWithBackBtnInListView();
-
-                  // hide all menus
-                  // M_CATEGORY.view.chat_hideUserMenus();
-
-                  // create chat
-                  createChatByGetUrlUserInfo(d['uid']);
-                  return true;
-                },
-                'onAppear'  : function () {
-                    console.log('onAppear one');
-                    M_VIEW.view.closeLoader(); 
-                    M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader'); 
-                },
-                'onDisappear'  : function () {
-                    console.log('onDisappear one');
-                },
-                'onHide'  : function () { 
-                  console.log('onHide one');
-
-                  
-
-                  return true;
-                },
-                // 'setPage' : function () {    return true;},
-                'onCreate' : function (d,d1) { 
-                  M_APP.view.d_createPageInListApp({app:'base','page':'index','content': '<div class="scrolBlockForChat" style="" id="MixItUp81681F"></div>'}); 
-                },
-              };
-          //>page one
-
-
-
-    //> page full window
-
-  const options = {
-    
-  };
-  // function overided getTemplate
-  /* 
-  function getTemplate (iNdata) {
-     iNdata['other'] = VIEW.getAppContent();
-   }
-   _['getTemplate'] = getTemplate; 
-   */
-
-  // function overided onInit
-  function onInit (iNstring,iNobject) {
-    console.log('onInit - iNstring,iNobject',iNstring,iNobject);
-    M_CATEGORY.view.initSort();
-    //ddd
-    controller_devise_run();
-    // get chat list
-    if ( USER.getMyId() ) {
-      getAllMyChats();
-    }
-  }
-  _['onInit'] = onInit;
-
-  // function overided onCreate
-  function onCreate (iNstring,iNobject) {
-    // init global filter for sort
-    M_CATEGORY.view.chat_initGlobalFilter();
-
-
-    // create app block in list
-    M_APP.view.d_createListApp({app:'base','other':VIEW.getAppContent()} ); 
-
-    // init search input autocomplete
-    initForAutocompleteForSearch();
-
-    // get chat if we auth user
-    if ( USER.getMyId() ) {
-      // getAllMyChats();
-    }
-
-  }
-  _['onCreate'] = onCreate;
-
-  // function overided isApp
-  function isApp (iNstring,iNobject) {
-    
-    return (M_APP.view.d_checkListApp({app:'base'}) > 0) ? true : false;
-  }
-  _['isApp'] = isApp;
-
-
-  // function overided onInit
-  // function onInit (iNstring,iNobject) {
-    
-  //   //
-
-  // }
-  // _['onInit'] = onInit;
-
-    // function onIn
-    function onIn (iNstring,iNobject) {
-      
-    }
-    _['onIn'] = onIn;
-
-      //@overide
-      function onAppear (iNstring,iNobject) {
-
-
-      }
-      _['onAppear'] = onAppear;
-
-      //@overide
-      function onDisappear (iNstring,iNobject) {
-
-      }
-      _['onDisappear'] = onDisappear;
-
-    //@overide
-    function onOut (iNstring,iNobject) {
-
-    }
-    _['onOut'] = onOut;
-
-  //@overide
-  function onDeinit (iNstring,iNobject) {
-
-  }
-  _['onDeinit'] = onDeinit;
-
-
-  function onHide () {
-    return true;
-  }
-  _['onHide'] = onHide;
-
-
-
-
-
-
+  //CHANGE move to view
   function initForAutocompleteForSearch () {
     var index = M_DATABASE.algolia.initIndex('connect-search');
     $('.searchInputInSearchBlock').autocomplete({ hint: false }, [
@@ -367,7 +35,7 @@ define(
     ]).on('autocomplete:selected', function(event, suggestion, dataset) {
       console.log(suggestion, dataset);
     });
-  }
+  } _.initForAutocompleteForSearch = initForAutocompleteForSearch;
 
 
   function addStandartHeaderForListView () {
@@ -381,14 +49,15 @@ define(
       // add header for non auth user
       VIEW.addUserHeaderInList ( 
         {
-          'icon' : 'https://cdn.ramman.net/web/res/images/icons/user/noPhoto.png',
+          'icon' : USER.getIconNonePhoto(),//URL.db.userNonePhoto,
           'name' : DICTIONARY.withString('[system-signIn]/[system-signUp]'),
         },
         'change'
       );
 
     }
-  }
+  } _.addStandartHeaderForListView = addStandartHeaderForListView;
+
 
   function addHeaderWithBackBtnInListView (iNicon,iNname,iNlogin) {
     VIEW.addUserHeaderInList({
@@ -404,11 +73,9 @@ define(
         M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index','data':'back=1'});
       }
     );
-  }
+  } _.addHeaderWithBackBtnInListView = addHeaderWithBackBtnInListView;
 
 
-  const baseSite  = 'https://ramman.net/';
-    const url_getPage   = baseSite + 'api/service/page';
   function openPage (iNuid,iNid) {
     /*
       @discr
@@ -438,14 +105,15 @@ define(
         1 - get page object from server 
     */
     $.get (
-      url_getPage, 
+      URL.db.api.page.get, 
       iNdata, 
       function (_) {
         iNfunction(_);
       },
       'json'
     );
-  };
+  }
+
     function processingData (iNdata,iNid) {
       /*
         @example
@@ -475,29 +143,8 @@ define(
           }
         }
       }
-    }; 
+    }
 
-  function closePage () {
-    /*
-      @example
-      @discr
-        get page by iNuid and iNid from server
-      @inputs
-        @required
-      @return
-      @algoritm
-        1 - clear page
-    */
-  }
-
-  function getMessagesByChatId () {
-    // M_CATEGORY.view.startEffSortChats();
-    // var myUid       = M_APP.get('uid'),
-    //     chatsRef = FIREBASE.database().ref('chats/'+chatId);
-    // chatsRef.once('value', function(chatData) {
-
-    // });
-  }
 
     CONST['url_getUser']    = 'https://ramman.net/api/user';
 
@@ -516,28 +163,33 @@ define(
       //resort this chat (up this to top)
       M_CATEGORY.view.chatPosition_annihilateForSort ();
       M_CATEGORY.view.chatPosition_setByChatIdForSort (objForCreateChat['chatId'],1); 
-      M_CATEGORY.view.startEffSortChats ();
+      // M_CATEGORY.view.startEffSortChats ();
+
       // show only this chat
-      M_CATEGORY.view.chat_showChatByChatId(objForCreateChat['chatId']);
+      if(!iNobjectForCreateChat['filter']) M_CATEGORY.view.chat_showChatByChatId(objForCreateChat['chatId']);
       // add on click for this chat event
       M_CATEGORY.view.addOnClickActionForChatList ( objForCreateChat['chatId']);
-    }
+    } _.chat_openChatWithCreateIfNotExist = chat_openChatWithCreateIfNotExist;
 
 
     /*< USER INFO */
-      function createChatByGetUrlUserInfo (iNlogin) {
+
+
+
+      function request_getUserMenuByLogin (iNlogin, iNfunction) {
 
         M_VIEW.view.closeLoaderByTimeout(5000, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
+
         const objectForAjax = {};
               objectForAjax['userId']     = USER.getMyId();
               objectForAjax['token']      = USER.getMyToken();
               objectForAjax['uid']        = iNlogin;
         getByGetRequest_userInfo(objectForAjax,
-          function (resultOfAjax) {
+          (resultOfAjax) => {
 
 
 
-            var icon          = 'https://cdn.ramman.net/images/icons/apps/app_sharepay.png',
+            var icon          = URL.getUserIconByUid(resultOfAjax['user']['uid']),//'https://gstorage.ramman.net/users/'+resultOfAjax['user']['uid']+'/public/icons/1.jpg', //https://cdn.ramman.net/images/icons/apps/app_sharepay.png',
                 userName      = resultOfAjax['user']['name'],
                 userLogin     = resultOfAjax['user']['login'],
                 userId        = resultOfAjax['user']['uid'],
@@ -549,7 +201,7 @@ define(
            // if we does not signed
             var objForCreateChat = {};
               // get chatId if we has chat with this user
-              objForCreateChat['chatId']      = resultOfAjax['chat'];//||userLogin; //because we dont have chat
+              objForCreateChat['chatId']      = resultOfAjax['chat']||userLogin; //because we dont have chat
               objForCreateChat['userId']      = userId;
               // objForCreateChat['userHasMenu'] = 1;
               objForCreateChat['login']       = userLogin;//resultOfAjax['user']['login'];
@@ -567,31 +219,36 @@ define(
               M_CATEGORY.view.createChatListIfNotExist(objForCreateChat);
 
               // set select effects for this chat
-              M_CATEGORY.view.chat_setSelectOnlyThisChat(objForCreateChat['chatId'],1); 
+              M_CATEGORY.view.chat_setSelectOnlyThisChat(objForCreateChat['userId'],1); 
 
               //resort this chat (up this to top)
               M_CATEGORY.view.chatPosition_annihilateForSort ();
-              M_CATEGORY.view.chatPosition_setByChatIdForSort (objForCreateChat['chatId'],1); 
+              M_CATEGORY.view.chatPosition_setByUserIdForSort (objForCreateChat['userId'],1); 
               M_CATEGORY.view.startEffSortChats ();
+
               // show only this chat
-              M_CATEGORY.view.chat_showChatByChatId(objForCreateChat['chatId']);
+              console.log('request_getUserMenuByLogin chat_showChatByUserId - objForCreateChat',objForCreateChat['userId'], objForCreateChat);
+              M_CATEGORY.view.chat_showChatByUserId(objForCreateChat['userId']);
 
               // add user menu  
               addServiceMenu (objForCreateChat,resultOfAjax);
 
               // show this chat menu
-              M_CATEGORY.view.chat_showOnlyThisChatMenu(objForCreateChat['chatId']);
-
+              M_CATEGORY.view.chat_showOnlyThisChatMenu(objForCreateChat['userId']);
 
               // M_VIEW.view.closeLoaderByTimeout(2500, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
               M_VIEW.view.closeLoader ('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
+
+
+              if(typeof iNfunction == 'function') iNfunction();
           }
         );
-      }
+      } _.request_getUserMenuByLogin = request_getUserMenuByLogin;
+
         function getByGetRequest_userInfo (iNdata,iNfunction) {
           /*
             @example
-              createChatByGetUrlUserInfo({'uid': '769b72df-6e67-465c-9334-b1a8bfb95a1a2' ,'userId': 'bac255e1-6a59-4181-bfb9-61139e38630e' , 'token' : '1bf92fd8-fe97-44bc-a223-9b7af3019392'},(result) => {console.log(result);})
+              request_getUserMenuByLogin({'uid': '769b72df-6e67-465c-9334-b1a8bfb95a1a2' ,'userId': 'bac255e1-6a59-4181-bfb9-61139e38630e' , 'token' : '1bf92fd8-fe97-44bc-a223-9b7af3019392'},(result) => {console.log(result);})
             @discr
               get categories, chatId of UID
             @inputs
@@ -622,21 +279,20 @@ define(
 
     /*< CHAT */
 
-      CONST['url_createChat'] = 'https://ramman.net/api/chat';
-      function createPrivateChat (iNuid,iNuserData) {
+      CONST['url_createChat'] = URL.db.api.chat.create;// 'https://ramman.net/api/chat';
+      function createPrivateChat (iNuid,/*iNuserData,*/ iNsuccessFunction, iNerrorFunction) {
         const objectForAjax = {};
               objectForAjax['uid']     = USER.getMyId();
               objectForAjax['token']   = USER.getMyToken();
               objectForAjax['userUrl'] = iNuid;
         getByGetRequest_ChatDataBySafeCreate(objectForAjax,
-          function (resultOfAjax) {
-            if(typeof resultOfAjax == 'object' && resultOfAjax['status'] == 1 ) {
-              //SUCCESS we  created chat
-              // create chat if it did not exist
-              viewThisChatFromFDB(resultOfAjax['chat'],iNuserData);
-            }else {
-              //ERROR we cannpt create chats
-
+          (resultOfAjax) => {
+            if (typeof resultOfAjax == 'object' && resultOfAjax['status'] == 1 ) {
+              // SUCCESS we  created chat
+              if(typeof iNsuccessFunction == 'function') iNsuccessFunction(resultOfAjax);
+            } else {
+              // ERROR we cannpt create chats
+              if(typeof iNerrorFunction == 'function') iNerrorFunction(resultOfAjax);
             }
           }
         );
@@ -645,7 +301,7 @@ define(
         function getByGetRequest_ChatDataBySafeCreate (iNdata,iNfunction) {
           /*
             @example
-              createChatByGetUrlUserInfo({'uid': '769b72df-6e67-465c-9334-b1a8bfb95a1a2' ,'userId': 'bac255e1-6a59-4181-bfb9-61139e38630e' , 'token' : '1bf92fd8-fe97-44bc-a223-9b7af3019392'},(result) => {console.log(result);})
+              request_getUserMenuByLogin({'uid': '769b72df-6e67-465c-9334-b1a8bfb95a1a2' ,'userId': 'bac255e1-6a59-4181-bfb9-61139e38630e' , 'token' : '1bf92fd8-fe97-44bc-a223-9b7af3019392'},(result) => {console.log(result);})
             @discr
               get categories, chatId of UID
             @inputs
@@ -675,10 +331,12 @@ define(
 
        
         function viewThisChatFromFDB (iNchat,iNuserData) {
+            //LATER DEL
             console.log('viewThisChatFromFDB iNchat,iNuserData',iNchat,iNuserData);
             const objForCreatChat = {};
             objForCreatChat['chatId']   = iNchat || ('noneChat_'+iNuserData['user']['uid']);
             objForCreatChat['userId']   = iNuserData['user']['uid'];
+            objForCreatChat['userLogin']   = iNuserData['user']['login'];
             objForCreatChat['chatName'] = iNuserData['user']['name'];
             objForCreatChat['icon_min'] = iNuserData['user']['icon'];
             // if(iNchat) {
@@ -701,25 +359,83 @@ define(
             // show this chat list
             M_CATEGORY.view.effShowChatList(objForCreatChat['chatId']);
         }
+
+
+
+
           function addServiceMenu ( objForCreatChat, iNuserData ) {
               M_VIEW.view.closeLoaderByTimeout(2500, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
             // add chat if we has chat
-            var chatId = objForCreatChat['chatId']||VIEW.getRealChatIdByUid(objForCreatChat['userId']);
-            if ( chatId ) {
+            var chatId = M_CATEGORY.view.getChatIdByUid(objForCreatChat['userId']) || objForCreatChat['chatId'];//  objForCreatChat['chatId']||VIEW.getRealChatIdByUid(objForCreatChat['userId']);
+
+
+            console.log('addServiceMenu objForCreatChat - ',objForCreatChat);
+            console.log('addServiceMenu chatId - ',chatId);
+            if ( chatId && objForCreatChat['userId'] != chatId) {
               // we has chatId
               M_CATEGORY.addChatBlockToCategory (iNuserData,chatId,objForCreatChat['userId']);
 
             } else {
 
               // we has not chatId -> we disable chat btn link
-              M_CATEGORY.addDisabledChatBlockToCategory (iNuserData,objForCreatChat['userId']);
+              M_CATEGORY.addDisabledChatBlockToCategory (iNuserData,objForCreatChat['userId'],objForCreatChat['login']);
 
             }
 
-            // add menu to user chat
+            // add menu to user chat (creating menu in dom)
             M_CATEGORY.view.addMenuByCategoryList ( iNuserData, objForCreatChat['userId'] );
+            
+            // attach onclick to 'chat' menu for create chat if it need
+            M_CATEGORY.view.onClickCategoryForCreateChat (
+              (userId, userLogin) => {
+                // SUCCESS -> will do requiest for create chat
+                // show loader
+                M_APP.view.showLoader
+                createPrivateChat (
+                  userId,
+                  ( iNchatObject ) => {
+                    console.log ( 'request_getUserMenuByLogin userLogin', userLogin );
+                    // we created chat -> we update menu && we open chat
+
+                    M_CATEGORY.view.removeChatListByUserId(
+                      userId,
+                      () => {
+                        // get menu -> show menu
+                        request_getUserMenuByLogin ( userLogin , 
+                          () => {
+                            // open chat after reload menu
+                            var chatLinkSelector = M_CATEGORY.view.getPathToChatByUserId(userId);
+                            // trigger click for chat btn for view chat
+                            $(chatLinkSelector + ' .privateChatBtn').trigger('click');
+                          }
+                        );
+                      }
+                    );
+
+
+
+                    //
+
+
+                  }  , 
+                  () => {
+                    // we CANNOT created chat
+
+                  }
+                )
+                console.log('category success');
+
+              },
+              (userId, userLogin) => {
+                // ERROR
+                console.log('category error');
+
+              }
+            );
+
             // translated all menu dictionary
             DICTIONARY.start('.menuListForUsers');
+
           }
 
         
@@ -772,7 +488,10 @@ define(
 
               var memberBlock   = memberData.data();
               var chatId        = memberData.id;
-              var user2         = M_APP.getJsonKey(memberBlock);
+              console.log('userForPrivateChat chatId',chatId);
+              console.log('userForPrivateChat memberBlock',memberBlock);
+              var user2         = memberBlock['with'];
+              console.log('userForPrivateChat user2 with - ',user2);
               M_CATEGORY.userForPrivateChat(chatId,user2);
                    
               safeAttachLiveLinkToChatElement(chatId);
@@ -807,6 +526,10 @@ define(
     M_CATEGORY.view.domSafeShowNewMsgCountInChatBlock( iNchatId, number );
   }
 
+
+  function offAllLinkWithChatDbByChatId () {
+    // body...
+  }
 
   function safeAttachLiveLinkToChatElement (iNchatId,iNfunction) {
       // of all link with chat db
@@ -861,41 +584,8 @@ define(
             }
           }
        );
-       
-      // chatsRef.once ( 'value', (chatData) => {
-      //   var chatId    = chatData.ref.parent.key,
-      //       chatBlock = chatData.val(),
-      //       chatType  = chatBlock.chat.type;
-      //   //@< creating chat
-      //     if (chatType == 1) {
-      //         //create "private" chat
-      //         safeUpdatePrivateChatBlockFromUserDb( chatId,chatBlock, chatType ,iNfunction); // changeObject
-      //     } else if (chatType == 2) {
-      //         //create "common" chat
-      //         safeUpdateCommonChatBlockFromUserDb ( chatId, chatBlock, chatType ,iNfunction);
-      //     }
-      //   //@> creating chat
-
-      //   startNewMsgCounter(chatId,myUid);
-      // });
-      // chatsRef.on ( 'child_changed' , function (chatData) {
-      //     var chatId           = chatData.ref.parent.parent.key;
-      //     var chatKey          = chatData.ref.key;
-      //     var chatDataValue    = chatData.val();
-      //     var chatObject      = {}; 
-      //       chatObject[chatKey] = chatDataValue;
-      //       var chatBlock     = chatData.val();
-      //       var chatType      = chatBlock.type;
-      //       var changeObject  = M_CATEGORY.getObjectForUpdateChatBlock ( chatObject );
-      //             changeObject['chatType'] = chatType;
-      //             changeObject['chatId']   = chatId;
-      //       // change chat
-      //       M_CATEGORY.safeUpdateChatBlock(changeObject,chatType);
-      // });
   }
 
-  function offAllLinkWithChatDbByChatId (iNchatId) {
-  }
 
   function safeUpdateCommonChatBlockFromUserDb (iNchatId,iNobject,iNchatType) {
     /*
@@ -935,6 +625,8 @@ define(
     
     M_CATEGORY.safeUpdateChatBlock(changeObject);
   }
+
+
   function checkUserForHasMenuForMe (iNoptions) {
     /*
       @discr
@@ -947,7 +639,6 @@ define(
               hasMenuForNoneAuth -> number
               hasMenuForAll -> number
     */
-    console.log('checkUserForHasMenuForMe - iNoptions',iNoptions);
     if(typeof iNoptions == 'object') {
       // check menu for all
       if( typeof iNoptions.hasMenuForAll == 'number' && iNoptions.hasMenuForAll > 0) {
@@ -997,6 +688,11 @@ define(
       console.log('safeUpdatePrivateChatBlockFromUserDb - iNchatId,iNobject,iNchatType',iNchatId,iNobject,iNchatType);
 
       function functWhenGet (usersData) {
+          /*
+            @inputs
+              @required
+
+          */
           var objForCreate  = {};
           var user2id       = usersData.id;
           var user2Object   = usersData.data();
@@ -1073,43 +769,6 @@ define(
             }
       );
 
-      // usersRef.on('value', function(usersData) { 
-          // change date if change userDate 
-          // var objForCreate  = {};
-          // var user2id       = usersData.key;
-          // var user2Object   = usersData.val();
-
-          // var chatId = iNchatId; // M_CATEGORY.view.getChatIdByUid(user2id);
-
-          // var chatName    = user2Object.info.data.name;
-          // var login       = user2Object.info.data.login;
-          // var user2Phone  = user2Object.info.data.phone;
-          // var user2Icon   = user2Object.info.data.icon;
-          // var userType    = user2Object.info.data.type;
-          // var userOnline  = user2Object.info.live.online;
-
-          // var objForCreateChat = {}; // objForCreate;
-          //     objForCreateChat['uuid']      = user2id,
-          //     objForCreateChat['chatId']    = chatId,
-          //     objForCreateChat['chatName']  = chatName,
-          //     objForCreateChat['userPhone'] = user2Phone,
-          //     objForCreateChat['icon']      = user2Icon,
-          //     objForCreateChat['login']     = login;
-          //     objForCreateChat['userType']  = userType;
-          //     objForCreateChat['userOnline']  = userOnline;
-
-
-
-          // delete objForCreateChat.liveData;
-          // M_CATEGORY.safeUpdateChatBlock (objForCreateChat,iNchatType);
-          // activeContactChangeInChatBlock(user2Phone);
-
-          // // safe invoke once iNsuccessFunction just one
-          // if (typeof iNsuccessFunction == 'function') {
-          //   iNsuccessFunction();
-          //   iNsuccessFunction = false;
-          // }
-      // });
   }
 
   function activeContactChangeInChatBlock (user2Phone){
@@ -1178,7 +837,7 @@ define(
         onEvent_devise_MousemoveController();
       });
     }
-  } 
+  } _.controller_devise_run = controller_devise_run;
   
 
   function devise_setStateIOnline () {
@@ -1352,14 +1011,6 @@ define(
             );
           }
         )
-
-
-        // ref.once('value')
-        // .then(function(dataSnapshot) {
-        //   // handle read data.
-        //     console.log('devise_onDisconectController once dataSnapshot.val()',dataSnapshot.val());
-            
-        // });
 
 
         

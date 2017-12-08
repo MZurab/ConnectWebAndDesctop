@@ -1,4 +1,4 @@
-define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'], function ($,FIREBASE,DICTIONARY,M_VIEW,M_APP) {
+define(['jquery','m_firebase','dictionary','m_view','m_app','url','jquery.countdown'], function ($,FIREBASE,DICTIONARY,M_VIEW,M_APP,URL) {
   	const _ = {};
 	//@@@<<< USER
 		function getUserCountry() {
@@ -161,7 +161,7 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 		if ( iNloader == true  ) M_VIEW.view.showLoader ();
 	    $.ajax(
 	    {
-	        url: 'https://ramman.net/api/web/sign',
+	        url: URL.db.api.user.sign, //'https://ramman.net/api/web/sign',
 	        type: 'POST',
 	        data: JSON.stringify({'type':'signInByAnonim'}),
 	        beforeSend: function(request) {
@@ -204,7 +204,7 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 
 
 	    $.ajax({
-	        url: 'https://ramman.net/api/web/sign',
+	        url: URL.db.api.user.sign,//'https://ramman.net/api/web/sign',
 	        type: 'POST',
 	        data: JSON.stringify(iNdata),
 	        beforeSend: function(request) {
@@ -254,7 +254,7 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	        iNdata['codeType'] 	= formBlock['codeType'];
 	        M_VIEW.view.showLoader ();
 	        $.ajax({
-	            url: 'https://ramman.net/api/web/sign',
+	            url: URL.db.api.user.sign,//'https://ramman.net/api/web/sign',
 	            type: 'POST',
 	            data: JSON.stringify(iNdata),
 	            beforeSend: function(request) {
@@ -297,7 +297,7 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 		M_VIEW.view.showLoader();
 	    var formBlock = $(Obj).serializeObject();
 	    $.ajax({
-	        url: 'https://ramman.net/api/web/sign',
+	        url: URL.db.api.user.sign,//'https://ramman.net/api/web/sign',
 	        type: 'POST',
 	        data: JSON.stringify(formBlock),
 	        beforeSend: function(request) {
@@ -341,12 +341,17 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 
 
     function setMyIcon (iNurl) {
-	    M_APP.save('userIcon',iNurl);
+    	// DELETE CHANGE
+	    // M_APP.save('userIcon',iNurl);
     }
     function getMyIcon () {
-    	return M_APP.get('userIcon');
+    	return URL.getUserIconByUid( getMyId() );//M_APP.get('userIcon');
 	}
     _['getMyIcon'] = getMyIcon;
+
+    function getIconNonePhoto () {
+    	return URL.db.userNonePhoto;
+    } _.getIconNonePhoto = getIconNonePhoto;
 
     function setMyLogin (iNlogin) {
 	    M_APP.save('user',iNlogin);
@@ -431,7 +436,7 @@ define(['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'],
 	    if(st<nowSec) {
 	    	M_VIEW.view.showLoader();
 	        $.ajax({
-	            url: 'https://ramman.net/api/web/sign',
+	            url: URL.db.api.user.sign,//'https://ramman.net/api/web/sign',
 	            type: 'POST',
 	            data: JSON.stringify(iNdata),
 	            beforeSend: function(request) {

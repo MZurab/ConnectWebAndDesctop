@@ -16,18 +16,6 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	//@>>> TIME FUNCTIONS
 
 	//@<<< LOCAL STORAGE
-		// function _getValidStorage () {
-		// 	if ( getGlobalVar('m_routing').getUserDomain() ) {
-		// 		//if we are in subdomain
-		// 		return window.connectTempLocalStorage;
-		// 	} else {
-		// 		//if we are in chief site
-		//     	return localStorage;
-
-		// 	}
-		// }
-		// _['getValidStorage'] = _getValidStorage;
-
 			function _getLocalStorage () {
 		    	return localStorage;
 			}
@@ -81,14 +69,6 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 
 		function _get (name) {
 	    	return _getFromLocalStorageByKey( name );
-
-			// if ( getGlobalVar('m_routing').getUserDomain() ) {
-			// 	//if we are in subdomain
-			// 	return _getFromTempStorageByKey ( name );
-			// } else {
-			// 	//if we are in chief site
-		 //    	return _getFromLocalStorageByKey( name ); 
-			// }
 		}
 		_['get'] = _get;
 
@@ -174,11 +154,11 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	
 
 	//@< private vars
-		const globalPrefix = 'global-';
-		const prefixForApp_ = 'rammanApp-';
-		const prefixForGlobalApp_ = globalPrefix + prefixForApp_;
-		const prefixForGlobalVar = globalPrefix + 'var-';
-		const openPageName_ = 'openPage';
+		const globalPrefix 			= 'global-';
+		const prefixForApp_ 		= 'rammanApp-';
+		const prefixForGlobalApp_ 	= globalPrefix + prefixForApp_;
+		const prefixForGlobalVar 	= globalPrefix + 'var-';
+		const openPageName_ 		= 'openPage';
 	//@> private vars
 
 	function _setApp (iNapp) {
@@ -193,7 +173,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	}
 	_['setApp'] = _setApp;
 
-	function _setPage (iNapp,iNpage) {
+	function setOpeningPageByApp (iNapp,iNpage) {
 		/*
 			@discr
 				save open app and page in global window
@@ -203,11 +183,13 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 					iNpage -> string
 		*/
 		// _setApp(iNapp);
-		window[this.prefixForApp_ + '-' + iNapp+'-'+this.openPageName_] = iNpage;
+		window[prefixForApp_ + iNapp+'-'+openPageName_] = iNpage;
 	}
-	_['setPage'] = _setPage;
+	_['setOpeningPageByApp'] = setOpeningPageByApp;
 
-	function _thisPage (iNapp) {
+
+
+	function getOpeningPageByApp (iNapp) {
 		/*
 			@discr
 				get open page or false
@@ -215,14 +197,50 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 				@required
 					iNapp -> string
 		*/
-		return window[this.prefixForApp_ + '-' + iNapp + '-' + this.openPageName_ ] || false;
+		return window[prefixForApp_ + iNapp+'-'+openPageName_] || false;
 	}
-	_['thisPage'] = _thisPage;
+	_['getOpeningPageByApp'] = getOpeningPageByApp; window.getOpeningPageByApp = getOpeningPageByApp;
 
-	function _thisApp () {
+	function getOpeningApp () {
 		/*
 			@discr
-				get open app or false
+				get opening app or false
+			@input
+				@required
+			@return
+				object: app
+		*/
+		var thisApp = window.rammanNowOpenedApp||false;
+		return thisApp;
+	} _.getOpeningApp = getOpeningApp; window.getOpeningApp = getOpeningApp;
+
+	//
+	//
+	function addAppToStoryLog (iNapp) {
+		/*
+			@discr
+				add app to log fix time and count of opened times
+			@input
+				@required
+					iNapp -> string
+			@return
+				object: app
+		*/
+		if ( typeof window['connectAppStory'] != 'object') 			window['connectAppStory'] 			= {};
+		if ( typeof window['connectAppStory'][iNapp] != 'object') 	window['connectAppStory'][iNapp] 	= {};
+
+		// fixed amount open in time
+		window['connectAppStory'][iNapp]['count'] 	= (window['connectAppStory'][iNapp]['count']||0) + 1;
+
+		// fixed open time
+		window['connectAppStory'][iNapp]['time'] 	= new Date().getTime();
+		
+	} _.addAppToStoryLog = addAppToStoryLog;
+
+	function addAppPageToStoryLog (iNapp,iNpage) {
+		/*
+			@discr
+				add app of page to log fix time and count of opened times
 			@input
 				@required
 					iNapp -> string
@@ -230,10 +248,71 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 			@return
 				object: app
 		*/
-		var thisApp = window.rammanNowOpenedApp||false;
-		return thisApp;
-	}
-	_['thisApp'] = _thisApp;
+		// add app for first
+		addAppToStoryLog(iNapp);
+
+		// add page
+		if ( typeof window['connectAppStory'][iNapp]['pages'] != 'object') 		window['connectAppStory'][iNapp]['pages'] 	= {};
+		if ( typeof window['connectAppStory'][iNapp]['pages'][iNpage] != 'object') 		window['connectAppStory'][iNapp]['pages'][iNpage] 	= {};
+
+		// fixed amount open in time
+		window['connectAppStory'][iNapp]['pages'][iNpage]['count'] 	= (window['connectAppStory'][iNapp]['pages'][iNpage]['count']||0) + 1;
+
+		// fixed open time
+		window['connectAppStory'][iNapp]['pages'][iNpage]['time'] 	= new Date().getTime();
+		
+	} _.addAppPageToStoryLog = addAppPageToStoryLog;
+
+	function getAppFromStoryLog (iNapp) {
+		/*
+			@discr
+				get app from story for check opened app or no
+			@input
+				@required
+					iNapp -> string
+			@return
+				object: app
+		*/
+		// add app for first
+
+
+		if ( typeof window['connectAppStory'] != 'object') 			return false;
+		if ( typeof window['connectAppStory'][iNapp] != 'object') 	return false;
+		return window['connectAppStory'][iNapp];
+		
+	} _.getAppFromStoryLog = getAppFromStoryLog; 
+
+	function getAppPageFromStoryLog (iNapp,iNpage) {
+		/*
+			@discr
+				get page of app from story for check opened page or no
+			@input
+				@required
+					iNapp -> string
+					iNpage -> string
+			@return
+				false OR object: 
+					{
+						count -> number
+						time -> number (timestamp)
+					}
+
+		*/
+		// add app for first
+
+		if(!getAppFromStoryLog(iNapp)) return false;
+
+		
+		// get page
+		if ( typeof window['connectAppStory'][iNapp]['pages'] != 'object') 				return false;
+		if ( typeof window['connectAppStory'][iNapp]['pages'][iNpage] != 'object') 		return false;
+
+		return window['connectAppStory'][iNapp]['pages'][iNpage];
+		
+	} _.getAppPageFromStoryLog = getAppPageFromStoryLog;
+	//
+	//
+
 
 	function _invokeOpenedApp (iNmethodName) {
 		/*
@@ -244,11 +323,11 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 				@optional
 					iNmethodName -> string
 		*/
-		if ( typeof iNmethodName == 'string' && _thisApp() != false && typeof _thisApp()[iNmethodName] == 'function') {
-			let thisFunc =  _thisApp()[iNmethodName];	
+		if ( typeof iNmethodName == 'string' && getOpeningApp() != false && typeof getOpeningApp()[iNmethodName] == 'function') {
+			let thisFunc =  getOpeningApp()[iNmethodName];	
 			thisFunc();
 		}
-		return _thisApp();
+		return getOpeningApp();
 	}
 	_['invokeOpenedApp'] = _invokeOpenedApp;
 
@@ -268,7 +347,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 			@return
 				false OR 
 		*/
-		var appName = iNappName,appPrefix = this.prefixForApp_+'-',method=iNmethodName;
+		var appName = iNappName,appPrefix = prefixForApp_+'-',method=iNmethodName;
 		if( typeof(window[appPrefix+ appName]) == 'object' && typeof(window[appPrefix+ appName][method]) != 'undefined')
 				switch( typeof(window[appPrefix+ appName][method]) ){
 					case 'function':
@@ -336,7 +415,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 			@deps
 				funciton : VIEW.d_checkChiefApp,
 				funciton : VIEW.d_createChiefApp,
-				funciton : _thisPage
+				funciton : getOpeningPageByApp
 			@return
 			@algorithm
 				#1 check for isset app
@@ -363,7 +442,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 
 				//then invoke app init method
 				iNapp.onInit(iNdataForApp,objectForCreateApp);
-		} else if ( _thisPage(objectForCreateApp['app']) != objectForCreateApp['page']) {
+		} else if ( getOpeningPageByApp(objectForCreateApp['app']) != objectForCreateApp['page']) {
 			// we safe invoke app onUpdate method
 			if ( typeof(iNapp['onUpdate']) == 'function' ) iNapp.onUpdate(iNdataForApp);
 		}
@@ -424,10 +503,10 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 			@return
 			@algorithmh 
 		*/
-		// if we open this app from another this.appName != nowOpenedApp
-		if ( iNdata['app'] != _thisApp().name ) {
+		// if we open this app from another appName != nowOpenedApp
+		if ( iNdata['app'] != getOpeningApp().name ) {
 			// did safe invoke onDisappear, onOut methods for app is opening now
-			var pagesFunctionsFromAnotherApp =  getPageFuncitons(_thisApp(),_thisPage( _thisApp().name ) );//  _invokeApp(_thisApp(),'pages');
+			var pagesFunctionsFromAnotherApp =  getPageFuncitons(getOpeningApp(),getOpeningPageByApp( getOpeningApp().name ) );//  _invokeApp(getOpeningApp(),'pages');
 			// did safe invoke for pages from another app onDisappear, onOut
 			if ( pagesFunctionsFromAnotherApp != false) {
 				// invoke onDesappear for page 
@@ -442,7 +521,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 					if ( typeof(pagesFunctionsFromAnotherApp['onHide']) == 'function' )
 						pagesFunctionsFromAnotherApp['onHide']();
 					else 
-						VIEW.d_hidePages(_thisApp().name, _thisPage( _thisApp().name ));
+						VIEW.d_hidePages(getOpeningApp().name, getOpeningPageByApp( getOpeningApp().name ));
 			}
 
 
@@ -451,10 +530,10 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 			_invokeOpenedApp('onOut');
 
 			// hide another app with custom or defatult methods
-			if( typeof _thisApp()['onHide'] == 'function' ) {
-				_thisApp()['onHide']();
+			if( typeof getOpeningApp()['onHide'] == 'function' ) {
+				getOpeningApp()['onHide']();
 			} else {
-				VIEW.d_hideApps( _thisApp().name );
+				VIEW.d_hideApps( getOpeningApp().name );
 			}
 
 			// did safe invoke thisApp.onIn in
@@ -462,10 +541,10 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 
 			//did app appear functions and 
 			iNapp.onAppear();
-		} else if( _thisPage(iNdata['app']) != iNdata['page']) {
+		} else if( getOpeningPageByApp(iNdata['app']) != iNdata['page']) {
 			// if this app now open and this page does not open we have to invoke page open page on onDisappear
 			// did safe invoke onDisappear  methods for this app
-			var pagesFunctionsFromThisApp = getPageFuncitons( iNapp , _thisPage( _thisApp().name ) );// _invokeApp(_thisApp(),'pages');
+			var pagesFunctionsFromThisApp = getPageFuncitons( iNapp , getOpeningPageByApp( getOpeningApp().name ) );// _invokeApp(getOpeningApp(),'pages');
 
 			if (pagesFunctionsFromThisApp != false) {
 				// invoke safe onDesappear for page 
@@ -477,7 +556,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 				if ( typeof(pagesFunctionsFromThisApp['onHide']) == 'function' )
 					pagesFunctionsFromThisApp['onHide']();
 				else 
-					VIEW.d_hidePages( iNdata['app'], _thisPage( iNdata['app'] ));		
+					VIEW.d_hidePages( iNdata['app'], getOpeningPageByApp( iNdata['app'] ));		
 		}
 	}
 	function rightInvokePageFunctions (iNapp,iNdata,objectForCreatePage,iNdataForApp) {
@@ -537,7 +616,7 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 
 		// set this page as openinig
 		if( typeof pageFunctions['setPage'] != 'function' )
-			_setPage(iNdata['app'],iNdata['page']);
+			setOpeningPageByApp(iNdata['app'],iNdata['page']);
 		else
 			pageFunctions['setPage'](iNdataForApp,objectForCreatePage);
 
@@ -625,6 +704,9 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 			_setApp ( iNapp );
 		else
 			iNapp['setApp']( iNdataForApp , iNdata );
+
+		// add app to log
+		addAppPageToStoryLog(iNdata['app'],iNdata['page'])
 
 
 		// invoke app on appear functions
@@ -1038,9 +1120,9 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	//     'clone' 		: _clone,
 
 	//     'setApp' 		: _setApp,
-	//     'setPage' 		: _setPage,
-	//     'thisApp' 		: _thisApp,
-	//     'thisPage' 		: _thisPage, 
+	//     'setPage' 		: setOpeningPageByApp,
+	//     'thisApp' 		: getOpeningApp,
+	//     'thisPage' 		: getOpeningPageByApp, 
 
 	//     'd_hidePages'   : _td_hidePages,
 	//     'd_showPages'   : _td_showPages,
