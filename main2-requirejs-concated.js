@@ -6440,263 +6440,7 @@ define('m_view',['jquery','dictionary','v_view','sweetalert2'],
 		*/
 	}
 });
-define( 'localdb',[] , function () {
-	const DB = {};
-	const _ = {'db':DB};
-
-	//@< db > values
-		const VAL = {}; DB.val = VAL;
-
-		VAL['systemUser'] = '@system';
-	//@> db > valuse
-
-
-
-	//@<  db > main
-		const MAIN = {}; DB.main = MAIN;
-
-		//@<<< main > blocks
-			const BLOCKS 		= {}; MAIN['blocks'] = BLOCKS;
-		//@>>> main > blocks
-
-
-		//@<<< main > blocks > first
-			const FIRST 		= {}; BLOCKS['first'] = FIRST;
-
-			//@< main > blocks > first > header
-				const FHEADER 		= {}; FIRST['header'] = FHEADER;
-
-
-			//@> main > blocks > first > header
-
-			//@< main > blocks > first > body
-				const FBODY 		= {}; FIRST['body'] = FBODY;
-			//@> main > blocks > first > body
-
-			//@< main > blocks > first > footer
-				const FFOOTER 		= {}; FIRST['footer'] = FFOOTER;
-			//@> main > blocks > first > footer
-
-		//@>>> main > blocks > first
-
-		
-		//@<<< main > blocks > second
-			const SECOND 		= {}; BLOCKS['second'] = SECOND;
-
-
-			//@< main > blocks > second > header
-				const SHEADER 		= {}; SECOND['header'] = SHEADER;
-
-				//@< header > base
-					var APP_BASE 		= {}; SHEADER['base'] = APP_BASE;
-
-						// base > index
-						var PAGE_INDEX 		= {}; APP_BASE['index'] = PAGE_INDEX;
-
-							// index > icon
-							var FLAGS = {}; PAGE_INDEX['flags'] = FLAGS;
-							FLAGS['hasPseudoUser'] = 'flagHasPseudoUsers';
-				//@> menus
-
-			//@> main > blocks > second > header
-
-
-
-
-			//@< main > blocks > second > body
-				const SBODY 		= {}; SECOND['body'] = SBODY;
-			//@> main > blocks > second > body
-
-		//@>>> main > blocks > second 
-
-		//@<<< main > blocks > third
-			const THIRD 		= {}; BLOCKS['third'] = THIRD;
-
-			//@< main > blocks > third > header
-				const THHEADER 		= {}; THIRD['header'] = THHEADER;
-			//@> main > blocks > third > header
-
-			//@< main > blocks > third > body
-				const THBODY 		= {}; THIRD['body'] = THBODY;
-			//@> main > blocks > third > body
-
-		//@>>> main > blocks > third
-
-		
-
-		
-
-	//@> db > main 
-
-
-
-
-
-	return _;
-
-	/* <@MAP
-		db
-			doc
-				main
-					blocks
-						first
-							header
-							body
-							footer
-						second
-							header
-							body
-						third
-							header
-							body
-	@MAP> */
-});
-define( 'selector',['localdb'] , function (LOCALDB) {
-	const DB = {};
-	const _ = {'db':DB};
-
-	//@< db > values
-		const VAL = {}; DB.val = VAL;
-
-		VAL['curtain'] = '.connectBackgroundCurtain';
-	//@> db > valuse
-
-
-
-	//@<  db > main
-		const MAIN = {}; DB.main = MAIN;
-
-		//@<<< main > blocks
-			const BLOCKS 		= {}; MAIN['blocks'] = BLOCKS;
-		//@>>> main > blocks
-
-
-		//@<<< main > blocks > first
-			const FIRST 		= {}; BLOCKS['first'] = FIRST;
-
-			//@< main > blocks > first > header
-				const FHEADER 		= {}; FIRST['header'] = FHEADER;
-
-				//@< main > blocks > first > header > menus
-					const FH_MENUS 		= {}; FHEADER['menus'] = FHEADER;
-				//@> main > blocks > first > header > menus
-			//@> main > blocks > first > header
-
-			//@< main > blocks > first > body
-				const FBODY 		= {}; FIRST['body'] = FBODY;
-			//@> main > blocks > first > body
-
-			//@< main > blocks > first > footer
-				const FFOOTER 		= {}; FIRST['footer'] = FFOOTER;
-			//@> main > blocks > first > footer
-
-		//@>>> main > blocks > first
-
-		
-		//@<<< main > blocks > second
-			const SECOND 		= {}; BLOCKS['second'] = SECOND;
-			SECOND.val 			= '#menusBlock';
-
-			//@< main > blocks > second > header
-				const SHEADER 		= {}; SECOND['header'] = SHEADER;
-				SHEADER.val 		= SECOND.val + ' .topBlockInMenusBlock';
-
-				//@< header > base
-					var APP_BASE 		= {}; SHEADER['base'] = APP_BASE;
-					APP_BASE.val 		= SHEADER.val + ' .menuHeaderInMenusBlock[app-name="base"]';
-
-						// base > index
-						var PAGE_INDEX 		= {}; APP_BASE['index'] = PAGE_INDEX;
-						PAGE_INDEX.val 		= APP_BASE.val + ' .appPage[page-name="index"]'
-
-							//
-
-							// index > userIcon
-							var BASEHEADER = {}; PAGE_INDEX['baseHeader'] = BASEHEADER;
-							BASEHEADER.val = PAGE_INDEX.val + ' .appBase_userListHeaderContainer';
-
-							// index > userIcon
-							var USERICON = {}; PAGE_INDEX['userIcon'] = USERICON;
-							USERICON.val = BASEHEADER.val + ' .appBase_userIcon';
-
-							// index > userName
-							var USERNAME = {}; PAGE_INDEX['userName'] = USERNAME;
-							USERNAME.val = BASEHEADER.val + ' .appBase_ListHeader_dName';
-							
-							// index > userNameWihPseudoFlag
-							var userNameWihPseudoFlag = {}; PAGE_INDEX['userNameWihPseudoFlag'] = userNameWihPseudoFlag;
-							userNameWihPseudoFlag.val = `${BASEHEADER.val}.${LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser} .appBase_ListHeader_dName`;
-
-							
-							// index > iconNameWihPseudoFlag
-							var userIconWihPseudoFlag = {}; PAGE_INDEX['userIconWihPseudoFlag'] = userIconWihPseudoFlag;
-							userIconWihPseudoFlag.val = `${BASEHEADER.val}.${LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser} .appBase_userIcon`;
-
-							// index > menuSwitchUserBox
-							var menuSwitchUserBox = {}; PAGE_INDEX['menuSwitchUserBox'] = menuSwitchUserBox;
-							menuSwitchUserBox.val = `${PAGE_INDEX.val}  .appBase_userSelectMenuContainer`;
-
-								// index > menuSwitchUserBox > item
-								menuSwitchUserBox.item = {'val': `${menuSwitchUserBox.val} ul`}
-				//@> menus
-
-			//@> main > blocks > second > header
-
-			//@< main > blocks > second > body
-				const SBODY 		= {}; SECOND['body'] = SBODY;
-				SBODY.val 			= SECOND.val + ' .usersBlockContainerInMenusBlock';
-
-				SBODY['toChat'] = '.usersBlockContainerInMenusBlock .scrolBlockForChat .mix.usersBlockInMenusBlock';
-			//@> main > blocks > second > body
-
-		//@>>> main > blocks > second 
-
-		//@<<< main > blocks > third
-			const THIRD 		= {}; BLOCKS['third'] = THIRD;
-			THIRD.val = '#viewBlock';
-
-			//@< main > blocks > third > header
-				const THHEADER 		= {}; THIRD['header'] = THHEADER;
-					  THHEADER.val 	= THIRD.val + ' .topBlockInViewBlock';
-			//@> main > blocks > third > header
-
-			//@< main > blocks > third > body
-				const THBODY 		= {}; THIRD['body'] = THBODY;
-					  THBODY.val 	= THIRD.val + ' #viewAndChatBlockInViewBlock';
-			//@> main > blocks > third > body
-
-		//@>>> main > blocks > third
-
-		
-
-		
-
-	//@> db > main 
-
-
-
-
-
-	return _;
-
-	/* <@MAP
-		db
-			doc
-				main
-					blocks
-						first
-							header
-							body
-							footer
-						second
-							header
-							body
-						third
-							header
-							body
-	@MAP> */
-});
-define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,V_VIEW, SELECTOR){
+define('v_app',['jquery','template7','v_view'],function($,Template7,V_VIEW){
 	const CONST = {
 		'pathAppHeader' 	  : '#block #viewBlock .topBlockInViewBlock',
 		'pathAppView' 	  	  : '#block #viewBlock #viewAndChatBlockInViewBlock.appChiefWindow',
@@ -8276,63 +8020,106 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 			} _.sideButtons_addSelectedEffectsByFilter = sideButtons_addSelectedEffectsByFilter;
 		//@> SIDE BUTTONS
 
-
-		//@< CURTAIN
-			function showBackgroundCurtain () {
-				/*
-					@discr
-					@inputs
-				*/
-				$(SELECTOR.db.val.curtain).show();
-			} _.showBackgroundCurtain = showBackgroundCurtain;
-
-			function showBackgroundCurtainWithFunction (clickFunction) {
-				/*
-					@discr
-					@inputs
-				*/
-				// bacground
-				hideBackgroundCurtain();
-				// show
-				showBackgroundCurtain();
-				
-				$(SELECTOR.db.val.curtain).click(
-					function () {
-						if(typeof clickFunction == 'function') clickFunction(this);
-						// hide backgorun curtain
-						hideBackgroundCurtain();
-					}
-				);
-			} _.showBackgroundCurtainWithFunction = showBackgroundCurtainWithFunction;
-
-			function hideBackgroundCurtain () {
-				/*
-					@discr
-					@inputs
-				*/
-
-				// hide curtain
-				$(SELECTOR.db.val.curtain).hide();
-				// off click
-				$(SELECTOR.db.val.curtain).off('click');
-			} _.hideBackgroundCurtain = hideBackgroundCurtain;
-		//@> CURTAIN
-
 		function clear () {
 			// right header
-			$( SELECTOR.db.main.blocks.second.header.val ).html('');
-			
+			$('#menusBlock .topBlockInMenusBlock').html('');
 			// right body
-	        $( SELECTOR.db.main.blocks.second.body.val  ).html('');
+	        $('#menusBlock .usersBlockContainerInMenusBlock').html('');
 
 			// left header
-	        $(SELECTOR.db.main.blocks.third.header.val).html('');
-
+	        $('#viewBlock .topBlockInViewBlock').html('');
 			// left body
-	        $(SELECTOR.db.main.blocks.third.body.val).html('');
+	        $('#viewBlock #viewAndChatBlockInViewBlock').html('');
 		} _.clear = clear;
 
 		return _;
+  //       return {
+		//   // loader
+		//   	delLoaderInMenuView 	: delLoaderInMenuView,
+		//   	createLoaderInMenuView 	: createLoaderInMenuView,
+		//   	delLoaderInAppView 		: delLoaderInAppView,
+		//   	createLoaderInAppView 	: createLoaderInAppView,
+		//   	delLoader 				: V_VIEW.closeLoader,
+		//   	createLoader 			: V_VIEW.showLoader,
+
+  //   	  // functions for work with template
+  //   	  	'getAppTemplate'		: getAppTemplate,
+  //   	  	'getPageViewTemplate'	: getPageViewTemplate,
+  //   	  	'getPageMenuTemplate'	: getPageMenuTemplate,
+
+		//   // functions for list app
+		//     'getListApp'            : getListApp,
+		//     'getPageForListApp'     : getPageForListApp,
+		//     'd_updatePageInListApp' : d_updatePageInListApp,
+		//     'd_clearPageInListApp'  : d_clearPageInListApp,
+		//     'd_checkPageInListApp'  : d_checkPageInListApp,
+		//     'd_checkListApp'        : d_checkListApp,
+		//     'd_createPageInListApp' : d_createPageInListApp,
+		//     'd_createListApp'       : d_createListApp,
+
+		//   // functions for chief app
+		//     'getChiefApp'           : getChiefApp,
+		//     'getPageForChiefApp'    : getPageForChiefApp,
+		//     'd_updatePageInChiefApp': d_updatePageInChiefApp,
+		//     'd_clearPageInChiefApp' : d_clearPageInChiefApp,
+		//     'd_checkPageInChiefApp' : d_checkPageInChiefApp,
+		//     'd_checkChiefApp'       : d_checkChiefApp,
+		//     'd_createPageInChiefApp': d_createPageInChiefApp,
+		//     'd_createChiefApp'      : d_createChiefApp,
+		//     'addContentToChiefApp'	: addContentToChiefApp,
+
+		//    // effect functions for chief and list apps
+		//     'd_showApps'            : d_showApps,
+		//     'd_hideApps'            : d_hideApps,
+		//     'd_removeApps'          : d_removeApps,
+		//     'd_showPages'           : d_showPages,
+		//     'd_hidePages'           : d_hidePages,
+		//     'd_viewPage'            : d_viewPage,
+		//     'd_viewApp'             : d_viewApp,
+
+
+	 //       //< functions for headers
+		//     	//app menu header
+		// 		    'd_addPageMenuHeaderByTemplate'		: d_addPageMenuHeaderByTemplate,
+		// 		    'd_addAppMenuHeaderByTemplate'		: d_addAppMenuHeaderByTemplate,
+		// 		    'safeViewAppHeaderWithContent'		: safeViewAppHeaderWithContent, // @new of 24 08 2017
+		// 		    'safeAddAppHeader'					: safeAddAppHeader, // @new of 24 08 2017
+		// 		    'getPageMenuHeader'           		: getPageMenuHeader,
+		// 		    'getAppMenuHeader'           		: getAppMenuHeader,
+		// 		    'd_setMenuHeader'            		: d_setMenuHeader,
+		// 		    'd_viewMenuPageHeader' 				: d_viewMenuPageHeader,
+		// 		    'd_showMenuPageHeader' 				: d_showMenuPageHeader,
+		// 		    'd_showMenuHeader'            		: d_showMenuHeader,
+		// 		    'd_hideMenuPagesHeader'           	: d_hideMenuPagesHeader,
+		// 		    'd_hideMenuHeader'          		: d_hideMenuHeader,
+		// 		    'd_removeMenuHeader'          		: d_removeMenuHeader,
+		// 		    'd_checkMenuHeader'				: d_checkMenuHeader,
+
+		//     	//app header
+		// 		    'd_addPageAppHeaderByTemplate'		: d_addPageAppHeaderByTemplate,
+		// 		    'd_addAppHeaderByTemplate'			: d_addAppHeaderByTemplate,
+		// 		    'safeViewMenuHeaderWithContent'		: safeViewMenuHeaderWithContent, // @new of 24 08 2017
+		// 		    'safeAddAppMenuHeader'				: safeAddAppMenuHeader, // @new of 24 08 2017
+		// 		    'getPageAppHeader'           		: getPageAppHeader,
+		// 		    'getAppHeader'           			: getAppHeader,
+		// 		    'd_setAppHeader'            		: d_setAppHeader,
+		// 		    'd_viewAppPageHeader' 				: d_viewAppPageHeader,
+		// 		    'd_showAppPageHeader' 				: d_showAppPageHeader,
+		// 		    'd_showAppHeader'            		: d_showAppHeader,
+		// 		    'd_hideAppPagesHeader'           	: d_hideAppPagesHeader,
+		// 		    'd_hideAppHeader'          			: d_hideAppHeader,
+		// 		    'd_removeAppHeader'          		: d_removeAppHeader,
+	 //       //> functions for headers
+
+		// 	//work with header
+		// 		'd_loadCSS' 		: d_loadCSS,
+		// 		'd_loadJS' 			: d_loadJS,
+		// 		'd_removeByClass' 	: d_removeByClass,
+
+		// 	//effects
+		// 		'effScrollToButtom' 		: effScrollToButtom,
+
+		// }
 
 });
 define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
@@ -15495,7 +15282,7 @@ define(
 	  	{{/each}}
     `;
     templates['UserList'] = `
-		<div class="mix usersBlockInMenusBlock {{appsForFilter}} {{class}}" connect_uid="{{userId}}" {{#if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" data-sortable="1" data-position-of-chat='{{chatPosition}}' connect_toUserId='{{toUserId}}' connect_owner='{{owner}}' connect_userType='{{userType}}' connect_chatType='{{chatType}}' connect_userLogin='{{login}}'>
+		<div class="mix usersBlockInMenusBlock {{appsForFilter}} {{class}}" connect_uid="{{userId}}" {{#if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" data-sortable="1" data-position-of-chat='{{chatPosition}}' connect_userType='{{userType}}' connect_chatType='{{chatType}}' connect_userLogin='{{login}}'>
 			<div class='chatDataInUsersBlock'>
 				<div class="iconBlockInUserBlock">
 			      <div class="iconInUserBlock">
@@ -15516,11 +15303,8 @@ define(
 			         <div class="userNameInChatList">{{chatName}}</div>
 			      </div>
 			      <div class="toCallBlockInUserNameBlock">
-			      	 <div class="btnToCallInFirstLine"><i class="fas fa-phone-square"></i></div>
-			         <!-- 
-			         	<div class="btnToVoiceCallInFirstLine"></div>
-			         	<div class="btnToVideoCallInFirstLine"></div>
-		         	 -->
+			         <div class="btnToVoiceCallInFirstLine"></div>
+			         <div class="btnToVideoCallInFirstLine"></div>
 			      </div>
 			    </div>
 
@@ -23328,7 +23112,7 @@ define( 'c_app-chat',['m_app-chat', 'v_app-chat', 'm_view', 'm_message', 'm_app'
 
   return  _;
 });
-define('v_app-base',['jquery','m_user','template7','v_view','v_app','selector', 'localdb'],function($,USER,Template7,V_VIEW,V_APP, SELECTOR, LOCALDB) {
+define('v_app-base',['jquery','m_user','template7','v_view','v_app'],function($,USER,Template7,V_VIEW,V_APP) {
 	const _ = {};
 	const CONST = {'name':'base','pageIndex':'index'};
 	const templates = {};
@@ -23430,8 +23214,7 @@ define('v_app-base',['jquery','m_user','template7','v_view','v_app','selector', 
 
 	function getRealChatIdByUid (iNuid) {
 		// body...
-
-		var path 		= SELECTOR.db.main.blocks.second.body.toChat + "[connect_uid='"+iNuid+"']";
+		var path 		= ".usersBlockContainerInMenusBlock .scrolBlockForChat .mix.usersBlockInMenusBlock[connect_uid='"+iNuid+"']";
 		var el 			= $(path);
 		var chatId 		= el.attr('connect_chatid');
 		var userLogin 	= el.attr('connect_userlogin');
@@ -23445,170 +23228,7 @@ define('v_app-base',['jquery','m_user','template7','v_view','v_app','selector', 
 	
 
 
-	//@< PSEUDO USER MENU
 
-		templates['menuPseudoUser_box'] = `
-			<div class="appBase_userSelectMenuContainer">
-   				<ul>
-   					{{content}}
-   				</ul>
-			</div>
-		`;
-
-		templates['menuPseudoUser_item'] = `
-			<li>
-		         <div class="appBase_userListHeaderContainer" connect_uid='{{uid}}' connect_owner='{{owner}}'>
-		            <div class="appBase_userIcon"><a href="#"><img src="{{icon}}"></a></div>
-		            <div class="UserNameInMenusBlock">
-		               <div class="appBase_ListHeader_dName">
-		                  <a href="" class="CML">{{name}}</a>
-		               </div>
-		               {{#if owner}}
-		               		<div class="appBase_ListHeader_owner">{{owner}}</div>
-	               	   {{else}}
-		               		<div class="appBase_ListHeader_login">{{login}}</div>
-	               	   {{/if}}
-		            </div>
-		         </div>
-		    </li>
-		`;
-
-		function menuPseudoUser_getBox (iNdata) {
-			/*
-				@inputs
-					@required
-						iNdata
-							@required
-							@optional
-								content -> string
-			*/
-			var temp = Template7.compile(templates['menuPseudoUser_box']);
-			return temp(iNdata);
-		}
-		_['menuPseudoUser_getBox'] = menuPseudoUser_getBox;
-
-		function menuPseudoUser_getCountMenu () {
-
-			var path = SELECTOR.db.main.blocks.second.header.base.index.menuSwitchUserBox.val;
-			return $(path).length;
-		} _.menuPseudoUser_getCountMenu = menuPseudoUser_getCountMenu;
-
-		function menuPseudoUser_addBox (iNdata) {
-			/*
-				@inputs
-					@required
-						iNdata
-							@required
-							@optional
-								content -> string
-			*/
-			var path 		= SELECTOR.db.main.blocks.second.header.base.index.val,// '.topBlockInMenusBlock .menuHeaderInMenusBlock[app-name="base"] .appPage[page-name="index"]',
-				content 	= menuPseudoUser_getBox(iNdata);
-				V_VIEW.d_addDataToViewEl ( path, content, 'start' );
-		}
-
-		function menuPseudoUser_safeAddBox (iNdata) {
-			/*
-				@inputs
-					@required
-						iNdata
-							@required
-							@optional
-								content -> string
-			*/
-			if(typeof iNdata != 'object') iNdata = {};
-			if ( menuPseudoUser_getCountMenu() < 1 ) {
-				menuPseudoUser_addBox(iNdata);
-			}
-		} _.menuPseudoUser_safeAddBox = menuPseudoUser_safeAddBox;
-
-		function menuPseudoUser_getItem (iNdata) {
-			/*
-				@inputs
-					@required
-						iNdata
-							@required
-								name -> string
-								icon -> string
-								ownerLogin -> string
-			*/
-			var temp = Template7.compile(templates['menuPseudoUser_item']);
-			return temp(iNdata);
-		}
-		_['menuPseudoUser_getItem'] = menuPseudoUser_getItem;
-
-
-		function menuPseudoUser_addItem (iNdata) {
-			/*
-				@inputs
-					@required
-						iNdata
-							@required
-								name -> string
-								icon -> string
-								ownerLogin -> string
-			*/
-
-			// add box if not exist
-			menuPseudoUser_safeAddBox();
-
-			// add item
-			var path 	= SELECTOR.db.main.blocks.second.header.base.index.menuSwitchUserBox.item.val,
-				content = menuPseudoUser_getItem(iNdata);
-				V_VIEW.d_addDataToViewEl (path,content,'start');
-
-		}
-		_['menuPseudoUser_addItem'] = menuPseudoUser_addItem;
-
-		function menuPseudoUser_attachOnClickEventForShowMenu () {
-			// when click to icon OR to name
-			var pathToIcon 	= SELECTOR.db.main.blocks.second.header.base.index.userIconWihPseudoFlag.val,//'.appPage > .appBase_userListHeaderContainer.flagHasPseudoUsers .appBase_userIcon',
-				pathToName 	= SELECTOR.db.main.blocks.second.header.base.index.userNameWihPseudoFlag.val,//'.appPage > .appBase_userListHeaderContainer.flagHasPseudoUsers .appBase_ListHeader_dName',
-				path 		= pathToIcon + ', ' + pathToName;
-				// clear of any onclick actions
-				$(path).off('click');
-				// attach action to on click event for view menu
-				$(path).click(
-					function (e) {
-						e.preventDefault();
-						menuPseudoUser_showMenu();
-					}	
-				);
-		} _.menuPseudoUser_attachOnClickEventForShowMenu  = menuPseudoUser_attachOnClickEventForShowMenu;
-
-		function menuPseudoUser_hideMenu() {
-			//hide curtain
-			$(SELECTOR.val.curtain).hide();
-		}
-
-		function menuPseudoUser_showMenu() {
-			// open menu
-			$(SELECTOR.db.main.blocks.second.header.base.index.menuSwitchUserBox.val).show();
-
-			// show curtain
-			V_APP.showBackgroundCurtainWithFunction (
-				() => {
-					// hide menus
-					$(SELECTOR.db.main.blocks.second.header.base.index.menuSwitchUserBox.val).hide();
-
-				}
-			);
-		}
-
-		
-
-		function menuPseudoUser_addFlagToAttachOnClickEventForShowMenu () {
-			var flag = LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser,//'flagHasPseudoUsers',
-				path = SELECTOR.db.main.blocks.second.header.base.index.baseHeader.val;
-			$(path).addClass(flag);
-		} _.menuPseudoUser_addFlagToAttachOnClickEventForShowMenu = menuPseudoUser_addFlagToAttachOnClickEventForShowMenu;
-
-		function menuPseudoUser_removeFlagToAttachOnClickEventForShowMenu() {
-			var flag = LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser,//'flagHasPseudoUsers',
-				path = SELECTOR.db.main.blocks.second.header.base.index.baseHeader.val;
-			$(path).removeClass(flag);
-		} _.menuPseudoUser_removeFlagToAttachOnClickEventForShowMenu = menuPseudoUser_removeFlagToAttachOnClickEventForShowMenu;
-	//@> PSEUDO USER MENU
 
 	return _;
 });
@@ -23628,35 +23248,14 @@ define("jquery.autocomplete", ["jquery"], (function (global) {
 
 define( 
   'm_app-base',[
-    'jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictionary','v_app-base','m_routing', 'm_database', 'url', 'sweetalert2', 'localdb',
+    'jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictionary','v_app-base','m_routing', 'm_database', 'url', 'sweetalert2',
     'jquery.autocomplete'
   ] , 
-  function ($ , FIREBASE , M_CATEGORY , M_APP , M_VIEW,USER, DICTIONARY, VIEW , ROUTING, M_DATABASE,URL,SWEETALERT, LOCALDB) {
+  function ($ , FIREBASE , M_CATEGORY , M_APP , M_VIEW,USER, DICTIONARY, VIEW , ROUTING, M_DATABASE,URL,SWEETALERT) {
 
   const _ = {};
   const CONST = {};
   
-
-
-  // function checkFunction () {
-  //   VIEW.menuPseudoUser_addItem (
-  //     {
-  //       'name'        : 'Тестовый пользователь',
-  //       'icon'        : 'Тестовый пользователь',
-  //       'ownerLogin'  : 'Тестовый пользователь',
-  //     }
-  //   );
-
-  //   VIEW.menuPseudoUser_addItem (
-  //     {
-  //       'name'        : 'Тестовый пользователь',
-  //       'icon'        : 'Тестовый пользователь',
-  //       'ownerLogin'  : 'Тестовый пользователь',
-  //     }
-  //   );
-  //   VIEW.menuPseudoUser_attachOnClickEventForShowMenu();
-  // } _.checkFunction = checkFunction;
-
 
   //CHANGE move to view
   function initForAutocompleteForSearch () {
@@ -23977,32 +23576,31 @@ define(
           }
 
        
-        // function viewThisChatFromFDB (iNchat,iNuserData) {
-        //     //LATER DEL
-        //     const objForCreatChat = {};
-        //     objForCreatChat['chatId']   = iNchat || ('noneChat_'+iNuserData['user']['uid']);
-        //     objForCreatChat['userId']   = iNuserData['user']['uid'];
-        //     objForCreatChat['userLogin']   = iNuserData['user']['login'];
-        //     objForCreatChat['chatName'] = iNuserData['user']['name'];
-        //     objForCreatChat['icon_min'] = iNuserData['user']['icon'];
-        //     // if(iNchat) {
-        //       M_CATEGORY.userForPrivateChat(objForCreatChat['chatId'],objForCreatChat['userId']);
+        function viewThisChatFromFDB (iNchat,iNuserData) {
+            //LATER DEL
+            const objForCreatChat = {};
+            objForCreatChat['chatId']   = iNchat || ('noneChat_'+iNuserData['user']['uid']);
+            objForCreatChat['userId']   = iNuserData['user']['uid'];
+            objForCreatChat['userLogin']   = iNuserData['user']['login'];
+            objForCreatChat['chatName'] = iNuserData['user']['name'];
+            objForCreatChat['icon_min'] = iNuserData['user']['icon'];
+            // if(iNchat) {
+              M_CATEGORY.userForPrivateChat(objForCreatChat['chatId'],objForCreatChat['userId']);
 
-        //       // M_CATEGORY.view.safeAddChatList(objForCreatChat);
-        //       // attach link with chat db
-        //       safeAttachLiveLinkToChatElement(
-        //         objForCreatChat['chatId'], 
-        //         () => {
-        //           // add service category
-        //           addServiceMenu (objForCreatChat,iNuserData);
+              // M_CATEGORY.view.safeAddChatList(objForCreatChat);
+              // attach link with chat db
+              safeAttachLiveLinkToChatElement(objForCreatChat['chatId'], 
+                () => {
+                  // add service category
+                  addServiceMenu (objForCreatChat,iNuserData);
 
-        //         }
-        //       );
-        //     // hide all chat list
-        //     M_CATEGORY.view.effHideChatLists();
-        //     // show this chat list
-        //     M_CATEGORY.view.effShowChatList(objForCreatChat['chatId']);
-        // }
+                }
+              );
+            // hide all chat list
+            M_CATEGORY.view.effHideChatLists();
+            // show this chat list
+            M_CATEGORY.view.effShowChatList(objForCreatChat['chatId']);
+        }
 
 
 
@@ -24101,107 +23699,23 @@ define(
   }
 
 
+
   function getAllMyChats () {
-    // start effects for chats
-    M_CATEGORY.view.startEffSortChats();
-
-    // get my chats
-    var myUid       = M_APP.get('uid');
-    getChatsByUserId(myUid);
-
-    // get chat for pseudouser
-    getPseudoUsersByUserId(myUid);
-
-  }_.getAllMyChats = getAllMyChats;
-
-
-  function getPseudoUsersByUserId (iNuserId) {
-    // body...
-    console.log('getPseudoUsersByUserId - INVOKE2',iNuserId);
-    var uid = iNuserId;
-    // get data from DB
-    M_DATABASE.getRealtimeDataFromFirestoreDb (
-          'users',
-          uid + '/subusers',
-          {
-            'functionOnOther' : () => {
-
-            },
-            
-            'functionOnChangeFromServer' : (memberData) => {
-            
-            },
-            'functionOnAdd' : (pseudoUserData) => {
-              var pseudoUserBlock   = pseudoUserData.data(),
-                  pseudoUserid      = pseudoUserData.id,
-                  refStatus         = pseudoUserBlock.status,
-                  ref               = pseudoUserBlock.ref;
-
-              // if menu no exist
-              if ( !VIEW.menuPseudoUser_getCountMenu() ) {
-                  // active on click for view menu
-                  VIEW.menuPseudoUser_addFlagToAttachOnClickEventForShowMenu();
-                  // create container if not exist
-                  VIEW.menuPseudoUser_safeAddBox();
-                  // attach onclick event 
-                  VIEW.menuPseudoUser_attachOnClickEventForShowMenu();
-                  // add my user to menu
-                  VIEW.menuPseudoUser_addItem(
-                    {
-                      'uid'     : USER.getMyId(),
-                      'icon'    : URL.getUserIconByUid( USER.getMyId() ),
-                      'login'   : USER.getMyLogin(),
-                      'name'    : USER.getMyDisplayName()
-                    }
-                  );
-              }
-
-              //get pseudo user 
-              ref.get().then(
-                (userData) => {
-                  // get user data from db
-                  var userBlock       = userData.data(),
-                      objForAddToMenu = {};
-
-                  // get user id from db
-                  objForAddToMenu['uid']    = userData.id;
-                  objForAddToMenu['owner']  = userBlock.owner;
-                  objForAddToMenu['login']  = userBlock.info.data.login;
-                  objForAddToMenu['icon']   = URL.getUserIconByUid(objForAddToMenu['uid']);
-                  objForAddToMenu['name']   = userBlock.info.data.name;
-
-                  // delete owner if this user owner is system
-                  if ( objForAddToMenu['owner'] == LOCALDB.db.val.systemUser ) delete objForAddToMenu['owner'];
-
-                  // add menu
-                  VIEW.menuPseudoUser_addItem(objForAddToMenu );
-
-                  // get chats for pseudouserid   
-                  getChatsByUserId(objForAddToMenu['uid']);
-
-                }
-              );
-            }
-          }
-    );
-  } _.getPseudoUsersByUserId = getPseudoUsersByUserId;
-
-  function getChatsByUserId (iNuserId) {
     /*
         ovbserver for user chats list
         @depends
             domSortChatsBlock() - for create sort or check
     */
 
-    console.log('getChatsByUserId - INVOKE',iNuserId);
-
+    // start effects for chats
+    M_CATEGORY.view.startEffSortChats();
     // get my user id
-    var thisUserId       = iNuserId;//M_APP.get('uid');
+    var myUid       = M_APP.get('uid');
 
     // get data from DB
     M_DATABASE.getRealtimeDataFromFirestoreDb (
           'users',
-          thisUserId + '/members',
+          myUid + '/members',
           {
             'functionOnOther' : () => {
 
@@ -24217,18 +23731,18 @@ define(
 
               var memberBlock   = memberData.data();
               var chatId        = memberData.id;
+              console.log('userForPrivateChat chatId',chatId);
+              console.log('userForPrivateChat memberBlock',memberBlock);
               var user2         = memberBlock['with'];
+              console.log('userForPrivateChat user2 with - ',user2);
               M_CATEGORY.userForPrivateChat(chatId,user2);
                    
-              safeAttachLiveLinkToChatElement(
-                chatId,
-                thisUserId
-              );
+              safeAttachLiveLinkToChatElement(chatId);
             }
           }
     );
   }
-  _['getChatsByUserId'] = getChatsByUserId;
+  _['getAllMyChats'] = getAllMyChats;
 
 
 
@@ -24260,22 +23774,13 @@ define(
     // body...
   }
 
-  function safeAttachLiveLinkToChatElement (iNchatId,iNtoUserId,iNfunction) {
-      /*
-        @inputs
-          iNchatId -> string
-          iNuserId -> string
-          iNfunction -> function
-      */
-       console.log('safeAttachLiveLinkToChatElement - INVOKE',iNchatId,iNtoUserId)
+  function safeAttachLiveLinkToChatElement (iNchatId,iNfunction) {
       // of all link with chat db
       offAllLinkWithChatDbByChatId(iNchatId);
       //check chat list for exist
       var  chatId           = iNchatId,
-           myUid            = USER.getMyId(),
-           toUserId         = iNtoUserId;
+           myUid            = USER.getMyId();
 
-       console.log('safeAttachLiveLinkToChatElement - toUserId',iNchatId,toUserId)
        M_DATABASE.getRealtimeDataFromFirestoreDb (
           'chats',
           chatId,
@@ -24307,9 +23812,6 @@ define(
                         chatBlock = chatData.data(),
                         chatType  = chatBlock.type;
 
-                        chatBlock['info']['toUserId'] = toUserId;
-
-                    console.log('safeAttachLiveLinkToChatElement functionOnAdd - toUserId',toUserId);
                     console.log('safeAttachLiveLinkToChatElement functionOnAdd - chatId, chatBlock',chatId, chatBlock);
 
                    //@< creating chat
@@ -24446,10 +23948,6 @@ define(
           var user2Icon   = user2Object.info.data.icon;
           var userType    = user2Object.info.data.type;
           var userOnline  = user2Object.info.live.online;
-          var owner  = user2Object.owner||'@system';
-
-          console.log('safeUpdatePrivateChatBlockFromUserDb  functWhenGet - iNobject',iNobject);
-          var toUserId    = iNobject.toUserId;
 
           
           // create object for create chat
@@ -24463,9 +23961,6 @@ define(
               // user type (business (2) or user(1) or app of system (3) )
               objForCreateChat['userType']    = userType;
               objForCreateChat['userOnline']  = userOnline;
-              
-              objForCreateChat['owner']  = owner;
-              objForCreateChat['toUserId']    = toUserId;
 
           // add user options
           if(typeof user2Object.info.options == 'object') {
@@ -24892,8 +24387,6 @@ define (
                },
               'onAppear'  : function () {
                   console.log('onAppear index');
-                //ddd
-                // MODEL.checkFunction();
               },
               'onDisappear'  : function () {
                   console.log('onDisappear index');
@@ -26249,7 +25742,7 @@ define('m_synchronize',['jquery','m_user','m_app','m_firebase'],function( $, USE
 });
 // monitor js crash service - https://sentry.io/
 
-require2.config({
+require.config({
         // baseUrl: 'https://ramman.net/files/', //',
         waitSeconds: 59,
 
@@ -26372,8 +25865,6 @@ require2.config({
 
                 //url db
                 'url'              : 'mvc/model/url',
-                'selector'         : 'mvc/model/selector',
-                'localdb'          : 'mvc/model/localdb',
 
 
             /*>! models */
@@ -26468,7 +25959,7 @@ require2.config({
     });
 
 
-require2 (
+require(
     ['jquery','dictionary','m_engine','m_routing','m_app','m_synchronize','m_user', 'm_push'], 
     function( $, DICTIONARY, ENGINE, ROUTING, M_APP, SYNCHRONIZE, USER , PUSH) {
 

@@ -123,6 +123,8 @@ require.config({
 
                 //url db
                 'url'              : 'mvc/model/url',
+                'selector'         : 'mvc/model/selector',
+                'localdb'          : 'mvc/model/localdb',
 
 
             /*>! models */

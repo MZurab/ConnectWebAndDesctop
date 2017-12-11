@@ -29,17 +29,17 @@ define (
                 console.log('isPage index i',i); 
                 return i;
               },
-              'onCreate': function (iNojbectData,iNojbectApp) {
-                console.log('page index onCreate -iNojbectData,iNojbectApp',iNojbectData,iNojbectApp)
+              // 'onCreate': function (iNojbectData,iNojbectApp) {
+              //   console.log('page index onCreate -iNojbectData,iNojbectApp',iNojbectData,iNojbectApp)
 
-                // show loader
-                M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
+              //   // show loader
+              //   M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
 
-                // get chat list
-                if ( USER.getMyId() ) {
-                  MODEL.getAllMyChats();
-                }
-              },
+              //   // get chat list
+              //   if ( USER.getMyId() ) {
+              //     MODEL.getAllMyChats();
+              //   }
+              // },
               'onView'  : function (iNojbectData,iNojbectApp) { 
                 console.log('onView index iNojbectData,iNojbectApp',iNojbectData,iNojbectApp);
 
@@ -96,6 +96,8 @@ define (
                },
               'onAppear'  : function () {
                   console.log('onAppear index');
+                //ddd
+                // MODEL.checkFunction();
               },
               'onDisappear'  : function () {
                   console.log('onDisappear index');

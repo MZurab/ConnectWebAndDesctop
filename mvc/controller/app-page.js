@@ -26,12 +26,15 @@ define( ['m_app-page','v_app-page',] , function ( MODEL, VIEW ) {
           pages['fullWindow']['functions'] = {
             'isPage'  : function () {return true;},
             'onOut'  : function () { return true;},
-            'onView'  : function (inputData,inputApp) {
+            // 'onView'  : function (inputData,inputApp) {
+            //   MODEL.addPageToFullWindow({'id':inputData['id'],'uid':inputData['uid']});
+            //   return true;
+            // },
+            'onAppear' : function function_name(inputData,inputApp) {
               MODEL.addPageToFullWindow({'id':inputData['id'],'uid':inputData['uid']});
-              // VIEW.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
-              return true;
             },
-            'onHide'  : function () {  return true;},
+            // 'onHide'  : function () {  return true;},
+            
             // 'setPage' : function () { return true;},
             'onCreate' : function () {  return true;},
             'onDisappear' : function () {return true;},
@@ -58,7 +61,8 @@ define( ['m_app-page','v_app-page',] , function ( MODEL, VIEW ) {
             'onOut'  : function () {
               return true;
             },
-            'onView'  : function (iNdata, iNobject) {
+            'onAppear' : function (iNdata, iNobject) {
+
               /*
                 getPage -> checkData
                 create app view with page 
@@ -67,9 +71,18 @@ define( ['m_app-page','v_app-page',] , function ( MODEL, VIEW ) {
               MODEL.addMiniPageToAppView({'id':iNdata['id'],'uid':iNdata['uid']});
               return true;
             },
-            'onHide'  : function () {
-              return true;
-            },
+            // 'onView'  : function (iNdata, iNobject) {
+              /*
+                getPage -> checkData
+                create app view with page 
+                create header view with page
+              */
+              // MODEL.addMiniPageToAppView({'id':iNdata['id'],'uid':iNdata['uid']});
+              // return true;
+            // },
+            // 'onHide'  : function () {
+            //   return true;
+            // },
             'onCreate' : function () {
 
               return true;
@@ -112,10 +125,10 @@ define( ['m_app-page','v_app-page',] , function ( MODEL, VIEW ) {
 
 
     //@overide
-  function onView (iNstring,iNobject) {
+  // function onView (iNstring,iNobject) {
 
-  }
-  _['onView'] = onView;
+  // }
+  // _['onView'] = onView;
 
 
   // function onCreate

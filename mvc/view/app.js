@@ -1,4 +1,4 @@
-define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
+define(['jquery','template7','v_view', 'selector'],function($,Template7,V_VIEW, SELECTOR){
 	const CONST = {
 		'pathAppHeader' 	  : '#block #viewBlock .topBlockInViewBlock',
 		'pathAppView' 	  	  : '#block #viewBlock #viewAndChatBlockInViewBlock.appChiefWindow',
@@ -427,8 +427,11 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 				@return
 					int : 0 - false, 0< true
 			*/
+			console.log('d_checkPageInChiefApp - iNdata',iNdata);
 			var selector = CONST['pathAppView'] + ' .app[app-name="'+iNdata['app']+'"] .view[view-name="'+iNdata['page']+'"]';
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
+			console.log('d_checkPageInChiefApp - selector',selector);
+			console.log('d_checkPageInChiefApp - $(selector).length',$(selector).length);
         	return $(selector).length;
         } _.d_checkPageInChiefApp = d_checkPageInChiefApp;
 
@@ -476,6 +479,48 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
         	V_VIEW.d_addDataToViewEl(selector, getPageForChiefApp(iNdata) ,'end')
         } _.d_createPageInChiefApp = d_createPageInChiefApp;
+
+        function d_safeCreatePageInChiefApp (iNdata ) {
+        	/*
+				@discr
+					create page [if not exist] for chief app
+				@inputs
+					@required
+						iNdata -> object
+							app 		-> string
+							page 		-> string
+							content 	-> string
+							@optional
+								attr	-> object
+									class	-> 
+									attrKey : attrBalue
+								extra	-> string 
+					@optional
+				@deps
+					function : getPageForChiefApp
+				@return
+					int : 0 - false, 0< true
+			*/
+			var selectorToThisApp = CONST['pathAppView'] + ' .app[app-name="'+iNdata['app']+'"] ';
+			var selectorToThisPage = selectorToThisApp + ' .view[view-name="'+iNdata['page']+'"]' ; 
+
+			if(typeof(iNdata['extra']) == 'string') selectorToThisApp += ' ' + iNdata['extra'];
+
+
+			console.log('d_safeCreatePageInChiefApp - selectorToThisApp',selectorToThisApp,'',$(selectorToThisApp).length);
+			console.log('d_safeCreatePageInChiefApp - selectorToThisPage',selectorToThisPage,'',$(selectorToThisPage).length);
+			if($(selectorToThisPage).length < 1) {
+				// safe create app container
+				d_safeCreateChiefApp ({'app':iNdata['app']})
+
+				// if this page not exist we create this page
+        		V_VIEW.d_addDataToViewEl(selectorToThisApp, getPageForChiefApp(iNdata) ,'end')
+			} else  {
+				// if this page is exist we replace content with new val
+        		V_VIEW.d_addDataToViewEl(selectorToThisPage, getPageForChiefApp(iNdata) ,'replace')
+			}
+
+        } _.d_safeCreatePageInChiefApp = d_safeCreatePageInChiefApp;
         
         function d_createChiefApp (iNdata) {
         	/*
@@ -499,8 +544,39 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 			*/
 			var selector = CONST['pathAppView']; 
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
-        	V_VIEW.d_addDataToViewEl(selector, getChiefApp(iNdata) ,'change')
+        	V_VIEW.d_addDataToViewEl(selector, getChiefApp(iNdata) ,'start');
         } _.d_createChiefApp = d_createChiefApp;
+
+        function d_safeCreateChiefApp (iNdata) {
+        	/*
+				@discr
+					create chief app if not exist [@optional - with page]
+				@inputs
+					@required
+						iNdata -> object
+							app 		-> string
+							@optional
+								page 		-> string
+								content 	-> string
+
+								attr		-> string
+								extra		-> string
+
+								other -		> string
+					@optional
+				@return
+					int : 0 - false, 0< true
+			*/
+			var selectorAppContainer = CONST['pathAppView']; 
+			var selectorToThisApp = CONST['pathAppView'] + ' .app[app-name="'+iNdata['app']+'"]'; 
+			if(typeof(iNdata['extra']) == 'string') selectorAppContainer += ' ' + iNdata['extra'];
+			console.log('d_safeCreateChiefApp - selectorToThisApp',selectorToThisApp,'',$(selectorToThisApp).length);
+			console.log('d_safeCreateChiefApp - selectorAppContainer',selectorAppContainer,'',$(selectorAppContainer).length);
+			if($(selectorToThisApp).length < 1)
+        		V_VIEW.d_addDataToViewEl(selectorAppContainer, getChiefApp(iNdata) ,'end');
+        	// else 
+        	// 	V_VIEW.d_addDataToViewEl(selectorToThisApp, getChiefApp(iNdata) ,'change');
+        } _.d_safeCreateChiefApp = d_safeCreateChiefApp;
 
         //< app headers
 	        
@@ -1049,14 +1125,21 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 				@return
 				@deps
         	*/
+        	console.log('d_showApps 1 - iNarray,iNtypeApp',iNarray,iNtypeApp);
         	var selector, appNameForIletiral;
 
-        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewWindow .app'
-        	else selector = '.usersBlockContainerInMenusBlock .app'
+        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') 
+        		selector = '#viewBlock .app'
+        	else 
+        		selector = '.usersBlockContainerInMenusBlock .app'
+
+        	console.log('d_showApps 2 - selector',selector);
+
     		if(typeof(iNarray) !=  'object' || Array.isArray(iNarray) != true) iNarray = [iNarray];
     		for (var iKey in iNarray) {
     			appNameForIletiral = iNarray[iKey];
     			$(selector + '[app-name="' + appNameForIletiral + '"]').show();
+        		console.log('d_showApps 3 - selector',selector + '[app-name="' + appNameForIletiral + '"]');
     		}
         } _.d_showApps = d_showApps;
 
@@ -1084,16 +1167,28 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
         	*/
         	var selector, appNameForIletiral,thisSelector;
 
-        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewWindow .app';
+			console.log('d_hideApps 1  - iNarray, iNtypeApp', iNarray, iNtypeApp);
+
+			// choose right or left containery (default - left)
+        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') 
+        		selector = '#viewBlock .app';
+			else 
+        		selector = '.usersBlockContainerInMenusBlock .app'
+        	
+        	//by default we close all apps
         	if( typeof(iNarray) != 'string' && typeof(iNarray) != 'object' ) iNarray = 'all';
-        	else selector = '.usersBlockContainerInMenusBlock .app'
+        	
+        	// create array if iNarray is not it
     		if(typeof(iNarray) !=  'object' || Array.isArray(iNarray) != true) iNarray = [iNarray];
+
+			console.log('d_hideApps 2  - iNarray, iNtypeApp, selector', iNarray, iNtypeApp, selector);
     		for (var iKey in iNarray) {
     			thisSelector = selector
     			appNameForIletiral = iNarray[iKey];
     			if(appNameForIletiral != 'all') {
     				thisSelector += '[app-name="' + appNameForIletiral + '"]';
     			}
+    			console.log('d_hideApps 3 - thisSelector', thisSelector);
     			$(thisSelector).hide();
     		}
         } _.d_hideApps = d_hideApps;
@@ -1122,7 +1217,7 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
         	*/
         	var selector, appNameForIletiral,thisSelector;
 
-        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewWindow .app';
+        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewBlock .app';
         	if( typeof(iNarray) != 'string' && typeof(iNarray) != 'object' ) iNarray = 'all';
         	else selector = '.usersBlockContainerInMenusBlock .app'
     		if(typeof(iNarray) !=  'object' || Array.isArray(iNarray) != true) iNarray = [iNarray];
@@ -1162,10 +1257,14 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
         	// show app
         	d_showApps(iNapp,iNtypeApp)
         	// choose list of chief container
-        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewWindow .app'
-        	else selector = '.usersBlockContainerInMenusBlock .app'
+        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') 
+        		selector = '#viewBlock .app';
+        	else 
+        		selector = '.usersBlockContainerInMenusBlock .app';
+
     		// create array if need with page names for show
     		if(typeof(iNarray) !=  'object' || Array.isArray(iNarray) != true) iNarray = [iNarray];
+
     		for (var iKey in iNarray) {
     			pageNameForIletiral = iNarray[iKey];
     			$(selector + '[app-name="' + appName + '"] .view[view-name="'+pageNameForIletiral+'"]').show();
@@ -1257,7 +1356,7 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
         	// show app
         	d_hideApps(iNapp,iNtypeApp)
         	// choose list of chief container
-        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewWindow .app';
+        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewBlock .app';
         	if( typeof(iNarray) != 'string' || typeof(iNarray) == 'object') iNarray = 'all';
         	else selector = '.usersBlockContainerInMenusBlock .app'
     		// create array if need with page names for show
@@ -1479,105 +1578,62 @@ define(['jquery','template7','v_view'],function($,Template7,V_VIEW){
 			} _.sideButtons_addSelectedEffectsByFilter = sideButtons_addSelectedEffectsByFilter;
 		//@> SIDE BUTTONS
 
+
+		//@< CURTAIN
+			function showBackgroundCurtain () {
+				/*
+					@discr
+					@inputs
+				*/
+				$(SELECTOR.db.val.curtain).show();
+			} _.showBackgroundCurtain = showBackgroundCurtain;
+
+			function showBackgroundCurtainWithFunction (clickFunction) {
+				/*
+					@discr
+					@inputs
+				*/
+				// bacground
+				hideBackgroundCurtain();
+				// show
+				showBackgroundCurtain();
+				
+				$(SELECTOR.db.val.curtain).click(
+					function () {
+						if(typeof clickFunction == 'function') clickFunction(this);
+						// hide backgorun curtain
+						hideBackgroundCurtain();
+					}
+				);
+			} _.showBackgroundCurtainWithFunction = showBackgroundCurtainWithFunction;
+
+			function hideBackgroundCurtain () {
+				/*
+					@discr
+					@inputs
+				*/
+
+				// hide curtain
+				$(SELECTOR.db.val.curtain).hide();
+				// off click
+				$(SELECTOR.db.val.curtain).off('click');
+			} _.hideBackgroundCurtain = hideBackgroundCurtain;
+		//@> CURTAIN
+
 		function clear () {
 			// right header
-			$('#menusBlock .topBlockInMenusBlock').html('');
+			$( SELECTOR.db.main.blocks.second.header.val ).html('');
+			
 			// right body
-	        $('#menusBlock .usersBlockContainerInMenusBlock').html('');
+	        $( SELECTOR.db.main.blocks.second.body.val  ).html('');
 
 			// left header
-	        $('#viewBlock .topBlockInViewBlock').html('');
+	        $(SELECTOR.db.main.blocks.third.header.val).html('');
+
 			// left body
-	        $('#viewBlock #viewAndChatBlockInViewBlock').html('');
+	        $(SELECTOR.db.main.blocks.third.body.val).html('');
 		} _.clear = clear;
 
 		return _;
-  //       return {
-		//   // loader
-		//   	delLoaderInMenuView 	: delLoaderInMenuView,
-		//   	createLoaderInMenuView 	: createLoaderInMenuView,
-		//   	delLoaderInAppView 		: delLoaderInAppView,
-		//   	createLoaderInAppView 	: createLoaderInAppView,
-		//   	delLoader 				: V_VIEW.closeLoader,
-		//   	createLoader 			: V_VIEW.showLoader,
-
-  //   	  // functions for work with template
-  //   	  	'getAppTemplate'		: getAppTemplate,
-  //   	  	'getPageViewTemplate'	: getPageViewTemplate,
-  //   	  	'getPageMenuTemplate'	: getPageMenuTemplate,
-
-		//   // functions for list app
-		//     'getListApp'            : getListApp,
-		//     'getPageForListApp'     : getPageForListApp,
-		//     'd_updatePageInListApp' : d_updatePageInListApp,
-		//     'd_clearPageInListApp'  : d_clearPageInListApp,
-		//     'd_checkPageInListApp'  : d_checkPageInListApp,
-		//     'd_checkListApp'        : d_checkListApp,
-		//     'd_createPageInListApp' : d_createPageInListApp,
-		//     'd_createListApp'       : d_createListApp,
-
-		//   // functions for chief app
-		//     'getChiefApp'           : getChiefApp,
-		//     'getPageForChiefApp'    : getPageForChiefApp,
-		//     'd_updatePageInChiefApp': d_updatePageInChiefApp,
-		//     'd_clearPageInChiefApp' : d_clearPageInChiefApp,
-		//     'd_checkPageInChiefApp' : d_checkPageInChiefApp,
-		//     'd_checkChiefApp'       : d_checkChiefApp,
-		//     'd_createPageInChiefApp': d_createPageInChiefApp,
-		//     'd_createChiefApp'      : d_createChiefApp,
-		//     'addContentToChiefApp'	: addContentToChiefApp,
-
-		//    // effect functions for chief and list apps
-		//     'd_showApps'            : d_showApps,
-		//     'd_hideApps'            : d_hideApps,
-		//     'd_removeApps'          : d_removeApps,
-		//     'd_showPages'           : d_showPages,
-		//     'd_hidePages'           : d_hidePages,
-		//     'd_viewPage'            : d_viewPage,
-		//     'd_viewApp'             : d_viewApp,
-
-
-	 //       //< functions for headers
-		//     	//app menu header
-		// 		    'd_addPageMenuHeaderByTemplate'		: d_addPageMenuHeaderByTemplate,
-		// 		    'd_addAppMenuHeaderByTemplate'		: d_addAppMenuHeaderByTemplate,
-		// 		    'safeViewAppHeaderWithContent'		: safeViewAppHeaderWithContent, // @new of 24 08 2017
-		// 		    'safeAddAppHeader'					: safeAddAppHeader, // @new of 24 08 2017
-		// 		    'getPageMenuHeader'           		: getPageMenuHeader,
-		// 		    'getAppMenuHeader'           		: getAppMenuHeader,
-		// 		    'd_setMenuHeader'            		: d_setMenuHeader,
-		// 		    'd_viewMenuPageHeader' 				: d_viewMenuPageHeader,
-		// 		    'd_showMenuPageHeader' 				: d_showMenuPageHeader,
-		// 		    'd_showMenuHeader'            		: d_showMenuHeader,
-		// 		    'd_hideMenuPagesHeader'           	: d_hideMenuPagesHeader,
-		// 		    'd_hideMenuHeader'          		: d_hideMenuHeader,
-		// 		    'd_removeMenuHeader'          		: d_removeMenuHeader,
-		// 		    'd_checkMenuHeader'				: d_checkMenuHeader,
-
-		//     	//app header
-		// 		    'd_addPageAppHeaderByTemplate'		: d_addPageAppHeaderByTemplate,
-		// 		    'd_addAppHeaderByTemplate'			: d_addAppHeaderByTemplate,
-		// 		    'safeViewMenuHeaderWithContent'		: safeViewMenuHeaderWithContent, // @new of 24 08 2017
-		// 		    'safeAddAppMenuHeader'				: safeAddAppMenuHeader, // @new of 24 08 2017
-		// 		    'getPageAppHeader'           		: getPageAppHeader,
-		// 		    'getAppHeader'           			: getAppHeader,
-		// 		    'd_setAppHeader'            		: d_setAppHeader,
-		// 		    'd_viewAppPageHeader' 				: d_viewAppPageHeader,
-		// 		    'd_showAppPageHeader' 				: d_showAppPageHeader,
-		// 		    'd_showAppHeader'            		: d_showAppHeader,
-		// 		    'd_hideAppPagesHeader'           	: d_hideAppPagesHeader,
-		// 		    'd_hideAppHeader'          			: d_hideAppHeader,
-		// 		    'd_removeAppHeader'          		: d_removeAppHeader,
-	 //       //> functions for headers
-
-		// 	//work with header
-		// 		'd_loadCSS' 		: d_loadCSS,
-		// 		'd_loadJS' 			: d_loadJS,
-		// 		'd_removeByClass' 	: d_removeByClass,
-
-		// 	//effects
-		// 		'effScrollToButtom' 		: effScrollToButtom,
-
-		// }
 
 });

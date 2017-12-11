@@ -1,13 +1,34 @@
 define( 
   [
-    'jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictionary','v_app-base','m_routing', 'm_database', 'url', 'sweetalert2',
+    'jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictionary','v_app-base','m_routing', 'm_database', 'url', 'sweetalert2', 'localdb',
     'jquery.autocomplete'
   ] , 
-  function ($ , FIREBASE , M_CATEGORY , M_APP , M_VIEW,USER, DICTIONARY, VIEW , ROUTING, M_DATABASE,URL,SWEETALERT) {
+  function ($ , FIREBASE , M_CATEGORY , M_APP , M_VIEW,USER, DICTIONARY, VIEW , ROUTING, M_DATABASE,URL,SWEETALERT, LOCALDB) {
 
   const _ = {};
   const CONST = {};
   
+
+
+  // function checkFunction () {
+  //   VIEW.menuPseudoUser_addItem (
+  //     {
+  //       'name'        : 'Тестовый пользователь',
+  //       'icon'        : 'Тестовый пользователь',
+  //       'ownerLogin'  : 'Тестовый пользователь',
+  //     }
+  //   );
+
+  //   VIEW.menuPseudoUser_addItem (
+  //     {
+  //       'name'        : 'Тестовый пользователь',
+  //       'icon'        : 'Тестовый пользователь',
+  //       'ownerLogin'  : 'Тестовый пользователь',
+  //     }
+  //   );
+  //   VIEW.menuPseudoUser_attachOnClickEventForShowMenu();
+  // } _.checkFunction = checkFunction;
+
 
   //CHANGE move to view
   function initForAutocompleteForSearch () {
@@ -178,7 +199,7 @@ define(
 
       function request_getUserMenuByLogin (iNlogin, iNfunction) {
 
-        M_VIEW.view.closeLoaderByTimeout(5000, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
+        M_VIEW.view.closeLoaderByTimeout(10000, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
 
         const objectForAjax = {};
               objectForAjax['userId']     = USER.getMyId();
@@ -227,7 +248,6 @@ define(
               M_CATEGORY.view.startEffSortChats ();
 
               // show only this chat
-              console.log('request_getUserMenuByLogin chat_showChatByUserId - objForCreateChat',objForCreateChat['userId'], objForCreateChat);
               M_CATEGORY.view.chat_showChatByUserId(objForCreateChat['userId']);
 
               // add user menu  
@@ -237,7 +257,6 @@ define(
               M_CATEGORY.view.chat_showOnlyThisChatMenu(objForCreateChat['userId']);
 
               // M_VIEW.view.closeLoaderByTimeout(2500, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
-              M_VIEW.view.closeLoader ('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
 
 
               if(typeof iNfunction == 'function') iNfunction();
@@ -330,35 +349,32 @@ define(
           }
 
        
-        function viewThisChatFromFDB (iNchat,iNuserData) {
-            //LATER DEL
-            console.log('viewThisChatFromFDB iNchat,iNuserData',iNchat,iNuserData);
-            const objForCreatChat = {};
-            objForCreatChat['chatId']   = iNchat || ('noneChat_'+iNuserData['user']['uid']);
-            objForCreatChat['userId']   = iNuserData['user']['uid'];
-            objForCreatChat['userLogin']   = iNuserData['user']['login'];
-            objForCreatChat['chatName'] = iNuserData['user']['name'];
-            objForCreatChat['icon_min'] = iNuserData['user']['icon'];
-            // if(iNchat) {
-              console.log('viewThisChatFromFDB objForCreatChat',objForCreatChat);
-              M_CATEGORY.userForPrivateChat(objForCreatChat['chatId'],objForCreatChat['userId']);
+        // function viewThisChatFromFDB (iNchat,iNuserData) {
+        //     //LATER DEL
+        //     const objForCreatChat = {};
+        //     objForCreatChat['chatId']   = iNchat || ('noneChat_'+iNuserData['user']['uid']);
+        //     objForCreatChat['userId']   = iNuserData['user']['uid'];
+        //     objForCreatChat['userLogin']   = iNuserData['user']['login'];
+        //     objForCreatChat['chatName'] = iNuserData['user']['name'];
+        //     objForCreatChat['icon_min'] = iNuserData['user']['icon'];
+        //     // if(iNchat) {
+        //       M_CATEGORY.userForPrivateChat(objForCreatChat['chatId'],objForCreatChat['userId']);
 
-              // M_CATEGORY.view.safeAddChatList(objForCreatChat);
-              // attach link with chat db
-              safeAttachLiveLinkToChatElement(objForCreatChat['chatId'], 
-                () => {
-                  console.log('safeAttachLiveLinkToChatElement callbackobjForCreatChat - objForCreatChat',objForCreatChat );
-                  console.log('safeAttachLiveLinkToChatElement callbackobjForCreatChat -  iNuserData',iNuserData);
-                  // add service category
-                  addServiceMenu (objForCreatChat,iNuserData);
+        //       // M_CATEGORY.view.safeAddChatList(objForCreatChat);
+        //       // attach link with chat db
+        //       safeAttachLiveLinkToChatElement(
+        //         objForCreatChat['chatId'], 
+        //         () => {
+        //           // add service category
+        //           addServiceMenu (objForCreatChat,iNuserData);
 
-                }
-              );
-            // hide all chat list
-            M_CATEGORY.view.effHideChatLists();
-            // show this chat list
-            M_CATEGORY.view.effShowChatList(objForCreatChat['chatId']);
-        }
+        //         }
+        //       );
+        //     // hide all chat list
+        //     M_CATEGORY.view.effHideChatLists();
+        //     // show this chat list
+        //     M_CATEGORY.view.effShowChatList(objForCreatChat['chatId']);
+        // }
 
 
 
@@ -369,8 +385,6 @@ define(
             var chatId = M_CATEGORY.view.getChatIdByUid(objForCreatChat['userId']) || objForCreatChat['chatId'];//  objForCreatChat['chatId']||VIEW.getRealChatIdByUid(objForCreatChat['userId']);
 
 
-            console.log('addServiceMenu objForCreatChat - ',objForCreatChat);
-            console.log('addServiceMenu chatId - ',chatId);
             if ( chatId && objForCreatChat['userId'] != chatId) {
               // we has chatId
               M_CATEGORY.addChatBlockToCategory (iNuserData,chatId,objForCreatChat['userId']);
@@ -436,6 +450,9 @@ define(
             // translated all menu dictionary
             DICTIONARY.start('.menuListForUsers');
 
+            //close loader
+            M_VIEW.view.closeLoader ('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
+
           }
 
         
@@ -456,23 +473,107 @@ define(
   }
 
 
-
   function getAllMyChats () {
+    // start effects for chats
+    M_CATEGORY.view.startEffSortChats();
+
+    // get my chats
+    var myUid       = M_APP.get('uid');
+    getChatsByUserId(myUid);
+
+    // get chat for pseudouser
+    getPseudoUsersByUserId(myUid);
+
+  }_.getAllMyChats = getAllMyChats;
+
+
+  function getPseudoUsersByUserId (iNuserId) {
+    // body...
+    console.log('getPseudoUsersByUserId - INVOKE2',iNuserId);
+    var uid = iNuserId;
+    // get data from DB
+    M_DATABASE.getRealtimeDataFromFirestoreDb (
+          'users',
+          uid + '/subusers',
+          {
+            'functionOnOther' : () => {
+
+            },
+            
+            'functionOnChangeFromServer' : (memberData) => {
+            
+            },
+            'functionOnAdd' : (pseudoUserData) => {
+              var pseudoUserBlock   = pseudoUserData.data(),
+                  pseudoUserid      = pseudoUserData.id,
+                  refStatus         = pseudoUserBlock.status,
+                  ref               = pseudoUserBlock.ref;
+
+              // if menu no exist
+              if ( !VIEW.menuPseudoUser_getCountMenu() ) {
+                  // active on click for view menu
+                  VIEW.menuPseudoUser_addFlagToAttachOnClickEventForShowMenu();
+                  // create container if not exist
+                  VIEW.menuPseudoUser_safeAddBox();
+                  // attach onclick event 
+                  VIEW.menuPseudoUser_attachOnClickEventForShowMenu();
+                  // add my user to menu
+                  VIEW.menuPseudoUser_addItem(
+                    {
+                      'uid'     : USER.getMyId(),
+                      'icon'    : URL.getUserIconByUid( USER.getMyId() ),
+                      'login'   : USER.getMyLogin(),
+                      'name'    : USER.getMyDisplayName()
+                    }
+                  );
+              }
+
+              //get pseudo user 
+              ref.get().then(
+                (userData) => {
+                  // get user data from db
+                  var userBlock       = userData.data(),
+                      objForAddToMenu = {};
+
+                  // get user id from db
+                  objForAddToMenu['uid']    = userData.id;
+                  objForAddToMenu['owner']  = userBlock.owner;
+                  objForAddToMenu['login']  = userBlock.info.data.login;
+                  objForAddToMenu['icon']   = URL.getUserIconByUid(objForAddToMenu['uid']);
+                  objForAddToMenu['name']   = userBlock.info.data.name;
+
+                  // delete owner if this user owner is system
+                  if ( objForAddToMenu['owner'] == LOCALDB.db.val.systemUser ) delete objForAddToMenu['owner'];
+
+                  // add menu
+                  VIEW.menuPseudoUser_addItem(objForAddToMenu );
+
+                  // get chats for pseudouserid   
+                  getChatsByUserId(objForAddToMenu['uid']);
+
+                }
+              );
+            }
+          }
+    );
+  } _.getPseudoUsersByUserId = getPseudoUsersByUserId;
+
+  function getChatsByUserId (iNuserId) {
     /*
         ovbserver for user chats list
         @depends
             domSortChatsBlock() - for create sort or check
     */
 
-    // start effects for chats
-    M_CATEGORY.view.startEffSortChats();
+    console.log('getChatsByUserId - INVOKE',iNuserId);
+
     // get my user id
-    var myUid       = M_APP.get('uid');
+    var thisUserId       = iNuserId;//M_APP.get('uid');
 
     // get data from DB
     M_DATABASE.getRealtimeDataFromFirestoreDb (
           'users',
-          myUid + '/members',
+          thisUserId + '/members',
           {
             'functionOnOther' : () => {
 
@@ -488,18 +589,18 @@ define(
 
               var memberBlock   = memberData.data();
               var chatId        = memberData.id;
-              console.log('userForPrivateChat chatId',chatId);
-              console.log('userForPrivateChat memberBlock',memberBlock);
               var user2         = memberBlock['with'];
-              console.log('userForPrivateChat user2 with - ',user2);
               M_CATEGORY.userForPrivateChat(chatId,user2);
                    
-              safeAttachLiveLinkToChatElement(chatId);
+              safeAttachLiveLinkToChatElement(
+                chatId,
+                thisUserId
+              );
             }
           }
     );
   }
-  _['getAllMyChats'] = getAllMyChats;
+  _['getChatsByUserId'] = getChatsByUserId;
 
 
 
@@ -531,13 +632,22 @@ define(
     // body...
   }
 
-  function safeAttachLiveLinkToChatElement (iNchatId,iNfunction) {
+  function safeAttachLiveLinkToChatElement (iNchatId,iNtoUserId,iNfunction) {
+      /*
+        @inputs
+          iNchatId -> string
+          iNuserId -> string
+          iNfunction -> function
+      */
+       console.log('safeAttachLiveLinkToChatElement - INVOKE',iNchatId,iNtoUserId)
       // of all link with chat db
       offAllLinkWithChatDbByChatId(iNchatId);
       //check chat list for exist
       var  chatId           = iNchatId,
-           myUid            = USER.getMyId();
+           myUid            = USER.getMyId(),
+           toUserId         = iNtoUserId;
 
+       console.log('safeAttachLiveLinkToChatElement - toUserId',iNchatId,toUserId)
        M_DATABASE.getRealtimeDataFromFirestoreDb (
           'chats',
           chatId,
@@ -569,6 +679,9 @@ define(
                         chatBlock = chatData.data(),
                         chatType  = chatBlock.type;
 
+                        chatBlock['info']['toUserId'] = toUserId;
+
+                    console.log('safeAttachLiveLinkToChatElement functionOnAdd - toUserId',toUserId);
                     console.log('safeAttachLiveLinkToChatElement functionOnAdd - chatId, chatBlock',chatId, chatBlock);
 
                    //@< creating chat
@@ -705,6 +818,10 @@ define(
           var user2Icon   = user2Object.info.data.icon;
           var userType    = user2Object.info.data.type;
           var userOnline  = user2Object.info.live.online;
+          var owner  = user2Object.owner||'@system';
+
+          console.log('safeUpdatePrivateChatBlockFromUserDb  functWhenGet - iNobject',iNobject);
+          var toUserId    = iNobject.toUserId;
 
           
           // create object for create chat
@@ -718,6 +835,9 @@ define(
               // user type (business (2) or user(1) or app of system (3) )
               objForCreateChat['userType']    = userType;
               objForCreateChat['userOnline']  = userOnline;
+              
+              objForCreateChat['owner']  = owner;
+              objForCreateChat['toUserId']    = toUserId;
 
           // add user options
           if(typeof user2Object.info.options == 'object') {

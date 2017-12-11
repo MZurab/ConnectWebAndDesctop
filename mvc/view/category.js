@@ -42,7 +42,7 @@ define(
 	  	{{/each}}
     `;
     templates['UserList'] = `
-		<div class="mix usersBlockInMenusBlock {{appsForFilter}} {{class}}" connect_uid="{{userId}}" {{#if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" data-sortable="1" data-position-of-chat='{{chatPosition}}' connect_userType='{{userType}}' connect_chatType='{{chatType}}' connect_userLogin='{{login}}'>
+		<div class="mix usersBlockInMenusBlock {{appsForFilter}} {{class}}" connect_uid="{{userId}}" {{#if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" data-sortable="1" data-position-of-chat='{{chatPosition}}' connect_toUserId='{{toUserId}}' connect_owner='{{owner}}' connect_userType='{{userType}}' connect_chatType='{{chatType}}' connect_userLogin='{{login}}'>
 			<div class='chatDataInUsersBlock'>
 				<div class="iconBlockInUserBlock">
 			      <div class="iconInUserBlock">
@@ -63,8 +63,11 @@ define(
 			         <div class="userNameInChatList">{{chatName}}</div>
 			      </div>
 			      <div class="toCallBlockInUserNameBlock">
-			         <div class="btnToVoiceCallInFirstLine"></div>
-			         <div class="btnToVideoCallInFirstLine"></div>
+			      	 <div class="btnToCallInFirstLine"><i class="fas fa-phone-square"></i></div>
+			         <!-- 
+			         	<div class="btnToVoiceCallInFirstLine"></div>
+			         	<div class="btnToVideoCallInFirstLine"></div>
+		         	 -->
 			      </div>
 			    </div>
 
@@ -384,8 +387,6 @@ define(
 
 		// check has menu
 		var attrHasMenu = $(pathToThisChat).attr('connect_userhasmenu');
-		console.log('addOnClickActionForChatList - attrHasMenu',attrHasMenu);
-		console.log('addOnClickActionForChatList - $(pathToThisChat)',pathToThisChat, $(pathToThisChat));
 		if(attrHasMenu){
 			// if this chat hasmenu -> open app 'chat' page 'index'
 			var dataForOpenApp = 'uid='+obj['login']+'&login='+USER.getMyLogin();
@@ -397,8 +398,6 @@ define(
         			'pageName' 	: 'one',
         			'data' 		: dataForOpenApp
         		};
-			console.log('addOnClickActionForChatList 0 - selector', selector);
-			console.log('addOnClickActionForChatList 0 - objForCreateLink', objForCreateLink);
         	M_APP.view.convertDomElementToAppLink (selector,objForCreateLink);
 		} else {
 			// if this has not menu -> open app 'chat' page 'index'
@@ -656,7 +655,6 @@ define(
 		if(typeof iNdata != 'object') iNdata = {};
 
 		var chatType = iNdata.chatType ? parseInt(iNdata.chatType) : 2;
-		console.log('createChatListIfNotExist - chatType, iNdata', chatType, iNdata);
 		if( chatType == 1 ) {
 			// if private chat
 			var chatSelector = getPathToChatByUserId (iNdata['userId']);
@@ -665,12 +663,8 @@ define(
 			var chatSelector = getPathToChatByChatId (iNdata['chatId']);
 
 		}
-
-		console.log('createChatListIfNotExist - chatSelector',chatSelector)
-		console.log('createChatListIfNotExist - $(chatSelector).length',$(chatSelector).length);
-		console.log('createChatListIfNotExist - $(chatSelector)',$(chatSelector));
+		
 		if($(chatSelector).length < 1) {
-			console.log('createChatListIfNotExist - create',$(chatSelector));
 			createChatList(iNdata,iNfunction);
 		}
 
@@ -722,9 +716,7 @@ define(
 		var content = DICTIONARY.withString ( getUserListTemplate ( iNdata ) );
 		let mixer = output['sortMixitUpObject'];
 
-        console.log('createChatList mixer', mixer , $(content));
 		mixer.insert($(content)).then(function(state) {
-	        console.log('createChatList - totalShow',state.totalShow);
 	        if(typeof iNfunction == 'function') iNfunction();
 	    });
 		// $(vars['pathToChatList']).prepend( content );
@@ -740,9 +732,7 @@ define(
 		var selectorForDel = getPathToChatByUserId (iNuserId);
 		let mixer = output['sortMixitUpObject'];
 
-        console.log('removeChatListByUserId mixer');
 		mixer.remove(selectorForDel).then(function(state) {
-	        console.log('removeChatListByUserId - totalShow',state.totalShow);
 	        if(typeof iNfunction == 'function') iNfunction();
 	    });
 		// $(vars['pathToChatList']).prepend( content );
@@ -793,7 +783,7 @@ define(
             	string: coung of chat list element
         */
         var lengthChatList = findChatBlock(iNdata['chatId']);
-        if(lengthChatList < 1) {
+        if (lengthChatList < 1) {
         	createChatList(iNdata);
         	// add effect for last msg and live flash messages
         	setEffectsForChatList(iNdata['chatId']);

@@ -32,27 +32,6 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary','sweetalert
 	}
     _['userForPrivateChat'] = userForPrivateChat;
 
-    function getChatIconByType (iNchaType,iNobject) {
-        /*
-            @inputs
-                iNchatType -> number
-                iNobject
-                    uid -> string
-                    chatId -> string
-        */
-        var chatType = iNchaType, result;
-        if (chatType == 1) {
-            // private chat
-
-            result =  URL.getUserIconByUid(iNobject['userId']);
-
-        } else if(chatType == 2) {
-            // group chat
-            result = URL.getChatIconByChatId(iNobject['chatId']);
-        }
-        console.log('getChatIconByType - chatType, result', chatType, result );
-        return result;
-    } _.getChatIconByType = getChatIconByType;
 
     function safeUpdateChatBlock (iNdata,chatType) {
         /*
@@ -84,7 +63,7 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary','sweetalert
         			objForCreateChat['chatType'] 	= chatType;
 
                 // get chat icon
-                var chatIcon    = getChatIconByType(chatType,objForCreateChat); objForCreateChat['icon'] = chatIcon;
+                var chatIcon    = M_APP.getGlobalVar('m_app-chat').getChatIconByType(chatType,objForCreateChat); objForCreateChat['icon'] = chatIcon;
 
                 // create chat
                 VIEW.createChatList (objForCreateChat, () => {
@@ -205,7 +184,10 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary','sweetalert
    
     function addChatBlockToCategory (iNuserData,iNchatId,iNuserId) {
         // chatType does not work - CHANGE
-        var href = "chatId="+iNchatId+"&userId="+iNuserId+"&chatType=1&back=1"
+
+        // add chatType > chatIcon > uidType
+        var chatName    = VIEW.getChatName (iNchatId),
+            href        = "chatId=" + iNchatId + "&userId=" + iNuserId + "&chatType=1&back=1&chatName=" + chatName;
         var objForCreateChat = {
            'app'            : 'chat', 
            'code'           : 'chiefChat',
@@ -219,8 +201,7 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary','sweetalert
         iNuserData['categories']['chat'][iNchatId] = objForCreateChat;
         return true;
 
-    }
-    _['addChatBlockToCategory'] = addChatBlockToCategory;
+    } _['addChatBlockToCategory'] = addChatBlockToCategory;
 
     function addDisabledChatBlockToCategory (iNuserData,iNuserId,iNuserLogin) {
         // chatType does not work - CHANGE

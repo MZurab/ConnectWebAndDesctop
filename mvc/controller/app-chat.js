@@ -80,7 +80,7 @@ define( ['m_app-chat', 'v_app-chat', 'm_view', 'm_message', 'm_app'], function (
 		            // 'setPage' : function () {return true;},
 		            'onInit' 		: function () {
 		            	
-	        			M_APP.getGlobalVar('engine').passToApp( {'app':'base','page':'index','data':''} );
+	        			M_APP.getGlobalVar('engine').passToApp ( {'app':'base','page':'index','data':''} );
 		            	M_MESSAGE.view.initApp( { 
 		            		// for send simpleTextMessage when click
 		            		'simpleMsgText_onClickSendBtn' : M_MESSAGE.simpleMsgText_onClickSendBtn , 

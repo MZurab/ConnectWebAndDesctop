@@ -1,7 +1,9 @@
-define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_record','m_category'],function( VIEW, M_APP, M_VIEW, M_MESSAGE, USER, FIREBASE, M_RECORD, M_CATEGORY) {
+define(
+	['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_record','m_category','url'],
+	function( VIEW, M_APP, M_VIEW, M_MESSAGE, USER, FIREBASE, M_RECORD, M_CATEGORY, URL) {
 	//@< init
 		// init from app view templates
-	  const _ = {};
+	  const _ = {}; M_APP.setGlobalVar('m_app-chat',_);
 	  const CONST = {};
 	  const name = 'chat'; _['name'] = name;
 	  const pages = {};
@@ -109,7 +111,29 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
 
 
 
+	function getChatIconByType (iNchaType,iNobject) {
+        /*
+        	@discr 
+        		get chat icon for private and group chats
+            @inputs
+                iNchatType -> number
+                iNobject
+                    uid -> string
+                    chatId -> string
+        */
+        var chatType = parseInt(iNchaType), result;
+        console.log('getChatIconByType - iNchaType,iNobject',iNchaType,iNobject);
+        if (chatType == 1) {
+            // private chat
 
+            result =  URL.getUserIconByUid(iNobject['userId']);
+
+        } else if(chatType == 2) {
+            // group chat
+            result = URL.getChatIconByChatId(iNobject['chatId']);
+        }
+        return result;
+    } _.getChatIconByType = getChatIconByType;
 
 
 
@@ -121,6 +145,7 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
 						chatId
 						userId
 						chatName
+						chatType
 
 
 						userLogin
@@ -137,7 +162,6 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
 
 		console.log('pageIndex_openChatByChatId start - iNobject',iNobject);
 
-		iNobject['chatIcon'] 	= iNobject['chatIcon'];//https://cdn.ramman.net/images/icons/apps/app_sharepay.png';
 		iNobject['chatName']	= iNobject['chatName'];//'SharePay';
 		iNobject['login']	 	= iNobject['userLogin'];// 'sharepay';
 		iNobject['servise'] 	= (iNobject['userType'] == 2)?true:false;//true;
@@ -150,8 +174,9 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
 			chatName  		= iNobject['chatName'];
 
 		// get chatIcon
-		var chatType 	= iNobject['chatIcon']||1;
-		var chatIcon  	= M_CATEGORY.getChatIconByType(chatType,iNobject);
+		var chatType 	= iNobject['chatType']||1,
+			chatIcon  	= getChatIconByType(chatType,iNobject);
+			iNobject['chatIcon'] = chatIcon;
 
 
 		// setPreviusChat 
@@ -182,8 +207,7 @@ define(['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_reco
 
 
 		M_MESSAGE.setLastMsgTimeByChatId(chatId,0);
-		console.log('pageIndex_openChatByChatId VIEW.getCountsOfChatContainers(chatId)', VIEW.getCountsOfChatContainers(chatId));
-		console.log('pageIndex_openChatByChatId chatId', chatId);
+		
         if ( VIEW.getCountsOfChatContainers(chatId) == 0 ) {
             // need chat isset open it
             VIEW.createChatContainer(chatId);

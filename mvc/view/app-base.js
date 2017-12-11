@@ -1,4 +1,4 @@
-define(['jquery','m_user','template7','v_view','v_app'],function($,USER,Template7,V_VIEW,V_APP) {
+define(['jquery','m_user','template7','v_view','v_app','selector', 'localdb'],function($,USER,Template7,V_VIEW,V_APP, SELECTOR, LOCALDB) {
 	const _ = {};
 	const CONST = {'name':'base','pageIndex':'index'};
 	const templates = {};
@@ -100,7 +100,8 @@ define(['jquery','m_user','template7','v_view','v_app'],function($,USER,Template
 
 	function getRealChatIdByUid (iNuid) {
 		// body...
-		var path 		= ".usersBlockContainerInMenusBlock .scrolBlockForChat .mix.usersBlockInMenusBlock[connect_uid='"+iNuid+"']";
+
+		var path 		= SELECTOR.db.main.blocks.second.body.toChat + "[connect_uid='"+iNuid+"']";
 		var el 			= $(path);
 		var chatId 		= el.attr('connect_chatid');
 		var userLogin 	= el.attr('connect_userlogin');
@@ -114,7 +115,170 @@ define(['jquery','m_user','template7','v_view','v_app'],function($,USER,Template
 	
 
 
+	//@< PSEUDO USER MENU
 
+		templates['menuPseudoUser_box'] = `
+			<div class="appBase_userSelectMenuContainer">
+   				<ul>
+   					{{content}}
+   				</ul>
+			</div>
+		`;
+
+		templates['menuPseudoUser_item'] = `
+			<li>
+		         <div class="appBase_userListHeaderContainer" connect_uid='{{uid}}' connect_owner='{{owner}}'>
+		            <div class="appBase_userIcon"><a href="#"><img src="{{icon}}"></a></div>
+		            <div class="UserNameInMenusBlock">
+		               <div class="appBase_ListHeader_dName">
+		                  <a href="" class="CML">{{name}}</a>
+		               </div>
+		               {{#if owner}}
+		               		<div class="appBase_ListHeader_owner">{{owner}}</div>
+	               	   {{else}}
+		               		<div class="appBase_ListHeader_login">{{login}}</div>
+	               	   {{/if}}
+		            </div>
+		         </div>
+		    </li>
+		`;
+
+		function menuPseudoUser_getBox (iNdata) {
+			/*
+				@inputs
+					@required
+						iNdata
+							@required
+							@optional
+								content -> string
+			*/
+			var temp = Template7.compile(templates['menuPseudoUser_box']);
+			return temp(iNdata);
+		}
+		_['menuPseudoUser_getBox'] = menuPseudoUser_getBox;
+
+		function menuPseudoUser_getCountMenu () {
+
+			var path = SELECTOR.db.main.blocks.second.header.base.index.menuSwitchUserBox.val;
+			return $(path).length;
+		} _.menuPseudoUser_getCountMenu = menuPseudoUser_getCountMenu;
+
+		function menuPseudoUser_addBox (iNdata) {
+			/*
+				@inputs
+					@required
+						iNdata
+							@required
+							@optional
+								content -> string
+			*/
+			var path 		= SELECTOR.db.main.blocks.second.header.base.index.val,// '.topBlockInMenusBlock .menuHeaderInMenusBlock[app-name="base"] .appPage[page-name="index"]',
+				content 	= menuPseudoUser_getBox(iNdata);
+				V_VIEW.d_addDataToViewEl ( path, content, 'start' );
+		}
+
+		function menuPseudoUser_safeAddBox (iNdata) {
+			/*
+				@inputs
+					@required
+						iNdata
+							@required
+							@optional
+								content -> string
+			*/
+			if(typeof iNdata != 'object') iNdata = {};
+			if ( menuPseudoUser_getCountMenu() < 1 ) {
+				menuPseudoUser_addBox(iNdata);
+			}
+		} _.menuPseudoUser_safeAddBox = menuPseudoUser_safeAddBox;
+
+		function menuPseudoUser_getItem (iNdata) {
+			/*
+				@inputs
+					@required
+						iNdata
+							@required
+								name -> string
+								icon -> string
+								ownerLogin -> string
+			*/
+			var temp = Template7.compile(templates['menuPseudoUser_item']);
+			return temp(iNdata);
+		}
+		_['menuPseudoUser_getItem'] = menuPseudoUser_getItem;
+
+
+		function menuPseudoUser_addItem (iNdata) {
+			/*
+				@inputs
+					@required
+						iNdata
+							@required
+								name -> string
+								icon -> string
+								ownerLogin -> string
+			*/
+
+			// add box if not exist
+			menuPseudoUser_safeAddBox();
+
+			// add item
+			var path 	= SELECTOR.db.main.blocks.second.header.base.index.menuSwitchUserBox.item.val,
+				content = menuPseudoUser_getItem(iNdata);
+				V_VIEW.d_addDataToViewEl (path,content,'start');
+
+		}
+		_['menuPseudoUser_addItem'] = menuPseudoUser_addItem;
+
+		function menuPseudoUser_attachOnClickEventForShowMenu () {
+			// when click to icon OR to name
+			var pathToIcon 	= SELECTOR.db.main.blocks.second.header.base.index.userIconWihPseudoFlag.val,//'.appPage > .appBase_userListHeaderContainer.flagHasPseudoUsers .appBase_userIcon',
+				pathToName 	= SELECTOR.db.main.blocks.second.header.base.index.userNameWihPseudoFlag.val,//'.appPage > .appBase_userListHeaderContainer.flagHasPseudoUsers .appBase_ListHeader_dName',
+				path 		= pathToIcon + ', ' + pathToName;
+				// clear of any onclick actions
+				$(path).off('click');
+				// attach action to on click event for view menu
+				$(path).click(
+					function (e) {
+						e.preventDefault();
+						menuPseudoUser_showMenu();
+					}	
+				);
+		} _.menuPseudoUser_attachOnClickEventForShowMenu  = menuPseudoUser_attachOnClickEventForShowMenu;
+
+		function menuPseudoUser_hideMenu() {
+			//hide curtain
+			$(SELECTOR.val.curtain).hide();
+		}
+
+		function menuPseudoUser_showMenu() {
+			// open menu
+			$(SELECTOR.db.main.blocks.second.header.base.index.menuSwitchUserBox.val).show();
+
+			// show curtain
+			V_APP.showBackgroundCurtainWithFunction (
+				() => {
+					// hide menus
+					$(SELECTOR.db.main.blocks.second.header.base.index.menuSwitchUserBox.val).hide();
+
+				}
+			);
+		}
+
+		
+
+		function menuPseudoUser_addFlagToAttachOnClickEventForShowMenu () {
+			var flag = LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser,//'flagHasPseudoUsers',
+				path = SELECTOR.db.main.blocks.second.header.base.index.baseHeader.val;
+			$(path).addClass(flag);
+		} _.menuPseudoUser_addFlagToAttachOnClickEventForShowMenu = menuPseudoUser_addFlagToAttachOnClickEventForShowMenu;
+
+		function menuPseudoUser_removeFlagToAttachOnClickEventForShowMenu() {
+			var flag = LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser,//'flagHasPseudoUsers',
+				path = SELECTOR.db.main.blocks.second.header.base.index.baseHeader.val;
+			$(path).removeClass(flag);
+		} _.menuPseudoUser_removeFlagToAttachOnClickEventForShowMenu = menuPseudoUser_removeFlagToAttachOnClickEventForShowMenu;
+	//@> PSEUDO USER MENU
 
 	return _;
 });

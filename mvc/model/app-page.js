@@ -119,7 +119,7 @@ define( ['jquery','dictionary','m_view','v_app-page','m_app','m_user','mediaStre
             );
 
             //@< add content body 
-            M_APP.view.d_createChiefApp(
+            M_APP.view.d_safeCreateChiefApp(
               {
                 app       : 'page'
               }
@@ -128,7 +128,7 @@ define( ['jquery','dictionary','m_view','v_app-page','m_app','m_user','mediaStre
             // translate content
             var content = DICTIONARY.withLanguageObject(iNresult['content']);
 
-            M_APP.view.d_createPageInChiefApp(
+            M_APP.view.d_safeCreatePageInChiefApp(
               {
                 app       : 'page',
                 page      : 'miniPage',

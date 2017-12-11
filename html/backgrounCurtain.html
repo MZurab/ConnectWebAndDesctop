@@ -1,0 +1,59 @@
+<div id="container">
+   <div class="connectBackgroundCurtain"></div>
+</div>
+
+
+
+<style type="text/css">
+	.connectBackgroundCurtain {
+	    width: 100%;
+	    height: 100%;
+	    background: rgba(0, 0, 0, 0.20);
+	    position: fixed;
+	    z-index: 1000;
+	}
+</style>
+
+<script type="text/javascript">
+
+
+
+	function showBackgroundCurtain () {
+		/*
+			@discr
+			@inputs
+		*/
+		$(SELECTOR.val.curtain).show();
+	} _.showBackgroundCurtain = showBackgroundCurtain;
+
+	function showBackgroundCurtainWithFunction (clickFunction) {
+		/*
+			@discr
+			@inputs
+		*/
+		// bacground
+		hideBackgroundCurtain();
+		// show
+		showBackgroundCurtain();
+		
+		$(SELECTOR.val.curtain).click(
+			function () {
+				if(typeof clickFunction == 'function') clickFunction(this);
+				// hide backgorun curtain
+				hideBackgroundCurtain();
+			}
+		);
+	} _.showBackgroundCurtainWithFunction = showBackgroundCurtainWithFunction;
+
+	function hideBackgroundCurtain () {
+		/*
+			@discr
+			@inputs
+		*/
+
+		// hide curtain
+		$(SELECTOR.val.curtain).hide();
+		// off click
+		$(SELECTOR.val.curtain).off('click');
+	} _.hideBackgroundCurtain = hideBackgroundCurtain;
+</script>

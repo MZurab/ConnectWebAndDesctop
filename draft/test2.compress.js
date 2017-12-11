@@ -1,0 +1,1 @@
+var a="1",c={d:2},b='\n\t<div id="subViewInViewAndChatBlock">\n\t   <div id="menuWindowInSubView"></div>\n\t   <div id="viewWindow" class="appChiefWindow">\n\t      <div>\n\t         <div id="leftBlockInViewWindow">'+a+" "+c.d+"</div>\n\t      </div>\n\t   </div>\n\t</div>\n";

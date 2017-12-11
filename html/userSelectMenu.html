@@ -1,0 +1,147 @@
+<div class="appBase_userSelectMenuContainer">
+   <ul>
+      <li>
+         <div class="appBase_userListHeaderContainer">
+            <div class="appBase_userIcon"><a href="#"><img src="https://cdn.ramman.net/images/icons/users/zurab.jpg"></a></div>
+            <div class="UserNameInMenusBlock">
+               <div class="appBase_ListHeader_dName">
+                  <a href="" class="CML">Магомадов Зураб</a>
+               </div>
+               <div class="appBase_ListHeader_login">@zurab</div>
+            </div>
+         </div>
+      </li>
+      <li>
+         <div class="appBase_userListHeaderContainer">
+            <div class="appBase_userIcon"><a href="#"><img src="https://cdn.ramman.net/images/icons/users/zurab.jpg"></a></div>
+            <div class="UserNameInMenusBlock">
+               <div class="appBase_ListHeader_dName">
+                  <a href="" class="CML">Магомадов Зураб</a>
+               </div>
+               <div class="appBase_ListHeader_login">@zurab</div>
+            </div>
+         </div>
+      </li>
+      <li>
+         <div class="appBase_userListHeaderContainer">
+            <div class="appBase_userIcon"><a href="#"><img src="https://cdn.ramman.net/images/icons/users/zurab.jpg"></a></div>
+            <div class="UserNameInMenusBlock">
+               <div class="appBase_ListHeader_dName">
+                  <a href="" class="CML">Магомадов Зураб</a>
+               </div>
+               <div class="appBase_ListHeader_login">@zurab</div>
+            </div>
+         </div>
+      </li>
+      <li>
+         <div class="appBase_userListHeaderContainer">
+            <div class="appBase_userIcon"><a href="#"><img src="https://cdn.ramman.net/images/icons/users/zurab.jpg"></a></div>
+            <div class="UserNameInMenusBlock">
+               <div class="appBase_ListHeader_dName">
+                  <a href="" class="CML">Магомадов Зураб</a>
+               </div>
+               <div class="appBase_ListHeader_login">@zurab</div>
+            </div>
+         </div>
+      </li>
+   </ul>
+</div>
+
+<script type="text/javascript">
+	
+	function attachOnClickEventForShowPseudoUserMenu () {
+		// when click to icon OR to name
+		var pathToIcon = '.appPage > .appBase_userListHeaderContainer .appBase_userIcon',
+			pathToName = '.appPage > .appBase_userListHeaderContainer .appBase_ListHeader_dName',
+			path = pathToIcon + ', ' + pathToName;
+			// clear of any onclick actions
+			$(path).off('click');
+			// attach action to on click event for view menu
+			$(path).click(
+				function () {
+					showMenuForChoosePseudoUser();
+				}	
+			);
+	} _.attachOnClickEventForShowPseudoUserMenu  = attachOnClickEventForShowPseudoUserMenu;
+
+	function hideMenuForChoosePseudoUser() {
+		//hide curtain
+		$(SELECTOR.val.curtain).hide();
+	}
+
+	function showMenuForChoosePseudoUser(argument) {
+		// open menu
+		$(SELECTOR.db.main.blocks.first.header.menus.switchUser).show();
+
+		// show curtain
+		V_APP.showBackgroundCurtainWithFunction (
+			() => {
+				// hide menus
+				$(SELECTOR.db.main.blocks.first.header.menus.switchUser).hide();
+
+			}
+		);
+	}
+
+</script>
+
+
+<style type="text/css">
+	.appBase_ListHeader_login {
+	    color: rgb(255, 255, 255);
+	    font-style: italic;
+	    font-size: .9rem;
+	    display: table;
+	    padding: 0.1rem 0.5rem;
+	    border-radius: 0.5rem;
+	    border: 1px solid rgba(0, 0, 0, 0.05);
+	    margin-top: 0.15rem;
+	    background: rgb(0, 0, 0);
+	}
+
+	.appBase_userSelectMenuContainer {
+	    position: relative;
+	    width: 100%;
+	    z-index: 5;
+	    top: 4rem;
+	    overflow: hidden;
+	    border: 1px solid rgba(0, 0, 0, 0.05);
+	    border-radius: 0px 0px 15px 15px;
+	    max-height: 12rem;
+	    padding-bottom: 2rem;
+	    background: rgb(255, 255, 255);
+    	z-index: 1001;
+	}
+		.appBase_userSelectMenuContainer > ul {
+		    list-style: none;
+		    padding: 0px;
+		    z-index: 5;
+		    padding-bottom: 0.5rem;
+		    overflow: auto;
+		    overflow-x: hidden;
+		    max-height: 12rem;
+		    width: 100%;
+		    padding-right: 10%;
+		}
+			.appBase_userSelectMenuContainer > ul > li {
+			    position: relative;
+			    height: 4rem;
+			    margin-top: 2px;
+			    padding: 2px;
+			    cursor: pointer;
+			}
+			.appBase_userSelectMenuContainer > ul > li:hover {
+			    background: rgba(0, 145, 170, 0.08);
+			}
+				.appBase_ListHeader_owner {
+				    color: #000000;
+				    font-style: italic;
+				    font-size: .9rem;
+				    background: rgba(255, 225, 0, 0.99);
+				    display: table;
+				    padding: 0.1rem 0.5rem;
+				    border-radius: 0.5rem;
+				    border: 1px solid rgba(0, 0, 0, 0.05);    
+				    margin-top: 0.15rem;
+				}
+</style>

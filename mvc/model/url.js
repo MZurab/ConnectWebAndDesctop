@@ -1,4 +1,4 @@
-define([],function () {
+define( [] , function () {
 	const URL = {};
 	const _ = {'db':URL};
 

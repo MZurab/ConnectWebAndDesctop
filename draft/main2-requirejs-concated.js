@@ -4099,10 +4099,6 @@ define('v_view',['jquery','template7','dictionary'], function ($,Template7, DICT
 				$(iNdomElement).after(iNaddedData);
 			break;
 
-			case "replace":
-				$(iNdomElement).replaceWith(iNaddedData);
-			break;
-
 			default: // start
 				$(iNdomElement).prepend(iNaddedData);
 			break;
@@ -4314,7 +4310,6 @@ define('v_view',['jquery','template7','dictionary'], function ($,Template7, DICT
 			}
 			
 			function showLoader ( iNid, iNloaderKey, iNloaderCode ) {
-				console.log('showLoader - iNid, iNloaderKey, iNloaderCode',iNid, iNloaderKey, iNloaderCode);
 				// get loader key for get template from object {$loader_templates}
 				if ( typeof iNloaderKey != 'string' )  iNloaderKey = loader_getDefaultKey();
 				// get loader code for get template from object {$loader_templates}
@@ -4331,10 +4326,8 @@ define('v_view',['jquery','template7','dictionary'], function ($,Template7, DICT
 			}
 
 			function closeLoader (iNid, iNloaderKey, iNloaderCode) {
-				console.log('closeLoader - iNid, iNloaderKey, iNloaderCode',iNid, iNloaderKey, iNloaderCode);
 				// get dom path to loader
 				let loaderPathToDom = loader_getPathToLoader (iNid, iNloaderKey, iNloaderCode);
-				console.log('closeLoader - loaderPathToDom - ',loaderPathToDom);
 				// remove loader
 				$(loaderPathToDom).remove();
 			}
@@ -4440,16 +4433,14 @@ define('v_view',['jquery','template7','dictionary'], function ($,Template7, DICT
 	}
 });
 /*!
- * sweetalert2 v7.0.6
+ * sweetalert2 v6.4.2
  * Released under the MIT License.
  */
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define('sweetalert2',factory) :
-  (global.Sweetalert2 = factory());
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+	typeof define === 'function' && define.amd ? define('sweetalert2',factory) :
+	(global.Sweetalert2 = factory());
 }(this, (function () { 'use strict';
-
-var styles = ".swal2-buttonswrapper button { margin: 0.5rem; } body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {\n  overflow-y: hidden; }\n\nbody.swal2-toast-shown {\n  overflow-y: auto; }\n  body.swal2-toast-shown.swal2-has-input > .swal2-container > .swal2-toast {\n    -webkit-box-orient: vertical;\n    -webkit-box-direction: normal;\n        -ms-flex-direction: column;\n            flex-direction: column; }\n    body.swal2-toast-shown.swal2-has-input > .swal2-container > .swal2-toast .swal2-icon {\n      margin: 0 0 15px; }\n    body.swal2-toast-shown.swal2-has-input > .swal2-container > .swal2-toast .swal2-buttonswrapper {\n      -webkit-box-flex: 1;\n          -ms-flex: 1;\n              flex: 1;\n      -ms-flex-item-align: stretch;\n          align-self: stretch;\n      -webkit-box-pack: end;\n          -ms-flex-pack: end;\n              justify-content: flex-end; }\n    body.swal2-toast-shown.swal2-has-input > .swal2-container > .swal2-toast .swal2-loading {\n      -webkit-box-pack: center;\n          -ms-flex-pack: center;\n              justify-content: center; }\n    body.swal2-toast-shown.swal2-has-input > .swal2-container > .swal2-toast .swal2-input {\n      height: 32px;\n      font-size: 14px;\n      margin: 5px auto; }\n  body.swal2-toast-shown > .swal2-container {\n    position: fixed;\n    background-color: transparent; }\n    body.swal2-toast-shown > .swal2-container.swal2-shown {\n      background-color: transparent; }\n    body.swal2-toast-shown > .swal2-container.swal2-top {\n      top: 0;\n      left: 50%;\n      bottom: auto;\n      right: auto;\n      -webkit-transform: translateX(-50%);\n              transform: translateX(-50%); }\n    body.swal2-toast-shown > .swal2-container.swal2-top-right {\n      top: 0;\n      left: auto;\n      bottom: auto;\n      right: 0; }\n    body.swal2-toast-shown > .swal2-container.swal2-top-left {\n      top: 0;\n      left: 0;\n      bottom: auto;\n      right: auto; }\n    body.swal2-toast-shown > .swal2-container.swal2-center-left {\n      top: 50%;\n      left: 0;\n      bottom: auto;\n      right: auto;\n      -webkit-transform: translateY(-50%);\n              transform: translateY(-50%); }\n    body.swal2-toast-shown > .swal2-container.swal2-center {\n      top: 50%;\n      left: 50%;\n      bottom: auto;\n      right: auto;\n      -webkit-transform: translate(-50%, -50%);\n              transform: translate(-50%, -50%); }\n    body.swal2-toast-shown > .swal2-container.swal2-center-right {\n      top: 50%;\n      left: auto;\n      bottom: auto;\n      right: 0;\n      -webkit-transform: translateY(-50%);\n              transform: translateY(-50%); }\n    body.swal2-toast-shown > .swal2-container.swal2-bottom-left {\n      top: auto;\n      left: 0;\n      bottom: 0;\n      right: auto; }\n    body.swal2-toast-shown > .swal2-container.swal2-bottom {\n      top: auto;\n      left: 50%;\n      bottom: 0;\n      right: auto;\n      -webkit-transform: translateX(-50%);\n              transform: translateX(-50%); }\n    body.swal2-toast-shown > .swal2-container.swal2-bottom-right {\n      top: auto;\n      left: auto;\n      bottom: 0;\n      right: 0; }\n\nbody.swal2-iosfix {\n  position: fixed;\n  left: 0;\n  right: 0; }\n\nbody.swal2-no-backdrop > .swal2-shown {\n  top: auto;\n  bottom: auto;\n  left: auto;\n  right: auto;\n  background-color: transparent; }\n  body.swal2-no-backdrop > .swal2-shown > .swal2-modal {\n    -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);\n            box-shadow: 0 0 10px rgba(0, 0, 0, 0.4); }\n  body.swal2-no-backdrop > .swal2-shown.swal2-top {\n    top: 0;\n    left: 50%;\n    -webkit-transform: translateX(-50%);\n            transform: translateX(-50%); }\n  body.swal2-no-backdrop > .swal2-shown.swal2-top-left {\n    top: 0;\n    left: 0; }\n  body.swal2-no-backdrop > .swal2-shown.swal2-top-right {\n    top: 0;\n    right: 0; }\n  body.swal2-no-backdrop > .swal2-shown.swal2-center {\n    top: 50%;\n    left: 50%;\n    -webkit-transform: translate(-50%, -50%);\n            transform: translate(-50%, -50%); }\n  body.swal2-no-backdrop > .swal2-shown.swal2-center-left {\n    top: 50%;\n    left: 0;\n    -webkit-transform: translateY(-50%);\n            transform: translateY(-50%); }\n  body.swal2-no-backdrop > .swal2-shown.swal2-center-right {\n    top: 50%;\n    right: 0;\n    -webkit-transform: translateY(-50%);\n            transform: translateY(-50%); }\n  body.swal2-no-backdrop > .swal2-shown.swal2-bottom {\n    bottom: 0;\n    left: 50%;\n    -webkit-transform: translateX(-50%);\n            transform: translateX(-50%); }\n  body.swal2-no-backdrop > .swal2-shown.swal2-bottom-left {\n    bottom: 0;\n    left: 0; }\n  body.swal2-no-backdrop > .swal2-shown.swal2-bottom-right {\n    bottom: 0;\n    right: 0; }\n\n.swal2-container {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: row;\n          flex-direction: row;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  position: fixed;\n  padding: 10px;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background-color: transparent;\n  z-index: 1060; }\n  .swal2-container.swal2-top {\n    -webkit-box-align: start;\n        -ms-flex-align: start;\n            align-items: flex-start; }\n  .swal2-container.swal2-top-left {\n    -webkit-box-align: start;\n        -ms-flex-align: start;\n            align-items: flex-start;\n    -webkit-box-pack: start;\n        -ms-flex-pack: start;\n            justify-content: flex-start; }\n  .swal2-container.swal2-top-right {\n    -webkit-box-align: start;\n        -ms-flex-align: start;\n            align-items: flex-start;\n    -webkit-box-pack: end;\n        -ms-flex-pack: end;\n            justify-content: flex-end; }\n  .swal2-container.swal2-center {\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center; }\n  .swal2-container.swal2-center-left {\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    -webkit-box-pack: start;\n        -ms-flex-pack: start;\n            justify-content: flex-start; }\n  .swal2-container.swal2-center-right {\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    -webkit-box-pack: end;\n        -ms-flex-pack: end;\n            justify-content: flex-end; }\n  .swal2-container.swal2-bottom {\n    -webkit-box-align: end;\n        -ms-flex-align: end;\n            align-items: flex-end; }\n  .swal2-container.swal2-bottom-left {\n    -webkit-box-align: end;\n        -ms-flex-align: end;\n            align-items: flex-end;\n    -webkit-box-pack: start;\n        -ms-flex-pack: start;\n            justify-content: flex-start; }\n  .swal2-container.swal2-bottom-right {\n    -webkit-box-align: end;\n        -ms-flex-align: end;\n            align-items: flex-end;\n    -webkit-box-pack: end;\n        -ms-flex-pack: end;\n            justify-content: flex-end; }\n  .swal2-container.swal2-grow-fullscreen > .swal2-modal {\n    display: -webkit-box !important;\n    display: -ms-flexbox !important;\n    display: flex !important;\n    -webkit-box-flex: 1;\n        -ms-flex: 1;\n            flex: 1;\n    -ms-flex-item-align: stretch;\n        align-self: stretch;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center; }\n  .swal2-container.swal2-grow-row > .swal2-modal {\n    display: -webkit-box !important;\n    display: -ms-flexbox !important;\n    display: flex !important;\n    -webkit-box-flex: 1;\n        -ms-flex: 1;\n            flex: 1;\n    -ms-flex-line-pack: center;\n        align-content: center;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center; }\n  .swal2-container.swal2-grow-column {\n    -webkit-box-flex: 1;\n        -ms-flex: 1;\n            flex: 1;\n    -webkit-box-orient: vertical;\n    -webkit-box-direction: normal;\n        -ms-flex-direction: column;\n            flex-direction: column; }\n    .swal2-container.swal2-grow-column.swal2-top, .swal2-container.swal2-grow-column.swal2-center, .swal2-container.swal2-grow-column.swal2-bottom {\n      -webkit-box-align: center;\n          -ms-flex-align: center;\n              align-items: center; }\n    .swal2-container.swal2-grow-column.swal2-top-left, .swal2-container.swal2-grow-column.swal2-center-left, .swal2-container.swal2-grow-column.swal2-bottom-left {\n      -webkit-box-align: start;\n          -ms-flex-align: start;\n              align-items: flex-start; }\n    .swal2-container.swal2-grow-column.swal2-top-right, .swal2-container.swal2-grow-column.swal2-center-right, .swal2-container.swal2-grow-column.swal2-bottom-right {\n      -webkit-box-align: end;\n          -ms-flex-align: end;\n              align-items: flex-end; }\n    .swal2-container.swal2-grow-column > .swal2-modal {\n      display: -webkit-box !important;\n      display: -ms-flexbox !important;\n      display: flex !important;\n      -webkit-box-flex: 1;\n          -ms-flex: 1;\n              flex: 1;\n      -ms-flex-line-pack: center;\n          align-content: center;\n      -webkit-box-pack: center;\n          -ms-flex-pack: center;\n              justify-content: center; }\n  .swal2-container:not(.swal2-top):not(.swal2-top-left):not(.swal2-top-right):not(.swal2-center-left):not(.swal2-center-right):not(.swal2-bottom):not(.swal2-bottom-left):not(.swal2-bottom-right) > .swal2-modal {\n    margin: auto; }\n  @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {\n    .swal2-container .swal2-modal {\n      margin: 0 !important; } }\n  .swal2-container.swal2-fade {\n    -webkit-transition: background-color .1s;\n    transition: background-color .1s; }\n  .swal2-container.swal2-shown {\n    background-color: rgba(0, 0, 0, 0.4); }\n\n.swal2-popup {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  background-color: #fff;\n  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;\n  border-radius: 5px;\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n  text-align: center;\n  overflow-x: hidden;\n  overflow-y: auto;\n  display: none;\n  position: relative;\n  max-width: 100%; }\n  .swal2-popup.swal2-toast {\n    width: 300px;\n    padding: 0 15px;\n    -webkit-box-orient: horizontal;\n    -webkit-box-direction: normal;\n        -ms-flex-direction: row;\n            flex-direction: row;\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    overflow-y: hidden;\n    -webkit-box-shadow: 0 0 10px #d9d9d9;\n            box-shadow: 0 0 10px #d9d9d9; }\n    .swal2-popup.swal2-toast .swal2-title {\n      max-width: 300px;\n      font-size: 16px;\n      text-align: left; }\n    .swal2-popup.swal2-toast .swal2-content {\n      font-size: 14px;\n      text-align: left; }\n    .swal2-popup.swal2-toast .swal2-icon {\n      width: 32px;\n      height: 32px;\n      margin: 0 15px 0 0; }\n      .swal2-popup.swal2-toast .swal2-icon.swal2-success .swal2-success-ring {\n        width: 32px;\n        height: 32px; }\n      .swal2-popup.swal2-toast .swal2-icon.swal2-info, .swal2-popup.swal2-toast .swal2-icon.swal2-warning, .swal2-popup.swal2-toast .swal2-icon.swal2-question {\n        font-size: 26px;\n        line-height: 32px; }\n      .swal2-popup.swal2-toast .swal2-icon.swal2-error [class^='swal2-x-mark-line'] {\n        top: 14px;\n        width: 22px; }\n        .swal2-popup.swal2-toast .swal2-icon.swal2-error [class^='swal2-x-mark-line'][class$='left'] {\n          left: 5px; }\n        .swal2-popup.swal2-toast .swal2-icon.swal2-error [class^='swal2-x-mark-line'][class$='right'] {\n          right: 5px; }\n    .swal2-popup.swal2-toast .swal2-buttonswrapper {\n      margin: 0 0 0 5px; }\n    .swal2-popup.swal2-toast .swal2-styled {\n      margin: 0 0 0 5px;\n      padding: 5px 10px; }\n      .swal2-popup.swal2-toast .swal2-styled:focus {\n        -webkit-box-shadow: 0 0 0 1px #fff, 0 0 0 2px rgba(50, 100, 150, 0.4);\n                box-shadow: 0 0 0 1px #fff, 0 0 0 2px rgba(50, 100, 150, 0.4); }\n    .swal2-popup.swal2-toast .swal2-validationerror {\n      width: 100%;\n      margin: 5px -20px; }\n    .swal2-popup.swal2-toast .swal2-success {\n      border-color: #a5dc86; }\n      .swal2-popup.swal2-toast .swal2-success [class^='swal2-success-circular-line'] {\n        border-radius: 50%;\n        position: absolute;\n        width: 32px;\n        height: 64px;\n        -webkit-transform: rotate(45deg);\n                transform: rotate(45deg); }\n        .swal2-popup.swal2-toast .swal2-success [class^='swal2-success-circular-line'][class$='left'] {\n          border-radius: 64px 0 0 64px;\n          top: -4px;\n          left: -15px;\n          -webkit-transform: rotate(-45deg);\n                  transform: rotate(-45deg);\n          -webkit-transform-origin: 32px 32px;\n                  transform-origin: 32px 32px; }\n        .swal2-popup.swal2-toast .swal2-success [class^='swal2-success-circular-line'][class$='right'] {\n          border-radius: 0 64px 64px 0;\n          top: -5px;\n          left: 14px;\n          -webkit-transform-origin: 0 32px;\n                  transform-origin: 0 32px; }\n      .swal2-popup.swal2-toast .swal2-success .swal2-success-ring {\n        width: 32px;\n        height: 32px; }\n      .swal2-popup.swal2-toast .swal2-success .swal2-success-fix {\n        width: 7px;\n        height: 90px;\n        left: 28px;\n        top: 8px; }\n      .swal2-popup.swal2-toast .swal2-success [class^='swal2-success-line'] {\n        height: 5px; }\n        .swal2-popup.swal2-toast .swal2-success [class^='swal2-success-line'][class$='tip'] {\n          width: 12px;\n          left: 3px;\n          top: 18px; }\n        .swal2-popup.swal2-toast .swal2-success [class^='swal2-success-line'][class$='long'] {\n          width: 22px;\n          right: 3px;\n          top: 15px; }\n    .swal2-popup.swal2-toast .swal2-animate-success-line-tip {\n      -webkit-animation: animate-toast-success-tip .75s;\n              animation: animate-toast-success-tip .75s; }\n    .swal2-popup.swal2-toast .swal2-animate-success-line-long {\n      -webkit-animation: animate-toast-success-long .75s;\n              animation: animate-toast-success-long .75s; }\n  .swal2-popup:focus {\n    outline: none; }\n  .swal2-popup.swal2-loading {\n    overflow-y: hidden; }\n  .swal2-popup .swal2-title {\n    color: #595959;\n    font-size: 30px;\n    text-align: center;\n    font-weight: 600;\n    text-transform: none;\n    position: relative;\n    margin: 0 0 .4em;\n    padding: 0;\n    display: block;\n    word-wrap: break-word; }\n  .swal2-popup .swal2-buttonswrapper {\n    -webkit-box-align: center;\n        -ms-flex-align: center;\n            align-items: center;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center;\n    margin-top: 15px; }\n    .swal2-popup .swal2-buttonswrapper:not(.swal2-loading) .swal2-styled[disabled] {\n      opacity: .4;\n      cursor: no-drop; }\n    .swal2-popup .swal2-buttonswrapper.swal2-loading .swal2-styled.swal2-confirm {\n      -webkit-box-sizing: border-box;\n              box-sizing: border-box;\n      border: 4px solid transparent;\n      border-color: transparent;\n      width: 40px;\n      height: 40px;\n      padding: 0;\n      margin: 7.5px;\n      vertical-align: top;\n      background-color: transparent !important;\n      color: transparent;\n      cursor: default;\n      border-radius: 100%;\n      -webkit-animation: rotate-loading 1.5s linear 0s infinite normal;\n              animation: rotate-loading 1.5s linear 0s infinite normal;\n      -webkit-user-select: none;\n         -moz-user-select: none;\n          -ms-user-select: none;\n              user-select: none; }\n    .swal2-popup .swal2-buttonswrapper.swal2-loading .swal2-styled.swal2-cancel {\n      margin-left: 30px;\n      margin-right: 30px; }\n    .swal2-popup .swal2-buttonswrapper.swal2-loading :not(.swal2-styled).swal2-confirm::after {\n      display: inline-block;\n      content: '';\n      margin-left: 5px;\n      vertical-align: -1px;\n      height: 15px;\n      width: 15px;\n      border: 3px solid #999999;\n      -webkit-box-shadow: 1px 1px 1px #fff;\n              box-shadow: 1px 1px 1px #fff;\n      border-right-color: transparent;\n      border-radius: 50%;\n      -webkit-animation: rotate-loading 1.5s linear 0s infinite normal;\n              animation: rotate-loading 1.5s linear 0s infinite normal; }\n  .swal2-popup .swal2-styled {\n    border: 0;\n    border-radius: 3px;\n    -webkit-box-shadow: none;\n            box-shadow: none;\n    color: #fff;\n    cursor: pointer;\n    font-size: 17px;\n    font-weight: 500;\n    margin: 15px 5px 0;\n    padding: 10px 32px; }\n    .swal2-popup .swal2-styled:focus {\n      outline: none;\n      -webkit-box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(50, 100, 150, 0.4);\n              box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(50, 100, 150, 0.4); }\n  .swal2-popup .swal2-image {\n    margin: 20px auto;\n    max-width: 100%; }\n  .swal2-popup .swal2-close {\n    background: transparent;\n    border: 0;\n    margin: 0;\n    padding: 0;\n    width: 38px;\n    height: 40px;\n    font-size: 36px;\n    line-height: 40px;\n    font-family: serif;\n    position: absolute;\n    top: 5px;\n    right: 8px;\n    cursor: pointer;\n    color: #cccccc;\n    -webkit-transition: color .1s ease;\n    transition: color .1s ease; }\n    .swal2-popup .swal2-close:hover {\n      color: #d55; }\n  .swal2-popup > .swal2-input,\n  .swal2-popup > .swal2-file,\n  .swal2-popup > .swal2-textarea,\n  .swal2-popup > .swal2-select,\n  .swal2-popup > .swal2-radio,\n  .swal2-popup > .swal2-checkbox {\n    display: none; }\n  .swal2-popup .swal2-content {\n    font-size: 18px;\n    text-align: center;\n    font-weight: 300;\n    position: relative;\n    float: none;\n    margin: 0;\n    padding: 0;\n    line-height: normal;\n    color: #545454;\n    word-wrap: break-word; }\n  .swal2-popup .swal2-input,\n  .swal2-popup .swal2-file,\n  .swal2-popup .swal2-textarea,\n  .swal2-popup .swal2-select,\n  .swal2-popup .swal2-radio,\n  .swal2-popup .swal2-checkbox {\n    margin: 20px auto; }\n  .swal2-popup .swal2-input,\n  .swal2-popup .swal2-file,\n  .swal2-popup .swal2-textarea {\n    width: 100%;\n    -webkit-box-sizing: border-box;\n            box-sizing: border-box;\n    font-size: 18px;\n    border-radius: 3px;\n    border: 1px solid #d9d9d9;\n    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.06);\n            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.06);\n    -webkit-transition: border-color .3s, -webkit-box-shadow .3s;\n    transition: border-color .3s, -webkit-box-shadow .3s;\n    transition: border-color .3s, box-shadow .3s;\n    transition: border-color .3s, box-shadow .3s, -webkit-box-shadow .3s; }\n    .swal2-popup .swal2-input.swal2-inputerror,\n    .swal2-popup .swal2-file.swal2-inputerror,\n    .swal2-popup .swal2-textarea.swal2-inputerror {\n      border-color: #f27474 !important;\n      -webkit-box-shadow: 0 0 2px #f27474 !important;\n              box-shadow: 0 0 2px #f27474 !important; }\n    .swal2-popup .swal2-input:focus,\n    .swal2-popup .swal2-file:focus,\n    .swal2-popup .swal2-textarea:focus {\n      outline: none;\n      border: 1px solid #b4dbed;\n      -webkit-box-shadow: 0 0 3px #c4e6f5;\n              box-shadow: 0 0 3px #c4e6f5; }\n    .swal2-popup .swal2-input::-webkit-input-placeholder,\n    .swal2-popup .swal2-file::-webkit-input-placeholder,\n    .swal2-popup .swal2-textarea::-webkit-input-placeholder {\n      color: #cccccc; }\n    .swal2-popup .swal2-input:-ms-input-placeholder,\n    .swal2-popup .swal2-file:-ms-input-placeholder,\n    .swal2-popup .swal2-textarea:-ms-input-placeholder {\n      color: #cccccc; }\n    .swal2-popup .swal2-input::-ms-input-placeholder,\n    .swal2-popup .swal2-file::-ms-input-placeholder,\n    .swal2-popup .swal2-textarea::-ms-input-placeholder {\n      color: #cccccc; }\n    .swal2-popup .swal2-input::placeholder,\n    .swal2-popup .swal2-file::placeholder,\n    .swal2-popup .swal2-textarea::placeholder {\n      color: #cccccc; }\n  .swal2-popup .swal2-range input {\n    float: left;\n    width: 80%; }\n  .swal2-popup .swal2-range output {\n    float: right;\n    width: 20%;\n    font-size: 20px;\n    font-weight: 600;\n    text-align: center; }\n  .swal2-popup .swal2-range input,\n  .swal2-popup .swal2-range output {\n    height: 43px;\n    line-height: 43px;\n    vertical-align: middle;\n    margin: 20px auto;\n    padding: 0; }\n  .swal2-popup .swal2-input {\n    height: 43px;\n    padding: 0 12px; }\n    .swal2-popup .swal2-input[type='number'] {\n      max-width: 150px; }\n  .swal2-popup .swal2-file {\n    font-size: 20px; }\n  .swal2-popup .swal2-textarea {\n    height: 108px;\n    padding: 12px; }\n  .swal2-popup .swal2-select {\n    color: #545454;\n    font-size: inherit;\n    padding: 5px 10px;\n    min-width: 40%;\n    max-width: 100%; }\n  .swal2-popup .swal2-radio {\n    border: 0; }\n    .swal2-popup .swal2-radio label:not(:first-child) {\n      margin-left: 20px; }\n    .swal2-popup .swal2-radio input,\n    .swal2-popup .swal2-radio span {\n      vertical-align: middle; }\n    .swal2-popup .swal2-radio input {\n      margin: 0 3px 0 0; }\n  .swal2-popup .swal2-checkbox {\n    color: #545454; }\n    .swal2-popup .swal2-checkbox input,\n    .swal2-popup .swal2-checkbox span {\n      vertical-align: middle; }\n  .swal2-popup .swal2-validationerror {\n    background-color: #f0f0f0;\n    margin: 0 -20px;\n    overflow: hidden;\n    padding: 10px;\n    color: gray;\n    font-size: 16px;\n    font-weight: 300;\n    display: none; }\n    .swal2-popup .swal2-validationerror::before {\n      content: '!';\n      display: inline-block;\n      width: 24px;\n      height: 24px;\n      border-radius: 50%;\n      background-color: #ea7d7d;\n      color: #fff;\n      line-height: 24px;\n      text-align: center;\n      margin-right: 10px; }\n\n@supports (-ms-accelerator: true) {\n  .swal2-range input {\n    width: 100% !important; }\n  .swal2-range output {\n    display: none; } }\n\n@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {\n  .swal2-range input {\n    width: 100% !important; }\n  .swal2-range output {\n    display: none; } }\n\n.swal2-icon {\n  width: 80px;\n  height: 80px;\n  border: 4px solid transparent;\n  border-radius: 50%;\n  margin: 20px auto 30px;\n  padding: 0;\n  position: relative;\n  -webkit-box-sizing: content-box;\n          box-sizing: content-box;\n  cursor: default;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none; }\n  .swal2-icon.swal2-error {\n    border-color: #f27474; }\n    .swal2-icon.swal2-error .swal2-x-mark {\n      position: relative;\n      display: block; }\n    .swal2-icon.swal2-error [class^='swal2-x-mark-line'] {\n      position: absolute;\n      height: 5px;\n      width: 47px;\n      background-color: #f27474;\n      display: block;\n      top: 37px;\n      border-radius: 2px; }\n      .swal2-icon.swal2-error [class^='swal2-x-mark-line'][class$='left'] {\n        -webkit-transform: rotate(45deg);\n                transform: rotate(45deg);\n        left: 17px; }\n      .swal2-icon.swal2-error [class^='swal2-x-mark-line'][class$='right'] {\n        -webkit-transform: rotate(-45deg);\n                transform: rotate(-45deg);\n        right: 16px; }\n  .swal2-icon.swal2-warning {\n    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;\n    color: #f8bb86;\n    border-color: #facea8;\n    font-size: 60px;\n    line-height: 80px;\n    text-align: center; }\n  .swal2-icon.swal2-info {\n    font-family: 'Open Sans', sans-serif;\n    color: #3fc3ee;\n    border-color: #9de0f6;\n    font-size: 60px;\n    line-height: 80px;\n    text-align: center; }\n  .swal2-icon.swal2-question {\n    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;\n    color: #87adbd;\n    border-color: #c9dae1;\n    font-size: 60px;\n    line-height: 80px;\n    text-align: center; }\n  .swal2-icon.swal2-success {\n    border-color: #a5dc86; }\n    .swal2-icon.swal2-success [class^='swal2-success-circular-line'] {\n      border-radius: 50%;\n      position: absolute;\n      width: 60px;\n      height: 120px;\n      -webkit-transform: rotate(45deg);\n              transform: rotate(45deg); }\n      .swal2-icon.swal2-success [class^='swal2-success-circular-line'][class$='left'] {\n        border-radius: 120px 0 0 120px;\n        top: -7px;\n        left: -33px;\n        -webkit-transform: rotate(-45deg);\n                transform: rotate(-45deg);\n        -webkit-transform-origin: 60px 60px;\n                transform-origin: 60px 60px; }\n      .swal2-icon.swal2-success [class^='swal2-success-circular-line'][class$='right'] {\n        border-radius: 0 120px 120px 0;\n        top: -11px;\n        left: 30px;\n        -webkit-transform: rotate(-45deg);\n                transform: rotate(-45deg);\n        -webkit-transform-origin: 0 60px;\n                transform-origin: 0 60px; }\n    .swal2-icon.swal2-success .swal2-success-ring {\n      width: 80px;\n      height: 80px;\n      border: 4px solid rgba(165, 220, 134, 0.2);\n      border-radius: 50%;\n      -webkit-box-sizing: content-box;\n              box-sizing: content-box;\n      position: absolute;\n      left: -4px;\n      top: -4px;\n      z-index: 2; }\n    .swal2-icon.swal2-success .swal2-success-fix {\n      width: 7px;\n      height: 90px;\n      position: absolute;\n      left: 28px;\n      top: 8px;\n      z-index: 1;\n      -webkit-transform: rotate(-45deg);\n              transform: rotate(-45deg); }\n    .swal2-icon.swal2-success [class^='swal2-success-line'] {\n      height: 5px;\n      background-color: #a5dc86;\n      display: block;\n      border-radius: 2px;\n      position: absolute;\n      z-index: 2; }\n      .swal2-icon.swal2-success [class^='swal2-success-line'][class$='tip'] {\n        width: 25px;\n        left: 14px;\n        top: 46px;\n        -webkit-transform: rotate(45deg);\n                transform: rotate(45deg); }\n      .swal2-icon.swal2-success [class^='swal2-success-line'][class$='long'] {\n        width: 47px;\n        right: 8px;\n        top: 38px;\n        -webkit-transform: rotate(-45deg);\n                transform: rotate(-45deg); }\n\n.swal2-progresssteps {\n  font-weight: 600;\n  margin: 0 0 20px;\n  padding: 0; }\n  .swal2-progresssteps li {\n    display: inline-block;\n    position: relative; }\n  .swal2-progresssteps .swal2-progresscircle {\n    background: #3085d6;\n    border-radius: 2em;\n    color: #fff;\n    height: 2em;\n    line-height: 2em;\n    text-align: center;\n    width: 2em;\n    z-index: 20; }\n    .swal2-progresssteps .swal2-progresscircle:first-child {\n      margin-left: 0; }\n    .swal2-progresssteps .swal2-progresscircle:last-child {\n      margin-right: 0; }\n    .swal2-progresssteps .swal2-progresscircle.swal2-activeprogressstep {\n      background: #3085d6; }\n      .swal2-progresssteps .swal2-progresscircle.swal2-activeprogressstep ~ .swal2-progresscircle {\n        background: #add8e6; }\n      .swal2-progresssteps .swal2-progresscircle.swal2-activeprogressstep ~ .swal2-progressline {\n        background: #add8e6; }\n  .swal2-progresssteps .swal2-progressline {\n    background: #3085d6;\n    height: .4em;\n    margin: 0 -1px;\n    z-index: 10; }\n\n[class^='swal2'] {\n  -webkit-tap-highlight-color: transparent; }\n\n@-webkit-keyframes showSweetToast {\n  0% {\n    -webkit-transform: translateY(-10px) rotateZ(2deg);\n            transform: translateY(-10px) rotateZ(2deg);\n    opacity: 0; }\n  33% {\n    -webkit-transform: translateY(0) rotateZ(-2deg);\n            transform: translateY(0) rotateZ(-2deg);\n    opacity: .5; }\n  66% {\n    -webkit-transform: translateY(5px) rotateZ(2deg);\n            transform: translateY(5px) rotateZ(2deg);\n    opacity: .7; }\n  100% {\n    -webkit-transform: translateY(0) rotateZ(0);\n            transform: translateY(0) rotateZ(0);\n    opacity: 1; } }\n\n@keyframes showSweetToast {\n  0% {\n    -webkit-transform: translateY(-10px) rotateZ(2deg);\n            transform: translateY(-10px) rotateZ(2deg);\n    opacity: 0; }\n  33% {\n    -webkit-transform: translateY(0) rotateZ(-2deg);\n            transform: translateY(0) rotateZ(-2deg);\n    opacity: .5; }\n  66% {\n    -webkit-transform: translateY(5px) rotateZ(2deg);\n            transform: translateY(5px) rotateZ(2deg);\n    opacity: .7; }\n  100% {\n    -webkit-transform: translateY(0) rotateZ(0);\n            transform: translateY(0) rotateZ(0);\n    opacity: 1; } }\n\n@-webkit-keyframes hideSweetToast {\n  0% {\n    opacity: 1; }\n  33% {\n    opacity: .5; }\n  100% {\n    -webkit-transform: rotateZ(1deg);\n            transform: rotateZ(1deg);\n    opacity: 0; } }\n\n@keyframes hideSweetToast {\n  0% {\n    opacity: 1; }\n  33% {\n    opacity: .5; }\n  100% {\n    -webkit-transform: rotateZ(1deg);\n            transform: rotateZ(1deg);\n    opacity: 0; } }\n\n@-webkit-keyframes showSweetAlert {\n  0% {\n    -webkit-transform: scale(0.7);\n            transform: scale(0.7); }\n  45% {\n    -webkit-transform: scale(1.05);\n            transform: scale(1.05); }\n  80% {\n    -webkit-transform: scale(0.95);\n            transform: scale(0.95); }\n  100% {\n    -webkit-transform: scale(1);\n            transform: scale(1); } }\n\n@keyframes showSweetAlert {\n  0% {\n    -webkit-transform: scale(0.7);\n            transform: scale(0.7); }\n  45% {\n    -webkit-transform: scale(1.05);\n            transform: scale(1.05); }\n  80% {\n    -webkit-transform: scale(0.95);\n            transform: scale(0.95); }\n  100% {\n    -webkit-transform: scale(1);\n            transform: scale(1); } }\n\n@-webkit-keyframes hideSweetAlert {\n  0% {\n    -webkit-transform: scale(1);\n            transform: scale(1);\n    opacity: 1; }\n  100% {\n    -webkit-transform: scale(0.5);\n            transform: scale(0.5);\n    opacity: 0; } }\n\n@keyframes hideSweetAlert {\n  0% {\n    -webkit-transform: scale(1);\n            transform: scale(1);\n    opacity: 1; }\n  100% {\n    -webkit-transform: scale(0.5);\n            transform: scale(0.5);\n    opacity: 0; } }\n\n.swal2-show {\n  -webkit-animation: showSweetAlert .3s;\n          animation: showSweetAlert .3s; }\n  .swal2-show.swal2-toast {\n    -webkit-animation: showSweetToast .5s;\n            animation: showSweetToast .5s; }\n  .swal2-show.swal2-noanimation {\n    -webkit-animation: none;\n            animation: none; }\n\n.swal2-hide {\n  -webkit-animation: hideSweetAlert .15s forwards;\n          animation: hideSweetAlert .15s forwards; }\n  .swal2-hide.swal2-toast {\n    -webkit-animation: hideSweetToast .2s forwards;\n            animation: hideSweetToast .2s forwards; }\n  .swal2-hide.swal2-noanimation {\n    -webkit-animation: none;\n            animation: none; }\n\n@-webkit-keyframes animate-success-tip {\n  0% {\n    width: 0;\n    left: 1px;\n    top: 19px; }\n  54% {\n    width: 0;\n    left: 1px;\n    top: 19px; }\n  70% {\n    width: 50px;\n    left: -8px;\n    top: 37px; }\n  84% {\n    width: 17px;\n    left: 21px;\n    top: 48px; }\n  100% {\n    width: 25px;\n    left: 14px;\n    top: 45px; } }\n\n@keyframes animate-success-tip {\n  0% {\n    width: 0;\n    left: 1px;\n    top: 19px; }\n  54% {\n    width: 0;\n    left: 1px;\n    top: 19px; }\n  70% {\n    width: 50px;\n    left: -8px;\n    top: 37px; }\n  84% {\n    width: 17px;\n    left: 21px;\n    top: 48px; }\n  100% {\n    width: 25px;\n    left: 14px;\n    top: 45px; } }\n\n@-webkit-keyframes animate-success-long {\n  0% {\n    width: 0;\n    right: 46px;\n    top: 54px; }\n  65% {\n    width: 0;\n    right: 46px;\n    top: 54px; }\n  84% {\n    width: 55px;\n    right: 0;\n    top: 35px; }\n  100% {\n    width: 47px;\n    right: 8px;\n    top: 38px; } }\n\n@keyframes animate-success-long {\n  0% {\n    width: 0;\n    right: 46px;\n    top: 54px; }\n  65% {\n    width: 0;\n    right: 46px;\n    top: 54px; }\n  84% {\n    width: 55px;\n    right: 0;\n    top: 35px; }\n  100% {\n    width: 47px;\n    right: 8px;\n    top: 38px; } }\n\n@-webkit-keyframes animate-toast-success-tip {\n  0% {\n    width: 0;\n    left: 1px;\n    top: 9px; }\n  54% {\n    width: 0;\n    left: 1px;\n    top: 9px; }\n  70% {\n    width: 24px;\n    left: -4px;\n    top: 17px; }\n  84% {\n    width: 8px;\n    left: 10px;\n    top: 20px; }\n  100% {\n    width: 12px;\n    left: 3px;\n    top: 18px; } }\n\n@keyframes animate-toast-success-tip {\n  0% {\n    width: 0;\n    left: 1px;\n    top: 9px; }\n  54% {\n    width: 0;\n    left: 1px;\n    top: 9px; }\n  70% {\n    width: 24px;\n    left: -4px;\n    top: 17px; }\n  84% {\n    width: 8px;\n    left: 10px;\n    top: 20px; }\n  100% {\n    width: 12px;\n    left: 3px;\n    top: 18px; } }\n\n@-webkit-keyframes animate-toast-success-long {\n  0% {\n    width: 0;\n    right: 22px;\n    top: 26px; }\n  65% {\n    width: 0;\n    right: 22px;\n    top: 26px; }\n  84% {\n    width: 26px;\n    right: 0;\n    top: 15px; }\n  100% {\n    width: 22px;\n    right: 3px;\n    top: 15px; } }\n\n@keyframes animate-toast-success-long {\n  0% {\n    width: 0;\n    right: 22px;\n    top: 26px; }\n  65% {\n    width: 0;\n    right: 22px;\n    top: 26px; }\n  84% {\n    width: 26px;\n    right: 0;\n    top: 15px; }\n  100% {\n    width: 22px;\n    right: 3px;\n    top: 15px; } }\n\n@-webkit-keyframes rotatePlaceholder {\n  0% {\n    -webkit-transform: rotate(-45deg);\n            transform: rotate(-45deg); }\n  5% {\n    -webkit-transform: rotate(-45deg);\n            transform: rotate(-45deg); }\n  12% {\n    -webkit-transform: rotate(-405deg);\n            transform: rotate(-405deg); }\n  100% {\n    -webkit-transform: rotate(-405deg);\n            transform: rotate(-405deg); } }\n\n@keyframes rotatePlaceholder {\n  0% {\n    -webkit-transform: rotate(-45deg);\n            transform: rotate(-45deg); }\n  5% {\n    -webkit-transform: rotate(-45deg);\n            transform: rotate(-45deg); }\n  12% {\n    -webkit-transform: rotate(-405deg);\n            transform: rotate(-405deg); }\n  100% {\n    -webkit-transform: rotate(-405deg);\n            transform: rotate(-405deg); } }\n\n.swal2-animate-success-line-tip {\n  -webkit-animation: animate-success-tip .75s;\n          animation: animate-success-tip .75s; }\n\n.swal2-animate-success-line-long {\n  -webkit-animation: animate-success-long .75s;\n          animation: animate-success-long .75s; }\n\n.swal2-success.swal2-animate-success-icon .swal2-success-circular-line-right {\n  -webkit-animation: rotatePlaceholder 4.25s ease-in;\n          animation: rotatePlaceholder 4.25s ease-in; }\n\n@-webkit-keyframes animate-error-icon {\n  0% {\n    -webkit-transform: rotateX(100deg);\n            transform: rotateX(100deg);\n    opacity: 0; }\n  100% {\n    -webkit-transform: rotateX(0deg);\n            transform: rotateX(0deg);\n    opacity: 1; } }\n\n@keyframes animate-error-icon {\n  0% {\n    -webkit-transform: rotateX(100deg);\n            transform: rotateX(100deg);\n    opacity: 0; }\n  100% {\n    -webkit-transform: rotateX(0deg);\n            transform: rotateX(0deg);\n    opacity: 1; } }\n\n.swal2-animate-error-icon {\n  -webkit-animation: animate-error-icon .5s;\n          animation: animate-error-icon .5s; }\n\n@-webkit-keyframes animate-x-mark {\n  0% {\n    -webkit-transform: scale(0.4);\n            transform: scale(0.4);\n    margin-top: 26px;\n    opacity: 0; }\n  50% {\n    -webkit-transform: scale(0.4);\n            transform: scale(0.4);\n    margin-top: 26px;\n    opacity: 0; }\n  80% {\n    -webkit-transform: scale(1.15);\n            transform: scale(1.15);\n    margin-top: -6px; }\n  100% {\n    -webkit-transform: scale(1);\n            transform: scale(1);\n    margin-top: 0;\n    opacity: 1; } }\n\n@keyframes animate-x-mark {\n  0% {\n    -webkit-transform: scale(0.4);\n            transform: scale(0.4);\n    margin-top: 26px;\n    opacity: 0; }\n  50% {\n    -webkit-transform: scale(0.4);\n            transform: scale(0.4);\n    margin-top: 26px;\n    opacity: 0; }\n  80% {\n    -webkit-transform: scale(1.15);\n            transform: scale(1.15);\n    margin-top: -6px; }\n  100% {\n    -webkit-transform: scale(1);\n            transform: scale(1);\n    margin-top: 0;\n    opacity: 1; } }\n\n.swal2-animate-x-mark {\n  -webkit-animation: animate-x-mark .5s;\n          animation: animate-x-mark .5s; }\n\n@-webkit-keyframes rotate-loading {\n  0% {\n    -webkit-transform: rotate(0deg);\n            transform: rotate(0deg); }\n  100% {\n    -webkit-transform: rotate(360deg);\n            transform: rotate(360deg); } }\n\n@keyframes rotate-loading {\n  0% {\n    -webkit-transform: rotate(0deg);\n            transform: rotate(0deg); }\n  100% {\n    -webkit-transform: rotate(360deg);\n            transform: rotate(360deg); } }\n";
 
 var defaultParams = {
   title: '',
@@ -4457,10 +4448,8 @@ var defaultParams = {
   text: '',
   html: '',
   type: null,
-  toast: false,
   customClass: '',
   target: 'body',
-  backdrop: true,
   animation: true,
   allowOutsideClick: true,
   allowEscapeKey: true,
@@ -4469,24 +4458,19 @@ var defaultParams = {
   showCancelButton: false,
   preConfirm: null,
   confirmButtonText: 'OK',
-  confirmButtonAriaLabel: '',
   confirmButtonColor: '#3085d6',
   confirmButtonClass: null,
   cancelButtonText: 'Cancel',
-  cancelButtonAriaLabel: '',
   cancelButtonColor: '#aaa',
   cancelButtonClass: null,
   buttonsStyling: true,
   reverseButtons: false,
-  focusConfirm: true,
   focusCancel: false,
   showCloseButton: false,
-  closeButtonAriaLabel: 'Close this dialog',
   showLoaderOnConfirm: false,
   imageUrl: null,
   imageWidth: null,
   imageHeight: null,
-  imageAlt: '',
   imageClass: null,
   timer: null,
   width: 500,
@@ -4500,19 +4484,12 @@ var defaultParams = {
   inputClass: null,
   inputAttributes: {},
   inputValidator: null,
-  grow: false,
-  position: 'center',
   progressSteps: [],
   currentProgressStep: null,
   progressStepsDistance: '40px',
-  onBeforeOpen: null,
   onOpen: null,
-  onClose: null,
-  useRejections: false,
-  expectRejections: false
+  onClose: null
 };
-
-var deprecatedParams = ['useRejections', 'expectRejections'];
 
 var swalPrefix = 'swal2-';
 
@@ -4524,11 +4501,9 @@ var prefix = function prefix(items) {
   return result;
 };
 
-var swalClasses = prefix(['container', 'shown', 'iosfix', 'popup', 'modal', 'no-backdrop', 'toast', 'toast-shown', 'overlay', 'fade', 'show', 'hide', 'noanimation', 'close', 'title', 'content', 'contentwrapper', 'buttonswrapper', 'confirm', 'cancel', 'icon', 'image', 'input', 'has-input', 'file', 'range', 'select', 'radio', 'checkbox', 'textarea', 'inputerror', 'validationerror', 'progresssteps', 'activeprogressstep', 'progresscircle', 'progressline', 'loading', 'styled', 'top', 'top-left', 'top-right', 'center', 'center-left', 'center-right', 'bottom', 'bottom-left', 'bottom-right', 'grow-row', 'grow-column', 'grow-fullscreen']);
+var swalClasses = prefix(['container', 'shown', 'iosfix', 'modal', 'overlay', 'fade', 'show', 'hide', 'noanimation', 'close', 'title', 'content', 'spacer', 'confirm', 'cancel', 'icon', 'image', 'input', 'file', 'range', 'select', 'radio', 'checkbox', 'textarea', 'inputerror', 'validationerror', 'progresssteps', 'activeprogressstep', 'progresscircle', 'progressline', 'loading', 'styled']);
 
 var iconTypes = prefix(['success', 'warning', 'info', 'question', 'error']);
-
-var consolePrefix = 'SweetAlert2:';
 
 /*
  * Set hover, active and focus-states for buttons (source: http://www.sitepoint.com/javascript-generate-lighter-darker-color)
@@ -4552,1461 +4527,21 @@ var colorLuminance = function colorLuminance(hex, lum) {
   return rgb;
 };
 
-/**
- * Check if variable exists
- * @param variable
- */
-var isDefined = function isDefined(variable) {
-  return typeof variable !== 'undefined';
-};
-
-/**
- * Filter the unique values into a new array
- * @param arr
- */
-var uniqueArray = function uniqueArray(arr) {
-  var result = [];
-  for (var i in arr) {
-    if (result.indexOf(arr[i]) === -1) {
-      result.push(arr[i]);
-    }
-  }
-  return result;
-};
-
-/**
- * Standardise console warnings
- * @param message
- */
-var warn = function warn(message) {
-  console.warn(consolePrefix + ' ' + message);
-};
-
-/**
- * Standardise console errors
- * @param message
- */
-var error = function error(message) {
-  console.error(consolePrefix + ' ' + message);
-};
-
-/**
- * Private global state for `warnOnce`
- * @type {Array}
- * @private
- */
-var previousWarnOnceMessages = [];
-
-/**
- * Show a console warning, but only if it hasn't already been shown
- * @param message
- */
-var warnOnce = function warnOnce(message) {
-  if (!(previousWarnOnceMessages.indexOf(message) !== -1)) {
-    previousWarnOnceMessages.push(message);
-    warn(message);
-  }
-};
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
-  return typeof obj;
-} : function (obj) {
-  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var _extends = Object.assign || function (target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i];
-
-    for (var key in source) {
-      if (Object.prototype.hasOwnProperty.call(source, key)) {
-        target[key] = source[key];
-      }
-    }
-  }
-
-  return target;
-};
-
-var popupParams = _extends({}, defaultParams);
-var queue = [];
-
-var previousWindowKeyDown = void 0;
-var windowOnkeydownOverridden = void 0;
-
-/*
- * Check for the existence of Promise
- * Hopefully to avoid many github issues
- */
-if (!isDefined(Promise)) {
-  error('This package requires a Promise library, please include a shim to enable it in this browser (See: https://github.com/limonte/sweetalert2/wiki/Migration-from-SweetAlert-to-SweetAlert2#1-ie-support)');
-}
-
-/**
- * Show relevant warnings for given params
- *
- * @param params
- */
-var showWarningsForParams = function showWarningsForParams(params) {
-  for (var param in params) {
-    if (!sweetAlert$1.isValidParameter(param)) {
-      warn('Unknown parameter "' + param + '"');
-    }
-    if (sweetAlert$1.isDeprecatedParameter(param)) {
-      warnOnce('The parameter "' + param + '" is deprecated and will be removed in the next major release.');
-    }
-  }
-};
-
-/**
- * Set type, text and actions on popup
- *
- * @param params
- * @returns {boolean}
- */
-var setParameters = function setParameters(params) {
-  // If a custom element is set, determine if it is valid
-  if (typeof params.target === 'string' && !document.querySelector(params.target) || typeof params.target !== 'string' && !params.target.appendChild) {
-    warn('Target parameter is not valid, defaulting to "body"');
-    params.target = 'body';
-  }
-
-  var popup = void 0;
-  var oldPopup = getPopup();
-  var targetElement = typeof params.target === 'string' ? document.querySelector(params.target) : params.target;
-  // If the model target has changed, refresh the popup
-  if (oldPopup && targetElement && oldPopup.parentNode !== targetElement.parentNode) {
-    popup = init(params);
-  } else {
-    popup = oldPopup || init(params);
-  }
-
-  // Set popup width
-  var popupWidth = params.width === defaultParams.width && params.toast ? 'auto' : params.width;
-  popup.style.width = typeof popupWidth === 'number' ? popupWidth + 'px' : popupWidth;
-
-  var popupPadding = params.padding === defaultParams.padding && params.toast ? 'inherit' : params.padding;
-  popup.style.padding = typeof popupPadding === 'number' ? popupPadding + 'px' : popupPadding;
-  popup.style.background = params.background;
-  var successIconParts = popup.querySelectorAll('[class^=swal2-success-circular-line], .swal2-success-fix');
-  for (var i = 0; i < successIconParts.length; i++) {
-    successIconParts[i].style.background = params.background;
-  }
-
-  var container = getContainer();
-  var title = getTitle();
-  var content = getContent();
-  var buttonsWrapper = getButtonsWrapper();
-  var confirmButton = getConfirmButton();
-  var cancelButton = getCancelButton();
-  var closeButton = getCloseButton();
-
-  // Title
-  if (params.titleText) {
-    title.innerText = params.titleText;
-  } else {
-    title.innerHTML = params.title.split('\n').join('<br />');
-  }
-
-  if (!params.backdrop) {
-    addClass(document.body, swalClasses['no-backdrop']);
-  }
-
-  // Content
-  if (params.text || params.html) {
-    if (_typeof(params.html) === 'object') {
-      content.innerHTML = '';
-      if (0 in params.html) {
-        for (var _i = 0; _i in params.html; _i++) {
-          content.appendChild(params.html[_i].cloneNode(true));
-        }
-      } else {
-        content.appendChild(params.html.cloneNode(true));
-      }
-    } else if (params.html) {
-      content.innerHTML = params.html;
-    } else if (params.text) {
-      content.textContent = params.text;
-    }
-    show(content);
-  } else {
-    hide(content);
-  }
-
-  // Position
-  if (params.position in swalClasses) {
-    addClass(container, swalClasses[params.position]);
-  }
-
-  // Grow
-  if (params.grow && typeof params.grow === 'string') {
-    var growClass = 'grow-' + params.grow;
-    if (growClass in swalClasses) {
-      addClass(container, swalClasses[growClass]);
-    }
-  }
-
-  // Close button
-  if (params.showCloseButton) {
-    closeButton.setAttribute('aria-label', params.closeButtonAriaLabel);
-    show(closeButton);
-  } else {
-    hide(closeButton);
-  }
-
-  // Default Class
-  popup.className = swalClasses.popup;
-  if (params.toast) {
-    addClass(document.body, swalClasses['toast-shown']);
-    addClass(popup, swalClasses.toast);
-  } else {
-    addClass(popup, swalClasses.modal);
-  }
-
-  // Custom Class
-  if (params.customClass) {
-    addClass(popup, params.customClass);
-  }
-
-  // Progress steps
-  var progressStepsContainer = getProgressSteps();
-  var currentProgressStep = parseInt(params.currentProgressStep === null ? sweetAlert$1.getQueueStep() : params.currentProgressStep, 10);
-  if (params.progressSteps.length) {
-    show(progressStepsContainer);
-    empty(progressStepsContainer);
-    if (currentProgressStep >= params.progressSteps.length) {
-      warn('Invalid currentProgressStep parameter, it should be less than progressSteps.length ' + '(currentProgressStep like JS arrays starts from 0)');
-    }
-    params.progressSteps.forEach(function (step, index) {
-      var circle = document.createElement('li');
-      addClass(circle, swalClasses.progresscircle);
-      circle.innerHTML = step;
-      if (index === currentProgressStep) {
-        addClass(circle, swalClasses.activeprogressstep);
-      }
-      progressStepsContainer.appendChild(circle);
-      if (index !== params.progressSteps.length - 1) {
-        var line = document.createElement('li');
-        addClass(line, swalClasses.progressline);
-        line.style.width = params.progressStepsDistance;
-        progressStepsContainer.appendChild(line);
-      }
-    });
-  } else {
-    hide(progressStepsContainer);
-  }
-
-  // Icon
-  var icons = getIcons();
-  for (var _i2 = 0; _i2 < icons.length; _i2++) {
-    hide(icons[_i2]);
-  }
-  if (params.type) {
-    var validType = false;
-    for (var iconType in iconTypes) {
-      if (params.type === iconType) {
-        validType = true;
-        break;
-      }
-    }
-    if (!validType) {
-      error('Unknown alert type: ' + params.type);
-      return false;
-    }
-    var icon = popup.querySelector('.' + swalClasses.icon + '.' + iconTypes[params.type]);
-    show(icon);
-
-    // Animate icon
-    if (params.animation) {
-      switch (params.type) {
-        case 'success':
-          addClass(icon, 'swal2-animate-success-icon');
-          addClass(icon.querySelector('.swal2-success-line-tip'), 'swal2-animate-success-line-tip');
-          addClass(icon.querySelector('.swal2-success-line-long'), 'swal2-animate-success-line-long');
-          break;
-        case 'error':
-          addClass(icon, 'swal2-animate-error-icon');
-          addClass(icon.querySelector('.swal2-x-mark'), 'swal2-animate-x-mark');
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  // Custom image
-  var image = getImage();
-  if (params.imageUrl) {
-    image.setAttribute('src', params.imageUrl);
-    image.setAttribute('alt', params.imageAlt);
-    show(image);
-
-    if (params.imageWidth) {
-      image.setAttribute('width', params.imageWidth);
-    } else {
-      image.removeAttribute('width');
-    }
-
-    if (params.imageHeight) {
-      image.setAttribute('height', params.imageHeight);
-    } else {
-      image.removeAttribute('height');
-    }
-
-    image.className = swalClasses.image;
-    if (params.imageClass) {
-      addClass(image, params.imageClass);
-    }
-  } else {
-    hide(image);
-  }
-
-  // Cancel button
-  if (params.showCancelButton) {
-    cancelButton.style.display = 'inline-block';
-  } else {
-    hide(cancelButton);
-  }
-
-  // Confirm button
-  if (params.showConfirmButton) {
-    removeStyleProperty(confirmButton, 'display');
-  } else {
-    hide(confirmButton);
-  }
-
-  // Buttons wrapper
-  if (!params.showConfirmButton && !params.showCancelButton) {
-    hide(buttonsWrapper);
-  } else {
-    show(buttonsWrapper);
-  }
-
-  // Edit text on confirm and cancel buttons
-  confirmButton.innerHTML = params.confirmButtonText;
-  cancelButton.innerHTML = params.cancelButtonText;
-
-  // ARIA labels for confirm and cancel buttons
-  confirmButton.setAttribute('aria-label', params.confirmButtonAriaLabel);
-  cancelButton.setAttribute('aria-label', params.cancelButtonAriaLabel);
-
-  // Set buttons to selected background colors
-  if (params.buttonsStyling) {
-    confirmButton.style.backgroundColor = params.confirmButtonColor;
-    cancelButton.style.backgroundColor = params.cancelButtonColor;
-  }
-
-  // Add buttons custom classes
-  confirmButton.className = swalClasses.confirm;
-  addClass(confirmButton, params.confirmButtonClass);
-  cancelButton.className = swalClasses.cancel;
-  addClass(cancelButton, params.cancelButtonClass);
-
-  // Buttons styling
-  if (params.buttonsStyling) {
-    addClass(confirmButton, swalClasses.styled);
-    addClass(cancelButton, swalClasses.styled);
-  } else {
-    removeClass(confirmButton, swalClasses.styled);
-    removeClass(cancelButton, swalClasses.styled);
-
-    confirmButton.style.backgroundColor = confirmButton.style.borderLeftColor = confirmButton.style.borderRightColor = '';
-    cancelButton.style.backgroundColor = cancelButton.style.borderLeftColor = cancelButton.style.borderRightColor = '';
-  }
-
-  // CSS animation
-  if (params.animation === true) {
-    removeClass(popup, swalClasses.noanimation);
-  } else {
-    addClass(popup, swalClasses.noanimation);
-  }
-
-  // showLoaderOnConfirm && preConfirm
-  if (params.showLoaderOnConfirm && !params.preConfirm) {
-    warn('showLoaderOnConfirm is set to true, but preConfirm is not defined.\n' + 'showLoaderOnConfirm should be used together with preConfirm, see usage example:\n' + 'https://limonte.github.io/sweetalert2/#ajax-request');
-  }
-};
-
-/**
- * Animations
- *
- * @param animation
- * @param onBeforeOpen
- * @param onComplete
- */
-var openPopup = function openPopup(animation, onBeforeOpen, onComplete) {
-  var container = getContainer();
-  var popup = getPopup();
-
-  if (onBeforeOpen !== null && typeof onBeforeOpen === 'function') {
-    onBeforeOpen(popup);
-  }
-
-  if (animation) {
-    addClass(popup, swalClasses.show);
-    addClass(container, swalClasses.fade);
-    removeClass(popup, swalClasses.hide);
-  } else {
-    removeClass(popup, swalClasses.fade);
-  }
-  show(popup);
-
-  // scrolling is 'hidden' until animation is done, after that 'auto'
-  container.style.overflowY = 'hidden';
-  if (animationEndEvent && !hasClass(popup, swalClasses.noanimation)) {
-    popup.addEventListener(animationEndEvent, function swalCloseEventFinished() {
-      popup.removeEventListener(animationEndEvent, swalCloseEventFinished);
-      container.style.overflowY = 'auto';
-    });
-  } else {
-    container.style.overflowY = 'auto';
-  }
-
-  addClass(document.documentElement, swalClasses.shown);
-  addClass(document.body, swalClasses.shown);
-  addClass(container, swalClasses.shown);
-  if (isModal()) {
-    fixScrollbar();
-    iOSfix();
-  }
-  states.previousActiveElement = document.activeElement;
-  if (onComplete !== null && typeof onComplete === 'function') {
-    setTimeout(function () {
-      onComplete(popup);
-    });
-  }
-};
-
-var fixScrollbar = function fixScrollbar() {
-  // for queues, do not do this more than once
-  if (states.previousBodyPadding !== null) {
-    return;
-  }
-  // if the body has overflow
-  if (document.body.scrollHeight > window.innerHeight) {
-    // add padding so the content doesn't shift after removal of scrollbar
-    states.previousBodyPadding = document.body.style.paddingRight;
-    document.body.style.paddingRight = measureScrollbar() + 'px';
-  }
-};
-
-var undoScrollbar = function undoScrollbar() {
-  if (states.previousBodyPadding !== null) {
-    document.body.style.paddingRight = states.previousBodyPadding;
-    states.previousBodyPadding = null;
-  }
-};
-
-// Fix iOS scrolling http://stackoverflow.com/q/39626302/1331425
-var iOSfix = function iOSfix() {
-  var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  if (iOS && !hasClass(document.body, swalClasses.iosfix)) {
-    var offset = document.body.scrollTop;
-    document.body.style.top = offset * -1 + 'px';
-    addClass(document.body, swalClasses.iosfix);
-  }
-};
-
-var undoIOSfix = function undoIOSfix() {
-  if (hasClass(document.body, swalClasses.iosfix)) {
-    var offset = parseInt(document.body.style.top, 10);
-    removeClass(document.body, swalClasses.iosfix);
-    document.body.style.top = '';
-    document.body.scrollTop = offset * -1;
-  }
-};
-
-// SweetAlert entry point
-var sweetAlert$1 = function sweetAlert() {
-  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-    args[_key] = arguments[_key];
-  }
-
-  // Prevent run in Node env
-  if (!isDefined(window)) {
-    return;
-  }
-
-  if (!isDefined(args[0])) {
-    error('SweetAlert2 expects at least 1 attribute!');
-    return false;
-  }
-
-  var params = _extends({}, popupParams);
-
-  switch (_typeof(args[0])) {
-    case 'string':
-      params.title = args[0];
-      params.html = args[1];
-      params.type = args[2];
-
-      break;
-
-    case 'object':
-      showWarningsForParams(args[0]);
-      _extends(params, args[0]);
-      params.extraParams = args[0].extraParams;
-
-      if (params.input === 'email' && params.inputValidator === null) {
-        var inputValidator = function inputValidator(email) {
-          return new Promise(function (resolve, reject) {
-            var emailRegex = /^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9.-]+\.[a-zA-Z0-9-]{2,24}$/;
-            if (emailRegex.test(email)) {
-              resolve();
-            } else {
-              reject('Invalid email address');
-            }
-          });
-        };
-        params.inputValidator = params.expectRejections ? inputValidator : sweetAlert.adaptInputValidator(inputValidator);
-      }
-
-      if (params.input === 'url' && params.inputValidator === null) {
-        var _inputValidator = function _inputValidator(url) {
-          return new Promise(function (resolve, reject) {
-            // taken from https://stackoverflow.com/a/3809435/1331425
-            var urlRegex = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/;
-            if (urlRegex.test(url)) {
-              resolve();
-            } else {
-              reject('Invalid URL');
-            }
-          });
-        };
-        params.inputValidator = params.expectRejections ? _inputValidator : sweetAlert.adaptInputValidator(_inputValidator);
-      }
-      break;
-
-    default:
-      error('Unexpected type of argument! Expected "string" or "object", got ' + _typeof(args[0]));
-      return false;
-  }
-
-  setParameters(params);
-
-  var container = getContainer();
-  var popup = getPopup();
-
-  return new Promise(function (resolve, reject) {
-    // functions to handle all resolving/rejecting/settling
-    var succeedWith = function succeedWith(value) {
-      sweetAlert.closePopup(params.onClose);
-      if (params.useRejections) {
-        resolve(value);
-      } else {
-        resolve({ value: value });
-      }
-    };
-    var dismissWith = function dismissWith(dismiss) {
-      sweetAlert.closePopup(params.onClose);
-      if (params.useRejections) {
-        reject(dismiss);
-      } else {
-        resolve({ dismiss: dismiss });
-      }
-    };
-    var errorWith = function errorWith(error$$1) {
-      sweetAlert.closePopup(params.onClose);
-      reject(error$$1);
-    };
-
-    // Close on timer
-    if (params.timer) {
-      popup.timeout = setTimeout(function () {
-        return dismissWith('timer');
-      }, params.timer);
-    }
-
-    // Get input element by specified type or, if type isn't specified, by params.input
-    var getInput = function getInput(inputType) {
-      inputType = inputType || params.input;
-      if (!inputType) {
-        return null;
-      }
-      switch (inputType) {
-        case 'select':
-        case 'textarea':
-        case 'file':
-          return getChildByClass(popup, swalClasses[inputType]);
-        case 'checkbox':
-          return popup.querySelector('.' + swalClasses.checkbox + ' input');
-        case 'radio':
-          return popup.querySelector('.' + swalClasses.radio + ' input:checked') || popup.querySelector('.' + swalClasses.radio + ' input:first-child');
-        case 'range':
-          return popup.querySelector('.' + swalClasses.range + ' input');
-        default:
-          return getChildByClass(popup, swalClasses.input);
-      }
-    };
-
-    // Get the value of the popup input
-    var getInputValue = function getInputValue() {
-      var input = getInput();
-      if (!input) {
-        return null;
-      }
-      switch (params.input) {
-        case 'checkbox':
-          return input.checked ? 1 : 0;
-        case 'radio':
-          return input.checked ? input.value : null;
-        case 'file':
-          return input.files.length ? input.files[0] : null;
-        default:
-          return params.inputAutoTrim ? input.value.trim() : input.value;
-      }
-    };
-
-    // input autofocus
-    if (params.input) {
-      setTimeout(function () {
-        var input = getInput();
-        if (input) {
-          focusInput(input);
-        }
-      }, 0);
-    }
-
-    var confirm = function confirm(value) {
-      if (params.showLoaderOnConfirm) {
-        sweetAlert.showLoading();
-      }
-
-      if (params.preConfirm) {
-        var preConfirmPromise = Promise.resolve().then(function () {
-          return params.preConfirm(value, params.extraParams);
-        });
-        if (params.expectRejections) {
-          preConfirmPromise.then(function (preConfirmValue) {
-            return succeedWith(preConfirmValue || value);
-          }, function (validationError) {
-            sweetAlert.hideLoading();
-            if (validationError) {
-              sweetAlert.showValidationError(validationError);
-            }
-          });
-        } else {
-          preConfirmPromise.then(function (preConfirmValue) {
-            if (isVisible(getValidationError())) {
-              sweetAlert.hideLoading();
-            } else {
-              succeedWith(preConfirmValue || value);
-            }
-          }, function (error$$1) {
-            return errorWith(error$$1);
-          });
-        }
-      } else {
-        succeedWith(value);
-      }
-    };
-
-    // Mouse interactions
-    var onButtonEvent = function onButtonEvent(event) {
-      var e = event || window.event;
-      var target = e.target || e.srcElement;
-      var confirmButton = getConfirmButton();
-      var cancelButton = getCancelButton();
-      var targetedConfirm = confirmButton && (confirmButton === target || confirmButton.contains(target));
-      var targetedCancel = cancelButton && (cancelButton === target || cancelButton.contains(target));
-
-      switch (e.type) {
-        case 'mouseover':
-        case 'mouseup':
-          if (params.buttonsStyling) {
-            if (targetedConfirm) {
-              confirmButton.style.backgroundColor = colorLuminance(params.confirmButtonColor, -0.1);
-            } else if (targetedCancel) {
-              cancelButton.style.backgroundColor = colorLuminance(params.cancelButtonColor, -0.1);
-            }
-          }
-          break;
-        case 'mouseout':
-          if (params.buttonsStyling) {
-            if (targetedConfirm) {
-              confirmButton.style.backgroundColor = params.confirmButtonColor;
-            } else if (targetedCancel) {
-              cancelButton.style.backgroundColor = params.cancelButtonColor;
-            }
-          }
-          break;
-        case 'mousedown':
-          if (params.buttonsStyling) {
-            if (targetedConfirm) {
-              confirmButton.style.backgroundColor = colorLuminance(params.confirmButtonColor, -0.2);
-            } else if (targetedCancel) {
-              cancelButton.style.backgroundColor = colorLuminance(params.cancelButtonColor, -0.2);
-            }
-          }
-          break;
-        case 'click':
-          // Clicked 'confirm'
-          if (targetedConfirm && sweetAlert.isVisible()) {
-            sweetAlert.disableButtons();
-            if (params.input) {
-              var inputValue = getInputValue();
-
-              if (params.inputValidator) {
-                sweetAlert.disableInput();
-                var validationPromise = Promise.resolve().then(function () {
-                  return params.inputValidator(inputValue, params.extraParams);
-                });
-                if (params.expectRejections) {
-                  validationPromise.then(function () {
-                    sweetAlert.enableButtons();
-                    sweetAlert.enableInput();
-                    confirm(inputValue);
-                  }, function (validationError) {
-                    sweetAlert.enableButtons();
-                    sweetAlert.enableInput();
-                    if (validationError) {
-                      sweetAlert.showValidationError(validationError);
-                    }
-                  });
-                } else {
-                  validationPromise.then(function (validationError) {
-                    sweetAlert.enableButtons();
-                    sweetAlert.enableInput();
-                    if (validationError) {
-                      sweetAlert.showValidationError(validationError);
-                    } else {
-                      confirm(inputValue);
-                    }
-                  }, function (error$$1) {
-                    return errorWith(error$$1);
-                  });
-                }
-              } else {
-                confirm(inputValue);
-              }
-            } else {
-              confirm(true);
-            }
-
-            // Clicked 'cancel'
-          } else if (targetedCancel && sweetAlert.isVisible()) {
-            sweetAlert.disableButtons();
-            dismissWith('cancel');
-          }
-          break;
-        default:
-      }
-    };
-
-    var buttons = popup.querySelectorAll('button');
-    for (var i = 0; i < buttons.length; i++) {
-      buttons[i].onclick = onButtonEvent;
-      buttons[i].onmouseover = onButtonEvent;
-      buttons[i].onmouseout = onButtonEvent;
-      buttons[i].onmousedown = onButtonEvent;
-    }
-
-    // Closing popup by close button
-    getCloseButton().onclick = function () {
-      dismissWith('close');
-    };
-
-    if (params.toast) {
-      // Closing popup by overlay click
-      popup.onclick = function (e) {
-        if (e.target !== popup || params.showConfirmButton || params.showCancelButton) {
-          return;
-        }
-        if (params.allowOutsideClick) {
-          sweetAlert.closePopup(params.onClose);
-          dismissWith('overlay');
-        }
-      };
-    } else {
-      container.onclick = function (e) {
-        if (e.target !== container) {
-          return;
-        }
-        if (params.allowOutsideClick) {
-          dismissWith('overlay');
-        }
-      };
-    }
-
-    var buttonsWrapper = getButtonsWrapper();
-    var confirmButton = getConfirmButton();
-    var cancelButton = getCancelButton();
-
-    // Reverse buttons (Confirm on the right side)
-    if (params.reverseButtons) {
-      confirmButton.parentNode.insertBefore(cancelButton, confirmButton);
-    } else {
-      confirmButton.parentNode.insertBefore(confirmButton, cancelButton);
-    }
-
-    // Focus handling
-    var setFocus = function setFocus(index, increment) {
-      var focusableElements = getFocusableElements(params.focusCancel);
-      // search for visible elements and select the next possible match
-      for (var _i3 = 0; _i3 < focusableElements.length; _i3++) {
-        index = index + increment;
-
-        // rollover to first item
-        if (index === focusableElements.length) {
-          index = 0;
-
-          // go to last item
-        } else if (index === -1) {
-          index = focusableElements.length - 1;
-        }
-
-        // determine if element is visible
-        var el = focusableElements[index];
-        if (isVisible(el)) {
-          return el.focus();
-        }
-      }
-    };
-
-    var handleKeyDown = function handleKeyDown(event) {
-      var e = event || window.event;
-
-      var arrowKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Left', 'Right', 'Up', 'Down' // IE11
-      ];
-
-      if (e.key === 'Enter' && !e.isComposing) {
-        if (e.target === getInput()) {
-          if (e.target.tagName.toLowerCase() === 'textarea') {
-            return; // do not submit
-          }
-
-          sweetAlert.clickConfirm();
-          e.preventDefault();
-        }
-
-        // TAB
-      } else if (e.key === 'Tab') {
-        var targetElement = e.target || e.srcElement;
-
-        var focusableElements = getFocusableElements(params.focusCancel);
-        var btnIndex = -1; // Find the button - note, this is a nodelist, not an array.
-        for (var _i4 = 0; _i4 < focusableElements.length; _i4++) {
-          if (targetElement === focusableElements[_i4]) {
-            btnIndex = _i4;
-            break;
-          }
-        }
-
-        if (!e.shiftKey) {
-          // Cycle to the next button
-          setFocus(btnIndex, 1);
-        } else {
-          // Cycle to the prev button
-          setFocus(btnIndex, -1);
-        }
-        e.stopPropagation();
-        e.preventDefault();
-
-        // ARROWS - switch focus between buttons
-      } else if (arrowKeys.indexOf(e.key) !== -1) {
-        // focus Cancel button if Confirm button is currently focused
-        if (document.activeElement === confirmButton && isVisible(cancelButton)) {
-          cancelButton.focus();
-          // and vice versa
-        } else if (document.activeElement === cancelButton && isVisible(confirmButton)) {
-          confirmButton.focus();
-        }
-
-        // ESC
-      } else if ((e.key === 'Escape' || e.key === 'Esc') && params.allowEscapeKey === true) {
-        dismissWith('esc');
-      }
-    };
-
-    if (!windowOnkeydownOverridden) {
-      previousWindowKeyDown = window.onkeydown;
-      windowOnkeydownOverridden = true;
-      window.onkeydown = handleKeyDown;
-    }
-
-    // Loading state
-    if (params.buttonsStyling) {
-      confirmButton.style.borderLeftColor = params.confirmButtonColor;
-      confirmButton.style.borderRightColor = params.confirmButtonColor;
-    }
-
-    /**
-     * Show spinner instead of Confirm button and disable Cancel button
-     */
-    sweetAlert.hideLoading = sweetAlert.disableLoading = function () {
-      if (!params.showConfirmButton) {
-        hide(confirmButton);
-        if (!params.showCancelButton) {
-          hide(getButtonsWrapper());
-        }
-      }
-      removeClass(buttonsWrapper, swalClasses.loading);
-      removeClass(popup, swalClasses.loading);
-      popup.removeAttribute('aria-busy');
-      confirmButton.disabled = false;
-      cancelButton.disabled = false;
-    };
-
-    sweetAlert.getTitle = function () {
-      return getTitle();
-    };
-    sweetAlert.getContent = function () {
-      return getContent();
-    };
-    sweetAlert.getInput = function () {
-      return getInput();
-    };
-    sweetAlert.getImage = function () {
-      return getImage();
-    };
-    sweetAlert.getButtonsWrapper = function () {
-      return getButtonsWrapper();
-    };
-    sweetAlert.getConfirmButton = function () {
-      return getConfirmButton();
-    };
-    sweetAlert.getCancelButton = function () {
-      return getCancelButton();
-    };
-
-    sweetAlert.enableButtons = function () {
-      confirmButton.disabled = false;
-      cancelButton.disabled = false;
-    };
-
-    sweetAlert.disableButtons = function () {
-      confirmButton.disabled = true;
-      cancelButton.disabled = true;
-    };
-
-    sweetAlert.enableConfirmButton = function () {
-      confirmButton.disabled = false;
-    };
-
-    sweetAlert.disableConfirmButton = function () {
-      confirmButton.disabled = true;
-    };
-
-    sweetAlert.enableInput = function () {
-      var input = getInput();
-      if (!input) {
-        return false;
-      }
-      if (input.type === 'radio') {
-        var radiosContainer = input.parentNode.parentNode;
-        var radios = radiosContainer.querySelectorAll('input');
-        for (var _i5 = 0; _i5 < radios.length; _i5++) {
-          radios[_i5].disabled = false;
-        }
-      } else {
-        input.disabled = false;
-      }
-    };
-
-    sweetAlert.disableInput = function () {
-      var input = getInput();
-      if (!input) {
-        return false;
-      }
-      if (input && input.type === 'radio') {
-        var radiosContainer = input.parentNode.parentNode;
-        var radios = radiosContainer.querySelectorAll('input');
-        for (var _i6 = 0; _i6 < radios.length; _i6++) {
-          radios[_i6].disabled = true;
-        }
-      } else {
-        input.disabled = true;
-      }
-    };
-
-    // Show block with validation error
-    sweetAlert.showValidationError = function (error$$1) {
-      var validationError = getValidationError();
-      validationError.innerHTML = error$$1;
-      show(validationError);
-
-      var input = getInput();
-      if (input) {
-        input.setAttribute('aria-invalid', true);
-        input.setAttribute('aria-describedBy', swalClasses.validationerror);
-        focusInput(input);
-        addClass(input, swalClasses.inputerror);
-      }
-    };
-
-    // Hide block with validation error
-    sweetAlert.resetValidationError = function () {
-      var validationError = getValidationError();
-      hide(validationError);
-
-      var input = getInput();
-      if (input) {
-        input.removeAttribute('aria-invalid');
-        input.removeAttribute('aria-describedBy');
-        removeClass(input, swalClasses.inputerror);
-      }
-    };
-
-    sweetAlert.getProgressSteps = function () {
-      return params.progressSteps;
-    };
-
-    sweetAlert.setProgressSteps = function (progressSteps) {
-      params.progressSteps = progressSteps;
-      setParameters(params);
-    };
-
-    sweetAlert.showProgressSteps = function () {
-      show(getProgressSteps());
-    };
-
-    sweetAlert.hideProgressSteps = function () {
-      hide(getProgressSteps());
-    };
-
-    sweetAlert.enableButtons();
-    sweetAlert.hideLoading();
-    sweetAlert.resetValidationError();
-
-    if (params.input) {
-      addClass(document.body, swalClasses['has-input']);
-    }
-
-    // inputs
-    var inputTypes = ['input', 'file', 'range', 'select', 'radio', 'checkbox', 'textarea'];
-    var input = void 0;
-    for (var _i7 = 0; _i7 < inputTypes.length; _i7++) {
-      var inputClass = swalClasses[inputTypes[_i7]];
-      var inputContainer = getChildByClass(popup, inputClass);
-      input = getInput(inputTypes[_i7]);
-
-      // set attributes
-      if (input) {
-        for (var j in input.attributes) {
-          if (input.attributes.hasOwnProperty(j)) {
-            var attrName = input.attributes[j].name;
-            if (attrName !== 'type' && attrName !== 'value') {
-              input.removeAttribute(attrName);
-            }
-          }
-        }
-        for (var attr in params.inputAttributes) {
-          input.setAttribute(attr, params.inputAttributes[attr]);
-        }
-      }
-
-      // set class
-      inputContainer.className = inputClass;
-      if (params.inputClass) {
-        addClass(inputContainer, params.inputClass);
-      }
-
-      hide(inputContainer);
-    }
-
-    var populateInputOptions = void 0;
-    switch (params.input) {
-      case 'text':
-      case 'email':
-      case 'password':
-      case 'number':
-      case 'tel':
-      case 'url':
-        input = getChildByClass(popup, swalClasses.input);
-        input.value = params.inputValue;
-        input.placeholder = params.inputPlaceholder;
-        input.type = params.input;
-        show(input);
-        break;
-      case 'file':
-        input = getChildByClass(popup, swalClasses.file);
-        input.placeholder = params.inputPlaceholder;
-        input.type = params.input;
-        show(input);
-        break;
-      case 'range':
-        var range = getChildByClass(popup, swalClasses.range);
-        var rangeInput = range.querySelector('input');
-        var rangeOutput = range.querySelector('output');
-        rangeInput.value = params.inputValue;
-        rangeInput.type = params.input;
-        rangeOutput.value = params.inputValue;
-        show(range);
-        break;
-      case 'select':
-        var select = getChildByClass(popup, swalClasses.select);
-        select.innerHTML = '';
-        if (params.inputPlaceholder) {
-          var placeholder = document.createElement('option');
-          placeholder.innerHTML = params.inputPlaceholder;
-          placeholder.value = '';
-          placeholder.disabled = true;
-          placeholder.selected = true;
-          select.appendChild(placeholder);
-        }
-        populateInputOptions = function populateInputOptions(inputOptions) {
-          for (var optionValue in inputOptions) {
-            var option = document.createElement('option');
-            option.value = optionValue;
-            option.innerHTML = inputOptions[optionValue];
-            if (params.inputValue.toString() === optionValue) {
-              option.selected = true;
-            }
-            select.appendChild(option);
-          }
-          show(select);
-          select.focus();
-        };
-        break;
-      case 'radio':
-        var radio = getChildByClass(popup, swalClasses.radio);
-        radio.innerHTML = '';
-        populateInputOptions = function populateInputOptions(inputOptions) {
-          for (var radioValue in inputOptions) {
-            var radioInput = document.createElement('input');
-            var radioLabel = document.createElement('label');
-            var radioLabelSpan = document.createElement('span');
-            radioInput.type = 'radio';
-            radioInput.name = swalClasses.radio;
-            radioInput.value = radioValue;
-            if (params.inputValue.toString() === radioValue) {
-              radioInput.checked = true;
-            }
-            radioLabelSpan.innerHTML = inputOptions[radioValue];
-            radioLabel.appendChild(radioInput);
-            radioLabel.appendChild(radioLabelSpan);
-            radioLabel.for = radioInput.id;
-            radio.appendChild(radioLabel);
-          }
-          show(radio);
-          var radios = radio.querySelectorAll('input');
-          if (radios.length) {
-            radios[0].focus();
-          }
-        };
-        break;
-      case 'checkbox':
-        var checkbox = getChildByClass(popup, swalClasses.checkbox);
-        var checkboxInput = getInput('checkbox');
-        checkboxInput.type = 'checkbox';
-        checkboxInput.value = 1;
-        checkboxInput.id = swalClasses.checkbox;
-        checkboxInput.checked = Boolean(params.inputValue);
-        var label = checkbox.getElementsByTagName('span');
-        if (label.length) {
-          checkbox.removeChild(label[0]);
-        }
-        label = document.createElement('span');
-        label.innerHTML = params.inputPlaceholder;
-        checkbox.appendChild(label);
-        show(checkbox);
-        break;
-      case 'textarea':
-        var textarea = getChildByClass(popup, swalClasses.textarea);
-        textarea.value = params.inputValue;
-        textarea.placeholder = params.inputPlaceholder;
-        show(textarea);
-        break;
-      case null:
-        break;
-      default:
-        error('Unexpected type of input! Expected "text", "email", "password", "number", "tel", "select", "radio", "checkbox", "textarea", "file" or "url", got "' + params.input + '"');
-        break;
-    }
-
-    if (params.input === 'select' || params.input === 'radio') {
-      if (params.inputOptions instanceof Promise) {
-        sweetAlert.showLoading();
-        params.inputOptions.then(function (inputOptions) {
-          sweetAlert.hideLoading();
-          populateInputOptions(inputOptions);
-        });
-      } else if (_typeof(params.inputOptions) === 'object') {
-        populateInputOptions(params.inputOptions);
-      } else {
-        error('Unexpected type of inputOptions! Expected object or Promise, got ' + _typeof(params.inputOptions));
-      }
-    }
-
-    openPopup(params.animation, params.onBeforeOpen, params.onOpen);
-
-    if (!params.toast) {
-      if (!params.allowEnterKey) {
-        if (document.activeElement) {
-          document.activeElement.blur();
-        }
-      } else if (params.focusCancel && isVisible(cancelButton)) {
-        cancelButton.focus();
-      } else if (params.focusConfirm && isVisible(confirmButton)) {
-        confirmButton.focus();
-      } else {
-        setFocus(-1, 1);
-      }
-    }
-
-    // fix scroll
-    getContainer().scrollTop = 0;
-  });
-};
-
-/*
- * Global function to determine if swal2 popup is shown
- */
-sweetAlert$1.isVisible = function () {
-  return !!getPopup();
-};
-
-/*
- * Global function for chaining sweetAlert popups
- */
-sweetAlert$1.queue = function (steps) {
-  queue = steps;
-  var resetQueue = function resetQueue() {
-    queue = [];
-    document.body.removeAttribute('data-swal2-queue-step');
-  };
-  var queueResult = [];
-  return new Promise(function (resolve, reject) {
-    (function step(i, callback) {
-      if (i < queue.length) {
-        document.body.setAttribute('data-swal2-queue-step', i);
-
-        sweetAlert$1(queue[i]).then(function (result) {
-          if (isDefined(result.value)) {
-            queueResult.push(result.value);
-            step(i + 1, callback);
-          } else {
-            resetQueue();
-            resolve({ dismiss: result.dismiss });
-          }
-        });
-      } else {
-        resetQueue();
-        resolve({ value: queueResult });
-      }
-    })(0);
-  });
-};
-
-/*
- * Global function for getting the index of current popup in queue
- */
-sweetAlert$1.getQueueStep = function () {
-  return document.body.getAttribute('data-swal2-queue-step');
-};
-
-/*
- * Global function for inserting a popup to the queue
- */
-sweetAlert$1.insertQueueStep = function (step, index) {
-  if (index && index < queue.length) {
-    return queue.splice(index, 0, step);
-  }
-  return queue.push(step);
-};
-
-/*
- * Global function for deleting a popup from the queue
- */
-sweetAlert$1.deleteQueueStep = function (index) {
-  if (isDefined(queue[index])) {
-    queue.splice(index, 1);
-  }
-};
-
-/*
- * Global function to close sweetAlert
- */
-sweetAlert$1.close = sweetAlert$1.closePopup = sweetAlert$1.closeModal = sweetAlert$1.closeToast = function (onComplete) {
-  var container = getContainer();
-  var popup = getPopup();
-  if (!popup) {
-    return;
-  }
-  removeClass(popup, swalClasses.show);
-  addClass(popup, swalClasses.hide);
-  clearTimeout(popup.timeout);
-
-  if (!isToast()) {
-    resetPrevState();
-    window.onkeydown = previousWindowKeyDown;
-    windowOnkeydownOverridden = false;
-  }
-
-  var removePopupAndResetState = function removePopupAndResetState() {
-    if (container.parentNode) {
-      container.parentNode.removeChild(container);
-    }
-    removeClass(document.documentElement, swalClasses.shown);
-    removeClass(document.body, swalClasses.shown);
-    removeClass(document.body, swalClasses['no-backdrop']);
-    removeClass(document.body, swalClasses['has-input']);
-    removeClass(document.body, swalClasses['toast-shown']);
-
-    if (isModal()) {
-      undoScrollbar();
-      undoIOSfix();
-    }
-  };
-
-  // If animation is supported, animate
-  if (animationEndEvent && !hasClass(popup, swalClasses.noanimation)) {
-    popup.addEventListener(animationEndEvent, function swalCloseEventFinished() {
-      popup.removeEventListener(animationEndEvent, swalCloseEventFinished);
-      if (hasClass(popup, swalClasses.hide)) {
-        removePopupAndResetState();
-      }
-    });
-  } else {
-    // Otherwise, remove immediately
-    removePopupAndResetState();
-  }
-  if (onComplete !== null && typeof onComplete === 'function') {
-    setTimeout(function () {
-      onComplete(popup);
-    });
-  }
-};
-
-/*
- * Global function to click 'Confirm' button
- */
-sweetAlert$1.clickConfirm = function () {
-  return getConfirmButton().click();
-};
-
-/*
- * Global function to click 'Cancel' button
- */
-sweetAlert$1.clickCancel = function () {
-  return getCancelButton().click();
-};
-
-/**
- * Show spinner instead of Confirm button and disable Cancel button
- */
-sweetAlert$1.showLoading = sweetAlert$1.enableLoading = function () {
-  var popup = getPopup();
-  if (!popup) {
-    sweetAlert$1('');
-  }
-  popup = getPopup();
-  var buttonsWrapper = getButtonsWrapper();
-  var confirmButton = getConfirmButton();
-  var cancelButton = getCancelButton();
-
-  show(buttonsWrapper);
-  show(confirmButton, 'inline-block');
-  addClass(buttonsWrapper, swalClasses.loading);
-  addClass(popup, swalClasses.loading);
-  confirmButton.disabled = true;
-  cancelButton.disabled = true;
-
-  popup.setAttribute('aria-busy', true);
-  popup.focus();
-};
-
-/**
- * Is valid parameter
- * @param {String} paramName
- */
-sweetAlert$1.isValidParameter = function (paramName) {
-  return defaultParams.hasOwnProperty(paramName) || paramName === 'extraParams';
-};
-
-/**
- * Is deprecated parameter
- * @param {String} paramName
- */
-sweetAlert$1.isDeprecatedParameter = function (paramName) {
-  return deprecatedParams.indexOf(paramName) !== -1;
-};
-
-/**
- * Set default params for each popup
- * @param {Object} userParams
- */
-sweetAlert$1.setDefaults = function (userParams) {
-  if (!userParams || (typeof userParams === 'undefined' ? 'undefined' : _typeof(userParams)) !== 'object') {
-    return error('the argument for setDefaults() is required and has to be a object');
-  }
-
-  showWarningsForParams(userParams);
-
-  // assign valid params from userParams to popupParams
-  for (var param in userParams) {
-    if (sweetAlert$1.isValidParameter(param)) {
-      popupParams[param] = userParams[param];
-    }
-  }
-};
-
-/**
- * Reset default params for each popup
- */
-sweetAlert$1.resetDefaults = function () {
-  popupParams = _extends({}, defaultParams);
-};
-
-/**
- * Adapt a legacy inputValidator for use with expectRejections=false
- */
-sweetAlert$1.adaptInputValidator = function (legacyValidator) {
-  return function adaptedInputValidator(inputValue, extraParams) {
-    return legacyValidator.call(this, inputValue, extraParams).then(function () {
-      return undefined;
-    }, function (validationError) {
-      return validationError;
-    });
-  };
-};
-
-sweetAlert$1.noop = function () {};
-
-sweetAlert$1.version = '7.0.6';
-
-sweetAlert$1.default = sweetAlert$1;
+/* global MouseEvent */
 
 // Remember state in cases where opening and handling a modal will fiddle with it.
 var states = {
+  previousWindowKeyDown: null,
   previousActiveElement: null,
   previousBodyPadding: null
+};
 
-  /*
-   * Add modal + overlay to DOM
-   */
-};var init = function init(params) {
-  // Clean up the old popup if it exists
-  var c = getContainer();
-  if (c) {
-    c.parentNode.removeChild(c);
-    removeClass(document.body, swalClasses['no-backdrop']);
-    removeClass(document.body, swalClasses['has-input']);
-    removeClass(document.body, swalClasses['toast-shown']);
-  }
-
-  if (!isDefined(document)) {
-    error('SweetAlert2 requires document to initialize');
+/*
+ * Add modal + overlay to DOM
+ */
+var init = function init(params) {
+  if (typeof document === 'undefined') {
+    console.error('SweetAlert2 requires document to initialize');
     return;
   }
 
@@ -6014,61 +4549,81 @@ var states = {
   container.className = swalClasses.container;
   container.innerHTML = sweetHTML;
 
-  var targetElement = typeof params.target === 'string' ? document.querySelector(params.target) : params.target;
+  var targetElement = document.querySelector(params.target);
+  if (!targetElement) {
+    console.warn('SweetAlert2: Can\'t find the target "' + params.target + '"');
+    targetElement = document.body;
+  }
   targetElement.appendChild(container);
 
-  var popup = getPopup();
-  var input = getChildByClass(popup, swalClasses.input);
-  var file = getChildByClass(popup, swalClasses.file);
-  var range = popup.querySelector('.' + swalClasses.range + ' input');
-  var rangeOutput = popup.querySelector('.' + swalClasses.range + ' output');
-  var select = getChildByClass(popup, swalClasses.select);
-  var checkbox = popup.querySelector('.' + swalClasses.checkbox + ' input');
-  var textarea = getChildByClass(popup, swalClasses.textarea);
+  var modal = getModal();
+  var input = getChildByClass(modal, swalClasses.input);
+  var file = getChildByClass(modal, swalClasses.file);
+  var range = modal.querySelector('.' + swalClasses.range + ' input');
+  var rangeOutput = modal.querySelector('.' + swalClasses.range + ' output');
+  var select = getChildByClass(modal, swalClasses.select);
+  var checkbox = modal.querySelector('.' + swalClasses.checkbox + ' input');
+  var textarea = getChildByClass(modal, swalClasses.textarea);
 
-  // a11y
-  popup.setAttribute('aria-live', params.toast ? 'polite' : 'assertive');
-
-  var resetValidationError = function resetValidationError() {
-    sweetAlert$1.isVisible() && sweetAlert$1.resetValidationError();
+  input.oninput = function () {
+    sweetAlert.resetValidationError();
   };
 
-  input.oninput = resetValidationError;
-  file.onchange = resetValidationError;
-  select.onchange = resetValidationError;
-  checkbox.onchange = resetValidationError;
-  textarea.oninput = resetValidationError;
+  input.onkeydown = function (event) {
+    setTimeout(function () {
+      if (event.keyCode === 13 && params.allowEnterKey) {
+        event.stopPropagation();
+        sweetAlert.clickConfirm();
+      }
+    }, 0);
+  };
+
+  file.onchange = function () {
+    sweetAlert.resetValidationError();
+  };
 
   range.oninput = function () {
-    resetValidationError();
+    sweetAlert.resetValidationError();
     rangeOutput.value = range.value;
   };
 
   range.onchange = function () {
-    resetValidationError();
+    sweetAlert.resetValidationError();
     range.previousSibling.value = range.value;
   };
 
-  return popup;
+  select.onchange = function () {
+    sweetAlert.resetValidationError();
+  };
+
+  checkbox.onchange = function () {
+    sweetAlert.resetValidationError();
+  };
+
+  textarea.oninput = function () {
+    sweetAlert.resetValidationError();
+  };
+
+  return modal;
 };
 
 /*
  * Manipulate DOM
  */
 
-var sweetHTML = ('\n <div role="dialog" aria-modal="true" aria-labelledby="' + swalClasses.title + '" aria-describedby="' + swalClasses.content + '" class="' + swalClasses.popup + '" tabindex="-1">\n   <ul class="' + swalClasses.progresssteps + '"></ul>\n   <div class="' + swalClasses.icon + ' ' + iconTypes.error + '">\n     <span class="swal2-x-mark"><span class="swal2-x-mark-line-left"></span><span class="swal2-x-mark-line-right"></span></span>\n   </div>\n   <div class="' + swalClasses.icon + ' ' + iconTypes.question + '">?</div>\n   <div class="' + swalClasses.icon + ' ' + iconTypes.warning + '">!</div>\n   <div class="' + swalClasses.icon + ' ' + iconTypes.info + '">i</div>\n   <div class="' + swalClasses.icon + ' ' + iconTypes.success + '">\n     <div class="swal2-success-circular-line-left"></div>\n     <span class="swal2-success-line-tip"></span> <span class="swal2-success-line-long"></span>\n     <div class="swal2-success-ring"></div> <div class="swal2-success-fix"></div>\n     <div class="swal2-success-circular-line-right"></div>\n   </div>\n   <img class="' + swalClasses.image + '" />\n   <div class="' + swalClasses.contentwrapper + '">\n   <h2 class="' + swalClasses.title + '" id="' + swalClasses.title + '"></h2>\n   <div id="' + swalClasses.content + '" class="' + swalClasses.content + '"></div>\n   </div>\n   <input class="' + swalClasses.input + '" />\n   <input type="file" class="' + swalClasses.file + '" />\n   <div class="' + swalClasses.range + '">\n     <output></output>\n     <input type="range" />\n   </div>\n   <select class="' + swalClasses.select + '"></select>\n   <div class="' + swalClasses.radio + '"></div>\n   <label for="' + swalClasses.checkbox + '" class="' + swalClasses.checkbox + '">\n     <input type="checkbox" />\n   </label>\n   <textarea class="' + swalClasses.textarea + '"></textarea>\n   <div class="' + swalClasses.validationerror + '" id="' + swalClasses.validationerror + '"></div>\n   <div class="' + swalClasses.buttonswrapper + '">\n     <button type="button" class="' + swalClasses.confirm + '">OK</button>\n     <button type="button" class="' + swalClasses.cancel + '">Cancel</button>\n   </div>\n   <button type="button" class="' + swalClasses.close + '">\xD7</button>\n </div>\n').replace(/(^|\n)\s*/g, '');
+var sweetHTML = ('\n <div  role="dialog" aria-labelledby="modalTitleId" aria-describedby="modalContentId" class="' + swalClasses.modal + '" tabIndex="-1" >\n   <ul class="' + swalClasses.progresssteps + '"></ul>\n   <div class="' + swalClasses.icon + ' ' + iconTypes.error + '">\n     <span class="x-mark"><span class="line left"></span><span class="line right"></span></span>\n   </div>\n   <div class="' + swalClasses.icon + ' ' + iconTypes.question + '">?</div>\n   <div class="' + swalClasses.icon + ' ' + iconTypes.warning + '">!</div>\n   <div class="' + swalClasses.icon + ' ' + iconTypes.info + '">i</div>\n   <div class="' + swalClasses.icon + ' ' + iconTypes.success + '">\n     <span class="line tip"></span> <span class="line long"></span>\n     <div class="placeholder"></div> <div class="fix"></div>\n   </div>\n   <img class="' + swalClasses.image + '">\n   <h2 class="' + swalClasses.title + '" id="modalTitleId"></h2>\n   <div id="modalContentId" class="' + swalClasses.content + '"></div>\n   <input class="' + swalClasses.input + '">\n   <input type="file" class="' + swalClasses.file + '">\n   <div class="' + swalClasses.range + '">\n     <output></output>\n     <input type="range">\n   </div>\n   <select class="' + swalClasses.select + '"></select>\n   <div class="' + swalClasses.radio + '"></div>\n   <label for="' + swalClasses.checkbox + '" class="' + swalClasses.checkbox + '">\n     <input type="checkbox">\n   </label>\n   <textarea class="' + swalClasses.textarea + '"></textarea>\n   <div class="' + swalClasses.validationerror + '"></div>\n   <hr class="' + swalClasses.spacer + '">\n   <button type="button" role="button" tabIndex="0" class="' + swalClasses.confirm + '">OK</button>\n   <button type="button" role="button" tabIndex="0" class="' + swalClasses.cancel + '">Cancel</button>\n   <span class="' + swalClasses.close + '">&times;</span>\n </div>\n').replace(/(^|\n)\s*/g, '');
 
 var getContainer = function getContainer() {
   return document.body.querySelector('.' + swalClasses.container);
 };
 
-var getPopup = function getPopup() {
-  return getContainer() ? getContainer().querySelector('.' + swalClasses.popup) : null;
+var getModal = function getModal() {
+  return getContainer() ? getContainer().querySelector('.' + swalClasses.modal) : null;
 };
 
 var getIcons = function getIcons() {
-  var popup = getPopup();
-  return popup.querySelectorAll('.' + swalClasses.icon);
+  var modal = getModal();
+  return modal.querySelectorAll('.' + swalClasses.icon);
 };
 
 var elementByClass = function elementByClass(className) {
@@ -6087,6 +4642,10 @@ var getImage = function getImage() {
   return elementByClass(swalClasses.image);
 };
 
+var getSpacer = function getSpacer() {
+  return elementByClass(swalClasses.spacer);
+};
+
 var getProgressSteps = function getProgressSteps() {
   return elementByClass(swalClasses.progresssteps);
 };
@@ -6103,39 +4662,16 @@ var getCancelButton = function getCancelButton() {
   return elementByClass(swalClasses.cancel);
 };
 
-var getButtonsWrapper = function getButtonsWrapper() {
-  return elementByClass(swalClasses.buttonswrapper);
-};
-
 var getCloseButton = function getCloseButton() {
   return elementByClass(swalClasses.close);
 };
 
-var getFocusableElements = function getFocusableElements() {
-  var focusableElementsWithTabindex = Array.from(getPopup().querySelectorAll('[tabindex]:not([tabindex="-1"]):not([tabindex="0"])'))
-  // sort according to tabindex
-  .sort(function (a, b) {
-    a = parseInt(a.getAttribute('tabindex'));
-    b = parseInt(b.getAttribute('tabindex'));
-    if (a > b) {
-      return 1;
-    } else if (a < b) {
-      return -1;
-    }
-    return 0;
-  });
-
-  var otherFocusableElements = Array.prototype.slice.call(getPopup().querySelectorAll('button, input:not([type=hidden]), textarea, select, a, [tabindex="0"]'));
-
-  return uniqueArray(focusableElementsWithTabindex.concat(otherFocusableElements));
-};
-
-var isModal = function isModal() {
-  return !document.body.classList.contains(swalClasses['toast-shown']);
-};
-
-var isToast = function isToast() {
-  return document.body.classList.contains(swalClasses['toast-shown']);
+var getFocusableElements = function getFocusableElements(focusCancel) {
+  var buttons = [getConfirmButton(), getCancelButton()];
+  if (focusCancel) {
+    buttons.reverse();
+  }
+  return buttons.concat(Array.prototype.slice.call(getModal().querySelectorAll('button:not([class^=' + swalPrefix + ']), input:not([type=hidden]), textarea, select')));
 };
 
 var hasClass = function hasClass(elem, className) {
@@ -6187,7 +4723,7 @@ var getChildByClass = function getChildByClass(elem, className) {
 
 var show = function show(elem, display) {
   if (!display) {
-    display = elem === getPopup() || elem === getButtonsWrapper() ? 'flex' : 'block';
+    display = 'block';
   }
   elem.style.opacity = '';
   elem.style.display = display;
@@ -6204,7 +4740,7 @@ var empty = function empty(elem) {
   }
 };
 
-// borrowed from jquery $(elem).is(':visible') implementation
+// borrowed from jqeury $(elem).is(':visible') implementation
 var isVisible = function isVisible(elem) {
   return elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length;
 };
@@ -6217,20 +4753,43 @@ var removeStyleProperty = function removeStyleProperty(elem, property) {
   }
 };
 
-var animationEndEvent = function () {
-  // Prevent run in Node env
-  if (!isDefined(document)) {
+var fireClick = function fireClick(node) {
+  if (!isVisible(node)) {
     return false;
   }
 
+  // Taken from http://www.nonobtrusive.com/2011/11/29/programatically-fire-crossbrowser-click-event-with-javascript/
+  // Then fixed for today's Chrome browser.
+  if (typeof MouseEvent === 'function') {
+    // Up-to-date approach
+    var mevt = new MouseEvent('click', {
+      view: window,
+      bubbles: false,
+      cancelable: true
+    });
+    node.dispatchEvent(mevt);
+  } else if (document.createEvent) {
+    // Fallback
+    var evt = document.createEvent('MouseEvents');
+    evt.initEvent('click', false, false);
+    node.dispatchEvent(evt);
+  } else if (document.createEventObject) {
+    node.fireEvent('onclick');
+  } else if (typeof node.onclick === 'function') {
+    node.onclick();
+  }
+};
+
+var animationEndEvent = function () {
   var testEl = document.createElement('div');
   var transEndEventNames = {
     'WebkitAnimation': 'webkitAnimationEnd',
     'OAnimation': 'oAnimationEnd oanimationend',
+    'msAnimation': 'MSAnimationEnd',
     'animation': 'animationend'
   };
   for (var i in transEndEventNames) {
-    if (transEndEventNames.hasOwnProperty(i) && isDefined(testEl.style[i])) {
+    if (transEndEventNames.hasOwnProperty(i) && testEl.style[i] !== undefined) {
       return transEndEventNames[i];
     }
   }
@@ -6240,12 +4799,13 @@ var animationEndEvent = function () {
 
 // Reset previous window keydown handler and focued element
 var resetPrevState = function resetPrevState() {
+  window.onkeydown = states.previousWindowKeyDown;
   if (states.previousActiveElement && states.previousActiveElement.focus) {
     var x = window.scrollX;
     var y = window.scrollY;
     states.previousActiveElement.focus();
-    if (isDefined(x) && isDefined(y)) {
-      // IE doesn't have scrollX/scrollY support
+    if (x && y) {
+      // IE has no scrollX/scrollY support
       window.scrollTo(x, y);
     }
   }
@@ -6268,37 +4828,1174 @@ var measureScrollbar = function measureScrollbar() {
   return scrollbarWidth;
 };
 
-/**
- * Inject a string of CSS into the page header
- *
- * @param {String} css
- */
-var injectCSS = function injectCSS() {
-  var css = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+// JavaScript Debounce Function
+// Simplivied version of https://davidwalsh.name/javascript-debounce-function
+var debounce = function debounce(func, wait) {
+  var timeout = void 0;
+  return function () {
+    var later = function later() {
+      timeout = null;
+      func();
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+};
 
-  // Prevent run in Node env
-  if (!isDefined(document)) {
-    return false;
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
   }
 
-  var head = document.head || document.getElementsByTagName('head')[0];
-  var style = document.createElement('style');
-  style.type = 'text/css';
-  head.appendChild(style);
+  return target;
+};
 
-  if (style.styleSheet) {
-    style.styleSheet.cssText = css;
+var modalParams = _extends({}, defaultParams);
+var queue = [];
+var swal2Observer = void 0;
+
+/*
+ * Set type, text and actions on modal
+ */
+var setParameters = function setParameters(params) {
+  var modal = getModal() || init(params);
+
+  for (var param in params) {
+    if (!defaultParams.hasOwnProperty(param) && param !== 'extraParams') {
+      console.warn('SweetAlert2: Unknown parameter "' + param + '"');
+    }
+  }
+
+  // set modal width and margin-left
+  modal.style.width = typeof params.width === 'number' ? params.width + 'px' : params.width;
+
+  modal.style.padding = params.padding + 'px';
+  modal.style.background = params.background;
+
+  var title = getTitle();
+  var content = getContent();
+  var confirmButton = getConfirmButton();
+  var cancelButton = getCancelButton();
+  var closeButton = getCloseButton();
+
+  // Title
+  if (params.titleText) {
+    title.innerText = params.titleText;
   } else {
-    style.appendChild(document.createTextNode(css));
+    title.innerHTML = params.title.split('\n').join('<br>');
+  }
+
+  // Content
+  if (params.text || params.html) {
+    if (_typeof(params.html) === 'object') {
+      content.innerHTML = '';
+      if (0 in params.html) {
+        for (var i = 0; i in params.html; i++) {
+          content.appendChild(params.html[i].cloneNode(true));
+        }
+      } else {
+        content.appendChild(params.html.cloneNode(true));
+      }
+    } else if (params.html) {
+      content.innerHTML = params.html;
+    } else if (params.text) {
+      content.textContent = params.text;
+    }
+    show(content);
+  } else {
+    hide(content);
+  }
+
+  // Close button
+  if (params.showCloseButton) {
+    show(closeButton);
+  } else {
+    hide(closeButton);
+  }
+
+  // Custom Class
+  modal.className = swalClasses.modal;
+  if (params.customClass) {
+    addClass(modal, params.customClass);
+  }
+
+  // Progress steps
+  var progressStepsContainer = getProgressSteps();
+  var currentProgressStep = parseInt(params.currentProgressStep === null ? sweetAlert.getQueueStep() : params.currentProgressStep, 10);
+  if (params.progressSteps.length) {
+    show(progressStepsContainer);
+    empty(progressStepsContainer);
+    if (currentProgressStep >= params.progressSteps.length) {
+      console.warn('SweetAlert2: Invalid currentProgressStep parameter, it should be less than progressSteps.length ' + '(currentProgressStep like JS arrays starts from 0)');
+    }
+    params.progressSteps.forEach(function (step, index) {
+      var circle = document.createElement('li');
+      addClass(circle, swalClasses.progresscircle);
+      circle.innerHTML = step;
+      if (index === currentProgressStep) {
+        addClass(circle, swalClasses.activeprogressstep);
+      }
+      progressStepsContainer.appendChild(circle);
+      if (index !== params.progressSteps.length - 1) {
+        var line = document.createElement('li');
+        addClass(line, swalClasses.progressline);
+        line.style.width = params.progressStepsDistance;
+        progressStepsContainer.appendChild(line);
+      }
+    });
+  } else {
+    hide(progressStepsContainer);
+  }
+
+  // Icon
+  var icons = getIcons();
+  for (var _i = 0; _i < icons.length; _i++) {
+    hide(icons[_i]);
+  }
+  if (params.type) {
+    var validType = false;
+    for (var iconType in iconTypes) {
+      if (params.type === iconType) {
+        validType = true;
+        break;
+      }
+    }
+    if (!validType) {
+      console.error('SweetAlert2: Unknown alert type: ' + params.type);
+      return false;
+    }
+    var icon = modal.querySelector('.' + swalClasses.icon + '.' + iconTypes[params.type]);
+    show(icon);
+
+    // Animate icon
+    switch (params.type) {
+      case 'success':
+        addClass(icon, 'animate');
+        addClass(icon.querySelector('.tip'), 'animate-success-tip');
+        addClass(icon.querySelector('.long'), 'animate-success-long');
+        break;
+      case 'error':
+        addClass(icon, 'animate-error-icon');
+        addClass(icon.querySelector('.x-mark'), 'animate-x-mark');
+        break;
+      case 'warning':
+        addClass(icon, 'pulse-warning');
+        break;
+      default:
+        break;
+    }
+  }
+
+  // Custom image
+  var image = getImage();
+  if (params.imageUrl) {
+    image.setAttribute('src', params.imageUrl);
+    show(image);
+
+    if (params.imageWidth) {
+      image.setAttribute('width', params.imageWidth);
+    } else {
+      image.removeAttribute('width');
+    }
+
+    if (params.imageHeight) {
+      image.setAttribute('height', params.imageHeight);
+    } else {
+      image.removeAttribute('height');
+    }
+
+    image.className = swalClasses.image;
+    if (params.imageClass) {
+      addClass(image, params.imageClass);
+    }
+  } else {
+    hide(image);
+  }
+
+  // Cancel button
+  if (params.showCancelButton) {
+    cancelButton.style.display = 'inline-block';
+  } else {
+    hide(cancelButton);
+  }
+
+  // Confirm button
+  if (params.showConfirmButton) {
+    removeStyleProperty(confirmButton, 'display');
+  } else {
+    hide(confirmButton);
+  }
+
+  // Buttons spacer
+  var spacer = getSpacer();
+  if (!params.showConfirmButton && !params.showCancelButton) {
+    hide(spacer);
+  } else {
+    show(spacer);
+  }
+
+  // Edit text on cancel and confirm buttons
+  confirmButton.innerHTML = params.confirmButtonText;
+  cancelButton.innerHTML = params.cancelButtonText;
+
+  // Set buttons to selected background colors
+  if (params.buttonsStyling) {
+    confirmButton.style.backgroundColor = params.confirmButtonColor;
+    cancelButton.style.backgroundColor = params.cancelButtonColor;
+  }
+
+  // Add buttons custom classes
+  confirmButton.className = swalClasses.confirm;
+  addClass(confirmButton, params.confirmButtonClass);
+  cancelButton.className = swalClasses.cancel;
+  addClass(cancelButton, params.cancelButtonClass);
+
+  // Buttons styling
+  if (params.buttonsStyling) {
+    addClass(confirmButton, swalClasses.styled);
+    addClass(cancelButton, swalClasses.styled);
+  } else {
+    removeClass(confirmButton, swalClasses.styled);
+    removeClass(cancelButton, swalClasses.styled);
+
+    confirmButton.style.backgroundColor = confirmButton.style.borderLeftColor = confirmButton.style.borderRightColor = '';
+    cancelButton.style.backgroundColor = cancelButton.style.borderLeftColor = cancelButton.style.borderRightColor = '';
+  }
+
+  // CSS animation
+  if (params.animation === true) {
+    removeClass(modal, swalClasses.noanimation);
+  } else {
+    addClass(modal, swalClasses.noanimation);
   }
 };
 
-injectCSS(styles);
+/*
+ * Animations
+ */
+var openModal = function openModal(animation, onComplete) {
+  var container = getContainer();
+  var modal = getModal();
 
-return sweetAlert$1;
+  if (animation) {
+    addClass(modal, swalClasses.show);
+    addClass(container, swalClasses.fade);
+    removeClass(modal, swalClasses.hide);
+  } else {
+    removeClass(modal, swalClasses.fade);
+  }
+  show(modal);
+
+  // scrolling is 'hidden' until animation is done, after that 'auto'
+  container.style.overflowY = 'hidden';
+  if (animationEndEvent && !hasClass(modal, swalClasses.noanimation)) {
+    modal.addEventListener(animationEndEvent, function swalCloseEventFinished() {
+      modal.removeEventListener(animationEndEvent, swalCloseEventFinished);
+      container.style.overflowY = 'auto';
+    });
+  } else {
+    container.style.overflowY = 'auto';
+  }
+
+  addClass(document.documentElement, swalClasses.shown);
+  addClass(document.body, swalClasses.shown);
+  addClass(container, swalClasses.shown);
+  fixScrollbar();
+  iOSfix();
+  states.previousActiveElement = document.activeElement;
+  if (onComplete !== null && typeof onComplete === 'function') {
+    setTimeout(function () {
+      onComplete(modal);
+    });
+  }
+};
+
+var fixScrollbar = function fixScrollbar() {
+  // for queues, do not do this more than once
+  if (states.previousBodyPadding !== null) {
+    return;
+  }
+  // if the body has overflow
+  if (document.body.scrollHeight > window.innerHeight) {
+    // add padding so the content doesn't shift after removal of scrollbar
+    states.previousBodyPadding = document.body.style.paddingRight;
+    document.body.style.paddingRight = measureScrollbar() + 'px';
+  }
+};
+
+var undoScrollbar = function undoScrollbar() {
+  if (states.previousBodyPadding !== null) {
+    document.body.style.paddingRight = states.previousBodyPadding;
+    states.previousBodyPadding = null;
+  }
+};
+
+// Fix iOS scrolling http://stackoverflow.com/q/39626302/1331425
+var iOSfix = function iOSfix() {
+  var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (iOS && !hasClass(document.body, swalClasses.iosfix)) {
+    var offset = document.body.scrollTop;
+    document.body.style.top = offset * -1 + 'px';
+    addClass(document.body, swalClasses.iosfix);
+  }
+};
+
+var undoIOSfix = function undoIOSfix() {
+  if (hasClass(document.body, swalClasses.iosfix)) {
+    var offset = parseInt(document.body.style.top, 10);
+    removeClass(document.body, swalClasses.iosfix);
+    document.body.style.top = '';
+    document.body.scrollTop = offset * -1;
+  }
+};
+
+// SweetAlert entry point
+var sweetAlert = function sweetAlert() {
+  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+    args[_key] = arguments[_key];
+  }
+
+  if (args[0] === undefined) {
+    console.error('SweetAlert2 expects at least 1 attribute!');
+    return false;
+  }
+
+  var params = _extends({}, modalParams);
+
+  switch (_typeof(args[0])) {
+    case 'string':
+      params.title = args[0];
+      params.html = args[1];
+      params.type = args[2];
+
+      break;
+
+    case 'object':
+      _extends(params, args[0]);
+      params.extraParams = args[0].extraParams;
+
+      if (params.input === 'email' && params.inputValidator === null) {
+        params.inputValidator = function (email) {
+          return new Promise(function (resolve, reject) {
+            var emailRegex = /^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (emailRegex.test(email)) {
+              resolve();
+            } else {
+              reject('Invalid email address');
+            }
+          });
+        };
+      }
+      break;
+
+    default:
+      console.error('SweetAlert2: Unexpected type of argument! Expected "string" or "object", got ' + _typeof(args[0]));
+      return false;
+  }
+
+  setParameters(params);
+
+  var container = getContainer();
+  var modal = getModal();
+
+  return new Promise(function (resolve, reject) {
+    // Close on timer
+    if (params.timer) {
+      modal.timeout = setTimeout(function () {
+        sweetAlert.closeModal(params.onClose);
+        reject('timer');
+      }, params.timer);
+    }
+
+    // Get input element by specified type or, if type isn't specified, by params.input
+    var getInput = function getInput(inputType) {
+      inputType = inputType || params.input;
+      if (!inputType) {
+        return null;
+      }
+      switch (inputType) {
+        case 'select':
+        case 'textarea':
+        case 'file':
+          return getChildByClass(modal, swalClasses[inputType]);
+        case 'checkbox':
+          return modal.querySelector('.' + swalClasses.checkbox + ' input');
+        case 'radio':
+          return modal.querySelector('.' + swalClasses.radio + ' input:checked') || modal.querySelector('.' + swalClasses.radio + ' input:first-child');
+        case 'range':
+          return modal.querySelector('.' + swalClasses.range + ' input');
+        default:
+          return getChildByClass(modal, swalClasses.input);
+      }
+    };
+
+    // Get the value of the modal input
+    var getInputValue = function getInputValue() {
+      var input = getInput();
+      if (!input) {
+        return null;
+      }
+      switch (params.input) {
+        case 'checkbox':
+          return input.checked ? 1 : 0;
+        case 'radio':
+          return input.checked ? input.value : null;
+        case 'file':
+          return input.files.length ? input.files[0] : null;
+        default:
+          return params.inputAutoTrim ? input.value.trim() : input.value;
+      }
+    };
+
+    // input autofocus
+    if (params.input) {
+      setTimeout(function () {
+        var input = getInput();
+        if (input) {
+          focusInput(input);
+        }
+      }, 0);
+    }
+
+    var confirm = function confirm(value) {
+      if (params.showLoaderOnConfirm) {
+        sweetAlert.showLoading();
+      }
+
+      if (params.preConfirm) {
+        params.preConfirm(value, params.extraParams).then(function (preConfirmValue) {
+          sweetAlert.closeModal(params.onClose);
+          resolve(preConfirmValue || value);
+        }, function (error) {
+          sweetAlert.hideLoading();
+          if (error) {
+            sweetAlert.showValidationError(error);
+          }
+        });
+      } else {
+        sweetAlert.closeModal(params.onClose);
+        resolve(value);
+      }
+    };
+
+    // Mouse interactions
+    var onButtonEvent = function onButtonEvent(event) {
+      var e = event || window.event;
+      var target = e.target || e.srcElement;
+      var confirmButton = getConfirmButton();
+      var cancelButton = getCancelButton();
+      var targetedConfirm = confirmButton === target || confirmButton.contains(target);
+      var targetedCancel = cancelButton === target || cancelButton.contains(target);
+
+      switch (e.type) {
+        case 'mouseover':
+        case 'mouseup':
+          if (params.buttonsStyling) {
+            if (targetedConfirm) {
+              confirmButton.style.backgroundColor = colorLuminance(params.confirmButtonColor, -0.1);
+            } else if (targetedCancel) {
+              cancelButton.style.backgroundColor = colorLuminance(params.cancelButtonColor, -0.1);
+            }
+          }
+          break;
+        case 'mouseout':
+          if (params.buttonsStyling) {
+            if (targetedConfirm) {
+              confirmButton.style.backgroundColor = params.confirmButtonColor;
+            } else if (targetedCancel) {
+              cancelButton.style.backgroundColor = params.cancelButtonColor;
+            }
+          }
+          break;
+        case 'mousedown':
+          if (params.buttonsStyling) {
+            if (targetedConfirm) {
+              confirmButton.style.backgroundColor = colorLuminance(params.confirmButtonColor, -0.2);
+            } else if (targetedCancel) {
+              cancelButton.style.backgroundColor = colorLuminance(params.cancelButtonColor, -0.2);
+            }
+          }
+          break;
+        case 'click':
+          // Clicked 'confirm'
+          if (targetedConfirm && sweetAlert.isVisible()) {
+            sweetAlert.disableButtons();
+            if (params.input) {
+              (function () {
+                var inputValue = getInputValue();
+
+                if (params.inputValidator) {
+                  sweetAlert.disableInput();
+                  params.inputValidator(inputValue, params.extraParams).then(function () {
+                    sweetAlert.enableButtons();
+                    sweetAlert.enableInput();
+                    confirm(inputValue);
+                  }, function (error) {
+                    sweetAlert.enableButtons();
+                    sweetAlert.enableInput();
+                    if (error) {
+                      sweetAlert.showValidationError(error);
+                    }
+                  });
+                } else {
+                  confirm(inputValue);
+                }
+              })();
+            } else {
+              confirm(true);
+            }
+
+            // Clicked 'cancel'
+          } else if (targetedCancel && sweetAlert.isVisible()) {
+            sweetAlert.disableButtons();
+            sweetAlert.closeModal(params.onClose);
+            reject('cancel');
+          }
+          break;
+        default:
+      }
+    };
+
+    var buttons = modal.querySelectorAll('button');
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].onclick = onButtonEvent;
+      buttons[i].onmouseover = onButtonEvent;
+      buttons[i].onmouseout = onButtonEvent;
+      buttons[i].onmousedown = onButtonEvent;
+    }
+
+    // Closing modal by close button
+    getCloseButton().onclick = function () {
+      sweetAlert.closeModal(params.onClose);
+      reject('close');
+    };
+
+    // Closing modal by overlay click
+    container.onclick = function (e) {
+      if (e.target !== container) {
+        return;
+      }
+      if (params.allowOutsideClick) {
+        sweetAlert.closeModal(params.onClose);
+        reject('overlay');
+      }
+    };
+
+    var confirmButton = getConfirmButton();
+    var cancelButton = getCancelButton();
+
+    // Reverse buttons (Confirm on the right side)
+    if (params.reverseButtons) {
+      confirmButton.parentNode.insertBefore(cancelButton, confirmButton);
+    } else {
+      confirmButton.parentNode.insertBefore(confirmButton, cancelButton);
+    }
+
+    // Focus handling
+    var setFocus = function setFocus(index, increment) {
+      var focusableElements = getFocusableElements(params.focusCancel);
+      // search for visible elements and select the next possible match
+      for (var _i2 = 0; _i2 < focusableElements.length; _i2++) {
+        index = index + increment;
+
+        // rollover to first item
+        if (index === focusableElements.length) {
+          index = 0;
+
+          // go to last item
+        } else if (index === -1) {
+          index = focusableElements.length - 1;
+        }
+
+        // determine if element is visible
+        var el = focusableElements[index];
+        if (isVisible(el)) {
+          return el.focus();
+        }
+      }
+    };
+
+    var handleKeyDown = function handleKeyDown(event) {
+      var e = event || window.event;
+      var keyCode = e.keyCode || e.which;
+
+      if ([9, 13, 32, 27].indexOf(keyCode) === -1) {
+        // Don't do work on keys we don't care about.
+        return;
+      }
+
+      var targetElement = e.target || e.srcElement;
+
+      var focusableElements = getFocusableElements(params.focusCancel);
+      var btnIndex = -1; // Find the button - note, this is a nodelist, not an array.
+      for (var _i3 = 0; _i3 < focusableElements.length; _i3++) {
+        if (targetElement === focusableElements[_i3]) {
+          btnIndex = _i3;
+          break;
+        }
+      }
+
+      // TAB
+      if (keyCode === 9) {
+        if (!e.shiftKey) {
+          // Cycle to the next button
+          setFocus(btnIndex, 1);
+        } else {
+          // Cycle to the prev button
+          setFocus(btnIndex, -1);
+        }
+        e.stopPropagation();
+        e.preventDefault();
+
+        // ENTER/SPACE
+      } else if (keyCode === 13 || keyCode === 32) {
+        if (btnIndex === -1 && params.allowEnterKey) {
+          // ENTER/SPACE clicked outside of a button.
+          if (params.focusCancel) {
+            fireClick(cancelButton, e);
+          } else {
+            fireClick(confirmButton, e);
+          }
+        }
+        // ESC
+      } else if (keyCode === 27 && params.allowEscapeKey === true) {
+        sweetAlert.closeModal(params.onClose);
+        reject('esc');
+      }
+    };
+
+    states.previousWindowKeyDown = window.onkeydown;
+    window.onkeydown = handleKeyDown;
+
+    // Loading state
+    if (params.buttonsStyling) {
+      confirmButton.style.borderLeftColor = params.confirmButtonColor;
+      confirmButton.style.borderRightColor = params.confirmButtonColor;
+    }
+
+    /**
+     * Show spinner instead of Confirm button and disable Cancel button
+     */
+    sweetAlert.showLoading = sweetAlert.enableLoading = function () {
+      show(getSpacer());
+      show(confirmButton, 'inline-block');
+      addClass(confirmButton, swalClasses.loading);
+      addClass(modal, swalClasses.loading);
+      confirmButton.disabled = true;
+      cancelButton.disabled = true;
+    };
+
+    /**
+     * Show spinner instead of Confirm button and disable Cancel button
+     */
+    sweetAlert.hideLoading = sweetAlert.disableLoading = function () {
+      if (!params.showConfirmButton) {
+        hide(confirmButton);
+        if (!params.showCancelButton) {
+          hide(getSpacer());
+        }
+      }
+      removeClass(confirmButton, swalClasses.loading);
+      removeClass(modal, swalClasses.loading);
+      confirmButton.disabled = false;
+      cancelButton.disabled = false;
+    };
+
+    sweetAlert.getTitle = function () {
+      return getTitle();
+    };
+    sweetAlert.getContent = function () {
+      return getContent();
+    };
+    sweetAlert.getInput = function () {
+      return getInput();
+    };
+    sweetAlert.getImage = function () {
+      return getImage();
+    };
+    sweetAlert.getConfirmButton = function () {
+      return getConfirmButton();
+    };
+    sweetAlert.getCancelButton = function () {
+      return getCancelButton();
+    };
+
+    sweetAlert.enableButtons = function () {
+      confirmButton.disabled = false;
+      cancelButton.disabled = false;
+    };
+
+    sweetAlert.disableButtons = function () {
+      confirmButton.disabled = true;
+      cancelButton.disabled = true;
+    };
+
+    sweetAlert.enableConfirmButton = function () {
+      confirmButton.disabled = false;
+    };
+
+    sweetAlert.disableConfirmButton = function () {
+      confirmButton.disabled = true;
+    };
+
+    sweetAlert.enableInput = function () {
+      var input = getInput();
+      if (!input) {
+        return false;
+      }
+      if (input.type === 'radio') {
+        var radiosContainer = input.parentNode.parentNode;
+        var radios = radiosContainer.querySelectorAll('input');
+        for (var _i4 = 0; _i4 < radios.length; _i4++) {
+          radios[_i4].disabled = false;
+        }
+      } else {
+        input.disabled = false;
+      }
+    };
+
+    sweetAlert.disableInput = function () {
+      var input = getInput();
+      if (!input) {
+        return false;
+      }
+      if (input && input.type === 'radio') {
+        var radiosContainer = input.parentNode.parentNode;
+        var radios = radiosContainer.querySelectorAll('input');
+        for (var _i5 = 0; _i5 < radios.length; _i5++) {
+          radios[_i5].disabled = true;
+        }
+      } else {
+        input.disabled = true;
+      }
+    };
+
+    // Set modal min-height to disable scrolling inside the modal
+    sweetAlert.recalculateHeight = debounce(function () {
+      var modal = getModal();
+      if (!modal) {
+        return;
+      }
+      var prevState = modal.style.display;
+      modal.style.minHeight = '';
+      show(modal);
+      modal.style.minHeight = modal.scrollHeight + 1 + 'px';
+      modal.style.display = prevState;
+    }, 50);
+
+    // Show block with validation error
+    sweetAlert.showValidationError = function (error) {
+      var validationError = getValidationError();
+      validationError.innerHTML = error;
+      show(validationError);
+
+      var input = getInput();
+      if (input) {
+        focusInput(input);
+        addClass(input, swalClasses.inputerror);
+      }
+    };
+
+    // Hide block with validation error
+    sweetAlert.resetValidationError = function () {
+      var validationError = getValidationError();
+      hide(validationError);
+      sweetAlert.recalculateHeight();
+
+      var input = getInput();
+      if (input) {
+        removeClass(input, swalClasses.inputerror);
+      }
+    };
+
+    sweetAlert.getProgressSteps = function () {
+      return params.progressSteps;
+    };
+
+    sweetAlert.setProgressSteps = function (progressSteps) {
+      params.progressSteps = progressSteps;
+      setParameters(params);
+    };
+
+    sweetAlert.showProgressSteps = function () {
+      show(getProgressSteps());
+    };
+
+    sweetAlert.hideProgressSteps = function () {
+      hide(getProgressSteps());
+    };
+
+    sweetAlert.enableButtons();
+    sweetAlert.hideLoading();
+    sweetAlert.resetValidationError();
+
+    // inputs
+    var inputTypes = ['input', 'file', 'range', 'select', 'radio', 'checkbox', 'textarea'];
+    var input = void 0;
+    for (var _i6 = 0; _i6 < inputTypes.length; _i6++) {
+      var inputClass = swalClasses[inputTypes[_i6]];
+      var inputContainer = getChildByClass(modal, inputClass);
+      input = getInput(inputTypes[_i6]);
+
+      // set attributes
+      if (input) {
+        for (var j in input.attributes) {
+          if (input.attributes.hasOwnProperty(j)) {
+            var attrName = input.attributes[j].name;
+            if (attrName !== 'type' && attrName !== 'value') {
+              input.removeAttribute(attrName);
+            }
+          }
+        }
+        for (var attr in params.inputAttributes) {
+          input.setAttribute(attr, params.inputAttributes[attr]);
+        }
+      }
+
+      // set class
+      inputContainer.className = inputClass;
+      if (params.inputClass) {
+        addClass(inputContainer, params.inputClass);
+      }
+
+      hide(inputContainer);
+    }
+
+    var populateInputOptions = void 0;
+
+    (function () {
+      switch (params.input) {
+        case 'text':
+        case 'email':
+        case 'password':
+        case 'number':
+        case 'tel':
+          input = getChildByClass(modal, swalClasses.input);
+          input.value = params.inputValue;
+          input.placeholder = params.inputPlaceholder;
+          input.type = params.input;
+          show(input);
+          break;
+        case 'file':
+          input = getChildByClass(modal, swalClasses.file);
+          input.placeholder = params.inputPlaceholder;
+          input.type = params.input;
+          show(input);
+          break;
+        case 'range':
+          var range = getChildByClass(modal, swalClasses.range);
+          var rangeInput = range.querySelector('input');
+          var rangeOutput = range.querySelector('output');
+          rangeInput.value = params.inputValue;
+          rangeInput.type = params.input;
+          rangeOutput.value = params.inputValue;
+          show(range);
+          break;
+        case 'select':
+          var select = getChildByClass(modal, swalClasses.select);
+          select.innerHTML = '';
+          if (params.inputPlaceholder) {
+            var placeholder = document.createElement('option');
+            placeholder.innerHTML = params.inputPlaceholder;
+            placeholder.value = '';
+            placeholder.disabled = true;
+            placeholder.selected = true;
+            select.appendChild(placeholder);
+          }
+          populateInputOptions = function populateInputOptions(inputOptions) {
+            for (var optionValue in inputOptions) {
+              var option = document.createElement('option');
+              option.value = optionValue;
+              option.innerHTML = inputOptions[optionValue];
+              if (params.inputValue === optionValue) {
+                option.selected = true;
+              }
+              select.appendChild(option);
+            }
+            show(select);
+            select.focus();
+          };
+          break;
+        case 'radio':
+          var radio = getChildByClass(modal, swalClasses.radio);
+          radio.innerHTML = '';
+          populateInputOptions = function populateInputOptions(inputOptions) {
+            for (var radioValue in inputOptions) {
+              var radioInput = document.createElement('input');
+              var radioLabel = document.createElement('label');
+              var radioLabelSpan = document.createElement('span');
+              radioInput.type = 'radio';
+              radioInput.name = swalClasses.radio;
+              radioInput.value = radioValue;
+              if (params.inputValue === radioValue) {
+                radioInput.checked = true;
+              }
+              radioLabelSpan.innerHTML = inputOptions[radioValue];
+              radioLabel.appendChild(radioInput);
+              radioLabel.appendChild(radioLabelSpan);
+              radioLabel.for = radioInput.id;
+              radio.appendChild(radioLabel);
+            }
+            show(radio);
+            var radios = radio.querySelectorAll('input');
+            if (radios.length) {
+              radios[0].focus();
+            }
+          };
+          break;
+        case 'checkbox':
+          var checkbox = getChildByClass(modal, swalClasses.checkbox);
+          var checkboxInput = getInput('checkbox');
+          checkboxInput.type = 'checkbox';
+          checkboxInput.value = 1;
+          checkboxInput.id = swalClasses.checkbox;
+          checkboxInput.checked = Boolean(params.inputValue);
+          var label = checkbox.getElementsByTagName('span');
+          if (label.length) {
+            checkbox.removeChild(label[0]);
+          }
+          label = document.createElement('span');
+          label.innerHTML = params.inputPlaceholder;
+          checkbox.appendChild(label);
+          show(checkbox);
+          break;
+        case 'textarea':
+          var textarea = getChildByClass(modal, swalClasses.textarea);
+          textarea.value = params.inputValue;
+          textarea.placeholder = params.inputPlaceholder;
+          show(textarea);
+          break;
+        case null:
+          break;
+        default:
+          console.error('SweetAlert2: Unexpected type of input! Expected "text", "email", "password", "select", "checkbox", "textarea" or "file", got "' + params.input + '"');
+          break;
+      }
+    })();
+
+    if (params.input === 'select' || params.input === 'radio') {
+      if (params.inputOptions instanceof Promise) {
+        sweetAlert.showLoading();
+        params.inputOptions.then(function (inputOptions) {
+          sweetAlert.hideLoading();
+          populateInputOptions(inputOptions);
+        });
+      } else if (_typeof(params.inputOptions) === 'object') {
+        populateInputOptions(params.inputOptions);
+      } else {
+        console.error('SweetAlert2: Unexpected type of inputOptions! Expected object or Promise, got ' + _typeof(params.inputOptions));
+      }
+    }
+
+    openModal(params.animation, params.onOpen);
+
+    // Focus the first element (input or button)
+    if (params.allowEnterKey) {
+      setFocus(-1, 1);
+    } else {
+      if (document.activeElement) {
+        document.activeElement.blur();
+      }
+    }
+
+    // fix scroll
+    getContainer().scrollTop = 0;
+
+    // Observe changes inside the modal and adjust height
+    if (typeof MutationObserver !== 'undefined' && !swal2Observer) {
+      swal2Observer = new MutationObserver(sweetAlert.recalculateHeight);
+      swal2Observer.observe(modal, { childList: true, characterData: true, subtree: true });
+    }
+  });
+};
+
+/*
+ * Global function to determine if swal2 modal is shown
+ */
+sweetAlert.isVisible = function () {
+  return !!getModal();
+};
+
+/*
+ * Global function for chaining sweetAlert modals
+ */
+sweetAlert.queue = function (steps) {
+  queue = steps;
+  var resetQueue = function resetQueue() {
+    queue = [];
+    document.body.removeAttribute('data-swal2-queue-step');
+  };
+  var queueResult = [];
+  return new Promise(function (resolve, reject) {
+    (function step(i, callback) {
+      if (i < queue.length) {
+        document.body.setAttribute('data-swal2-queue-step', i);
+
+        sweetAlert(queue[i]).then(function (result) {
+          queueResult.push(result);
+          step(i + 1, callback);
+        }, function (dismiss) {
+          resetQueue();
+          reject(dismiss);
+        });
+      } else {
+        resetQueue();
+        resolve(queueResult);
+      }
+    })(0);
+  });
+};
+
+/*
+ * Global function for getting the index of current modal in queue
+ */
+sweetAlert.getQueueStep = function () {
+  return document.body.getAttribute('data-swal2-queue-step');
+};
+
+/*
+ * Global function for inserting a modal to the queue
+ */
+sweetAlert.insertQueueStep = function (step, index) {
+  if (index && index < queue.length) {
+    return queue.splice(index, 0, step);
+  }
+  return queue.push(step);
+};
+
+/*
+ * Global function for deleting a modal from the queue
+ */
+sweetAlert.deleteQueueStep = function (index) {
+  if (typeof queue[index] !== 'undefined') {
+    queue.splice(index, 1);
+  }
+};
+
+/*
+ * Global function to close sweetAlert
+ */
+sweetAlert.close = sweetAlert.closeModal = function (onComplete) {
+  var container = getContainer();
+  var modal = getModal();
+  if (!modal) {
+    return;
+  }
+  removeClass(modal, swalClasses.show);
+  addClass(modal, swalClasses.hide);
+  clearTimeout(modal.timeout);
+
+  resetPrevState();
+
+  var removeModalAndResetState = function removeModalAndResetState() {
+    container.parentNode.removeChild(container);
+    removeClass(document.documentElement, swalClasses.shown);
+    removeClass(document.body, swalClasses.shown);
+    undoScrollbar();
+    undoIOSfix();
+  };
+
+  // If animation is supported, animate
+  if (animationEndEvent && !hasClass(modal, swalClasses.noanimation)) {
+    modal.addEventListener(animationEndEvent, function swalCloseEventFinished() {
+      modal.removeEventListener(animationEndEvent, swalCloseEventFinished);
+      if (hasClass(modal, swalClasses.hide)) {
+        removeModalAndResetState();
+      }
+    });
+  } else {
+    // Otherwise, remove immediately
+    removeModalAndResetState();
+  }
+  if (onComplete !== null && typeof onComplete === 'function') {
+    setTimeout(function () {
+      onComplete(modal);
+    });
+  }
+};
+
+/*
+ * Global function to click 'Confirm' button
+ */
+sweetAlert.clickConfirm = function () {
+  return getConfirmButton().click();
+};
+
+/*
+ * Global function to click 'Cancel' button
+ */
+sweetAlert.clickCancel = function () {
+  return getCancelButton().click();
+};
+
+/**
+ * Set default params for each popup
+ * @param {Object} userParams
+ */
+sweetAlert.setDefaults = function (userParams) {
+  if (!userParams || (typeof userParams === 'undefined' ? 'undefined' : _typeof(userParams)) !== 'object') {
+    return console.error('SweetAlert2: the argument for setDefaults() is required and has to be a object');
+  }
+
+  for (var param in userParams) {
+    if (!defaultParams.hasOwnProperty(param) && param !== 'extraParams') {
+      console.warn('SweetAlert2: Unknown parameter "' + param + '"');
+      delete userParams[param];
+    }
+  }
+
+  _extends(modalParams, userParams);
+};
+
+/**
+ * Reset default params for each popup
+ */
+sweetAlert.resetDefaults = function () {
+  modalParams = _extends({}, defaultParams);
+};
+
+sweetAlert.noop = function () {};
+
+sweetAlert.version = '6.4.2';
+
+sweetAlert.default = sweetAlert;
+
+return sweetAlert;
 
 })));
-if (typeof window !== 'undefined' && window.Sweetalert2) window.sweetAlert = window.swal = window.Sweetalert2;
+if (window.Sweetalert2) window.sweetAlert = window.swal = window.Sweetalert2;
 define('m_view',['jquery','dictionary','v_view','sweetalert2'], 
 	function ( $, DICTIONARY, VIEW, SWAL ) {
 	//<? transactor methods
@@ -6440,264 +6137,8 @@ define('m_view',['jquery','dictionary','v_view','sweetalert2'],
 		*/
 	}
 });
-define( 'localdb',[] , function () {
-	const DB = {};
-	const _ = {'db':DB};
-
-	//@< db > values
-		const VAL = {}; DB.val = VAL;
-
-		VAL['systemUser'] = '@system';
-	//@> db > valuse
-
-
-
-	//@<  db > main
-		const MAIN = {}; DB.main = MAIN;
-
-		//@<<< main > blocks
-			const BLOCKS 		= {}; MAIN['blocks'] = BLOCKS;
-		//@>>> main > blocks
-
-
-		//@<<< main > blocks > first
-			const FIRST 		= {}; BLOCKS['first'] = FIRST;
-
-			//@< main > blocks > first > header
-				const FHEADER 		= {}; FIRST['header'] = FHEADER;
-
-
-			//@> main > blocks > first > header
-
-			//@< main > blocks > first > body
-				const FBODY 		= {}; FIRST['body'] = FBODY;
-			//@> main > blocks > first > body
-
-			//@< main > blocks > first > footer
-				const FFOOTER 		= {}; FIRST['footer'] = FFOOTER;
-			//@> main > blocks > first > footer
-
-		//@>>> main > blocks > first
-
-		
-		//@<<< main > blocks > second
-			const SECOND 		= {}; BLOCKS['second'] = SECOND;
-
-
-			//@< main > blocks > second > header
-				const SHEADER 		= {}; SECOND['header'] = SHEADER;
-
-				//@< header > base
-					var APP_BASE 		= {}; SHEADER['base'] = APP_BASE;
-
-						// base > index
-						var PAGE_INDEX 		= {}; APP_BASE['index'] = PAGE_INDEX;
-
-							// index > icon
-							var FLAGS = {}; PAGE_INDEX['flags'] = FLAGS;
-							FLAGS['hasPseudoUser'] = 'flagHasPseudoUsers';
-				//@> menus
-
-			//@> main > blocks > second > header
-
-
-
-
-			//@< main > blocks > second > body
-				const SBODY 		= {}; SECOND['body'] = SBODY;
-			//@> main > blocks > second > body
-
-		//@>>> main > blocks > second 
-
-		//@<<< main > blocks > third
-			const THIRD 		= {}; BLOCKS['third'] = THIRD;
-
-			//@< main > blocks > third > header
-				const THHEADER 		= {}; THIRD['header'] = THHEADER;
-			//@> main > blocks > third > header
-
-			//@< main > blocks > third > body
-				const THBODY 		= {}; THIRD['body'] = THBODY;
-			//@> main > blocks > third > body
-
-		//@>>> main > blocks > third
-
-		
-
-		
-
-	//@> db > main 
-
-
-
-
-
-	return _;
-
-	/* <@MAP
-		db
-			doc
-				main
-					blocks
-						first
-							header
-							body
-							footer
-						second
-							header
-							body
-						third
-							header
-							body
-	@MAP> */
-});
-define( 'selector',['localdb'] , function (LOCALDB) {
-	const DB = {};
-	const _ = {'db':DB};
-
-	//@< db > values
-		const VAL = {}; DB.val = VAL;
-
-		VAL['curtain'] = '.connectBackgroundCurtain';
-	//@> db > valuse
-
-
-
-	//@<  db > main
-		const MAIN = {}; DB.main = MAIN;
-
-		//@<<< main > blocks
-			const BLOCKS 		= {}; MAIN['blocks'] = BLOCKS;
-		//@>>> main > blocks
-
-
-		//@<<< main > blocks > first
-			const FIRST 		= {}; BLOCKS['first'] = FIRST;
-
-			//@< main > blocks > first > header
-				const FHEADER 		= {}; FIRST['header'] = FHEADER;
-
-				//@< main > blocks > first > header > menus
-					const FH_MENUS 		= {}; FHEADER['menus'] = FHEADER;
-				//@> main > blocks > first > header > menus
-			//@> main > blocks > first > header
-
-			//@< main > blocks > first > body
-				const FBODY 		= {}; FIRST['body'] = FBODY;
-			//@> main > blocks > first > body
-
-			//@< main > blocks > first > footer
-				const FFOOTER 		= {}; FIRST['footer'] = FFOOTER;
-			//@> main > blocks > first > footer
-
-		//@>>> main > blocks > first
-
-		
-		//@<<< main > blocks > second
-			const SECOND 		= {}; BLOCKS['second'] = SECOND;
-			SECOND.val 			= '#menusBlock';
-
-			//@< main > blocks > second > header
-				const SHEADER 		= {}; SECOND['header'] = SHEADER;
-				SHEADER.val 		= SECOND.val + ' .topBlockInMenusBlock';
-
-				//@< header > base
-					var APP_BASE 		= {}; SHEADER['base'] = APP_BASE;
-					APP_BASE.val 		= SHEADER.val + ' .menuHeaderInMenusBlock[app-name="base"]';
-
-						// base > index
-						var PAGE_INDEX 		= {}; APP_BASE['index'] = PAGE_INDEX;
-						PAGE_INDEX.val 		= APP_BASE.val + ' .appPage[page-name="index"]'
-
-							//
-
-							// index > userIcon
-							var BASEHEADER = {}; PAGE_INDEX['baseHeader'] = BASEHEADER;
-							BASEHEADER.val = PAGE_INDEX.val + ' .appBase_userListHeaderContainer';
-
-							// index > userIcon
-							var USERICON = {}; PAGE_INDEX['userIcon'] = USERICON;
-							USERICON.val = BASEHEADER.val + ' .appBase_userIcon';
-
-							// index > userName
-							var USERNAME = {}; PAGE_INDEX['userName'] = USERNAME;
-							USERNAME.val = BASEHEADER.val + ' .appBase_ListHeader_dName';
-							
-							// index > userNameWihPseudoFlag
-							var userNameWihPseudoFlag = {}; PAGE_INDEX['userNameWihPseudoFlag'] = userNameWihPseudoFlag;
-							userNameWihPseudoFlag.val = `${BASEHEADER.val}.${LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser} .appBase_ListHeader_dName`;
-
-							
-							// index > iconNameWihPseudoFlag
-							var userIconWihPseudoFlag = {}; PAGE_INDEX['userIconWihPseudoFlag'] = userIconWihPseudoFlag;
-							userIconWihPseudoFlag.val = `${BASEHEADER.val}.${LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser} .appBase_userIcon`;
-
-							// index > menuSwitchUserBox
-							var menuSwitchUserBox = {}; PAGE_INDEX['menuSwitchUserBox'] = menuSwitchUserBox;
-							menuSwitchUserBox.val = `${PAGE_INDEX.val}  .appBase_userSelectMenuContainer`;
-
-								// index > menuSwitchUserBox > item
-								menuSwitchUserBox.item = {'val': `${menuSwitchUserBox.val} ul`}
-				//@> menus
-
-			//@> main > blocks > second > header
-
-			//@< main > blocks > second > body
-				const SBODY 		= {}; SECOND['body'] = SBODY;
-				SBODY.val 			= SECOND.val + ' .usersBlockContainerInMenusBlock';
-
-				SBODY['toChat'] = '.usersBlockContainerInMenusBlock .scrolBlockForChat .mix.usersBlockInMenusBlock';
-			//@> main > blocks > second > body
-
-		//@>>> main > blocks > second 
-
-		//@<<< main > blocks > third
-			const THIRD 		= {}; BLOCKS['third'] = THIRD;
-			THIRD.val = '#viewBlock';
-
-			//@< main > blocks > third > header
-				const THHEADER 		= {}; THIRD['header'] = THHEADER;
-					  THHEADER.val 	= THIRD.val + ' .topBlockInViewBlock';
-			//@> main > blocks > third > header
-
-			//@< main > blocks > third > body
-				const THBODY 		= {}; THIRD['body'] = THBODY;
-					  THBODY.val 	= THIRD.val + ' #viewAndChatBlockInViewBlock';
-			//@> main > blocks > third > body
-
-		//@>>> main > blocks > third
-
-		
-
-		
-
-	//@> db > main 
-
-
-
-
-
-	return _;
-
-	/* <@MAP
-		db
-			doc
-				main
-					blocks
-						first
-							header
-							body
-							footer
-						second
-							header
-							body
-						third
-							header
-							body
-	@MAP> */
-});
-define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,V_VIEW, SELECTOR){
-	const CONST = {
+define('v_app',['jquery','template7','v_view'],function($,Template7,V_VIEW){
+	let CONST = {
 		'pathAppHeader' 	  : '#block #viewBlock .topBlockInViewBlock',
 		'pathAppView' 	  	  : '#block #viewBlock #viewAndChatBlockInViewBlock.appChiefWindow',
 		'nameInAppHeader' 	  : 'appHeaderInChiefBlock', // class
@@ -6709,9 +6150,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 
 
 	};
-	const _ = {};
 	// appName -> String, views -> array of objects {viewName,viewContent}
-	const templates = {};
+	var templates = {};
 		
 		templates['chiefForAppInList'] = `
 			<div class='app' app-name='{{app}}'>
@@ -6788,7 +6228,7 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	    //< template for modal window
 
 	   
-    function getListApp (iNdata) {
+    function _getListApp (iNdata) {
     	/*
     		@inputs
     			@required
@@ -6807,9 +6247,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
     	getAttrAndClassForAppAndPage(iNdata);
     	var temp = Template7.compile(templates['chiefForAppInList']);
     	return temp(iNdata);
-    } _.getListApp = getListApp;
-
-    function getPageForListApp (iNdata) {
+    };
+    function _getPageForListApp (iNdata) {
     	/*
 			@discr
 				get page for list app by object (iNdata)
@@ -6828,9 +6267,9 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 		getAttrAndClassForAppAndPage(iNdata);
 		var temp = Template7.compile(templates['pageForAppInList']);
 		return temp(iNdata);
-    } _.getPageForListApp = getPageForListApp
+    }
 
-    function d_updatePageInListApp (iNdata) {
+    function _d_updatePageInListApp (iNdata) {
     	/*
 			@discr
 				update page in list app by object (iNdata)
@@ -6847,9 +6286,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 		var selector = '.usersBlockContainerInMenusBlock .app[app-name="'+iNdata['app']+'"] .view[view-name="'+iNdata['page']+'"]';
 		if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
     	$(selector).html(iNdata['content']);
-    } _.d_updatePageInListApp = d_updatePageInListApp;
-
-    function d_clearPageInListApp (iNdata) {
+    }
+    function _d_clearPageInListApp (iNdata) {
     	/*
 			@discr
 				clear page in list app by object (iNdata)
@@ -6863,13 +6301,13 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 							extra		-> string
 				@optional
 			@deps
-				function : d_updatePageInListApp
+				function : _d_updatePageInListApp
 		*/
 		iNdata['html'] = '';
-		d_updatePageInListApp(iNdata);
-    } _.d_clearPageInListApp = d_clearPageInListApp;
+		_d_updatePageInListApp(iNdata);
+    }
 
-    function d_checkPageInListApp (iNdata) {
+    function _d_checkPageInListApp (iNdata) {
     	/*
 			@discr
 				update isset page in list app by object (iNdata)
@@ -6887,9 +6325,9 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 		var selector = '.usersBlockContainerInMenusBlock .app[app-name="'+iNdata['app']+'"] .view[view-name="'+iNdata['page']+'"]';
 		if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
     	return $(selector).length;
-    } _.d_checkPageInListApp = d_checkPageInListApp;
+    }
 
-    function d_checkListApp (iNdata) {
+    function _d_checkListApp (iNdata) {
     	/*
 			@discr
 				check isset list app by object (iNdata)
@@ -6906,9 +6344,9 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 		var selector = '.usersBlockContainerInMenusBlock .app[app-name="'+iNdata['app']+'"]';
 		if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
     	return $(selector).length;
-    } _.d_checkListApp = d_checkListApp;
+    }
 	
-	function d_createPageInListApp (iNdata) {
+	function _d_createPageInListApp (iNdata) {
     	/*
 			@discr
 				create page for list app
@@ -6930,8 +6368,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 		
 		var selector = '.usersBlockContainerInMenusBlock .app[app-name="'+iNdata['app']+'"] ';
 		if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
-    	V_VIEW.d_addDataToViewEl(selector, getPageForListApp(iNdata) ,'change');
-    } _.d_createPageInListApp = d_createPageInListApp;
+    	V_VIEW.d_addDataToViewEl(selector, _getPageForListApp(iNdata) ,'change');
+    }
     
     function addContentToChiefApp (iNdata,iNcontent) {
     	/*
@@ -6951,9 +6389,9 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
     	var selector = '#viewAndChatBlockInViewBlock .viewesInWindow.app[app-name="'+iNdata['app']+'"] .view[view-name="'+ iNdata['page']+ '"]';
     	if (typeof iNdata['type'] != 'string') iNdata['type']='begin';
     	V_VIEW.d_addDataToViewEl(selector, iNcontent,iNdata['type']);
-    } _.addContentToChiefApp = addContentToChiefApp;
+    }
 
-    function d_createListApp (iNdata) {
+    function _d_createListApp (iNdata) {
     	/*
 			@discr
 				create list app [@optional - with page]
@@ -6977,13 +6415,13 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 		var selector = '.usersBlockContainerInMenusBlock'; 
 		if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
 		getAttrAndClassForAppAndPage(iNdata);
-    	V_VIEW.d_addDataToViewEl(selector, getListApp(iNdata) ,'end');
-    } _.d_createListApp = d_createListApp;
+    	V_VIEW.d_addDataToViewEl(selector, _getListApp(iNdata) ,'end');
+    }
 
 
 
     
-		function getChiefApp (iNdata) {
+		function _getChiefApp (iNdata) {
 			/*
 				@discr
 					get app template by object (iNdata) [with page] [with other] [withoout content]
@@ -7009,9 +6447,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 			getAttrAndClassForAppAndPage(iNdata);
 			var temp = Template7.compile(templates['chiefForAppInView']);
 			return temp(iNdata);
-		} _.getChiefApp = getChiefApp;
-
-		function getPageForChiefApp (iNdata) {
+		}
+		function _getPageForChiefApp (iNdata) {
 			/*
 				@discr
 					get page for app by object (iNdata)
@@ -7032,8 +6469,7 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 			getAttrAndClassForAppAndPage(iNdata);
 			var temp = Template7.compile(templates['pageForAppInView']);
 			return temp(iNdata);
-		} _.getPageForChiefApp = getPageForChiefApp;
-
+		}
 			function getAttrAndClassForAppAndPage (iNdata) {
 				/*
 					@example
@@ -7070,7 +6506,7 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 				}
 				iNdata['class'] = classString; iNdata['attr'] = attrString;
 			}
-		function d_updatePageInChiefApp (iNdata) {
+		function _d_updatePageInChiefApp (iNdata) {
         	/*
 				@discr
 					update page in chieft app by object (iNdata)
@@ -7088,9 +6524,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 			if(typeof(iNdata['extra']) == 'string') 	selector += ' ' + iNdata['extra'];
         	$(selector).html(iNdata['content']);
 
-        } _.d_updatePageInChiefApp = d_updatePageInChiefApp;
-
-        function d_clearPageInChiefApp (iNdata) {
+        }
+        function _d_clearPageInChiefApp (iNdata) {
         	/*
 				@discr
 					clear page for chief app by object (iNdata)
@@ -7104,13 +6539,13 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 								extra		-> string
 					@optional
 				@deps
-					function : d_updatePageInChiefApp
+					function : _d_updatePageInChiefApp
 			*/
         	iNdata['content'] = '';
-			d_updatePageInChiefApp(iNdata);
-        } _.d_clearPageInChiefApp = d_clearPageInChiefApp;
+			_d_updatePageInChiefApp(iNdata);
+        }
 
-        function d_checkPageInChiefApp (iNdata) {
+        function _d_checkPageInChiefApp (iNdata) {
         	/*
 				@discr
 					get isset page lengthin chief app by object (iNdata)
@@ -7125,15 +6560,12 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 				@return
 					int : 0 - false, 0< true
 			*/
-			console.log('d_checkPageInChiefApp - iNdata',iNdata);
 			var selector = CONST['pathAppView'] + ' .app[app-name="'+iNdata['app']+'"] .view[view-name="'+iNdata['page']+'"]';
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
-			console.log('d_checkPageInChiefApp - selector',selector);
-			console.log('d_checkPageInChiefApp - $(selector).length',$(selector).length);
         	return $(selector).length;
-        } _.d_checkPageInChiefApp = d_checkPageInChiefApp;
+        }
 
-        function d_checkChiefApp (iNdata) {
+        function _d_checkChiefApp (iNdata) {
         	/*
 				@discr
 					check isset chief app by object (iNdata)
@@ -7150,9 +6582,9 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 			var selector = CONST['pathAppView'] + ' .app[app-name="'+iNdata['app']+'"]';
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
         	return $(selector).length;
-        } _.d_checkChiefApp = d_checkChiefApp;
+        }
 		
-		function d_createPageInChiefApp (iNdata ) {
+		function _d_createPageInChiefApp (iNdata ) {
         	/*
 				@discr
 					create page for chief app
@@ -7169,58 +6601,16 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 								extra	-> string 
 					@optional
 				@deps
-					function : getPageForChiefApp
+					function : _getPageForChiefApp
 				@return
 					int : 0 - false, 0< true
 			*/
 			var selector = CONST['pathAppView'] + ' .app[app-name="'+iNdata['app']+'"] ';
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
-        	V_VIEW.d_addDataToViewEl(selector, getPageForChiefApp(iNdata) ,'end')
-        } _.d_createPageInChiefApp = d_createPageInChiefApp;
-
-        function d_safeCreatePageInChiefApp (iNdata ) {
-        	/*
-				@discr
-					create page [if not exist] for chief app
-				@inputs
-					@required
-						iNdata -> object
-							app 		-> string
-							page 		-> string
-							content 	-> string
-							@optional
-								attr	-> object
-									class	-> 
-									attrKey : attrBalue
-								extra	-> string 
-					@optional
-				@deps
-					function : getPageForChiefApp
-				@return
-					int : 0 - false, 0< true
-			*/
-			var selectorToThisApp = CONST['pathAppView'] + ' .app[app-name="'+iNdata['app']+'"] ';
-			var selectorToThisPage = selectorToThisApp + ' .view[view-name="'+iNdata['page']+'"]' ; 
-
-			if(typeof(iNdata['extra']) == 'string') selectorToThisApp += ' ' + iNdata['extra'];
-
-
-			console.log('d_safeCreatePageInChiefApp - selectorToThisApp',selectorToThisApp,'',$(selectorToThisApp).length);
-			console.log('d_safeCreatePageInChiefApp - selectorToThisPage',selectorToThisPage,'',$(selectorToThisPage).length);
-			if($(selectorToThisPage).length < 1) {
-				// safe create app container
-				d_safeCreateChiefApp ({'app':iNdata['app']})
-
-				// if this page not exist we create this page
-        		V_VIEW.d_addDataToViewEl(selectorToThisApp, getPageForChiefApp(iNdata) ,'end')
-			} else  {
-				// if this page is exist we replace content with new val
-        		V_VIEW.d_addDataToViewEl(selectorToThisPage, getPageForChiefApp(iNdata) ,'replace')
-			}
-
-        } _.d_safeCreatePageInChiefApp = d_safeCreatePageInChiefApp;
+        	V_VIEW.d_addDataToViewEl(selector, _getPageForChiefApp(iNdata) ,'end')
+        }
         
-        function d_createChiefApp (iNdata) {
+        function _d_createChiefApp (iNdata) {
         	/*
 				@discr
 					create chief app [@optional - with page]
@@ -7242,43 +6632,11 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 			*/
 			var selector = CONST['pathAppView']; 
 			if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
-        	V_VIEW.d_addDataToViewEl(selector, getChiefApp(iNdata) ,'start');
-        } _.d_createChiefApp = d_createChiefApp;
-
-        function d_safeCreateChiefApp (iNdata) {
-        	/*
-				@discr
-					create chief app if not exist [@optional - with page]
-				@inputs
-					@required
-						iNdata -> object
-							app 		-> string
-							@optional
-								page 		-> string
-								content 	-> string
-
-								attr		-> string
-								extra		-> string
-
-								other -		> string
-					@optional
-				@return
-					int : 0 - false, 0< true
-			*/
-			var selectorAppContainer = CONST['pathAppView']; 
-			var selectorToThisApp = CONST['pathAppView'] + ' .app[app-name="'+iNdata['app']+'"]'; 
-			if(typeof(iNdata['extra']) == 'string') selectorAppContainer += ' ' + iNdata['extra'];
-			console.log('d_safeCreateChiefApp - selectorToThisApp',selectorToThisApp,'',$(selectorToThisApp).length);
-			console.log('d_safeCreateChiefApp - selectorAppContainer',selectorAppContainer,'',$(selectorAppContainer).length);
-			if($(selectorToThisApp).length < 1)
-        		V_VIEW.d_addDataToViewEl(selectorAppContainer, getChiefApp(iNdata) ,'end');
-        	// else 
-        	// 	V_VIEW.d_addDataToViewEl(selectorToThisApp, getChiefApp(iNdata) ,'change');
-        } _.d_safeCreateChiefApp = d_safeCreateChiefApp;
-
+        	V_VIEW.d_addDataToViewEl(selector, _getChiefApp(iNdata) ,'change')
+        }
         //< app headers
 	        
-        	function d_hideAppHeader (iNdata) {
+        	function _d_hideAppHeader (iNdata) {
 	        	/*
 	        		@discr
 	        			hide app page of header
@@ -7291,9 +6649,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        		'.'+CONST['nameInAppHeader'] 	+
         			'[app-name="' + iNdata['app'] + '"]'
         		).hide();
-	        } _.d_hideAppHeader = d_hideAppHeader;
-
-	        function d_hideAppHeaders (iNdata) {
+	        }
+	        function _d_hideAppHeaders (iNdata) {
 	        	/*
 	        		@discr
 	        			hide app page of header
@@ -7306,7 +6663,7 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        		'.'+CONST['nameInAppHeader']
         		).hide();
 	        }
-	        function d_removeAppHeader (iNdata) {
+	        function _d_removeAppHeader (iNdata) {
 	        	/*
 	        		@discr
 	        			hide app page of header
@@ -7319,9 +6676,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        		'.'+CONST['nameInAppHeader'] 	+
         			'[app-name="' + iNdata['app'] + '"]'
         		).remove();
-	        } _.d_removeAppHeader = d_removeAppHeader;
-
-		        function d_hideAppPagesHeader (iNdata) {
+	        }
+		        function _d_hideAppPagesHeader (iNdata) {
 		        	/*
 		        		@discr
 		        			hide app page of header
@@ -7335,9 +6691,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        			'[app-name="' + iNdata['app'] + '"] '	+
 	        			'.'+CONST['pageNameInAppHeader']
 	        		).hide();
-		        } _.d_hideAppPagesHeader = d_hideAppPagesHeader;
-
-	        function d_showAppHeader (iNdata) {
+		        }
+	        function _d_showAppHeader (iNdata) {
 	        	/*
 	        		@discr
 	        			show app of header
@@ -7350,9 +6705,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        		'.'+CONST['nameInAppHeader']  		+
 	        		'[app-name="'+ iNdata['app'] +'"]' 
         		).show();
-	        } _.d_showAppHeader = d_showAppHeader;
-
-		        function d_showAppPageHeader (iNdata) {
+	        }
+		        function _d_showAppPageHeader (iNdata) {
 		        	/*
 		        		@discr
 		        			show app of header
@@ -7368,9 +6722,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 		        		'.'+CONST['pageNameInAppHeader']  +
 		        		'[page-name="'+ iNdata['page'] +'"]' 
 	        		).show();
-		        } _.d_showAppPageHeader = d_showAppPageHeader;
-
-            function d_viewAppPageHeader (iNdata) {
+		        }
+            function _d_viewAppPageHeader (iNdata) {
 	        	/*
 	        		@discr
 	        			wathc app page of header
@@ -7380,19 +6733,18 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        				page -> string
 	        	*/
 	        	// hide apps
-	        	d_hideAppHeaders(iNdata);
+	        	_d_hideAppHeaders(iNdata);
 
 	        	// show this app
-	        	d_showAppHeader(iNdata); 
+	        	_d_showAppHeader(iNdata); 
 
 				// hide other pages app
-	        	d_hideAppPagesHeader(iNdata);
+	        	_d_hideAppPagesHeader(iNdata);
 
 	        	// show this page
-	        	d_showAppPageHeader(iNdata); 
-	        } _.d_viewAppPageHeader = d_viewAppPageHeader;
-
-	        function d_setAppHeader (iNcontent) {
+	        	_d_showAppPageHeader(iNdata); 
+	        }
+	        function _d_setAppHeader (iNcontent) {
 	        	/*
 	        		@discr
 	        			set content for app into header block
@@ -7400,9 +6752,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        			iNcontent -> string
 	        	*/
 	        	$( CONST['pathAppHeader'] + ' .topBlockInViewBlock' ).html(iNcontent);
-	        } _.d_setAppHeader = d_setAppHeader;
-
-	        function d_getLengthAppHeader (iNdata) {
+	        }
+	        function _d_getLengthAppHeader (iNdata) {
 	        	/*
 	        		@discr
 	        			set content for app into header block
@@ -7416,10 +6767,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        	if ( typeof iNdata['page'] == 'string' )
 	        		selector += '.' + CONST['pageNameInAppHeader'] + '[page-name="'+ iNdata['page'] +'"]';
 	        	return $(selector).length;
-	        } _.d_getLengthAppHeader = d_getLengthAppHeader;
-
-
-	       	function getAppHeader (iNdata) {
+	        }
+	       	function _getAppHeader (iNdata) {
 	        	/*
 	        		@discr
 	        			get content for app headery by template
@@ -7434,9 +6783,9 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 				*/
         		var temp = Template7.compile(templates['appContentChiefHeader']);
         		return temp(iNdata)
-        	} _.getAppHeader = getAppHeader;
+        	}
 
-        	function getPageAppHeader (iNdata) {
+        	function _getPageAppHeader (iNdata) {
 	        	/*
 	        		@discr
 	        			get content for app menu headery by template
@@ -7449,9 +6798,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 				*/
         		var temp = Template7.compile(templates['pageContentChiefHeader']);
         		return temp(iNdata)
-        	} _.getPageAppHeader = getPageAppHeader;
-
-        function d_addAppHeaderByTemplate (iNdata,iNtype) {
+        	}
+        function _d_addAppHeaderByTemplate (iNdata,iNtype) {
         	/*
         		@discr
         			add content for app into  header block by template
@@ -7466,11 +6814,10 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
         	*/
         	if( typeof iNtype != 'string' ) iNtype = 'end';
         	var selector = CONST['pathAppHeader'],
-        		content = getAppHeader(iNdata);
+        		content = _getAppHeader(iNdata);
 			V_VIEW.d_addDataToViewEl(selector, content ,iNtype);
-        } _.d_addAppHeaderByTemplate = d_addAppHeaderByTemplate;
-
-        function safeViewAppHeaderWithContent (iNdata,iNtype) {
+        }
+        function _d_safeViewAppHeaderWithContent (iNdata,iNtype) {
 			/*
 				@discr
 					add safe content to chief app header and view this
@@ -7484,12 +6831,11 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 						in [end,begin, after, before, change]
 			*/
 			if( typeof iNtype != 'string' ) iNtype = 'end';
-			safeAddAppHeader(iNdata,iNtype);
+			_d_safeAddAppHeader(iNdata,iNtype);
 			//view this menu 
-			d_viewAppPageHeader(iNdata);
-		} _.safeViewAppHeaderWithContent = safeViewAppHeaderWithContent;
-
-		function safeAddAppHeader (iNdata,iNtype) {
+			_d_viewAppPageHeader(iNdata);
+		}
+		function _d_safeAddAppHeader (iNdata,iNtype) {
 			/*
 				@discr
 					add safe content to chief app header
@@ -7503,16 +6849,15 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 						in [end,begin, after, before, change]
 			*/
 			if( typeof iNtype != 'string' ) iNtype = 'end';
-			if( d_getLengthAppHeader ({'app':iNdata['app']}) < 1 ) {
+			if( _d_getLengthAppHeader ({'app':iNdata['app']}) < 1 ) {
 				// check app container
-				d_addAppHeaderByTemplate(iNdata,iNtype);
-			} else if ( typeof iNdata['page'] == 'string' && d_getLengthAppHeader(iNdata) < 1 ) {
-				d_addPageAppHeaderByTemplate( iNdata,iNtype);
+				_d_addAppHeaderByTemplate(iNdata,iNtype);
+			} else if ( typeof iNdata['page'] == 'string' && _d_getLengthAppHeader(iNdata) < 1 ) {
+				_d_addPageAppHeaderByTemplate( iNdata,iNtype);
 			}
 
-		} _.safeAddAppHeader =safeAddAppHeader;
-
-        function d_addPageAppHeaderByTemplate (iNdata,iNtype) {
+		}
+        function _d_addPageAppHeaderByTemplate (iNdata,iNtype) {
         	/*
         		@discr
         			add content with page for app into  header block by template
@@ -7528,12 +6873,12 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
         	*/
         	if( typeof iNtype != 'string') iNtype = 'end';
         	var selector = CONST['pathAppHeader'] + ' .' + CONST['nameInAppHeader']+'[app-name="'+iNdata['app']+'"]',
-        		content = getPageAppHeader(iNdata);
-			V_VIEW.d_addDataToViewEl(selector, content /* getPageForListApp(content) */, iNtype); 
-        } _.d_addPageAppHeaderByTemplate = d_addPageAppHeaderByTemplate;
+        		content = _getPageAppHeader(iNdata);
+			V_VIEW.d_addDataToViewEl(selector, content /* _getPageForListApp(content) */, iNtype); 
+        }
 
 
-	        function d_hideMenuHeader (iNdata) {
+	        function _d_hideMenuHeader (iNdata) {
 	        	/*
 	        		@discr
 	        			hide app page of header
@@ -7546,11 +6891,10 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        		'.'+CONST['nameInMenuHeader'] 	+
         			'[app-name="' + iNdata['app'] + '"]'
         		).hide();
-	        } _.d_hideMenuHeader = d_hideMenuHeader;
+	        }
 
 
-
-	        function d_checkMenuHeader (iNdata) {
+	        function _d_checkMenuHeader (iNdata) {
 		    	/*
 					@discr
 						update isset page in list app by object (iNdata)
@@ -7568,11 +6912,10 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 				var selector = '#menusBlock .topBlockInMenusBlock .menuHeaderInMenusBlock[app-name="'+iNdata['app']+'"] .appPage[view-name="'+iNdata['page']+'"]';
 				if(typeof(iNdata['extra']) == 'string') selector += ' ' + iNdata['extra'];
 		    	return $(selector).length;
-		    } _.d_checkMenuHeader = d_checkMenuHeader;
+		    }
 
 
-
-	        function d_removeMenuHeader (iNdata) {
+	        function _d_removeMenuHeader (iNdata) {
 	        	/*
 	        		@discr
 	        			hide app page of header
@@ -7585,9 +6928,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        		'.'+CONST['nameInMenuHeader'] 	+
         			'[app-name="' + iNdata['app'] + '"]'
         		).remove();
-	        } _.d_removeMenuHeader = d_removeMenuHeader;
-
-		        function d_hideMenuPagesHeader (iNdata) {
+	        }
+		        function _d_hideMenuPagesHeader (iNdata) {
 		        	/*
 		        		@discr
 		        			hide app page of header
@@ -7601,9 +6943,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        			'[app-name="' + iNdata['app'] + '"] '	+
 	        			'.'+CONST['pageNameInMenuHeader']
 	        		).hide();
-		        } _.d_hideMenuPagesHeader = d_hideMenuPagesHeader;
-
-	        function d_showMenuHeader (iNdata) {
+		        }
+	        function _d_showMenuHeader (iNdata) {
 	        	/*
 	        		@discr
 	        			show app of menu header
@@ -7616,9 +6957,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        		'.'+CONST['nameInMenuHeader']  		+
 	        		'[app-name="'+ iNdata['app'] +'"]' 
         		).show();
-	        } _.d_showMenuHeader = d_showMenuHeader;
-
-		        function d_showMenuPageHeader (iNdata) {
+	        }
+		        function _d_showMenuPageHeader (iNdata) {
 		        	/*
 		        		@discr
 		        			show app of menu header
@@ -7634,9 +6974,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 		        		'.'+CONST['pageNameInMenuHeader']  +
 		        		'[page-name="'+ iNdata['page'] +'"]' 
 	        		).show();
-		        } _.d_showMenuPageHeader = d_showMenuPageHeader;
-
-            function d_viewMenuPageHeader (iNdata) {
+		        }
+            function _d_viewMenuPageHeader (iNdata) {
 	        	/*
 	        		@discr
 	        			wathc app page of menu header
@@ -7646,19 +6985,18 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        				page -> string
 	        	*/
 	        	// hide apps
-	        	d_hideMenuHeader(iNdata);
+	        	_d_hideMenuHeader(iNdata);
 
 	        	// show this app
-	        	d_showMenuHeader(iNdata); 
+	        	_d_showMenuHeader(iNdata); 
 
 				// hide other pages app
-	        	d_hideMenuPagesHeader(iNdata);
+	        	_d_hideMenuPagesHeader(iNdata);
 
 	        	// show this page
-	        	d_showMenuPageHeader(iNdata); 
-	        } _.d_viewMenuPageHeader = d_viewMenuPageHeader;
-
-	        function d_setMenuHeader (iNcontent) {
+	        	_d_showMenuPageHeader(iNdata); 
+	        }
+	        function _d_setMenuHeader (iNcontent) {
 	        	/*
 	        		@discr
 	        			set content for app into menu header block
@@ -7666,9 +7004,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        			iNcontent -> string
 				*/
 	        	$( CONST['pathMenuHeader']).html(iNcontent);
-	        } _.d_setMenuHeader = d_setMenuHeader;
-
-	        function safeViewMenuHeaderWithContent (iNdata,iNtype) {
+	        }
+	        function _d_safeViewMenuHeaderWithContent (iNdata,iNtype) {
 				/*
 					@discr
 						add safe content to menu header and view this
@@ -7682,12 +7019,11 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 							in [end,begin, after, before, change]
 				*/
 				if( typeof iNtype != 'string' ) iNtype = 'end';
-				safeAddAppMenuHeader(iNdata,iNtype);
+				_d_safeAddAppMenuHeader(iNdata,iNtype);
 				//view this menu 
-				d_viewMenuPageHeader(iNdata);
-			} _.safeViewMenuHeaderWithContent = safeViewMenuHeaderWithContent;
-
-			function safeAddAppMenuHeader (iNdata,iNtype) {
+				_d_viewMenuPageHeader(iNdata);
+			}
+			function _d_safeAddAppMenuHeader (iNdata,iNtype) {
 				/*
 					@discr
 						add safe content to menu app header
@@ -7701,16 +7037,15 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 							in [end,begin, after, before, change]
 				*/
 				if( typeof iNtype != 'string' ) iNtype = 'end';
-				if( d_getLengthMenuHeader ({'app':iNdata['app']}) < 1 ) {
+				if( _d_getLengthMenuHeader ({'app':iNdata['app']}) < 1 ) {
 					// check app container
-					d_addAppMenuHeaderByTemplate(iNdata,iNtype);
-				} else if ( typeof iNdata['page'] == 'string' && d_getLengthMenuHeader(iNdata) < 1 ) {
+					_d_addAppMenuHeaderByTemplate(iNdata,iNtype);
+				} else if ( typeof iNdata['page'] == 'string' && _d_getLengthMenuHeader(iNdata) < 1 ) {
 					// check page container
-					d_addPageMenuHeaderByTemplate( iNdata,iNtype);
+					_d_addPageMenuHeaderByTemplate( iNdata,iNtype);
 				}
-			} _.safeAddAppMenuHeader = safeAddAppMenuHeader;
-
-	        	function getAppMenuHeader (iNdata) {
+			}
+	        	function _getAppMenuHeader (iNdata) {
 		        	/*
 		        		@discr
 		        			get content for app menu headery by template
@@ -7725,9 +7060,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 					*/
 	        		var temp = Template7.compile(templates['appContentMenuHeader']);
 	        		return temp(iNdata)
-	        	} _.getAppMenuHeader = getAppMenuHeader;
-
-	        	function d_getLengthMenuHeader (iNdata) {
+	        	}
+	        	function _d_getLengthMenuHeader (iNdata) {
 	        	/*
 	        		@discr
 	        			get length of elements or 0
@@ -7743,7 +7077,7 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        	return $(selector).length;
 	        }
 
-	        	function getPageMenuHeader (iNdata) {
+	        	function _getPageMenuHeader (iNdata) {
 		        	/*
 		        		@discr
 		        			get content for app menu headery by template
@@ -7756,9 +7090,8 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 					*/
 	        		var temp = Template7.compile(templates['pageContentMenuHeader']);
 	        		return temp(iNdata)
-	        	} _.getPageMenuHeader = getPageMenuHeader;
-
-	        function d_addAppMenuHeaderByTemplate (iNdata,iNtype) {
+	        	}
+	        function _d_addAppMenuHeaderByTemplate (iNdata,iNtype) {
 	        	/*
 	        		@discr
 	        			add content for app into menu header block by template
@@ -7774,14 +7107,14 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        	*/
 				if( typeof iNtype != 'string' ) iNtype = 'end';
 	        	var selector = CONST['pathMenuHeader'],
-	        		content = getAppMenuHeader(iNdata);
-	        	// d_addAppHeaderByTemplate(iNdata,iNtype);
-				V_VIEW.d_addDataToViewEl(selector, content ,iNtype);//getPageForListApp(content)
-	        } _.d_addAppMenuHeaderByTemplate = d_addAppMenuHeaderByTemplate;
+	        		content = _getAppMenuHeader(iNdata);
+	        	// _d_addAppHeaderByTemplate(iNdata,iNtype);
+				V_VIEW.d_addDataToViewEl(selector, content ,iNtype);//_getPageForListApp(content)
+	        }
 	        
 
 
-	        function d_addPageMenuHeaderByTemplate (iNdata,iNtype) {
+	        function _d_addPageMenuHeaderByTemplate (iNdata,iNtype) {
 	        	/*
 	        		@discr
 	        			add content with page for app into menu header block by template
@@ -7798,12 +7131,12 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	    		
 				if( typeof iNtype != 'string' ) iNtype = 'end';		
 	        	var selector = CONST['pathMenuHeader'] + ' .' + CONST['nameInMenuHeader']+'[app-name="'+iNdata['app']+'"]',
-	        		content = getPageMenuHeader(iNdata);
+	        		content = _getPageMenuHeader(iNdata);
 				V_VIEW.d_addDataToViewEl(selector, content ,iNtype);
-	        } _.d_addPageMenuHeaderByTemplate = d_addPageMenuHeaderByTemplate
+	        }
         //> app headers
 
-        function d_showApps (iNarray,iNtypeApp) {
+        function _d_showApps (iNarray,iNtypeApp) {
         	/*
         		@example
         			d_showApps(['chat'],'chief')
@@ -7823,30 +7156,22 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 				@return
 				@deps
         	*/
-        	console.log('d_showApps 1 - iNarray,iNtypeApp',iNarray,iNtypeApp);
         	var selector, appNameForIletiral;
 
-        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') 
-        		selector = '#viewBlock .app'
-        	else 
-        		selector = '.usersBlockContainerInMenusBlock .app'
-
-        	console.log('d_showApps 2 - selector',selector);
-
+        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewWindow .app'
+        	else selector = '.usersBlockContainerInMenusBlock .app'
     		if(typeof(iNarray) !=  'object' || Array.isArray(iNarray) != true) iNarray = [iNarray];
     		for (var iKey in iNarray) {
     			appNameForIletiral = iNarray[iKey];
     			$(selector + '[app-name="' + appNameForIletiral + '"]').show();
-        		console.log('d_showApps 3 - selector',selector + '[app-name="' + appNameForIletiral + '"]');
     		}
-        } _.d_showApps = d_showApps;
-
-        function d_hideApps (iNarray,iNtypeApp) {
+        }
+        function _d_hideApps (iNarray,iNtypeApp) {
         	/*
         		@example
-        			d_hideApps(['chat'],'chief')
-        			d_hideApps('chat') == d_showApps('chat','chief')
-        			d_hideApps() 		== d_showApps('all','chief')
+        			_d_hideApps(['chat'],'chief')
+        			_d_hideApps('chat') == d_showApps('chat','chief')
+        			_d_hideApps() 		== d_showApps('all','chief')
         		@disc
 					did show apps in passed by 1st argument as string or array (multu effect) and by 2nd argument in Chief (default) or List container
         		@input
@@ -7865,38 +7190,25 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
         	*/
         	var selector, appNameForIletiral,thisSelector;
 
-			console.log('d_hideApps 1  - iNarray, iNtypeApp', iNarray, iNtypeApp);
-
-			// choose right or left containery (default - left)
-        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') 
-        		selector = '#viewBlock .app';
-			else 
-        		selector = '.usersBlockContainerInMenusBlock .app'
-        	
-        	//by default we close all apps
+        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewWindow .app';
         	if( typeof(iNarray) != 'string' && typeof(iNarray) != 'object' ) iNarray = 'all';
-        	
-        	// create array if iNarray is not it
+        	else selector = '.usersBlockContainerInMenusBlock .app'
     		if(typeof(iNarray) !=  'object' || Array.isArray(iNarray) != true) iNarray = [iNarray];
-
-			console.log('d_hideApps 2  - iNarray, iNtypeApp, selector', iNarray, iNtypeApp, selector);
     		for (var iKey in iNarray) {
     			thisSelector = selector
     			appNameForIletiral = iNarray[iKey];
     			if(appNameForIletiral != 'all') {
     				thisSelector += '[app-name="' + appNameForIletiral + '"]';
     			}
-    			console.log('d_hideApps 3 - thisSelector', thisSelector);
     			$(thisSelector).hide();
     		}
-        } _.d_hideApps = d_hideApps;
-
-        function d_removeApps (iNarray,iNtypeApp) {
+        }
+        function _d_removeApps (iNarray,iNtypeApp) {
         	/*
         		@example
-        			d_hideApps(['chat'],'chief')
-        			d_hideApps('chat') == d_showApps('chat','chief')
-        			d_hideApps() 		== d_showApps('all','chief')
+        			_d_hideApps(['chat'],'chief')
+        			_d_hideApps('chat') == d_showApps('chat','chief')
+        			_d_hideApps() 		== d_showApps('all','chief')
         		@disc
 					did show apps in passed by 1st argument as string or array (multu effect) and by 2nd argument in Chief (default) or List container
         		@input
@@ -7915,7 +7227,7 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
         	*/
         	var selector, appNameForIletiral,thisSelector;
 
-        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewBlock .app';
+        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewWindow .app';
         	if( typeof(iNarray) != 'string' && typeof(iNarray) != 'object' ) iNarray = 'all';
         	else selector = '.usersBlockContainerInMenusBlock .app'
     		if(typeof(iNarray) !=  'object' || Array.isArray(iNarray) != true) iNarray = [iNarray];
@@ -7927,13 +7239,12 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
     			}
     			$(thisSelector).remove();
     		}
-        } _.d_removeApps =d_removeApps;
-
-		function d_showPages (iNapp,iNarray,iNtypeApp) {
+        }
+		function _d_showPages (iNapp,iNarray,iNtypeApp) {
 			/*
         		@example
-        			d_showPages('chat',['private'],'chief')
-        			d_showPages('chat','private') == d_showPages('chat','chief')
+        			_d_showPages('chat',['private'],'chief')
+        			d_showPages('chat','private') == _d_showPages('chat','chief')
         		@disc
 					did show page of apps in passed by 1nd argument as string name of app, by 2nd argument as string or array (multu effect) and by 3d argument in Chief (default) or List container
         		@input
@@ -7953,26 +7264,21 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
         	*/
         	var selector, appName, pageNameForIletiral;
         	// show app
-        	d_showApps(iNapp,iNtypeApp)
+        	_d_showApps(iNapp,iNtypeApp)
         	// choose list of chief container
-        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') 
-        		selector = '#viewBlock .app';
-        	else 
-        		selector = '.usersBlockContainerInMenusBlock .app';
-
+        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewWindow .app'
+        	else selector = '.usersBlockContainerInMenusBlock .app'
     		// create array if need with page names for show
     		if(typeof(iNarray) !=  'object' || Array.isArray(iNarray) != true) iNarray = [iNarray];
-
     		for (var iKey in iNarray) {
     			pageNameForIletiral = iNarray[iKey];
     			$(selector + '[app-name="' + appName + '"] .view[view-name="'+pageNameForIletiral+'"]').show();
     		}
-    	} _.d_showPages = d_showPages;
-
-    	function d_viewPage (iNdata) {
+    	}
+    	function _d_viewPage (iNdata) {
     		/*
         		@example
-        			d_openPage('chat','index')
+        			_d_openPage('chat','index')
         		@disc
 					open page with hide all other app and other pages in this app
 				@input
@@ -7990,19 +7296,18 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 					#1 hide all pages in this app
 					#2 show this page in this app
 				@deps
-					function : d_showPages
-					function : d_hidePages
+					function : _d_showPages
+					function : _d_hidePages
         	*/
         	if(typeof(iNdata['type']) != 'string' || iNdata['type'] != 'list') iNdata['type'] = 'chief'
-        	// d_hidePages(iNdata['app'],'all',iNdata['type']);
-        	d_showPages(iNdata['app'],iNdata['page'],iNdata['type']);
-		} _.d_viewPage = d_viewPage;
-
-		function d_viewApp (iNdata) {
+        	// _d_hidePages(iNdata['app'],'all',iNdata['type']);
+        	_d_showPages(iNdata['app'],iNdata['page'],iNdata['type']);
+		}
+		function _d_viewApp (iNdata) {
     		/*
         		@example
-        			d_viewApp('chat','index','chief')
-        			d_viewApp('chat','index')
+        			_d_viewApp('chat','index','chief')
+        			_d_viewApp('chat','index')
         		@disc
 					open page with hide all other app and other pages in this app
 				@input
@@ -8019,20 +7324,19 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 					#1 hide all apps
 					#2 show this app
 				@deps
-					function : d_hideApps
-					function : d_showApps
+					function : _d_hideApps
+					function : _d_showApps
         	*/
         	if(typeof(iNdata['type']) != 'string' || iNdata['type'] != 'list') iNdata['type'] = 'chief'
-        	// d_hideApps('all',iNdata['type']);
-        	d_showApps(iNdata['app'],iNdata['type']);
-		} _.d_viewApp = d_viewApp;
-
-        function d_hidePages (iNapp,iNarray,iNtypeApp) {
+        	// _d_hideApps('all',iNdata['type']);
+        	_d_showApps(iNdata['app'],iNdata['type']);
+		}
+        function _d_hidePages (iNapp,iNarray,iNtypeApp) {
         	/*
         		@example
-        			d_hidePages('chat',['private'],'chief')
-        			d_hidePages('chat','private') == d_hidePages('chat','chief')
-        			d_hidePages('chat') == d_hidePages('chat','all')
+        			_d_hidePages('chat',['private'],'chief')
+        			_d_hidePages('chat','private') == _d_hidePages('chat','chief')
+        			_d_hidePages('chat') == _d_hidePages('chat','all')
         		@disc
 					did hide page of apps in passed by 1nd argument as string name of app, by 2nd argument as string or array (multu effect) and by 3d argument in Chief (default) or List container
         		@input
@@ -8048,13 +7352,13 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 							{DEFAULT - chief}
 				@return
 				@deps
-					function : d_hideApps
+					function : _d_hideApps
         	*/
         	var selector, appName, pageNameForIletiral, thisSelector;
         	// show app
-        	d_hideApps(iNapp,iNtypeApp)
+        	_d_hideApps(iNapp,iNtypeApp)
         	// choose list of chief container
-        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewBlock .app';
+        	if( typeof(iNtypeApp) != 'string' || iNtypeApp == 'chief') selector = '#viewWindow .app';
         	if( typeof(iNarray) != 'string' || typeof(iNarray) == 'object') iNarray = 'all';
         	else selector = '.usersBlockContainerInMenusBlock .app'
     		// create array if need with page names for show
@@ -8070,7 +7374,7 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
     			$(thisSelector).hide();
     		}
     			
-        } _.d_hidePages = d_hidePages;
+        }
 
 		
 
@@ -8080,7 +7384,6 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 					return iNapp.templates;
 				return false;
 			}
-
 			function getPageTemplate (iNapp) {
 				var template = getTemplate(iNapp);
 				if(typeof(template['page']) == 'object')
@@ -8088,26 +7391,24 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 				return false;
 			}
 			
-			function getPageMenuTemplate (iNapp,iName) {
+			function _getPageMenuTemplate (iNapp,iName) {
 				var pageTemplate = getPageTemplate(iNapp);
 				if( typeof pageTemplate['menu'] == 'object' && typeof pageTemplate['menu'][iName] != 'undefined')
 					return pageTemplate['menu'][iName];
 				return false;
-			} _.getPageMenuTemplate = getPageMenuTemplate;
-
-			function getPageViewTemplate (iNapp,iName) {
+			}
+			function _getPageViewTemplate (iNapp,iName) {
 				var pageTemplate = getPageTemplate(iNapp);
 				if(typeof(pageTemplate['view']) == 'object' && typeof(pageTemplate['view'][iName]) != 'undefined')
 					return pageTemplate['view'][iName];
 				return false;
-			} _.getPageViewTemplate = getPageViewTemplate;
-
-			function getAppTemplate (iNapp,iName) {
+			}
+			function _getAppTemplate (iNapp,iName) {
 				var template = getTemplate(iNapp);
 				if(typeof(template['app']) == 'object' && typeof(pageTemplate['app'][iName]) != 'undefined')
 					return template['app'];
 				return false;
-			} _.getAppTemplate = getAppTemplate;
+			}
 		//@>  work with templates  from app
 
 
@@ -8116,223 +7417,141 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 
 
 		//@< work with header
-			function d_loadCSS (filename,iNclass){ 
+			function _d_loadCSS (filename,iNclass){ 
 				var file = document.createElement("link");
 				   file.setAttribute("rel", "stylesheet");
 				   file.setAttribute("type", "text/css");
 				   file.setAttribute("href", filename);
 				   file.setAttribute("class", iNclass);
 			   document.head.appendChild(file);
-			} _.d_loadCSS = d_loadCSS;
-
-			function d_loadJS (filename,iNclass) { 
+			}
+			function _d_loadJS (filename,iNclass) { 
 			  var fileref = document.createElement('script');
 				  fileref.setAttribute("type","text/javascript");
 				  fileref.setAttribute("src", filename);
 				  fileref.setAttribute("class", iNclass);
 			  document.getElementsByTagName("head")[0].appendChild(fileref);
 
-			} _.d_loadJS = d_loadJS;
-
-			function d_removeByClass (iNclass) {
+			}
+			function _d_removeByClass (iNclass) {
 				$('.'+iNclass).remove();
-			} _.d_removeByClass = d_removeByClass;
-
+			}
 		//@> work with header
 
 		//@< effects animation
 		function effScrollToButtom(el,iNspeed){
 	        if(typeof(iNspeed) == 'undefined') iNspeed ='slow';
 	        $(el).animate({ scrollTop: $(el)[0].scrollHeight }, iNspeed);
-	    } _.effScrollToButtom = effScrollToButtom;
+	    }
 		//@> effects animation
 
 
-		//@< LINKS work with href.links
-			function convertDomElementToLink (iNthis) {
-				/*
-					@disct
-						we create link from dom element
-					@inputs
-						@required
-						iNthis -> object (dom selector)
-					@return : Void
-				*/
-	        	$(iNthis).addClass('appHref');
-	        	$(iNthis).addClass('connect_href');
-			} _ ['convertDomElementToLink'] = convertDomElementToLink;
-
-			function convertDomElementToAppLink (iNthis,iNdata) {
-				/*
-					@disct
-						we create link to app from dom element
-					@inputs
-						@required
-						iNthis -> object (dom selector)
-						@optional
-							iNdata -> object 
-								@optional
-									app 	-> string (@default 'base')
-									page 	-> string (@default 'index')
-									data 	-> string (@default '')
-					@return : Void
-
-				*/
-				if(typeof iNdata != 'object') iNdata = {};
-				// create values for open app OR set default values for them
-				var appName 	= iNdata['appName']||'base',
-					pageName 	= iNdata['pageName']||'index',
-					data 		= iNdata['data']||'';
-
-				// create link
-				convertDomElementToLink(iNthis);
-
-	        	// then we add app name and page name
-	        	$(iNthis).attr('app-name',appName);
-	        	$(iNthis).attr('page-name',pageName);
-
-	        	// add data to this links
-	        	$(iNthis).attr('data',data);
-
-			} _ ['convertDomElementToAppLink'] = convertDomElementToAppLink;
-
-		//@> LINKS work with href.links
-
 		//@< LODADER
-			function createLoaderInAppView () {
+			function _createLoaderInAppView () {
 				V_VIEW.showLoader('#viewBlock');
 			}
-			_.createLoaderInAppView = createLoaderInAppView;
 
-			function delLoaderInAppView () {
+			function _delLoaderInAppView () {
 				V_VIEW.closeLoader('#viewBlock');
 			}
-			_.delLoaderInAppView = delLoaderInAppView;
 
-			function createLoaderInMenuView () {
+			function _createLoaderInMenuView () {
 				V_VIEW.showLoader('#menusBlock');
 			}
-			_.createLoaderInMenuView = createLoaderInMenuView;
 			
-			function delLoaderInMenuView () {
+			function _delLoaderInMenuView () {
 				V_VIEW.closeLoader('#menusBlock');
 			}
-			_.delLoaderInMenuView = delLoaderInMenuView;
-
-
-			_.delLoader 	= V_VIEW.closeLoader;
-			_.createLoader 	= V_VIEW.showLoader;
 
 		//@> LODADER
 
-		//@< SIDE BUTTONS
-			function sideButtons_disableSelectedEffects () {
-				/*
-					@discr
-						deleted selected class from all side buttons
-					@inputs
-						@required
-				*/
-				$('.appsBpxInAppBlock').removeClass('selected');
-			} _.sideButtons_disableSelectedEffects = sideButtons_disableSelectedEffects;
+        return {
+		  // loader
+		  	delLoaderInMenuView 	: _delLoaderInMenuView,
+		  	createLoaderInMenuView 	: _createLoaderInMenuView,
+		  	delLoaderInAppView 		: _delLoaderInAppView,
+		  	createLoaderInAppView 	: _createLoaderInAppView,
+		  	delLoader 				: V_VIEW.closeLoader,
+		  	createLoader 			: V_VIEW.showLoader,
 
-			function sideButtons_addSelectedEffectsByFilter (iNfilter) {
-				/*
-					@discr
-						add select class for show effects by filter (service id)
-					@inputs
-						@required
-						@optional
-							iNfilter -> string
-				*/
-				
-				// remove selected class from all btn
-				sideButtons_disableSelectedEffects();
+    	  // functions for work with template
+    	  	'getAppTemplate'		: _getAppTemplate,
+    	  	'getPageViewTemplate'	: _getPageViewTemplate,
+    	  	'getPageMenuTemplate'	: _getPageMenuTemplate,
 
-				var baseClass = '.appsBpxInAppBlock';
+		  // functions for list app
+		    'getListApp'            : _getListApp,
+		    'getPageForListApp'     : _getPageForListApp,
+		    'd_updatePageInListApp' : _d_updatePageInListApp,
+		    'd_clearPageInListApp'  : _d_clearPageInListApp,
+		    'd_checkPageInListApp'  : _d_checkPageInListApp,
+		    'd_checkListApp'        : _d_checkListApp,
+		    'd_createPageInListApp' : _d_createPageInListApp,
+		    'd_createListApp'       : _d_createListApp,
 
-				switch(iNfilter) {
+		  // functions for chief app
+		    'getChiefApp'           : _getChiefApp,
+		    'getPageForChiefApp'    : _getPageForChiefApp,
+		    'd_updatePageInChiefApp': _d_updatePageInChiefApp,
+		    'd_clearPageInChiefApp' : _d_clearPageInChiefApp,
+		    'd_checkPageInChiefApp' : _d_checkPageInChiefApp,
+		    'd_checkChiefApp'       : _d_checkChiefApp,
+		    'd_createPageInChiefApp': _d_createPageInChiefApp,
+		    'd_createChiefApp'      : _d_createChiefApp,
+		    'addContentToChiefApp'	: addContentToChiefApp,
 
-					case "market":
-						$(baseClass + '.filterMarket').addClass('selected');
-					break;
-					
-					case "onepay":
-						$(baseClass + '.filterOnepay').addClass('selected');
-					break;
-					
-					case "sharepay":
-						$(baseClass + '.filterSharepay').addClass('selected');
-					break;
-					
-					case "edocument":
-						$(baseClass + '.filterEdocument').addClass('selected');
-					break;
-
-					default :
-						$(baseClass + '.filterAll').addClass('selected');
-					break;
-				}
-			} _.sideButtons_addSelectedEffectsByFilter = sideButtons_addSelectedEffectsByFilter;
-		//@> SIDE BUTTONS
+		   // effect functions for chief and list apps
+		    'd_showApps'            : _d_showApps,
+		    'd_hideApps'            : _d_hideApps,
+		    'd_removeApps'          : _d_removeApps,
+		    'd_showPages'           : _d_showPages,
+		    'd_hidePages'           : _d_hidePages,
+		    'd_viewPage'            : _d_viewPage,
+		    'd_viewApp'             : _d_viewApp,
 
 
-		//@< CURTAIN
-			function showBackgroundCurtain () {
-				/*
-					@discr
-					@inputs
-				*/
-				$(SELECTOR.db.val.curtain).show();
-			} _.showBackgroundCurtain = showBackgroundCurtain;
+	       //< functions for headers
+		    	//app menu header
+				    'd_addPageMenuHeaderByTemplate'		: _d_addPageMenuHeaderByTemplate,
+				    'd_addAppMenuHeaderByTemplate'		: _d_addAppMenuHeaderByTemplate,
+				    'safeViewAppHeaderWithContent'		: _d_safeViewAppHeaderWithContent, // @new of 24 08 2017
+				    'safeAddAppHeader'					: _d_safeAddAppHeader, // @new of 24 08 2017
+				    'getPageMenuHeader'           		: _getPageMenuHeader,
+				    'getAppMenuHeader'           		: _getAppMenuHeader,
+				    'd_setMenuHeader'            		: _d_setMenuHeader,
+				    'd_viewMenuPageHeader' 				: _d_viewMenuPageHeader,
+				    'd_showMenuPageHeader' 				: _d_showMenuPageHeader,
+				    'd_showMenuHeader'            		: _d_showMenuHeader,
+				    'd_hideMenuPagesHeader'           	: _d_hideMenuPagesHeader,
+				    'd_hideMenuHeader'          		: _d_hideMenuHeader,
+				    'd_removeMenuHeader'          		: _d_removeMenuHeader,
+				    'd_checkMenuHeader'				: _d_checkMenuHeader,
 
-			function showBackgroundCurtainWithFunction (clickFunction) {
-				/*
-					@discr
-					@inputs
-				*/
-				// bacground
-				hideBackgroundCurtain();
-				// show
-				showBackgroundCurtain();
-				
-				$(SELECTOR.db.val.curtain).click(
-					function () {
-						if(typeof clickFunction == 'function') clickFunction(this);
-						// hide backgorun curtain
-						hideBackgroundCurtain();
-					}
-				);
-			} _.showBackgroundCurtainWithFunction = showBackgroundCurtainWithFunction;
+		    	//app header
+				    'd_addPageAppHeaderByTemplate'		: _d_addPageAppHeaderByTemplate,
+				    'd_addAppHeaderByTemplate'			: _d_addAppHeaderByTemplate,
+				    'safeViewMenuHeaderWithContent'		: _d_safeViewMenuHeaderWithContent, // @new of 24 08 2017
+				    'safeAddAppMenuHeader'				: _d_safeAddAppMenuHeader, // @new of 24 08 2017
+				    'getPageAppHeader'           		: _getPageAppHeader,
+				    'getAppHeader'           			: _getAppHeader,
+				    'd_setAppHeader'            		: _d_setAppHeader,
+				    'd_viewAppPageHeader' 				: _d_viewAppPageHeader,
+				    'd_showAppPageHeader' 				: _d_showAppPageHeader,
+				    'd_showAppHeader'            		: _d_showAppHeader,
+				    'd_hideAppPagesHeader'           	: _d_hideAppPagesHeader,
+				    'd_hideAppHeader'          			: _d_hideAppHeader,
+				    'd_removeAppHeader'          		: _d_removeAppHeader,
+	       //> functions for headers
 
-			function hideBackgroundCurtain () {
-				/*
-					@discr
-					@inputs
-				*/
+			//work with header
+				'd_loadCSS' 		: _d_loadCSS,
+				'd_loadJS' 			: _d_loadJS,
+				'd_removeByClass' 	: _d_removeByClass,
 
-				// hide curtain
-				$(SELECTOR.db.val.curtain).hide();
-				// off click
-				$(SELECTOR.db.val.curtain).off('click');
-			} _.hideBackgroundCurtain = hideBackgroundCurtain;
-		//@> CURTAIN
+			//effects
+				'effScrollToButtom' 		: effScrollToButtom,
 
-		function clear () {
-			// right header
-			$( SELECTOR.db.main.blocks.second.header.val ).html('');
-			
-			// right body
-	        $( SELECTOR.db.main.blocks.second.body.val  ).html('');
-
-			// left header
-	        $(SELECTOR.db.main.blocks.third.header.val).html('');
-
-			// left body
-	        $(SELECTOR.db.main.blocks.third.body.val).html('');
-		} _.clear = clear;
-
-		return _;
+		}
 
 });
 define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
@@ -8353,6 +7572,18 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	//@>>> TIME FUNCTIONS
 
 	//@<<< LOCAL STORAGE
+		// function _getValidStorage () {
+		// 	if ( getGlobalVar('m_routing').getUserDomain() ) {
+		// 		//if we are in subdomain
+		// 		return window.connectTempLocalStorage;
+		// 	} else {
+		// 		//if we are in chief site
+		//     	return localStorage;
+
+		// 	}
+		// }
+		// _['getValidStorage'] = _getValidStorage;
+
 			function _getLocalStorage () {
 		    	return localStorage;
 			}
@@ -8406,6 +7637,14 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 
 		function _get (name) {
 	    	return _getFromLocalStorageByKey( name );
+
+			// if ( getGlobalVar('m_routing').getUserDomain() ) {
+			// 	//if we are in subdomain
+			// 	return _getFromTempStorageByKey ( name );
+			// } else {
+			// 	//if we are in chief site
+		 //    	return _getFromLocalStorageByKey( name ); 
+			// }
 		}
 		_['get'] = _get;
 
@@ -8491,11 +7730,11 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	
 
 	//@< private vars
-		const globalPrefix 			= 'global-';
-		const prefixForApp_ 		= 'rammanApp-';
-		const prefixForGlobalApp_ 	= globalPrefix + prefixForApp_;
-		const prefixForGlobalVar 	= globalPrefix + 'var-';
-		const openPageName_ 		= 'openPage';
+		const globalPrefix = 'global-';
+		const prefixForApp_ = 'rammanApp-';
+		const prefixForGlobalApp_ = globalPrefix + prefixForApp_;
+		const prefixForGlobalVar = globalPrefix + 'var-';
+		const openPageName_ = 'openPage';
 	//@> private vars
 
 	function _setApp (iNapp) {
@@ -8510,7 +7749,7 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	}
 	_['setApp'] = _setApp;
 
-	function setOpeningPageByApp (iNapp,iNpage) {
+	function _setPage (iNapp,iNpage) {
 		/*
 			@discr
 				save open app and page in global window
@@ -8520,13 +7759,11 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 					iNpage -> string
 		*/
 		// _setApp(iNapp);
-		window[prefixForApp_ + iNapp+'-'+openPageName_] = iNpage;
+		window[this.prefixForApp_ + '-' + iNapp+'-'+this.openPageName_] = iNpage;
 	}
-	_['setOpeningPageByApp'] = setOpeningPageByApp;
+	_['setPage'] = _setPage;
 
-
-
-	function getOpeningPageByApp (iNapp) {
+	function _thisPage (iNapp) {
 		/*
 			@discr
 				get open page or false
@@ -8534,122 +7771,25 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 				@required
 					iNapp -> string
 		*/
-		return window[prefixForApp_ + iNapp+'-'+openPageName_] || false;
+		return window[this.prefixForApp_ + '-' + iNapp + '-' + this.openPageName_ ] || false;
 	}
-	_['getOpeningPageByApp'] = getOpeningPageByApp; window.getOpeningPageByApp = getOpeningPageByApp;
+	_['thisPage'] = _thisPage;
 
-	function getOpeningApp () {
+	function _thisApp () {
 		/*
 			@discr
-				get opening app or false
+				get open app or false
 			@input
 				@required
+					iNapp -> string
+					iNpage -> string
 			@return
 				object: app
 		*/
 		var thisApp = window.rammanNowOpenedApp||false;
 		return thisApp;
-	} _.getOpeningApp = getOpeningApp; window.getOpeningApp = getOpeningApp;
-
-	//
-	//
-	function addAppToStoryLog (iNapp) {
-		/*
-			@discr
-				add app to log fix time and count of opened times
-			@input
-				@required
-					iNapp -> string
-			@return
-				object: app
-		*/
-		if ( typeof window['connectAppStory'] != 'object') 			window['connectAppStory'] 			= {};
-		if ( typeof window['connectAppStory'][iNapp] != 'object') 	window['connectAppStory'][iNapp] 	= {};
-
-		// fixed amount open in time
-		window['connectAppStory'][iNapp]['count'] 	= (window['connectAppStory'][iNapp]['count']||0) + 1;
-
-		// fixed open time
-		window['connectAppStory'][iNapp]['time'] 	= new Date().getTime();
-		
-	} _.addAppToStoryLog = addAppToStoryLog;
-
-	function addAppPageToStoryLog (iNapp,iNpage) {
-		/*
-			@discr
-				add app of page to log fix time and count of opened times
-			@input
-				@required
-					iNapp -> string
-					iNpage -> string
-			@return
-				object: app
-		*/
-		// add app for first
-		addAppToStoryLog(iNapp);
-
-		// add page
-		if ( typeof window['connectAppStory'][iNapp]['pages'] != 'object') 		window['connectAppStory'][iNapp]['pages'] 	= {};
-		if ( typeof window['connectAppStory'][iNapp]['pages'][iNpage] != 'object') 		window['connectAppStory'][iNapp]['pages'][iNpage] 	= {};
-
-		// fixed amount open in time
-		window['connectAppStory'][iNapp]['pages'][iNpage]['count'] 	= (window['connectAppStory'][iNapp]['pages'][iNpage]['count']||0) + 1;
-
-		// fixed open time
-		window['connectAppStory'][iNapp]['pages'][iNpage]['time'] 	= new Date().getTime();
-		
-	} _.addAppPageToStoryLog = addAppPageToStoryLog;
-
-	function getAppFromStoryLog (iNapp) {
-		/*
-			@discr
-				get app from story for check opened app or no
-			@input
-				@required
-					iNapp -> string
-			@return
-				object: app
-		*/
-		// add app for first
-
-
-		if ( typeof window['connectAppStory'] != 'object') 			return false;
-		if ( typeof window['connectAppStory'][iNapp] != 'object') 	return false;
-		return window['connectAppStory'][iNapp];
-		
-	} _.getAppFromStoryLog = getAppFromStoryLog; 
-
-	function getAppPageFromStoryLog (iNapp,iNpage) {
-		/*
-			@discr
-				get page of app from story for check opened page or no
-			@input
-				@required
-					iNapp -> string
-					iNpage -> string
-			@return
-				false OR object: 
-					{
-						count -> number
-						time -> number (timestamp)
-					}
-
-		*/
-		// add app for first
-
-		if(!getAppFromStoryLog(iNapp)) return false;
-
-		
-		// get page
-		if ( typeof window['connectAppStory'][iNapp]['pages'] != 'object') 				return false;
-		if ( typeof window['connectAppStory'][iNapp]['pages'][iNpage] != 'object') 		return false;
-
-		return window['connectAppStory'][iNapp]['pages'][iNpage];
-		
-	} _.getAppPageFromStoryLog = getAppPageFromStoryLog;
-	//
-	//
-
+	}
+	_['thisApp'] = _thisApp;
 
 	function _invokeOpenedApp (iNmethodName) {
 		/*
@@ -8660,11 +7800,11 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 				@optional
 					iNmethodName -> string
 		*/
-		if ( typeof iNmethodName == 'string' && getOpeningApp() != false && typeof getOpeningApp()[iNmethodName] == 'function') {
-			let thisFunc =  getOpeningApp()[iNmethodName];	
+		if ( typeof iNmethodName == 'string' && _thisApp() != false && typeof _thisApp()[iNmethodName] == 'function') {
+			let thisFunc =  _thisApp()[iNmethodName];	
 			thisFunc();
 		}
-		return getOpeningApp();
+		return _thisApp();
 	}
 	_['invokeOpenedApp'] = _invokeOpenedApp;
 
@@ -8684,7 +7824,7 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 			@return
 				false OR 
 		*/
-		var appName = iNappName,appPrefix = prefixForApp_+'-',method=iNmethodName;
+		var appName = iNappName,appPrefix = this.prefixForApp_+'-',method=iNmethodName;
 		if( typeof(window[appPrefix+ appName]) == 'object' && typeof(window[appPrefix+ appName][method]) != 'undefined')
 				switch( typeof(window[appPrefix+ appName][method]) ){
 					case 'function':
@@ -8752,7 +7892,7 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 			@deps
 				funciton : VIEW.d_checkChiefApp,
 				funciton : VIEW.d_createChiefApp,
-				funciton : getOpeningPageByApp
+				funciton : _thisPage
 			@return
 			@algorithm
 				#1 check for isset app
@@ -8778,8 +7918,8 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 				}
 
 				//then invoke app init method
-				iNapp.onInit(iNdataForApp,objectForCreateApp);
-		} else if ( getOpeningPageByApp(objectForCreateApp['app']) != objectForCreateApp['page']) {
+				iNapp.onInit(iNdataForApp);
+		} else if ( _thisPage(objectForCreateApp['app']) != objectForCreateApp['page']) {
 			// we safe invoke app onUpdate method
 			if ( typeof(iNapp['onUpdate']) == 'function' ) iNapp.onUpdate(iNdataForApp);
 		}
@@ -8840,10 +7980,10 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 			@return
 			@algorithmh 
 		*/
-		// if we open this app from another appName != nowOpenedApp
-		if ( iNdata['app'] != getOpeningApp().name ) {
+		// if we open this app from another this.appName != nowOpenedApp
+		if ( iNdata['app'] != _thisApp().name ) {
 			// did safe invoke onDisappear, onOut methods for app is opening now
-			var pagesFunctionsFromAnotherApp =  getPageFuncitons(getOpeningApp(),getOpeningPageByApp( getOpeningApp().name ) );//  _invokeApp(getOpeningApp(),'pages');
+			var pagesFunctionsFromAnotherApp =  getPageFuncitons(_thisApp(),_thisPage( _thisApp().name ) );//  _invokeApp(_thisApp(),'pages');
 			// did safe invoke for pages from another app onDisappear, onOut
 			if ( pagesFunctionsFromAnotherApp != false) {
 				// invoke onDesappear for page 
@@ -8858,7 +7998,7 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 					if ( typeof(pagesFunctionsFromAnotherApp['onHide']) == 'function' )
 						pagesFunctionsFromAnotherApp['onHide']();
 					else 
-						VIEW.d_hidePages(getOpeningApp().name, getOpeningPageByApp( getOpeningApp().name ));
+						VIEW.d_hidePages(_thisApp().name, _thisPage( _thisApp().name ));
 			}
 
 
@@ -8867,10 +8007,10 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 			_invokeOpenedApp('onOut');
 
 			// hide another app with custom or defatult methods
-			if( typeof getOpeningApp()['onHide'] == 'function' ) {
-				getOpeningApp()['onHide']();
+			if( typeof _thisApp()['onHide'] == 'function' ) {
+				_thisApp()['onHide']();
 			} else {
-				VIEW.d_hideApps( getOpeningApp().name );
+				VIEW.d_hideApps( _thisApp().name );
 			}
 
 			// did safe invoke thisApp.onIn in
@@ -8878,10 +8018,10 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 
 			//did app appear functions and 
 			iNapp.onAppear();
-		} else if( getOpeningPageByApp(iNdata['app']) != iNdata['page']) {
+		} else if( _thisPage(iNdata['app']) != iNdata['page']) {
 			// if this app now open and this page does not open we have to invoke page open page on onDisappear
 			// did safe invoke onDisappear  methods for this app
-			var pagesFunctionsFromThisApp = getPageFuncitons( iNapp , getOpeningPageByApp( getOpeningApp().name ) );// _invokeApp(getOpeningApp(),'pages');
+			var pagesFunctionsFromThisApp = getPageFuncitons( iNapp , _thisPage( _thisApp().name ) );// _invokeApp(_thisApp(),'pages');
 
 			if (pagesFunctionsFromThisApp != false) {
 				// invoke safe onDesappear for page 
@@ -8893,7 +8033,7 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 				if ( typeof(pagesFunctionsFromThisApp['onHide']) == 'function' )
 					pagesFunctionsFromThisApp['onHide']();
 				else 
-					VIEW.d_hidePages( iNdata['app'], getOpeningPageByApp( iNdata['app'] ));		
+					VIEW.d_hidePages( iNdata['app'], _thisPage( iNdata['app'] ));		
 		}
 	}
 	function rightInvokePageFunctions (iNapp,iNdata,objectForCreatePage,iNdataForApp) {
@@ -8953,7 +8093,7 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 
 		// set this page as openinig
 		if( typeof pageFunctions['setPage'] != 'function' )
-			setOpeningPageByApp(iNdata['app'],iNdata['page']);
+			_setPage(iNdata['app'],iNdata['page']);
 		else
 			pageFunctions['setPage'](iNdataForApp,objectForCreatePage);
 
@@ -9041,9 +8181,6 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 			_setApp ( iNapp );
 		else
 			iNapp['setApp']( iNdataForApp , iNdata );
-
-		// add app to log
-		addAppPageToStoryLog(iNdata['app'],iNdata['page'])
 
 
 		// invoke app on appear functions
@@ -9457,9 +8594,9 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	//     'clone' 		: _clone,
 
 	//     'setApp' 		: _setApp,
-	//     'setPage' 		: setOpeningPageByApp,
-	//     'thisApp' 		: getOpeningApp,
-	//     'thisPage' 		: getOpeningPageByApp, 
+	//     'setPage' 		: _setPage,
+	//     'thisApp' 		: _thisApp,
+	//     'thisPage' 		: _thisPage, 
 
 	//     'd_hidePages'   : _td_hidePages,
 	//     'd_showPages'   : _td_showPages,
@@ -9502,62 +8639,6 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	// 	'view' : VIEW
 	// }
 });
-define( 'url',[] , function () {
-	const URL = {};
-	const _ = {'db':URL};
-
-	//@< user files
-		URL['gstorage'] = 'https://gstorage.ramman.net';
-		URL['cdn'] 		= 'https://cdn.ramman.net';
-		URL['main'] 	= 'https://ramman.net';
-
-		URL['userNonePhoto']= URL['cdn'] + '/web/res/images/icons/user/noPhoto.png';
-		URL['userNonePhoto']= URL['cdn'] + '/web/res/images/icons/user/noPhoto.png';
-
-
-		function getUserIconByUid (iNuid) {
-		    return  URL['gstorage'] + '/users/' + iNuid + '/public/icons/1.jpg';
-		} _.getUserIconByUid = getUserIconByUid;
-
-		function getChatIconByChatId (iNchatId) {
-		    return  URL['gstorage'] + '/chats/' + iNchatId + '/public/icons/1.jpg';
-		} _.getChatIconByChatId = getChatIconByChatId;
-	//@>
-
-
-
-	//@< api 
-		const API = {}; URL.api = API;
-
-		//@< api > chat
-			const APICHAT 		= {}; API['chat'] = APICHAT;
-			APICHAT['create'] 	= URL['main'] + '/api/chat';
-		//@> api > chat
-
-      	//@< api > page
-			const APIPAGE 		= {}; API['page'] = APIPAGE;
-			APIPAGE['get'] 		= URL['main'] + '/api/service/page';
-		//@> api > page
-
-		//@< api > user
-			const APIUSER 		= {}; API['user'] = APIUSER;
-			APIUSER['sign']		= URL['main'] + '/api/web/sign';
-		//@> api > user
-
-
-		//@< api > getUrl
-			const APIGETURL 		= {}; API['getUrl'] = APIGETURL;
-			APIGETURL['forChat']	= URL['main'] + '/api/geturl/chat';
-		//@> api > getUrl
-
-	//@> api 
-
-
-
-
-
-	return _;
-});
 /*! Simple JavaScript Inheritance
  * By John Resig http://ejohn.org/
  * MIT Licensed.
@@ -9588,7 +8669,7 @@ define("jquery.countdown", ["jquery","jquery.plugin"], (function (global) {
     };
 }(this)));
 
-define('m_user',['jquery','m_firebase','dictionary','m_view','m_app','url','jquery.countdown'], function ($,FIREBASE,DICTIONARY,M_VIEW,M_APP,URL) {
+define('m_user',['jquery','m_firebase','dictionary','m_view','m_app','jquery.countdown'], function ($,FIREBASE,DICTIONARY,M_VIEW,M_APP) {
   	const _ = {};
 	//@@@<<< USER
 		function getUserCountry() {
@@ -9612,9 +8693,6 @@ define('m_user',['jquery','m_firebase','dictionary','m_view','m_app','url','jque
     	_['saveUserLang'] = saveUserLang;
 	//@@@>>> USER
 	function signOut (inSuccess,iNerror){
-		// clear app
-    	M_APP.view.clear();
-
 		if( getMyId() ) {
 			// invoke global function for deleted note from fb db 
 			M_APP.globalFunctions_invoke('devise_removeNoteFromDatabase');
@@ -9647,12 +8725,8 @@ define('m_user',['jquery','m_firebase','dictionary','m_view','m_app','url','jque
     _['signOut'] = signOut;
 
 	function signIn (token,iNfuntion) {
-    	// clear app
-    	M_APP.view.clear();
-    	
 	    FIREBASE.auth().signInWithCustomToken(token).then( 
 	    (user) => {
-
 	    	// save new user id
 	        M_APP.save('uid', FIREBASE.auth().currentUser.uid );
 	        
@@ -9758,7 +8832,7 @@ define('m_user',['jquery','m_firebase','dictionary','m_view','m_app','url','jque
 		if ( iNloader == true  ) M_VIEW.view.showLoader ();
 	    $.ajax(
 	    {
-	        url: URL.db.api.user.sign, //'https://ramman.net/api/web/sign',
+	        url: 'https://ramman.net/api/web/sign',
 	        type: 'POST',
 	        data: JSON.stringify({'type':'signInByAnonim'}),
 	        beforeSend: function(request) {
@@ -9801,7 +8875,7 @@ define('m_user',['jquery','m_firebase','dictionary','m_view','m_app','url','jque
 
 
 	    $.ajax({
-	        url: URL.db.api.user.sign,//'https://ramman.net/api/web/sign',
+	        url: 'https://ramman.net/api/web/sign',
 	        type: 'POST',
 	        data: JSON.stringify(iNdata),
 	        beforeSend: function(request) {
@@ -9851,7 +8925,7 @@ define('m_user',['jquery','m_firebase','dictionary','m_view','m_app','url','jque
 	        iNdata['codeType'] 	= formBlock['codeType'];
 	        M_VIEW.view.showLoader ();
 	        $.ajax({
-	            url: URL.db.api.user.sign,//'https://ramman.net/api/web/sign',
+	            url: 'https://ramman.net/api/web/sign',
 	            type: 'POST',
 	            data: JSON.stringify(iNdata),
 	            beforeSend: function(request) {
@@ -9894,7 +8968,7 @@ define('m_user',['jquery','m_firebase','dictionary','m_view','m_app','url','jque
 		M_VIEW.view.showLoader();
 	    var formBlock = $(Obj).serializeObject();
 	    $.ajax({
-	        url: URL.db.api.user.sign,//'https://ramman.net/api/web/sign',
+	        url: 'https://ramman.net/api/web/sign',
 	        type: 'POST',
 	        data: JSON.stringify(formBlock),
 	        beforeSend: function(request) {
@@ -9938,17 +9012,12 @@ define('m_user',['jquery','m_firebase','dictionary','m_view','m_app','url','jque
 
 
     function setMyIcon (iNurl) {
-    	// DELETE CHANGE
-	    // M_APP.save('userIcon',iNurl);
+	    M_APP.save('userIcon',iNurl);
     }
     function getMyIcon () {
-    	return URL.getUserIconByUid( getMyId() );//M_APP.get('userIcon');
+    	return M_APP.get('userIcon');
 	}
     _['getMyIcon'] = getMyIcon;
-
-    function getIconNonePhoto () {
-    	return URL.db.userNonePhoto;
-    } _.getIconNonePhoto = getIconNonePhoto;
 
     function setMyLogin (iNlogin) {
 	    M_APP.save('user',iNlogin);
@@ -10033,7 +9102,7 @@ define('m_user',['jquery','m_firebase','dictionary','m_view','m_app','url','jque
 	    if(st<nowSec) {
 	    	M_VIEW.view.showLoader();
 	        $.ajax({
-	            url: URL.db.api.user.sign,//'https://ramman.net/api/web/sign',
+	            url: 'https://ramman.net/api/web/sign',
 	            type: 'POST',
 	            data: JSON.stringify(iNdata),
 	            beforeSend: function(request) {
@@ -13034,18 +12103,10 @@ define(
 	    /* EXTENCION */
 	});
 
-  	// tagForTracking
-  	// 	templates['tag_forTracking'] = `
-  	// 		<div id='tagId{{tagId}}' class='tagForTracking'></div>
-  	// 	`;
-  	// 	function getTagForTracking () {
-  	// 		let temp 		= Template7.compile(templates['tag_forTracking']);
-			// let domElement 	=  temp(iNdata);
-  	// 	} _.getTagForTracking = getTagForTracking;
 	
 	//@< chief msg container
 		templates['msg_boxForMessage'] = `
-			<div id='msgId{{msgId}}' class="messagesInChatView {{class}} {{#if hide}}hide{{/if}}{{#if appearClass}}connect-appear{{/if}} {{#if fromMe}}fromMeMessageInChatView{{/if}}{{#if toMe}}toMeMessageInChatView{{/if}} {{#if note}}noteMessage{{/if}}"  {{#if timeSent}}time-sent="{{timeSent}}"{{/if}}  {{#if timeRead}}time-read="{{timeRead}}"{{/if}} {{#if timeDelivered}}time-delivered="{{timeDelivered}}"{{/if}}  connect_msg="{{msgId}}" connect-appear-scroll-parent='#leftBlockInViewWindow' connect-appear-my-parent='.ChatViewInAppWindow'>
+			<div id='msgId{{msgId}}' class="messagesInChatView {{class}} {{#if appearClass}}connect-appear{{/if}} {{#if fromMe}}fromMeMessageInChatView{{/if}}{{#if toMe}}toMeMessageInChatView{{/if}} {{#if note}}noteMessage{{/if}}"  {{#if timeSent}}time-sent="{{timeSent}}"{{/if}}  {{#if timeRead}}time-read="{{timeRead}}"{{/if}} {{#if timeDelivered}}time-delivered="{{timeDelivered}}"{{/if}}  connect_msg="{{msgId}}" connect-appear-scroll-parent='#leftBlockInViewWindow' connect-appear-my-parent='.ChatViewInAppWindow'>
 				{{boxContent}}
 			</div>
 		`;
@@ -13205,14 +12266,6 @@ define(
 					_['msg_getDomAttrByNameMessageTimeDelivered'] = msg_getDomAttrByNameMessageTimeDelivered;
 		//@SECTION> common time
 
-
-		function msg_dellHideClassByMsgId (iNmsgId) {
-			var id = '#msgId' + iNmsgId;
-			$(id+'.messagesInChatView').removeClass('hide');
-		} _.msg_dellHideClassByMsgId = msg_dellHideClassByMsgId;
-
-
-
 		function msg_getTemplateByNameBoxForMsg (iNdata) {
     		/*
     			@inputs
@@ -13251,21 +12304,24 @@ define(
 		}
 	    _['msg_getPathToDomForMsg'] = msg_getPathToDomForMsg;
 
-	    function msg_getNameOfTypeByType (iNtype) {
-	    	switch(iNtype) {
+
+		function msg_createMsgByItsType ( iNtype, iNobjectForCreateMessage, iNmyUID, iNchatId ) {
+    		switch(iNtype) {
     			//@< text messages
     			case 1: 	// simpleText 
-					return 'simpleText';
+					msgSimpleText_createMsg( iNobjectForCreateMessage, iNmyUID, iNchatId );
     			break;
     			//@> text messages
 
     			//@< live messages
 	    			case 20: 	// liveAudio 
-						return 'liveAudio';
+						// msgLiveAudio_createMsg( iNobjectForCreateMessage, iNmyUID, iNchatId );
+						msgLiveAudio_safeReplace( iNobjectForCreateMessage, iNmyUID, iNchatId  );
 	    			break;
 
-	    			case 21: 	// liveVideo
-						return 'liveVideo';
+	    			case 21: 	// liveAudio
+						// msgLiveVideo_createMsg( iNobjectForCreateMessage, iNmyUID, iNchatId );
+						msgLiveVideo_safeReplace( iNobjectForCreateMessage, iNmyUID, iNchatId  );
 	    			break;
     			//@> live messages
 
@@ -13275,8 +12331,8 @@ define(
 				//@< documents messages
     			//@< documents messages
     		}
-    		return false;
-	    } _.msg_getNameOfTypeByType = msg_getNameOfTypeByType;
+		}
+	    _['msg_createMsgByItsType'] = msg_createMsgByItsType;
 
 	    function msg_replaceMsgByItsType ( iNtype, iNobjectForCreateMessage, iNmyUID, iNchatId ) {
 	    	console.log('msg_replaceMsgByItsType' , iNtype, iNobjectForCreateMessage, iNmyUID, iNchatId);
@@ -13461,7 +12517,7 @@ define(
 		         <div class="aCpI_msgLiveAudio_controllPlayInAudioMessage" onclick="aCpI_msgLiveAudio_playAudioOnClickBtnPlay(this,event)"></div>
 		         <div class="aCpI_msgLiveAudio_controllPauseInAudioMessage" onclick="aCpI_msgLiveAudio_pauseAudioOnClickBtnPause(this,event)"></div>
 		         <div class="aCpI_msgLiveAudio_hideAudioBlock">
-		            <audio class="audioSrc flagAudioOrVideoElement" onplay="aCpI_msgLiveAudio_onEventPlay(this)" onpause="aCpI_msgLiveAudio_onEventPause(this)" preload="metadata" src="{{url}}" onloadeddata="aCpI_msgLiveAudio_onEventLoadedAudio(this)" ontimeupdate="aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl(this)"></audio>
+		            <audio class="audioSrc flagAudioOrVideoElement" onplay="aCpI_msgLiveAudio_onEventPlay(this)" onpause="aCpI_msgLiveAudio_onEventPause(this)" preload="auto" src="{{content}}" onloadeddata="aCpI_msgLiveAudio_onEventLoadedAudio(this)" ontimeupdate="aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl(this)"></audio>
 		         </div>
 		         <div class="aCpI_msgLiveAudio_timeNowInAudioMessage aCpI_msgLiveAudio_timeInAudioMsg"></div>
 		         <div class="aCpI_msgLiveAudio_timeAllInAudioMessage aCpI_msgLiveAudio_timeInAudioMsg"></div>
@@ -13484,7 +12540,7 @@ define(
 		         <div class="aCpI_msgLiveAudio_controllPlayInAudioMessage" onclick="aCpI_msgLiveAudio_playAudioOnClickBtnPlay(this,event)"></div>
 		         <div class="aCpI_msgLiveAudio_controllPauseInAudioMessage" onclick="aCpI_msgLiveAudio_pauseAudioOnClickBtnPause(this,event)"></div>
 		         <div class="aCpI_msgLiveAudio_hideAudioBlock">
-		            <audio class="audioSrc flagAudioOrVideoElement" onplay="aCpI_msgLiveAudio_onEventPlay(this)" onpause="aCpI_msgLiveAudio_onEventPause(this)" preload="metadata" src="{{url}}" onloadeddata="aCpI_msgLiveAudio_onEventLoadedAudio(this)" ontimeupdate="aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl(this)"></audio>
+		            <audio class="audioSrc flagAudioOrVideoElement" onplay="aCpI_msgLiveAudio_onEventPlay(this)" onpause="aCpI_msgLiveAudio_onEventPause(this)" preload="auto" src="{{content}}" onloadeddata="aCpI_msgLiveAudio_onEventLoadedAudio(this)" ontimeupdate="aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl(this)"></audio>
 		         </div>
 		         <div class="aCpI_msgLiveAudio_timeNowInAudioMessage aCpI_msgLiveAudio_timeInAudioMsg"></div>
 		         <div class="aCpI_msgLiveAudio_timeAllInAudioMessage aCpI_msgLiveAudio_timeInAudioMsg"></div>
@@ -13494,10 +12550,6 @@ define(
 
 		function  msgLiveAudio_createMsg ( iNdata, iNmyUid, iNchatId ) {
 	        var iNneedView = msg_getPathToDomForChat(iNchatId);
-
-	        // add hide class if we has no url
-	        if(iNdata['url'])iNdata['hide'] = 1;
-
 	        $( iNneedView ).append( msgLiveAudio_getMsg ( iNdata, iNmyUid ) );
 		}
 	    _['msgLiveAudio_createMsg'] = msgLiveAudio_createMsg;
@@ -13576,35 +12628,17 @@ define(
 		    _['msgLiveAudio_safeReplace'] = msgLiveAudio_safeReplace;
 		    
 			    function msgLiveAudio_replace ( iNdata, iNmyUid, iNchatId ) {
-			    	/*
-			    		если нет src то не видимый
-
-			    		первый раз мы добавляем без url - мы должны скрыть
-			    		потом при добавление url мы показываем
-			    	*/
 		        	// update common time
 		        	msg_updateDomCommonTimeBlock (iNchatId,iNdata['msgId'],iNdata);
 
-		        	if ( iNdata['url'] ) {
-		        		//if we has url we show 
-		        		msg_dellHideClassByMsgId(iNdata['msgId'])
-
-		        		//if we have not url => we add
-		        		if ( !msgLiveAudio_getUrl(iNchatId, iNdata['msgId']) ) {
-		        			msgLiveAudio_setUrl(iNchatId, iNdata['msgId'], iNdata['url'] );
-		        		}
-		        	}
+		        	// update content NOT NEED -> we never change src 
+		        	// msgLiveAudio_updateContent (iNchatId, iNdata, iNmyUid);
 				}
 			    _['msgLiveAudio_replace'] = msgLiveAudio_replace;
 
-			    	function msgLiveAudio_getUrl ( iNchatId, iNmsgId ) {
+			    	function msgLiveAudio_getUrl (iNchatId, iNmsgId) {
 			        	var fullPath = msg_getPathToDomForMsg(iNchatId, iNmsgId);
 			        	return $(fullPath + ' audio').attr('src');
-			    	}
-
-			    	function msgLiveAudio_setUrl ( iNchatId, iNmsgId, iNurl ) {
-			        	var fullPath = msg_getPathToDomForMsg(iNchatId, iNmsgId);
-			        	return $(fullPath + ' audio').attr('src',iNurl);
 			    	}
 
 
@@ -13689,7 +12723,7 @@ define(
 		      	 <div class='aCpI_msgLiveVideo_msgNowVideoTime'></div>
 		         <div class="aCpI_msgLiveVideo_backgroundPlayVideoOnHover aCpI_msgLiveVideo_backgroundVideoOnHover" onclick='aCpI_msgLiveVideo_onEventClickForBackground(this)'></div>
 		         <!-- <div class="aCpI_msgLiveVideo_backgroundPauseVideoOnHover aCpI_msgLiveVideo_backgroundVideoOnHover"></div> -->
-		         <video preload="metadata" ontimeupdate='aCpI_msgLiveVideo_onEventTimeUpdateVideo(this)' onloadeddata='aCpI_msgLiveVideo_onEventLoadedDataVideo(this)' onplay='aCpI_msgLiveVideo_onEventPlayVideo(this)' onpause='aCpI_msgLiveVideo_onEventPauseVideo(this)' src="{{url}}" class="liveVideoSrc"></video>
+		         <video ontimeupdate='aCpI_msgLiveVideo_onEventTimeUpdateVideo(this)' onloadeddata='aCpI_msgLiveVideo_onEventLoadedDataVideo(this)' onplay='aCpI_msgLiveVideo_onEventPlayVideo(this)' onpause='aCpI_msgLiveVideo_onEventPauseVideo(this)' src="{{content}}" class="liveVideoSrc"></video>
 		      </div>
 		   </div>
 		`;
@@ -13703,17 +12737,13 @@ define(
 		      	 <div class='aCpI_msgLiveVideo_msgNowVideoTime'></div>
 		         <div class="aCpI_msgLiveVideo_backgroundPlayVideoOnHover aCpI_msgLiveVideo_backgroundVideoOnHover" onclick='aCpI_msgLiveVideo_onEventClickForBackground(this)'></div>
 		         <!-- <div class="aCpI_msgLiveVideo_backgroundPauseVideoOnHover aCpI_msgLiveVideo_backgroundVideoOnHover"></div> -->
-		         <video preload="metadata" ontimeupdate='aCpI_msgLiveVideo_onEventTimeUpdateVideo(this)' onloadeddata='aCpI_msgLiveVideo_onEventLoadedDataVideo(this)' onplay='aCpI_msgLiveVideo_onEventPlayVideo(this)' onpause='aCpI_msgLiveVideo_onEventPauseVideo(this)' src="{{url}}" class="liveVideoSrc"></video>
+		         <video ontimeupdate='aCpI_msgLiveVideo_onEventTimeUpdateVideo(this)' onloadeddata='aCpI_msgLiveVideo_onEventLoadedDataVideo(this)' onplay='aCpI_msgLiveVideo_onEventPlayVideo(this)' onpause='aCpI_msgLiveVideo_onEventPauseVideo(this)' src="{{content}}" class="liveVideoSrc"></video>
 		      </div>
 		   </div>
 		`;
 
 		function  msgLiveVideo_createMsg ( iNdata, iNmyUid, iNchatId ) {
-	        var iNneedView = msg_getPathToDomForChat(iNchatId);
-
-	        // add hide class if we has no url
-	        if(iNdata['url'])iNdata['hide'] = 1;
-
+	        var iNneedView = msg_getPathToDomForChat(iNchatId);//"#leftBlockInViewWindow .ChatViewInAppWindow[connect_chatid='"+iNchatId+"']";
 	        $( iNneedView ).append( msgLiveVideo_getMsg ( iNdata, iNmyUid ) );
 		}
 	    _['msgLiveVideo_createMsg'] = msgLiveVideo_createMsg;
@@ -13780,6 +12810,8 @@ define(
 
     		function msgLiveVideo_safeReplace ( iNdata, iNmyUid, iNchatId ) {
 		        var thisIssetLength = msg_getLength(iNdata, iNchatId);
+		        console.log('msgLiveVideo_safeReplace thisIssetLength',thisIssetLength);
+		        console.log('msgLiveVideo_safeReplace iNdata, iNmyUid, iNchatId',iNdata, iNmyUid, iNchatId);
 		        if (thisIssetLength > 0) {
 		        	// create message
 		        	msgLiveVideo_replace ( iNdata, iNmyUid, iNchatId );
@@ -13791,20 +12823,7 @@ define(
 		    
 			    function msgLiveVideo_replace ( iNdata, iNmyUid, iNchatId ) {
 		        	// update common time
-		        	msg_updateDomCommonTimeBlock (iNchatId, iNdata['msgId'], iNdata);
-
-
-					console.log("msgLiveVideo_replace - iNdata['url']", iNdata['url'] );
-		        	if ( iNdata['url'] ) {
-						//if we has url we show 
-						msg_dellHideClassByMsgId(iNdata['msgId'])
-
-						//if we have not url => we add
-						console.log("msgLiveVideo_replace - msgLiveVideo_getUrl(iNchatId, iNdata['msgId'])",msgLiveVideo_getUrl(iNchatId, iNdata['msgId']));
-						if ( !msgLiveVideo_getUrl(iNchatId, iNdata['msgId']) ) {
-							msgLiveVideo_setUrl(iNchatId, iNdata['msgId'], iNdata['url'] );
-						}
-					}
+		        	msg_updateDomCommonTimeBlock (iNchatId,iNdata['msgId'],iNdata);
 
 		        	// update content NOT NEED -> we never change src of video el
 		        	// msgLivVideo_updateContent (iNchatId, iNdata, iNmyUid);
@@ -13815,10 +12834,6 @@ define(
 			        	var fullPath = msg_getPathToDomForMsg(iNchatId, iNmsgId);
 			        	return $(fullPath + ' video').attr('src');
 			    	}
-			    	function msgLiveVideo_setUrl (iNchatId, iNmsgId, iNurl) {
-						var fullPath = msg_getPathToDomForMsg(iNchatId, iNmsgId);
-						return $(fullPath + ' video').attr('src',iNurl);
-					}
 
 
 		    function msgLiveVideo_showUploadBlock (iNchatId,iNmsgId) {
@@ -14135,7 +13150,7 @@ define(
   		*/
   		if ( typeof iNdata['simpleMsgText_onClickSendBtn'] == 'function') {
   			// if value is empty
-  			$('#sendTextButtonInSenderBlock').off('click');
+  			$('#sendTextButtonInSenderBlock').off();
 
   			$('#sendTextButtonInSenderBlock').click(function (e) {
   				var value =  $('#forTextInputInSenderBlock textarea').val();
@@ -14148,14 +13163,12 @@ define(
   			
 
   		}
-		$('.buttonChatToBottom').off('click');
   		$('.buttonChatToBottom').click( 
 			function () {
 				$('#leftBlockInViewWindow').scrollBot(0);
 			} 
 		);
 
-  		$("#forTextInputInSenderBlock textarea").off('keydown keyup');
 		$("#forTextInputInSenderBlock textarea").keydown( function(e) { 
 	    var code = e.which; // recommended to use e.which, it's normalized across browsers
 
@@ -14827,7 +13840,8 @@ define(
 		    			
 		    		},500);
 		    	}
-			} window.aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl = aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl;
+			}
+			window.aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl = aCpI_msgLiveAudio_onEventTimeUpdateForAuidioEl;
 
 		  	function aCpI_msgLiveAudio_playAudioOnClickBtnPlay (iNobject,iNevent) {
 		  		/*
@@ -14847,7 +13861,8 @@ define(
 		  		var thisAudioEl = thisPlayBtn.nextAll('.aCpI_msgLiveAudio_hideAudioBlock').children('audio').get(0);
 
 		  		thisAudioEl.play();
-		  	} window.aCpI_msgLiveAudio_playAudioOnClickBtnPlay = aCpI_msgLiveAudio_playAudioOnClickBtnPlay;
+		  	}
+			window.aCpI_msgLiveAudio_playAudioOnClickBtnPlay = aCpI_msgLiveAudio_playAudioOnClickBtnPlay;
 
 					
 
@@ -14862,7 +13877,8 @@ define(
 				  		$(iNthis)
 				  			.addClass('flagForSearchPlayingAudioOrVideo')
 				  			.addClass('flagForSearchPlayingLiveAudio');
-					} _['msgLiveAudio_addPlayingFlags'] = aCpI_msgLiveAudio_addPlayingFlags;
+					}
+					_['msgLiveAudio_addPlayingFlags'] = aCpI_msgLiveAudio_addPlayingFlags;
 
 		  	function aCpI_msgLiveAudio_pauseAudioOnClickBtnPause (iNobject,iNevent) {
 		  		/*
@@ -14882,7 +13898,8 @@ define(
 		  		var thisAudio = thisPauseBtn.nextAll('.aCpI_msgLiveAudio_hideAudioBlock').children('audio').get(0);
 
 		  		thisAudio.pause();
-		  	} window.aCpI_msgLiveAudio_pauseAudioOnClickBtnPause = aCpI_msgLiveAudio_pauseAudioOnClickBtnPause;
+		  	}
+			window.aCpI_msgLiveAudio_pauseAudioOnClickBtnPause = aCpI_msgLiveAudio_pauseAudioOnClickBtnPause;
 				
 				function aCpI_msgLiveAudio_onEventPause (iNobject) {
 					// del flag
@@ -14890,9 +13907,9 @@ define(
 
 						var parent = $(iNobject).closest('.aCpI_msgLiveAudio_blockInAudioMsg');
 					aCpI_msgLiveAudio_smartViewBtnPlayAudio(parent)
-				} window.aCpI_msgLiveAudio_onEventPause = aCpI_msgLiveAudio_onEventPause;
-
-					function aCpI_msgLiveAudio_delPlayingFlags (iNthis) {
+				}
+				window.aCpI_msgLiveAudio_onEventPause = aCpI_msgLiveAudio_onEventPause;
+						function aCpI_msgLiveAudio_delPlayingFlags (iNthis) {
 						/*
 				  			@discr
 				  				delete flag by removeClass 'flagForSearchPlayingAudioOrVideo' && 'flagForSearchPlayingLiveAudio'
@@ -14951,7 +13968,8 @@ define(
 		  					iNthis -> object (this)
 		  		*/
 		  		$(iNthis).children('.aCpI_msgLiveVideo_backgroundVideoOnHover').show();
-			} window.aCpI_msgLiveVideo_onEventMouseEnter = aCpI_msgLiveVideo_onEventMouseEnter;	
+			}
+			window.aCpI_msgLiveVideo_onEventMouseEnter = aCpI_msgLiveVideo_onEventMouseEnter;	
 
 			function aCpI_msgLiveVideo_onEventMouseLeave (iNthis) {
 				/*
@@ -14962,7 +13980,8 @@ define(
 		  					iNthis -> object (this)
 		  		*/
 		  		$(iNthis).children('.aCpI_msgLiveVideo_backgroundVideoOnHover').hide();
-			} window.aCpI_msgLiveVideo_onEventMouseLeave = aCpI_msgLiveVideo_onEventMouseLeave;	
+			}
+			window.aCpI_msgLiveVideo_onEventMouseLeave = aCpI_msgLiveVideo_onEventMouseLeave;	
 
 			
 
@@ -14978,7 +13997,8 @@ define(
 			  		$(iNthis)
 			  			.addClass('flagForSearchPlayingAudioOrVideo')
 			  			.addClass('flagForSearchPlayingLiveVideo');
-				} _['msgLiveVideo_addPlayingFlags'] = msgLiveVideo_addPlayingFlags;
+				}
+				_['msgLiveVideo_addPlayingFlags'] = msgLiveVideo_addPlayingFlags;
 
 			function aCpI_msgLiveVideo_onEventPauseVideo (iNthis) {
 				/*
@@ -14997,7 +14017,8 @@ define(
 
 		  		// dell flag by removeClass 'flagForSearchPlayingAudioOrVideo' && 'flagForSearchPlayingLiveVideo'
 		  		aCpI_msgLiveVideo_delPlayingFlags(iNthis);
-			} window.aCpI_msgLiveVideo_onEventPauseVideo = aCpI_msgLiveVideo_onEventPauseVideo;	
+			}
+			window.aCpI_msgLiveVideo_onEventPauseVideo = aCpI_msgLiveVideo_onEventPauseVideo;	
 
 				function aCpI_msgLiveVideo_delPlayingFlags (iNthis) {
 					/*
@@ -15011,7 +14032,6 @@ define(
 			  			.removeClass('flagForSearchPlayingAudioOrVideo')
 			  			.removeClass('flagForSearchPlayingLiveVideo');
 				}
-
 			function aCpI_msgLiveVideo_onEventLoadedDataVideo (iNthis) {
 				/*
 		  			@discr
@@ -15021,7 +14041,8 @@ define(
 		  					iNthis -> object (this)
 		  		*/
 		  		let loadingEl = $(iNthis).closest('.aCpI_msgLiveVideo_videoMsgContent').find('.aCpI_msgLiveVideo_viewWhenLoadingVideoLiveMsg').hide();
-			} window.aCpI_msgLiveVideo_onEventLoadedDataVideo = aCpI_msgLiveVideo_onEventLoadedDataVideo;	
+			}
+			window.aCpI_msgLiveVideo_onEventLoadedDataVideo = aCpI_msgLiveVideo_onEventLoadedDataVideo;	
 
 			function aCpI_msgLiveVideo_onEventTimeUpdateVideo (iNthis) {
 				/*
@@ -15036,7 +14057,8 @@ define(
 		  		var currentTime 	= (iNthis.currentTime * 1000) || 0;
 		  		var textCurrentTime = moment(currentTime).format('mm:ss');
 		  		let parent = $(iNthis).closest('.aCpI_msgLiveVideo_videoMsgContent').find('.aCpI_msgLiveVideo_msgNowVideoTime').html(textCurrentTime);
-			} window.aCpI_msgLiveVideo_onEventTimeUpdateVideo = aCpI_msgLiveVideo_onEventTimeUpdateVideo;	
+			}
+			window.aCpI_msgLiveVideo_onEventTimeUpdateVideo = aCpI_msgLiveVideo_onEventTimeUpdateVideo;	
 
 
 			function aCpI_msgLiveVideo_onEventClickForBackground (iNthis) {
@@ -15057,9 +14079,22 @@ define(
 		  			videoEl.play()
 
 		  		}
-			} window.aCpI_msgLiveVideo_onEventClickForBackground = aCpI_msgLiveVideo_onEventClickForBackground;	
+			}
+			window.aCpI_msgLiveVideo_onEventClickForBackground = aCpI_msgLiveVideo_onEventClickForBackground;	
 
 		//@> codeKey = appChatPageIndex - aCpI 'videoLiveMsg'
+
+
+
+
+
+	///
+	///
+
+
+
+
+
 
 	return _;
 
@@ -15452,8 +14487,8 @@ define("jquery.lettering", ["jquery"], (function (global) {
 }(this)));
 
 define(
-	'v_category',['sweetalert2','m_user', 'm_app','v_message','v_view','jquery','mixitup','dictionary','m_moment','jquery.textillate','jquery.lettering'], 
-	function(swal, USER,  M_APP,V_MESSAGE, V_VIEW, $, mixitup, DICTIONARY , MOMENT ) 
+	'v_category',['sweetalert2', 'm_app','v_message','v_view','jquery','mixitup','dictionary','m_moment','jquery.textillate','jquery.lettering'], 
+	function(SWEETALERT, M_APP,V_MESSAGE, V_VIEW, $, mixitup, DICTIONARY , MOMENT ) 
 {//'m_view','m_app'
 				
 	const _ = {};
@@ -15494,8 +14529,9 @@ define(
 		  	</div>
 	  	{{/each}}
     `;
+
     templates['UserList'] = `
-		<div class="mix usersBlockInMenusBlock {{appsForFilter}} {{class}}" connect_uid="{{userId}}" {{#if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" data-sortable="1" data-position-of-chat='{{chatPosition}}' connect_toUserId='{{toUserId}}' connect_owner='{{owner}}' connect_userType='{{userType}}' connect_chatType='{{chatType}}' connect_userLogin='{{login}}'>
+		<div class="mix usersBlockInMenusBlock" connect_uid="{{userId}}" {{if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" connect_userType='{{userType}}' connect_userLogin='{{login}}'>
 			<div class='chatDataInUsersBlock'>
 				<div class="iconBlockInUserBlock">
 			      <div class="iconInUserBlock">
@@ -15516,11 +14552,8 @@ define(
 			         <div class="userNameInChatList">{{chatName}}</div>
 			      </div>
 			      <div class="toCallBlockInUserNameBlock">
-			      	 <div class="btnToCallInFirstLine"><i class="fas fa-phone-square"></i></div>
-			         <!-- 
-			         	<div class="btnToVoiceCallInFirstLine"></div>
-			         	<div class="btnToVideoCallInFirstLine"></div>
-		         	 -->
+			         <div class="btnToVoiceCallInFirstLine"></div>
+			         <div class="btnToVideoCallInFirstLine"></div>
 			      </div>
 			    </div>
 
@@ -15590,292 +14623,27 @@ define(
 
 
 
-	function chat_initGlobalFilter (iNfilter) {
-		/*
-			@discr
-				init global filter for chat sort
-			@inputs
-				@optional
-					iNfilter -> string
-
-		*/
-		let filter = iNfilter||'ramman';
-		chat_setGlobalFilter(filter);
-	} _['chat_initGlobalFilter'] = chat_initGlobalFilter;
-
-	function chat_getGlobalFilter () {
-		/*
-			@discr
-				get global filter for chat sort
-			@inputs
-				@required
-
-		*/
-		var filter = window['connect_globalFilterForUserSort'];
-		switch (filter) {
-			case 'market':
-				return '.' + filter;
-			break; 
-			case 'sharepay':
-				return '.' + filter;
-			break; 
-			case 'onepay':
-				return '.' + filter;
-			break; 
-			case 'edocument':
-				return '.' + filter;
-			break; 
-			default:
-				return 'all';
-			break; 
-		}
-	} _['chat_getGlobalFilter'] = chat_getGlobalFilter;
-
-	function chat_setGlobalFilter (iNfilter) {
-		/*
-			@discr
-				set global filter for chat sort
-			@inputs
-				@optional
-					iNfilter -> string
-
-		*/
-		switch (iNfilter) {
-			case 'sharepay':
-			break; 
-			case 'market':
-			break; 
-			case 'onepay':
-			break; 
-			case 'edocument':
-			break; 
-			default:
-				iNfilter = 'all';
-			break; 
-		}
-		window['connect_globalFilterForUserSort'] = iNfilter;
-	} _['chat_setGlobalFilter'] = chat_setGlobalFilter;
-	
-
-	function chat_offSelectEffects () {
-		/*
-			@discr
-				del select effects from all chats
-			@inputs
-				@required
-
-		*/
-		$('.chatDataInUsersBlock').removeClass('selected');
-	} _.chat_offSelectEffects = chat_offSelectEffects;
-
-	function chat_addSelectEffectsByChatId (iNchatId) {
-		/*
-			@discr
-				set select effects for this chat
-			@inputs
-				@required
-					iNchatId -> string
-
-		*/
-		let pathToThisChat = getPathToChatByChatId(iNchatId);
-		$(pathToThisChat).find('.chatDataInUsersBlock').addClass('selected');
-
-	} _.chat_addSelectEffectsByChatId = chat_addSelectEffectsByChatId;
-
-	function chat_setSelectOnlyThisChat (iNchatId) {
-		/*
-			@discr
-				set select effects ONLY for this chat 
-			@inputs
-				@required
-					iNchatId -> string
-
-		*/
-		chat_offSelectEffects();
-		chat_addSelectEffectsByUserId(iNchatId);
-
-	} _.chat_setSelectOnlyThisChat = chat_setSelectOnlyThisChat;
-
-	function chat_addSelectEffectsByUserId (iNchatId) {
-		/*
-			@discr
-				add select effects by chatId
-			@inputs
-				@required
-					iNchatId -> string
-
-		*/
-		let pathToThisChat = getPathToChatByUserId(iNchatId);
-		$(pathToThisChat).find('.chatDataInUsersBlock').addClass('selected');
-
-	} _.chat_addSelectEffectsByUserId = chat_addSelectEffectsByUserId;
-	
-	function chat_hideAllChats () {
-		/*
-			@discr
-				show all chats
-			@inputs
-				@required
-		*/
-		let mixer = output['sortMixitUpObject'];
-		if(typeof mixer == 'object') mixer.filter("none");
-
-	} _['chat_hideAllChats'] = chat_hideAllChats;
-
-	function chat_showAllChats () {
-		/*
-			@discr
-				show all chats
-			@inputs
-				@required
-		*/
-		// $('.mix.usersBlockInMenusBlock').show();
-		let mixer = output['sortMixitUpObject'];
-		if(typeof mixer == 'object') mixer.filter("all");
-	} _['chat_showAllChats'] = chat_showAllChats;
-
-	function chat_showChatByUserId (iNuserId) {
-		/*
-			@discr
-				show chat by his userId
-			@inputs
-				@required
-					iNuserId -> string
-		*/
-
-		let mixer = output['sortMixitUpObject'];
-		if(typeof mixer == 'object') mixer.filter("[connect_uid='"+iNuserId+"']");
-	} _['chat_showChatByUserId'] = chat_showChatByUserId;
-
-
-	function chat_showChatByChatId (iNchatId) {
-		/*
-			@discr
-				show chat by his chatId
-			@inputs
-				@required
-					iNchatId -> string
-		*/
-
-		let mixer = output['sortMixitUpObject'];
-		if(typeof mixer == 'object') mixer.filter("[connect_chatid='"+iNchatId+"']");
-	} _['chat_showChatByChatId'] = chat_showChatByChatId;
-
-
-	function chat_hideUserMenus () {
-		/*
-			@discr
-				hide all chat menus
-			@inputs
-				@required
-		*/
-		var selector = '#menusBlock .menusInUsersBlock';
-		$(selector).hide();
-	}
-	_['chat_hideUserMenus'] = chat_hideUserMenus;
-
-	function chat_showOnlyThisChatMenu (iNuserId) {
-		/*
-			@discr
-				show only this chat menu by chatId
-			@inputs
-				@required
-					iNchatId -> string
-		*/
-
-		// hide all menus
-		chat_hideUserMenus();
-
-		//show this chat menu
-		chat_showChatMenuByUserId(iNuserId);
-
-	} _['chat_showOnlyThisChatMenu'] = chat_showOnlyThisChatMenu;
-
-	function chat_showChatMenuByUserId (iNchatId) {
-		/*
-			@discr
-				show chat menu by chatId
-			@inputs
-				@required
-					iNchatId -> string
-
-		*/
-		var pathToThisChat = getPathToChatByUserId(iNchatId);
-		$(pathToThisChat + ' .menusInUsersBlock').show();
-	} _['chat_showChatMenuByUserId'] = chat_showChatMenuByUserId;
-
-
-	function addOnClickActionForChatList (iNchatId) {
-		/*
-			@discr
-				add action for open chat by click to this chat
-			@inputs
-				@required
-					iNchatId -> string
-
-		*/
-		var pathToThisChat = getPathToChatByChatId(iNchatId);
-		console.log('addOnClickActionForChatList - iNchatId, pathToThisChat',iNchatId, pathToThisChat);
-
-		// selected thi chat -> we remove selected class from all
-		chat_setSelectOnlyThisChat(iNchatId);
-
-
-		//prepare object
-		var obj = {};
-			var chatId 		= iNchatId;//$(pathToThisChat).attr('connect_chatid');
+	function onClickToChatList (iNchatId,iNfunction) {
+		var pathToThisChat = getPathToDomElByChatId(iNchatId);
+		$(pathToThisChat + ' .iconInUserBlock img, ' + pathToThisChat + ' .userNameInChatList').off();
+		$(pathToThisChat + ' .iconInUserBlock img, ' + pathToThisChat + ' .userNameInChatList').click(function(e) {
+			e.preventDefault();
+			var obj = {};
+			let chatId 		= iNchatId;//$(this).attr('connect_chatid');
 				obj['chatId'] 	= chatId;
-				obj['userType'] = $(pathToThisChat).attr('connect_userType');
-				obj['chatType'] = $(pathToThisChat).attr('connect_chatType');
-				obj['login'] 	= $(pathToThisChat).attr('connect_userlogin');
-				obj['uid'] 		= $(pathToThisChat).attr('connect_uid');
+				obj['userType'] = $(this).closest('.mix.usersBlockInMenusBlock').attr('connect_userType');;
+				obj['login'] 	= $(this).closest('.mix.usersBlockInMenusBlock').attr('connect_userLogin');
+				obj['uid'] 		= $(this).closest('.mix.usersBlockInMenusBlock').attr('connect_uid');;
 				obj['chatIcon'] = getChatIcon(chatId);
 				obj['chatName'] = getChatName(chatId);
+				if(typeof iNfunction == 'function')iNfunction(obj,this);
 
-
-		//resort this chat (up this to top)
-		// chatPosition_annihilateForSort ();
-		// chatPosition_setByChatIdForSort (iNchatId,1); 
-		// startEffSortChats ();
-
-		// check has menu
-		var attrHasMenu = $(pathToThisChat).attr('connect_userhasmenu');
-		if(attrHasMenu){
-			// if this chat hasmenu -> open app 'chat' page 'index'
-			var dataForOpenApp = 'uid='+obj['login']+'&login='+USER.getMyLogin();
-
-        	// convert to link for open app -> we add need classes
-        	var selector = pathToThisChat + ' .iconInUserBlock img, ' + pathToThisChat + ' .userNameInChatList',
-        		objForCreateLink = {
-        			'appName' 	: 'base',
-        			'pageName' 	: 'one',
-        			'data' 		: dataForOpenApp
-        		};
-        	M_APP.view.convertDomElementToAppLink (selector,objForCreateLink);
-		} else {
-			// if this has not menu -> open app 'chat' page 'index'
-			var dataForOpenApp = 'chatName='+obj['chatName']+'&chatId='+obj['chatId']+'&chatIcon='+obj['chatIcon']+'&userLogin='+obj['login']+'&uid='+obj['uid']+'&chatType=' + obj['chatType'];
-
-        	//< safe add online
-            	let thisOnline 			= $(pathToThisChat).attr('connect_online');
-            	if (typeof thisOnline == 'string' && thisOnline.length > 0) {
-        			dataForOpenApp += '&online='+thisOnline
-            	}
-        	//> safe add online
-
-        	// convert to link for open app -> we add need classes
-        	var selector = pathToThisChat + ' .iconInUserBlock img, ' + pathToThisChat + ' .userNameInChatList',
-        		objForCreateLink = {
-        			'appName' 	: 'chat',
-        			'pageName' 	: 'index',
-        			'data' 		: dataForOpenApp
-        		};
-        	M_APP.view.convertDomElementToAppLink (selector,objForCreateLink);
-		}
+		});
 	}
-	_['addOnClickActionForChatList'] = addOnClickActionForChatList;
+	_['onClickToChatList'] = onClickToChatList;
 
-	
+
+
 
 	function addUserMenuChildN (iNmenu,iNdataBlockN) {
 	   	var newData = getUserMenuChildN(iNmenu);
@@ -15931,7 +14699,6 @@ define(
 		activeActionsForMenuEvents();
 	}
 	_['addMenuByCategoryList'] = addMenuByCategoryList;
-
 		function activeActionsForMenuEvents () {
 	    	$('.appUserMenu.flagMenuLevel1 > a, .appUserMenu.flagMenuLevel1 > div.userMenuParentButton').click(clickToMenuFirstLevel);
 	    	$('.appUserMenu.flagMenuLevel2 > a, .appUserMenu.flagMenuLevel2 > div.userMenuParentButton').click(clickToMenuSecondLevel);
@@ -15946,7 +14713,7 @@ define(
 			function clickToMenuForViewError (e) {
 				e.preventDefault();
 				var errorCode = $(this).attr('errorText');
-				swal(
+				SWEETALERT(
 				  DICTIONARY.withString('[error-value]') + '!',
 				  DICTIONARY.withString(errorCode),
 				  'error'
@@ -16085,73 +14852,7 @@ define(
 
 
 
-	function createChatListIfNotExist (iNdata,iNfunction) {
-		/*
-			@inputs
-				@required
-					iNdata -> object
-						@required
-							chatId
-							userId
-							icon (icon_big,icon_min)
-							chatName
-							login
-							userType
-							chatType
-							chatPosition
-						@optional
-							userHasMenu -> boolean
-							printing
-							lastMsgTimeText
-							lastMsgTime
-		*/
-		if(typeof iNdata != 'object') iNdata = {};
-
-		var chatType = iNdata.chatType ? parseInt(iNdata.chatType) : 2;
-		if( chatType == 1 ) {
-			// if private chat
-			var chatSelector = getPathToChatByUserId (iNdata['userId']);
-		} else {
-			// if group chat
-			var chatSelector = getPathToChatByChatId (iNdata['chatId']);
-
-		}
-		
-		if($(chatSelector).length < 1) {
-			createChatList(iNdata,iNfunction);
-		}
-
-		// create if not exist
-	} _.createChatListIfNotExist = createChatListIfNotExist;
-
-	function createPrivateChatListIfNotExist (iNdata) {
-		/*
-			@inputs
-				@required
-					iNdata -> object
-						@required
-							chatId
-							userId
-							icon (icon_big,icon_min)
-							chatName
-							login
-							userType
-							chatType
-							chatPosition
-						@optional
-							userHasMenu -> boolean
-							printing
-							lastMsgTimeText
-							lastMsgTime
-		*/
-		if(typeof iNdata != 'object') iNdata = {};
-		let chatSelector = getPathToChatByUserId(iNdata['userId']);
-		// create if not exist
-		if($(chatSelector).length < 1) createChatList(iNdata);
-
-	} _.createPrivateChatListIfNotExist = createPrivateChatListIfNotExist;
-
-	function createChatList (iNdata, iNfunction) {
+	function createChatList (iNdata) {
 		/*
 			@inputs
 				@required
@@ -16165,35 +14866,10 @@ define(
 						lastMsgTimeText
 						lastMsgTime
 		*/
-		if(typeof iNdata['chatPosition'] != 'number') iNdata['chatPosition'] = 999;
 		var content = DICTIONARY.withString ( getUserListTemplate ( iNdata ) );
-		let mixer = output['sortMixitUpObject'];
-
-		mixer.insert($(content)).then(function(state) {
-	        if(typeof iNfunction == 'function') iNfunction();
-	    });
-		// $(vars['pathToChatList']).prepend( content );
+		$(vars['pathToChatList']).prepend( content );
 	}
 	_['createChatList'] = createChatList;
-
-	function removeChatListByUserId (iNuserId, iNfunction) {
-		/*
-			@inputs
-				@required
-					iNuserId -> string
-		*/
-		var selectorForDel = getPathToChatByUserId (iNuserId);
-		let mixer = output['sortMixitUpObject'];
-
-		mixer.remove(selectorForDel).then(function(state) {
-	        if(typeof iNfunction == 'function') iNfunction();
-	    });
-		// $(vars['pathToChatList']).prepend( content );
-	}
-	_['removeChatListByUserId'] = removeChatListByUserId;
-
-	
-
 
 		function getUserListTemplate (iNdata) {
 	    	var temp = Template7.compile(templates['UserList']);
@@ -16236,7 +14912,7 @@ define(
             	string: coung of chat list element
         */
         var lengthChatList = findChatBlock(iNdata['chatId']);
-        if (lengthChatList < 1) {
+        if(lengthChatList < 1) {
         	createChatList(iNdata);
         	// add effect for last msg and live flash messages
         	setEffectsForChatList(iNdata['chatId']);
@@ -16248,22 +14924,17 @@ define(
 		function getPathToDomChatHeader (iNchatId) {
 			return '.appBase_pIndexLeftBlockInChiefHeader[connect_chatid="'+iNchatId+'"]';
 		}
-		_['getPathToDomChatHeader'] = getPathToDomChatHeader;
+		_['getPathToDomElByChatId'] = getPathToDomElByChatId;
 	//chat
 		function findChatBlock (iNchatId) {
-			return $( getPathToChatByChatId(iNchatId) ).length;
+			return $( getPathToDomElByChatId(iNchatId) ).length;
 		}
 		_['findChatBlock'] = findChatBlock;
-
-			function getPathToChatByChatId (iNchatId) {
-				return '.usersBlockInMenusBlock[connect_chatid="'+iNchatId+'"]';//[chatType="2"]
+			function getPathToDomElByChatId (iNchatId) {
+				return '.usersBlockInMenusBlock[connect_chatid="'+iNchatId+'"]';
 			}
-			_['getPathToChatByChatId'] = getPathToChatByChatId;
-
-			function getPathToChatByUserId (iNuserId) {
-				return '.usersBlockInMenusBlock[connect_uid="'+iNuserId+'"]';
-			}
-			_['getPathToChatByUserId'] = getPathToChatByUserId;
+			_['getPathToDomElByChatId'] = getPathToDomElByChatId;
+		
 
 		function getChatIdByUid (iNuid) {
 			return $('.usersBlockInMenusBlock[connect_uid="'+iNuid+'"]').attr('connect_chatid');;
@@ -16281,50 +14952,30 @@ define(
 		_['effShowChatList'] = effShowChatList;
 
 			function getChatIcon (iNchatId) {
-				var pathToIcon = getPathToChatByChatId(iNchatId) + ' .iconBlockInUserBlock img';
+				var pathToIcon = getPathToDomElByChatId(iNchatId) + ' .iconBlockInUserBlock img';
 				return $(pathToIcon).attr('src');
 			}
 			_['getChatIcon'] = getChatIcon;
 
 			function getChatName (iNchatId) {
-				var pathToIcon = getPathToChatByChatId(iNchatId) + ' .userNameInChatList';
+				var pathToIcon = getPathToDomElByChatId(iNchatId) + ' .userNameInChatList';
 				return $(pathToIcon).text();
 			}
 			_['getChatName'] = getChatName;
 
 			function getUserLoginFromPrivateChat (iNchatId) {
-				var pathTo = getPathToChatByChatId(iNchatId);
+				var pathTo = getPathToDomElByChatId(iNchatId);
 				return $(pathToIcon).attr('connect_userLogin');
 			}
 			_['getUserLoginFromPrivateChat'] = getUserLoginFromPrivateChat;
 
 			function getUserTypeFromPrivateChat (iNchatId) {
-				var pathTo = getPathToChatByChatId(iNchatId);
+				var pathTo = getPathToDomElByChatId(iNchatId);
 				return $(pathToIcon).attr('connect_userType');
 			}
 			_['getUserTypeFromPrivateChat'] = getUserTypeFromPrivateChat;
 
 	//effects
-		function initSort () {
-		    /*
-		    	@discr
-		        	create object for sort chats block
-		        @inputs
-					@required
-					@optional
-		    */
-			 if(typeof(output['sortMixitUpObject']) != 'undefined') output['sortMixitUpObject'].destroy();
-
-		    output['sortMixitUpObject'] = mixitup (
-		    	vars['pathToChatList'],
-		    	{
-		    		load: {
-		    			'sort' : 'position-of-chat:asc lastmsgtime:desc',
-		    		}
-		    	}
-	    	);
-		} _['initSort'] = initSort;
-
 		function startEffSortChats (iNdata) {
 		    /*
 		    	@discr
@@ -16337,69 +14988,17 @@ define(
 							sort
 		    */
 
-		    if(typeof(output['sortMixitUpObject']) != 'undefined') {
-		    	var mixer = output['sortMixitUpObject'],block = {};
-		    	if( typeof(iNdata) != 'object' ) iNdata = {};
-		    		var sort, sortdefault, filter;
-				    if( typeof(iNdata.filter) == 'string' )      
-				    	filter 		=  iNdata.filter;
-				    else {
-				    	filter 		=  chat_getGlobalFilter();
-				    }
+		    if(typeof(output['sortMixitUpObject']) != 'undefined') output['sortMixitUpObject'].destroy();
 
-				    if( typeof(iNdata.sort)  == 'string' )       
-				    	sort 		=  iNdata.sort;
-				    else {
-				    	sort 		=  'position-of-chat:asc lastmsgtime:desc';
-				    	sortdefault 		= 'sortable position-of-chat:asc lastmsgtime:desc';
-					    mixer.sort(sortdefault);
-				    	mixer.sort(sort);
-				    }
-
-			    	mixer.filter(filter);
-			}
+		    output['sortMixitUpObject'] = mixitup(vars['pathToChatList']);
+		    var block = {};
+		    
+		    if( typeof(iNdata) == 'undefined' )         	iNdata={};
+		    if( typeof(iNdata.filter) == 'undefined' )      block.filter 	=  '.usersBlockInMenusBlock';
+		    if( typeof(iNdata.sort) == 'undefined' )        block.sort 		=  'lastmsgtime:desc';
+		    output['sortMixitUpObject'].multimix(block);
 		}
 		_['startEffSortChats'] = startEffSortChats;
-
-		function chatPosition_annihilateForSort () {
-			/*
-				@discr 
-					annihilate chat position for sort
-				@inputs : Void
-
-			*/
-			$('.mix.usersBlockInMenusBlock').attr('data-position-of-chat',999);
-		} _.chatPosition_annihilateForSort = chatPosition_annihilateForSort;
-
-		function chatPosition_setByChatIdForSort (iNchatId,iNnumber) {
-			/*
-				@discr 
-					set chat position for sort
-				@inputs
-					@required
-						iNchatId -> string
-					@optoinal
-						iNnumber -> number
-
-			*/
-			if (typeof iNnumber != 'number') iNnumber = 1;
-			$(getPathToChatByChatId(iNchatId)).attr('data-position-of-chat',iNnumber);
-		} _.chatPosition_setByChatIdForSort = chatPosition_setByChatIdForSort;
-
-		function chatPosition_setByUserIdForSort (iNchatId,iNnumber) {
-			/*
-				@discr 
-					set chat position for sort
-				@inputs
-					@required
-						iNchatId -> string
-					@optoinal
-						iNnumber -> number
-
-			*/
-			if (typeof iNnumber != 'number') iNnumber = 1;
-			$(getPathToChatByUserId(iNchatId)).attr('data-position-of-chat',iNnumber);
-		} _.chatPosition_setByUserIdForSort = chatPosition_setByUserIdForSort;
 
 		function flash_msgSimpleText_init (iNchatId) {
 		    /*
@@ -16412,7 +15011,7 @@ define(
 							filter
 							sort
 		    */
-            var chatObject = getPathToChatByChatId(iNchatId);
+            var chatObject = getPathToDomElByChatId(iNchatId);
 	    	$(chatObject +' '+ vars['pathForFlashMsgSimpleText']).textillate({ autoStart:false, in: {effect: 'wobble',delay:10 } });
 		}
 		_['flash_msgSimpleText_init'] = flash_msgSimpleText_init;
@@ -16428,7 +15027,7 @@ define(
 							filter
 							sort
 		    */
-            var chatObject = getPathToChatByChatId(iNchatId);
+            var chatObject = getPathToDomElByChatId(iNchatId);
 	    	$(chatObject +' '+ vars['pathForFlashMsgLiveAudio']).textillate({ autoStart:false, in: {effect: 'wobble',delay:10 } });
 		}
 		_['flash_msgLiveAudio_init'] = flash_msgLiveAudio_init;
@@ -16444,7 +15043,7 @@ define(
 							filter
 							sort
 		    */
-            var chatObject = getPathToChatByChatId(iNchatId);
+            var chatObject = getPathToDomElByChatId(iNchatId);
 	    	$(chatObject +' '+ vars['pathForFlashMsgLiveVideo']).textillate({ autoStart:false, in: {effect: 'wobble',delay:10 } });
 		}
 		_['flash_msgLiveVideo_init'] = flash_msgLiveVideo_init;
@@ -16460,7 +15059,7 @@ define(
 							filter
 							sort
 		    */
-            var chatObject = getPathToChatByChatId(iNchatId);
+            var chatObject = getPathToDomElByChatId(iNchatId);
 			$(chatObject +' '+ vars['pathForEffectsLastMsg']).textillate({ autoStart:false, in: {effect: 'fadeInLeftBig',delay:30 }, out: {effect: 'fadeOutRightBig', delay:15, callback: function () { $(chatObject + ' .lastMessageInThirdLine').textillate('start');} }, minDisplayTime:150 }).textillate('start');
 		}
 		_['startEffLastMsgByChatId'] = startEffLastMsgByChatId;
@@ -16479,7 +15078,7 @@ define(
 		    if( typeof(iNtime) != 'number' ) iNtime = 2500; 
 		    if( typeof(output['objectTimeoutForHideLiveInChatsList']) != 'undefined') clearTimeout(output['objectTimeoutForHideLiveInChatsList'])
 		    output['objectTimeoutForHideLiveInChatsList'] = setTimeout(function () {
-            	var chatObject = getPathToChatByChatId(iNchatId);
+            	var chatObject = getPathToDomElByChatId(iNchatId);
 		        $(chatObject + ' .aCpAll_flashBLocks').hide();
 		    }, iNtime);
 		}
@@ -16493,12 +15092,29 @@ define(
                     defined chat object
                 2 - iNnumber (int)
                 @depends
-                    getPathToChatByChatId
+                    getPathToDomElByChatId
             */
-            var chatObject = getPathToChatByChatId(iNchatId);
+            var chatObject = getPathToDomElByChatId(iNchatId);
             $(chatObject + ' .newMsgInSecondLine').html(iNnumber);
 		}
 		_['domChangeCountMessages'] = domChangeCountMessages;
+
+		// function domPlusCountMessages ( iNchatId, newMsg ) {
+  //           /*
+  //               increase new msg count by $newMsg variable
+  //               1 - chatObject (String)
+  //                   defined chat object
+  //               2 - newMsg (int)
+  //               @depends
+  //                   domShowNewMsgCountInChatBlock
+  //           */
+  //           var chatObject = getPathToDomElByChatId(iNchatId);
+  //           if(typeof(newMsg) == 'undefined') newMsg = 1;
+  //           var count_msg = parseInt($(chatObject + ' .newMsgInSecondLine').text()) + newMsg;
+  //           $(chatObject + ' .newMsgInSecondLine').change(count_msg);
+  //           domShowNewMsgCountInChatBlock(chatObject);
+  //       }
+		// _['domPlusCountMessages'] = domPlusCountMessages;
 
 			function domSafeShowNewMsgCountInChatBlock (iNchatId,iNnumber) {
                 /*
@@ -16517,7 +15133,7 @@ define(
                     1 - chatObject (String)
                         defined chat object
                 */
-                var chatObject = getPathToChatByChatId(iNchatId);
+                var chatObject = getPathToDomElByChatId(iNchatId);
                 $(chatObject + ' .newMsgInSecondLine').html(iNnumber);
             }
 			_['domChangeNewMsgCountInChatBlock'] = domChangeNewMsgCountInChatBlock;
@@ -16528,7 +15144,7 @@ define(
                     1 - chatObject (String)
                         defined chat object
                 */
-                var chatObject = getPathToChatByChatId(iNchatId);
+                var chatObject = getPathToDomElByChatId(iNchatId);
                 $(chatObject + ' .newMsgInSecondLine').css('display','inline-block');
             }
 			_['domShowNewMsgCountInChatBlock'] = domShowNewMsgCountInChatBlock;
@@ -16541,7 +15157,7 @@ define(
                     @depends
                         domClearNewMsgCountInChatBloc()
                 */
-                var chatObject = getPathToChatByChatId(iNchatId);
+                var chatObject = getPathToDomElByChatId(iNchatId);
                 $(chatObject + ' .newMsgInSecondLine').hide();
             }
 			_['domHideNewMsgCountInChatBlock'] = domHideNewMsgCountInChatBlock;
@@ -16579,7 +15195,7 @@ define(
             	@inputs
 	                iNchatId -> stirng
             */
-            var chatObject = getPathToChatByChatId(iNchatId) + ' .chatDataInUsersBlock';
+            var chatObject = getPathToDomElByChatId(iNchatId) + ' .chatDataInUsersBlock';
             $(chatObject).addClass('flagUserOnline');
             $(chatObject).attr('connect_online',1);
         }
@@ -16592,7 +15208,7 @@ define(
             	@inputs
 	                iNchatId -> stirng
             */
-            var chatObject = getPathToChatByChatId(iNchatId) + ' .chatDataInUsersBlock';
+            var chatObject = getPathToDomElByChatId(iNchatId) + ' .chatDataInUsersBlock';
             $(chatObject).removeClass('flagUserOnline');
             $(chatObject).attr('connect_online',iNtime);
         }
@@ -16606,7 +15222,7 @@ define(
                 2 - icon (String)
                     new icon src
             */
-            var chatObject = getPathToChatByChatId(iNchatId);
+            var chatObject = getPathToDomElByChatId(iNchatId);
             $(chatObject+" .iconInUserBlock img").attr('src',icon);
         }
 		_['domChangeIconInChatBlock'] = domChangeIconInChatBlock;
@@ -16620,7 +15236,7 @@ define(
                     new user Name
 
             */
-            var chatObject = getPathToChatByChatId(iNchatId);
+            var chatObject = getPathToDomElByChatId(iNchatId);
             $(chatObject+" .userNameInChatList").text(chatName);
         }
 		_['domChangeChatNameInChatBlock'] = domChangeChatNameInChatBlock;
@@ -16635,7 +15251,7 @@ define(
                     new user Name
 
             */
-            var chatObject = getPathToChatByChatId(iNchatId);
+            var chatObject = getPathToDomElByChatId(iNchatId);
             $(chatObject).attr('cLogin',userLogin);
         }
 		_['domChangeLoginInChatBlock'] = domChangeLoginInChatBlock;
@@ -16649,7 +15265,7 @@ define(
                     lmsgText (String)
                     lmsgTime (String)
             */
-            var chatObject = getPathToChatByChatId(iNchatId);
+            var chatObject = getPathToDomElByChatId(iNchatId);
             var lastMsgText = V_MESSAGE.msg_getLastMsg (iNdata);
             if($(chatObject + ' .lastMessageInThirdLine .current').text() != lastMsgText) {
                 var NowTime = getTodayTime( iNdata.lmsgTime );
@@ -16671,7 +15287,7 @@ define(
 
 		function flash_hideAllFlashBlocks (iNchatId) {
 			// body...
-            var chatObject = getPathToChatByChatId(iNchatId);
+            var chatObject = getPathToDomElByChatId(iNchatId);
 			$(chatObject + ' .aCpAll_flashBLocks').hide();
 		}
 
@@ -16684,7 +15300,7 @@ define(
 
             */
 
-            var chatObject = getPathToChatByChatId(iNchatId);
+            var chatObject = getPathToDomElByChatId(iNchatId);
             var currentValue = $(chatObject + ' .aCpAll_msgSimpleText_animateContainer .current').text();
             if(currentValue != iNdata.liveData){
 
@@ -16713,7 +15329,7 @@ define(
 
             */
 
-            var chatObject = getPathToChatByChatId(iNchatId);
+            var chatObject = getPathToDomElByChatId(iNchatId);
             var currentValue = $(chatObject + ' .aCpAll_msgLiveAudio_animateContainer .current').text();
             if(currentValue != iNdata.liveData){
 	            flash_hideAllFlashBlocks(iNchatId);
@@ -16739,7 +15355,7 @@ define(
 
             */
             
-            var chatObject = getPathToChatByChatId(iNchatId);
+            var chatObject = getPathToDomElByChatId(iNchatId);
             var currentValue = $(chatObject + ' .aCpAll_msgLiveVideo_animateContainer .current').text();
             if(currentValue != iNdata.liveData){
 	            flash_hideAllFlashBlocks(iNchatId);
@@ -16764,73 +15380,12 @@ define(
                     defined chat object
             */
             $(chatObject + ' .usersNameInUserBlock').append("<span class=\"isVerificateinUserBlock\"></span>");
-        } _['domAddVerificateStatusToChatBlock'] = domAddVerificateStatusToChatBlock;
+        }
+		_['domAddVerificateStatusToChatBlock'] = domAddVerificateStatusToChatBlock;
 	//> effects
-
-
-	function onClickCategoryForCreateChat (iNsuccessFunc, iNerrorFunc) {
-        /*
-            @inputs
-                @required
-        */
-        var iNsuccessFunc = iNsuccessFunc;
-        var iNerrorFunc = iNerrorFunc;
-        (
-        	()=>{
-	        	$('.viewCategoryPrompt').click( 
-	        		(event) =>  {
-			            var thisUserId          = $(event.target).attr('categoryUserId'),
-			                thisUserLogin       = $(event.target).attr('categoryUserLogin');
-
-			            if( thisUserId && thisUserLogin ) {
-			                // SUCCESS we has login and uid for create chat
-			                showPromptQuestionForCreateChat ( iNsuccessFunc, iNerrorFunc, thisUserId , thisUserLogin);
-			            } else {
-			                // ERROR we has NOT  login and uid
-			                if (typeof iNerrorFunc == 'function') iNerrorFunc ();
-
-			            }
-	        		}
-	        	);
-	        }
-        )()
-        
-    } _['onClickCategoryForCreateChat'] = onClickCategoryForCreateChat;
-
-
-    function showPromptQuestionForCreateChat ( iNsuccessFunc, iNerrorFunc, iNuid, iNulogin) {
-        (()=>{
-
-        	swal({
-	          title: 'Создать чат с этим пользователем?',
-	          text: "Чат необходим для общения!",
-	          type: 'warning',
-	          showCancelButton: true,
-	          confirmButtonColor: '#3085d6',
-	          cancelButtonColor: '#d33',
-	          confirmButtonText: 'Да, создать чат!',
-	          cancelButtonText: 'Нет, отмена!',
-	          confirmButtonClass: 'btn btn-success',
-	          cancelButtonClass: 'btn btn-danger',
-	          buttonsStyling: false
-	        }).then(
-		        (result) => {
-		          if (result.value) {
-		            if (typeof iNsuccessFunc == 'function') iNsuccessFunc(iNuid,iNulogin);
-		            // result.dismiss can be 'cancel', 'overlay',
-		            // 'close', and 'timer'
-		          } else if (result.dismiss === 'cancel') {
-		            if (typeof iNerrorFunc == 'function') iNerrorFunc(iNuid,iNulogin);
-		          }
-		        }
-	        )
-        })()
-        
-    } // _['showPromptQuestionForCreateChat'] = showPromptQuestionForCreateChat;
-
 	return _;
 });
-define('m_category',['jquery','v_category','m_view','m_app','m_user','dictionary','sweetalert2', 'url'], function ( $, VIEW, M_VIEW, M_APP,USER, DICTIONARY, SWAL, URL) {
+define('m_category',['jquery','v_category','m_view','m_app','m_user','dictionary'], function ( $, VIEW, M_VIEW, M_APP,USER, DICTIONARY) {
 	const _        = {'view':VIEW};
 	const CONST    = {};
 
@@ -16865,6 +15420,7 @@ define('m_category',['jquery','v_category','m_view','m_app','m_user','dictionary
     _['userForPrivateChat'] = userForPrivateChat;
 
 
+
     function safeUpdateChatBlock (iNdata,chatType) {
         /*
            	@inputs
@@ -16885,8 +15441,7 @@ define('m_category',['jquery','v_category','m_view','m_app','m_user','dictionary
         var  DomBloc, lmsg_text, lmsg_time, countNewMessages, newMsgBlock, verificate;
 
         var chatLength = VIEW.findChatBlock(chatId);
-                console.log('safeUpdateChatBlock - iNdata', iNdata );
-        if (  chatLength < 1 ) {
+        if(  chatLength < 1 ) {
         		//CHANGE STATIC PARAMS
                 // chatType = 'private';
                 uuid = userForPrivateChat(chatId);
@@ -16894,19 +15449,19 @@ define('m_category',['jquery','v_category','m_view','m_app','m_user','dictionary
         			objForCreateChat['userId'] 		= uuid;
         			objForCreateChat['chatType'] 	= chatType;
 
-                // get chat icon
-                var chatIcon    = M_APP.getGlobalVar('m_app-chat').getChatIconByType(chatType,objForCreateChat); objForCreateChat['icon'] = chatIcon;
-
                 // create chat
-                VIEW.createChatList (objForCreateChat, () => {
-                    // after add chat
+                VIEW.createChatList (objForCreateChat);
+                VIEW.setEffectsForChatList(chatId);
+                VIEW.onClickToChatList(objForCreateChat['chatId'],function (iNobj,iNthis) {
+                	var hrefForOpenApp = 'chatName='+iNobj['chatName']+'&chatId='+iNobj['chatId']+'&chatIcon='+iNobj['chatIcon']+'&userLogin='+iNobj['login']+'&uid='+iNobj['uid'];
 
-                    // set animation effect (eg. scroll )
-                    VIEW.setEffectsForChatList(chatId);
-                    // add on click for this chat event
-                    console.log('safeUpdateChatBlock - objForCreateChat',objForCreateChat);
-                    VIEW.addOnClickActionForChatList ( objForCreateChat['chatId']);
-
+                	//< safe add online
+	                	let thisOnline = $(iNthis).closest('.mix.usersBlockInMenusBlock').attr('connect_online');
+	                	if(typeof thisOnline == 'string' && thisOnline.length > 0) {
+	            			hrefForOpenApp += '&online='+thisOnline
+	                	}
+                	//> safe add online
+                	M_APP.getGlobalVar('engine').passToApp({'app':'chat','page':'index','data': hrefForOpenApp});
                 });
 		} 
         domChangeChatBlock (chatId,iNdata);
@@ -17016,58 +15571,42 @@ define('m_category',['jquery','v_category','m_view','m_app','m_user','dictionary
    
     function addChatBlockToCategory (iNuserData,iNchatId,iNuserId) {
         // chatType does not work - CHANGE
-
-        // add chatType > chatIcon > uidType
-        var chatName    = VIEW.getChatName (iNchatId),
-            href        = "chatId=" + iNchatId + "&userId=" + iNuserId + "&chatType=1&back=1&chatName=" + chatName;
+        var href = "chatId="+iNchatId+"&userId="+iNuserId+"&chatType=1&back=1"
         var objForCreateChat = {
            'app'            : 'chat', 
            'code'           : 'chiefChat',
            'page'           : 'index',
            'name'           : DICTIONARY.withString('[app-chat]'),
            'id'             : iNchatId,
-           'data'           : href,
-           'classForATeg'   : 'privateChatBtn',//
+           'data'           : href
+
         };
         iNuserData['categories']['chat'] = {};
         iNuserData['categories']['chat'][iNchatId] = objForCreateChat;
         return true;
 
-    } _['addChatBlockToCategory'] = addChatBlockToCategory;
+    }
+    _['addChatBlockToCategory'] = addChatBlockToCategory;
 
-    function addDisabledChatBlockToCategory (iNuserData,iNuserId,iNuserLogin) {
+    function addDisabledChatBlockToCategory (iNuserData,iNuserId) {
         // chatType does not work - CHANGE
-        if ( USER.getMyId() ) {
-            // if we are auth user -> we created link for create chat
-            var objForCreateChat = {
-               'app'            : 'chat', 
-               'code'           : 'chiefChat',
-               'page'           : 'index',
-               'name'           : DICTIONARY.withString('[app-chat]'),
-               'id'             : iNuserId,
-               'classForATeg'   : 'viewCategoryPrompt',//
-               'attrForATeg'    : `categoryUserId='${iNuserId}' categoryUserLogin='${iNuserLogin}'`,
-            };
-        } else {
-            // if we are NON authed user -> we created link for view error
-            var objForCreateChat = {
-               'app'            : 'chat', 
-               'code'           : 'chiefChat',
-               'page'           : 'index',
-               'name'           : DICTIONARY.withString('[app-chat]'),
-               'id'             : iNuserId,
-               'classForATeg'   : 'viewError',
-               'attrForATeg'    : "errorText='[phrase-needSignForChat]'",
+        var objForCreateChat = {
+           'app'            : 'chat', 
+           'code'           : 'chiefChat',
+           'page'           : 'index',
+           'name'           : DICTIONARY.withString('[app-chat]'),
+           'id'             : iNuserId,
+           'classForATeg'   : 'viewError',
+           'attrForATeg'    : "errorText='[phrase-needSignForChat]'",
 
-            };
-        }
-        
+        };
         iNuserData['categories']['chat'] = {};
         iNuserData['categories']['chat'][iNuserId] = objForCreateChat;
         return true;
+
     }
     _['addDisabledChatBlockToCategory'] = addDisabledChatBlockToCategory;
-    
+
     
 
 	return _;
@@ -17079,17 +15618,6 @@ define('m_storage',['m_firebase'],function( FIREBASE ) {
 
 	// set firebase framework
     const STORAGE = FIREBASE.storage().ref();
-
-    function getDownloadURL (iNpatch, iNfunction) {
-    	STORAGE.child(iNpatch).getDownloadURL().then(function(url) {
-		  // `url` is the download URL for 'images/stars.jpg'
-		  iNfunction(null,url);
-		 
-		}).catch(function(error) {
-		  // Handle any errors
-		  iNfunction(error,null);
-		});
-    } _.getDownloadURL = getDownloadURL;
 
 	function upload ( iNdata , iNfunctions) { 
 		/*
@@ -21495,8 +20023,8 @@ _['printObject'] = printObject;
 return _;
 });
 define(
-    'm_message',['jquery', 'v_message', 'm_moment', 'm_user', 'm_app', 'm_category', 'm_storage', 'm_record', 'm_progressbar', 'm_database', 'log', 'url'],
-    function($, VIEW, MOMENT, USER, M_APP, M_CATEGORY, M_STORAGE, M_RECORD, M_PROGRESSBAR, M_DATABASE, LOG, M_URL) {
+    'm_message',['jquery', 'v_message', 'm_moment', 'm_user', 'm_app', 'm_category', 'm_storage', 'm_record', 'm_progressbar', 'm_database', 'log'],
+    function($, VIEW, MOMENT, USER, M_APP, M_CATEGORY, M_STORAGE, M_RECORD, M_PROGRESSBAR, M_DATABASE, LOG) {
         const _ = {
             'view': VIEW
         };
@@ -21511,6 +20039,11 @@ define(
         function annihilateNewMsgCounterFDB(iNchatId) {
             var chatId = iNchatId; //msg_getCurrentChatId();
             var myUID = USER.getMyId();
+            // var baseKey = 'chats/' + chatId + '/member/' + myUID + '/newMsg';
+            // var updateArray = {};
+            // updateArray[baseKey] = 0;
+            // FIREBASE.database().ref().update(updateArray);
+
             let collection = 'chats',
                 pathToDb =  chatId + '/member/' + myUID + '/newMsg';
             M_DATABASE.addRealtimeDb ( collection, pathToDb, 0 )
@@ -21587,7 +20120,7 @@ define(
         }
         _['synchronizeWithMessageDb'] = synchronizeWithMessageDb;
 
-        function getMessagesFromDb (iNchatId, iNtype, iNobject) {
+        function getMessagesFromDb(iNchatId, iNtype, iNobject) {
             /*
                     @inputs
                         @required
@@ -21602,8 +20135,27 @@ define(
                 */
 
             if (typeof iNobject != 'object') iNobject = {};
+
+            // var messagesRef = FIREBASE.database().ref('messages/' + iNchatId);
+            // messagesRef.orderByChild("time").limitToLast(40).on(iNtype, (messagesData) => {
+            //     callbackAddOrChangeMessageForDb(messagesData, iNchatId, iNtype, iNobject);
+            // });
+
+            // M_DATABASE.getDataFromRealtimeDb ('messages', iNchatId, 
+            //     {
+            //         'order' : 'time',
+            //         limitToLast : 40,
+            //         type : iNtype,
+            //         functionOnSuccess : (messagesData) => {
+            //             callbackAddOrChangeMessageForDb(messagesData, iNchatId, iNtype, iNobject);
+            //         }
+            //     }
+            // )
             LOG.on();
 
+            // var iKey = 'member.769b72df-6e67-465c-9334-b1a8bfb95a1a2.status';
+            // var whereEquilTo = {};
+            //     whereEquilTo[iKey] = 1;
             var iNobject = {
                 'limitToFirst' : 40,
                 'functionOnAdd':    (messagesData) => {
@@ -21628,7 +20180,7 @@ define(
                     );
 
 
-                }
+                }//(d) => { console.log('getRealtimeDataFromFirestoreDb functionOnAdd',d); },
             };
 
             M_DATABASE.getRealtimeDataFromFirestoreDb('chats', iNchatId +'/messages' , iNobject);
@@ -21636,17 +20188,17 @@ define(
 
         function callbackAddOrChangeMessageForDb(iNdataFromFB, iNchatId, iNtype, iNobject) {
             /*
-                @inputs
-                    @required
-                        iNdataFromFB (result from firebase db)
-                        iNchatId -> string
-                        iNtype -> string 
-                            child_changed || child_added
-                        iNobject -> object
-                            @optional
-                                functionOnChildChanged
-                                functionOnChildAdded
-            */
+                        @inputs
+                            @required
+                                iNdataFromFB (result from firebase db)
+                                iNchatId -> string
+                                iNtype -> string 
+                                    child_changed || child_added
+                                iNobject -> object
+                                    @optional
+                                        functionOnChildChanged
+                                        functionOnChildAdded
+                    */
 
 
             var messagesData = iNdataFromFB;
@@ -21685,10 +20237,8 @@ define(
                 msgSimpleText_safeCreateCenterMessageByPassedTime(objectForCreateMessage, fullData, iNchatId, myUID);
 
 
-                // create message
-                msg_createMsgByItsType ( msgType, fullData, iNchatId, objectForCreateMessage['msgId'] );
 
-                // VIEW.msg_createMsgByItsType(msgType, objectForCreateMessage, myUID, iNchatId)
+                VIEW.msg_createMsgByItsType(msgType, objectForCreateMessage, myUID, iNchatId)
                 // VIEW.msgSimpleText_createMsg ( objectForCreateMessage, myUID, iNchatId );
 
                 VIEW.effChatViewScrollToBotWithTimeOut(
@@ -21704,57 +20254,11 @@ define(
                 );
 
                 msg_setObserverForAppearMessageInVisualScrollByChatId(iNchatId,msgType);
-            } // ser observer for income non read message to me
-        }
-
-        function msg_createMsgByItsType (msgType, iNmsgObject, iNchatId, iNmsgId ) {
-            // body...
-            console.log('msg_createMsgByItsType - msgType, iNmsgObject, iNchatId, iNmsgId',msgType, iNmsgObject, iNchatId, iNmsgId);
-            var myUID = USER.getMyId();
-            switch (msgType) {
-                //@< text messages
-                case 1:     // simpleText 
-                    msgType = VIEW.msg_getNameOfTypeByType(1);
-                    VIEW.msgSimpleText_createMsg( iNmsgObject['info'], myUID, iNchatId );
-                break;
-                //@> text messages
-
-                //@< live messages
-                    case 20:    // liveAudio 
-                        msgType = VIEW.msg_getNameOfTypeByType(20);
-                        // msgLiveAudio_createMsg( iNobjectForCreateMessage, myUID, iNchatId );
-                        if (iNmsgObject['uid'] == myUID) {
-                            // if msg from me
-                            msgLiveAudio_createFromMe (iNchatId, iNmsgId,  iNmsgObject )
-                        } else {
-                            // if msg to me
-                            msgLiveAudio_createToMe  (iNchatId, iNmsgId,  iNmsgObject );
-                        }
-                    break;
-
-                    case 21:    // liveVideo
-                        msgType = VIEW.msg_getNameOfTypeByType(21);
-                        // msgLiveVideo_createMsg( iNobjectForCreateMessage, myUID, iNchatId );
-                        // VIEW.msgLiveVideo_safeReplace( iNmsgObject['info'], myUID, iNchatId  );
-                        if (iNmsgObject['uid'] == myUID) {
-                            // if msg from me
-                            msgLiveVideo_createFromMe (iNchatId, iNmsgId,  iNmsgObject )
-                        } else {
-                            // if msg to me
-                            msgLiveVideo_createToMe  (iNchatId, iNmsgId,  iNmsgObject );
-                        }
-                    break;
-                //@> live messages
-
-                //@< file messages
-                //@< file messages
-
-                //@< documents messages
-                //@< documents messages
             }
+            // ser observer for income non read message to me
         }
 
-        function msg_setObserverForAppearMessageInVisualScrollByChatId(iNchatId, iNMsgType) {
+        function msg_setObserverForAppearMessageInVisualScrollByChatId(iNchatId,iNMsgType) {
             /*
                 @discr
                     set read state when some messages watch in for user
@@ -21793,93 +20297,6 @@ define(
 
         }
 
-        function msgLiveAudio_createFromMe (iNchatId, iNmsgId,  iNmsgObject ) {
-            /*
-                @discr
-                    create liveAudio (from me) message with get M_URL 
-                @inputs
-                    @required
-                        iNchatId    -> string
-                        iNmsgId     -> string
-                        iNmsgObject -> object
-            */
-            var msgType     = VIEW.msg_getNameOfTypeByType(iNmsgObject.type),
-                thisUserId  = iNmsgObject.uid,
-                src         = iNmsgObject.info.src,
-                myUID       = USER.getMyId(),
-                path = `chats/${iNchatId}/${thisUserId}/${msgType}/${iNmsgId}/${src}`,
-                msgForCreateObject  = iNmsgObject['info'];
-
-                // create msg live auio for fix position
-                VIEW.msgLiveAudio_safeReplace( msgForCreateObject, myUID, iNchatId  );
-
-            console.log( 'msgLiveAudio_createFromMe - iNchatId, iNmsgId,  iNmsgObject',iNchatId, iNmsgId,  iNmsgObject );
-            console.log( 'msgLiveAudio_createFromMe - myUID, src,  thisUserId', myUID, src,  thisUserId );
-            console.log( 'msgLiveAudio_createFromMe - msgType, path', msgType, path );
-            M_STORAGE.getDownloadURL (path, 
-                (errUrl, dataUrl) => {
-                    console.log( 'msgLiveAudio_createFromMe - dataUrl', dataUrl );
-                    console.log( 'msgLiveAudio_createFromMe - errUrl', errUrl );
-                    if (errUrl) {
-                        // ERROR we can not get url
-
-                        return;
-                    }
-                    var url                 = dataUrl;
-
-                    msgForCreateObject['url'] = url;
-                    // create msg live auio
-                    VIEW.msgLiveAudio_safeReplace( msgForCreateObject, myUID, iNchatId  );
-
-                }
-            );
-        } _.msgLiveAudio_createFromMe = msgLiveAudio_createFromMe;
-
-        function msgLiveAudio_createToMe (iNchatId, iNmsgId,  iNmsgObject) {
-            /*
-                @discr
-                    create liveAudio (to me) message with get M_URL 
-                @inputs
-                    @required
-                        iNchatId    -> string
-                        iNmsgId     -> string
-                        iNmsgObject -> object
-            */
-            var myUID               = USER.getMyId(),
-                path                = M_URL.db.api.getUrl.forChat,
-                msgForCreateObject  = iNmsgObject['info'];
-
-            // create msg live auio for fix position
-            VIEW.msgLiveAudio_safeReplace( msgForCreateObject, myUID, iNchatId  );
-
-            console.log( 'msgLiveAudio_createToMe   - path'     , path  );
-            console.log( 'msgLiveAudio_createToMe   - myUID'    , myUID );
-            console.log( 'msgLiveAudio_createToMe   - iNmsgObject'     , iNmsgObject  );
-            $.getJSON (
-                path,
-                {
-                    'token'     : USER.getMyToken(),
-                    'chatId'    : iNchatId,
-                    'msgId'     : iNmsgId,
-                    'uid'       : myUID,
-                },
-                (dataFromServer) => {
-                    console.log( 'msgLiveAudio_createToMe - dataFromServer', dataFromServer );
-                    if(typeof dataFromServer != 'object' || dataFromServer.status != 1) {
-                        // ERROR we can not get M_URL
-                        return;
-                    }
-                    var url = dataFromServer.link;
-                    console.log( 'msgLiveAudio_createToMe - url', url );
-                    console.log( 'msgLiveAudio_createToMe - msgForCreateObject', msgForCreateObject );
-                    //attach this url to this object    
-                    msgForCreateObject['url'] = url;
-                    // create msg live auio
-                    VIEW.msgLiveAudio_safeReplace( msgForCreateObject, myUID, iNchatId  );
-
-                } 
-            );
-        } _.msgLiveAudio_createToMe = msgLiveAudio_createToMe;
 
         function msgLiveAudio_safeSetReadState () {
             var msgSelectorText = msg_getPathToDomForMsg (  iNchatId, iNmsgId );
@@ -21914,20 +20331,12 @@ define(
             }
         }
 
-        function getTimeForToMeMessages ( iNobject, iNfullBlock, iNchatId, iNmyUid ) {
-            /*
-                @inputs
-                    @required
-                        iNobject    -> object
-                        iNfullBlock -> object
-                        iNchatId    -> string
-                        iNmyUid     -> string
-            */
+        function getTimeForToMeMessages(iNobject, iNfullBlock, iNchatId, iNmyUid) {
             //get status by timestamp read,delivered,sent
             var myState = msgFromMe_getTimesOfState(iNfullBlock, iNmyUid);
-            console.log ( 'getTimeForToMeMessages myState',       myState     );
-            console.log ( 'getTimeForToMeMessages iNfullBlock',   iNfullBlock );
-            console.log ( 'getTimeForToMeMessages iNmyUid',       iNmyUid     );
+            console.log('getTimeForToMeMessages myState',myState);
+            console.log('getTimeForToMeMessages iNfullBlock',iNfullBlock);
+            console.log('getTimeForToMeMessages iNmyUid',iNmyUid);
             if ( typeof myState == 'object' ) {
                 var states = myState;
                 console.log('timestamp states',states);
@@ -22039,6 +20448,11 @@ define(
                 'type'  : iNdata['type']
             }
 
+            var baseKey = 'chats/' + chatId + '/info/live';
+            // let collection = 'chats',
+            //     pathToDb = chatId + '/info/live';
+            // M_DATABASE.addRealtimeDb ( collection, pathToDb, objForSendToDb )
+
             let objForSafeUpdate = {
                 'info' : {
                     'live' : objForSendToDb
@@ -22112,16 +20526,19 @@ define(
                     var dataForCheck, dateForAddLength, dataForUpdate;
                     const firestoreDb       = M_DATABASE.getFirestoreDb();
                     const firestoreBatch    = M_DATABASE.getBatchFirestoreDb (firestoreDb );
+
+                    console.log('<------------------------START---------------------------->');
+                    console.log('msg_stateSendToDb prepare for batch',window['connecVar_storageForMsgState']);
                     
                     for (var chatId in connecVar_storageForMsgState) {
                         try {
                             // for check for prepare operations
-                            dataForCheck        = window['connecVar_storageForMsgState'][iNchatId][iNmsgId]['member'][iNmyUid]['state'];
+                            dataForCheck = window['connecVar_storageForMsgState'][iNchatId][iNmsgId]['member'][iNmyUid]['state'];
                             // for add to Queue
-                            dataForUpdate       = window['connecVar_storageForMsgState'][iNchatId][iNmsgId];
+                            dataForUpdate = window['connecVar_storageForMsgState'][iNchatId][iNmsgId];
                             // get length for last check for update to msg in db
-                            dateForAddLength    = Object.keys(dataForCheck).length;
-                            if ( dateForAddLength > 0 ) {
+                            dateForAddLength = Object.keys(dataForCheck).length;
+                            if(dateForAddLength > 0) {
 
                                 console.log('add to batch', 'chats', iNchatId + '/messages/' + iNmsgId, dataForUpdate);
                                 // add to queqe
@@ -22140,6 +20557,10 @@ define(
                             'onSuccess' : () => { console.log('msg_stateSendToDb added to db',window['connecVar_storageForMsgState']); window['connecVar_storageForMsgState'] = {}; }
                         }
                     );
+
+                    //clear for add
+
+                    console.log('<------------------------END---------------------------->');
                 }, 250
             );
 
@@ -22176,7 +20597,7 @@ define(
             msg_stateAddToQueue ('delivered',myUID , iNchatId, iNmsgId);
         }
 
-        function msg_addToDb (iNdata, iNchatId, iNmsgId) {
+        function msg_addToDb(iNdata, iNchatId, iNmsgId) {
             /*
         @discr
             send msg to firebase realtime db
@@ -22186,7 +20607,6 @@ define(
                     @required
                         content
                     @optional
-                        src
                         block
                         fire
                         group
@@ -22200,20 +20620,24 @@ define(
       */
             //default message type
             iNdata.type = iNdata.type || 1;
-
-
             // get my user id
             let myUid = USER.getMyId();//FIREBASE.auth().currentUser.uid;
             // get right object for add to msg db
             let objForSentToDb = prepareObjectForSentToMsgBase(iNdata, myUid);
 
-            let collection  = 'messages', pathToDb, msgId;
+            let collection = 'messages';
 
-                msgId       = iNmsgId || msg_generateMsgIdByChatId(iNchatId);
-                collection  = 'chats';
+            let msgId = iNmsgId || msg_generateMsgIdByChatId(iNchatId); //   FIREBASE.database().ref().child('messages/'+iNchatId).push().key;
 
+            let pathToDb = iNchatId + '/' + msgId;
+            // M_DATABASE.addRealtimeDb(collection, pathToDb, objForSentToDb);
+
+
+
+
+            collection = 'chats';
             pathToDb = iNchatId + '/messages/' + msgId;
-            M_DATABASE.addFirestoreDb ( collection, pathToDb, objForSentToDb );
+            M_DATABASE.addFirestoreDb(collection, pathToDb, objForSentToDb);
 
 
         }
@@ -22236,7 +20660,6 @@ define(
                         @required
                             content
                         @optional
-                            src
                             block
                             fire
                             group
@@ -22261,10 +20684,6 @@ define(
             };
 
             if (typeof(iNdata.type) != 'undefined') objForSentToDb['info']['type'] = iNdata.type; // default text key
-            if (typeof(iNdata.src) == 'string') objForSentToDb['info']['src'] = iNdata.src; // source for messages with files
-
-
-
             if (typeof(iNdata.block) == 'undefined') objForSentToDb['info']['options']['base']['block'] = 0; // default block disable
             if (typeof(iNdata.fire) == 'undefined') objForSentToDb['info']['options']['base']['fire'] = 0; // default fire disable
             if (typeof(iNdata.group) == 'undefined') objForSentToDb['info']['options']['base']['group'] = 0; // default group dissable
@@ -22275,7 +20694,7 @@ define(
             return objForSentToDb;
         }
 
-        function updateChatLastMsgObject (iNobject, iNchatId) {
+        function updateChatLastMsgObject(iNobject, iNchatId) {
             /*
                 @discr
                     update last msg block in chat db for show in list menus for all users 
@@ -22303,7 +20722,7 @@ define(
             return M_DATABASE.addRealtimeDb ( collection, pathToDb, lastMessage );
         }
 
-        function msgSimpleText_createCenterDateText (iNchatId, iNtime) {
+        function msgSimpleText_createCenterDateText(iNchatId, iNtime) {
             var lastMsgTimeText = getLastMsgTimeByChatId(iNchatId);
             var lastMsgTime = parseInt(lastMsgTimeText);
             var isThisDay = MOMENT().isThisDay(iNtime);
@@ -22355,93 +20774,6 @@ define(
     //
 
     //@<SECTION 'msg live video' type = 21
-        function msgLiveVideo_createFromMe (iNchatId, iNmsgId,  iNmsgObject ) {
-            /*
-                @discr
-                    create liveAudio (from me) message with get M_URL 
-                @inputs
-                    @required
-                        iNchatId    -> string
-                        iNmsgId     -> string
-                        iNmsgObject -> object
-            */
-            var msgType             = VIEW.msg_getNameOfTypeByType(iNmsgObject.type),
-                thisUserId          = iNmsgObject.uid,
-                src                 = iNmsgObject.info.src,
-                myUID               = USER.getMyId(),
-                path                = `chats/${iNchatId}/${thisUserId}/${msgType}/${iNmsgId}/${src}`,
-                msgForCreateObject  = iNmsgObject['info'];
-
-            // create msg live auio for fix position
-                VIEW.msgLiveVideo_safeReplace( msgForCreateObject, myUID, iNchatId  );
-
-            console.log( 'msgLiveVideo_createFromMe - iNchatId, iNmsgId,  iNmsgObject',iNchatId, iNmsgId,  iNmsgObject );
-            console.log( 'msgLiveVideo_createFromMe - myUID, src,  thisUserId', myUID, src,  thisUserId );
-            console.log( 'msgLiveVideo_createFromMe - msgType, path', msgType, path );
-            M_STORAGE.getDownloadURL (path, 
-                (errUrl, dataUrl) => {
-                    console.log( 'msgLiveVideo_createFromMe - dataUrl', dataUrl );
-                    console.log( 'msgLiveVideo_createFromMe - errUrl', errUrl );
-                    if (errUrl) {
-                        // ERROR we can not get url
-
-                        return;
-                    }
-                    var url                 = dataUrl;
-
-                    msgForCreateObject['url'] = url;
-                    // create msg live auio
-                    VIEW.msgLiveVideo_safeReplace( msgForCreateObject, myUID, iNchatId  );
-
-                }
-            );
-        } _.msgLiveVideo_createFromMe = msgLiveVideo_createFromMe;
-
-        function msgLiveVideo_createToMe (iNchatId, iNmsgId,  iNmsgObject) {
-            /*
-                @discr
-                    create liveVideo (to me) message with get M_URL 
-                @inputs
-                    @required
-                        iNchatId    -> string
-                        iNmsgId     -> string
-                        iNmsgObject -> object
-            */
-            var myUID               = USER.getMyId(),
-                path                = M_URL.db.api.getUrl.forChat,
-                msgForCreateObject  = iNmsgObject['info'];
-
-            // create msg live auio for fix position
-                VIEW.msgLiveVideo_safeReplace( msgForCreateObject, myUID, iNchatId  );
-
-            console.log( 'msgLiveVideo_createToMe   - path'     , path  );
-            console.log( 'msgLiveVideo_createToMe   - myUID'    , myUID );
-            console.log( 'msgLiveVideo_createToMe   - iNmsgObject'     , iNmsgObject  );
-            $.getJSON (
-                path,
-                {
-                    'token'     : USER.getMyToken(),
-                    'chatId'    : iNchatId,
-                    'msgId'     : iNmsgId,
-                    'uid'       : myUID,
-                },
-                (dataFromServer) => {
-                    console.log( 'msgLiveVideo_createToMe - dataFromServer', dataFromServer );
-                    if(typeof dataFromServer != 'object' || dataFromServer.status != 1) {
-                        // ERROR we can not get M_URL
-                        return;
-                    }
-                    var url = dataFromServer.link;
-                    console.log( 'msgLiveVideo_createToMe - url', url );
-                    console.log( 'msgLiveVideo_createToMe - msgForCreateObject', msgForCreateObject );
-                    //attach this url to this object    
-                    msgForCreateObject['url'] = url;
-                    // create msg live auio
-                    VIEW.msgLiveVideo_safeReplace( msgForCreateObject, myUID, iNchatId  );
-
-                } 
-            );
-        } _.msgLiveVideo_createToMe = msgLiveVideo_createToMe;
 
         function msgLiveVideo_onEventPlayVideo (iNthis) {
             /*
@@ -22505,24 +20837,22 @@ define(
                 let path = ''
             }
 
-        function msgLiveVideo_createMsgFromMe (iNsrc, iNmyUid, iNchatId, iNmsgId) {
+        function msgLiveVideo_createMsgFromMe(iNsrc, iNmyUid, iNchatId, iNmsgId) {
             var iNdata = {};
-            iNdata['url']       = iNsrc;
-            iNdata['content']   = '';
-            iNdata['uid']       = iNmyUid;
-            iNdata['msgId']     = iNmsgId;
+            iNdata['content'] = iNsrc;
+            iNdata['uid'] = iNmyUid;
+            iNdata['msgId'] = iNmsgId;
             // create message element
             VIEW.msgLiveVideo_createMsg(iNdata, iNmyUid, iNchatId);
             // scroll to bot
             VIEW.effChatViewScrollToBotWithTimeOut();
         }
 
-        function msgLiveVideo_sendMsgFromMe (iNsrc, iNchatId, iNmsgId) {
-            var iNdata      = {
-                'src'       : iNsrc ,
-                'content'   : ''    ,
-                'type'      : 21
+        function msgLiveVideo_sendMsgFromMe(iNsrc, iNchatId, iNmsgId) {
+            var iNdata = {
+                'content': iNsrc
             };
+            iNdata['type'] = 21;
             // add to database
             msg_addToDb(iNdata, iNchatId, iNmsgId)
         }
@@ -22543,8 +20873,7 @@ define(
             var functionUploadBlob = () => {
                 // init loader
                 var progressBar     = VIEW.msgLiveVideo_initLoader(iNchatId, iNmsgId);
-                var file = '1.webm';
-                var pathForSaveFile = 'chats/'+iNchatId+'/'+iNmyUid+'/liveVideo/'+iNmsgId+'/' + file;
+                var pathForSaveFile = 'chats/'+iNchatId+'/'+iNmyUid+'/liveVideo/'+iNmsgId+'/1.webm';
                 M_STORAGE.uploadBlob(
                     iNblob, {
                         'pathForSaveFile': pathForSaveFile,
@@ -22555,7 +20884,7 @@ define(
                             VIEW.msgLiveVideo_hideUploadBlock(iNchatId, iNmsgId);
 
                             // send message to uplload
-                            msgLiveVideo_sendMsgFromMe(file, iNchatId, iNmsgId);
+                            msgLiveVideo_sendMsgFromMe(iNdownloadURL, iNchatId, iNmsgId);
                         },
                         'onProgress': (iNprogress) => {
                             let progress = iNprogress / 100;
@@ -22723,12 +21052,11 @@ define(
             //@> add read state for to me message if it need
         }
 
-        function msgLiveAudio_createMsgFromMe ( iNsrc, iNmyUid, iNchatId, iNmsgId ) {
+        function msgLiveAudio_createMsgFromMe(iNsrc, iNmyUid, iNchatId, iNmsgId) {
             var iNdata = {};
-            iNdata['url']       = iNsrc;
-            iNdata['uid']       = iNmyUid;
-            iNdata['content']   = '';
-            iNdata['msgId']     = iNmsgId;
+            iNdata['content'] = iNsrc;
+            iNdata['uid'] = iNmyUid;
+            iNdata['msgId'] = iNmsgId;
             // create message element
             VIEW.msgLiveAudio_createMsg(iNdata, iNmyUid, iNchatId);
             // scroll to bot
@@ -22750,14 +21078,14 @@ define(
                 'type': 20
             };
             msg_flashSending(objForSendToDb,iNchatId)
-        } _['msgLiveAudio_flashSending'] = msgLiveAudio_flashSending;
+        }
+        _['msgLiveAudio_flashSending'] = msgLiveAudio_flashSending;
 
-        function msgLiveAudio_sendMsgFromMe (iNsrc, iNchatId, iNmsgId) {
-            var iNdata      = {
-                'src'       : iNsrc,
-                'content'   : '',
-                'type'      : 20
+        function msgLiveAudio_sendMsgFromMe(iNsrc, iNchatId, iNmsgId) {
+            var iNdata = {
+                'content': iNsrc
             };
+            iNdata['type'] = 20;
             // add to database
             msg_addToDb(iNdata, iNchatId, iNmsgId)
         }
@@ -22778,8 +21106,7 @@ define(
             var functionUploadBlob = () => {
                 // init loader
                 var progressBar = VIEW.msgLiveAudio_initLoader(iNchatId, iNmsgId);
-                var file = '1.ogg';
-                var pathForSaveFile = 'chats/'+iNchatId+'/'+iNmyUid+'/liveAudio/'+iNmsgId+'/' + file;
+                var pathForSaveFile = 'chats/'+iNchatId+'/'+iNmyUid+'/liveAudio/'+iNmsgId+'/1.ogg';
                 M_STORAGE.uploadBlob (
                     iNblob, {
                         'pathForSaveFile': pathForSaveFile,
@@ -22790,7 +21117,7 @@ define(
                             VIEW.msgLiveAudio_hideUploadBlock(iNchatId, iNmsgId);
 
                             // send message to uplload
-                            msgLiveAudio_sendMsgFromMe(file, iNchatId, iNmsgId);
+                            msgLiveAudio_sendMsgFromMe(iNdownloadURL, iNchatId, iNmsgId);
                         },
                         'onProgress': (iNprogress) => {
                             let progress = iNprogress / 100;
@@ -22908,12 +21235,10 @@ define(
         return _;
     }
 );
-define(
-	'm_app-chat',['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_record','m_category','url'],
-	function( VIEW, M_APP, M_VIEW, M_MESSAGE, USER, FIREBASE, M_RECORD, M_CATEGORY, URL) {
+define('m_app-chat',['v_app-chat', 'm_app','m_view','m_message','m_user','m_firebase','m_record'],function( VIEW, M_APP, M_VIEW, M_MESSAGE, USER, FIREBASE, M_RECORD) {
 	//@< init
 		// init from app view templates
-	  const _ = {}; M_APP.setGlobalVar('m_app-chat',_);
+	  const _ = {};
 	  const CONST = {};
 	  const name = 'chat'; _['name'] = name;
 	  const pages = {};
@@ -22930,7 +21255,101 @@ define(
 
 	  var thisPageName; 
 
-	 
+	  //< init pages const
+		    //< page fullWindow
+		    	thisPageName = 'index';
+		        pages[thisPageName]  = {'attr':{'id' : 'leftBlockInViewWindow'},'menus':{}};
+		          pages[thisPageName]['functions'] = {
+		            // 'isPage'  : function () {    return true;},
+		            'getTemplate' : function (iNdata) {
+
+		            },
+		            'onOut'  : function () {   return true;},
+		            // 'onView'  : function () {
+		            //   addPageToFullWindow({'id':'sign','uid':'@system'});
+		            //   // V_APP_PAGE.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
+		            //   return true;
+		            // },
+		            // 'onHide'  : function () { return true;},
+		            // 'setPage' : function () {return true;},
+		            'onInit' 		: function () {
+		            	
+	        			M_APP.getGlobalVar('engine').passToApp( {'app':'base','page':'index'} );
+		            	M_MESSAGE.view.initApp( { 
+		            		// for send simpleTextMessage when click
+		            		'simpleMsgText_onClickSendBtn' : M_MESSAGE.simpleMsgText_onClickSendBtn , 
+		            		// for send flash data for simpleTextMessage
+		            		'simpleMsgText_printing' : M_MESSAGE.msgSimpleText_flashSending } 
+	            		);
+
+
+		            	//
+		            	M_MESSAGE.controller_msgLiveVideo_record_run ();
+		            	M_MESSAGE.controller_msgLiveAudio_record_run ();
+
+		            	return true;
+		            },
+		            'onAppear' 		: function (d1,d2) {
+		            	// M_MESSAGE.view.startAppearObserver();
+		            	pageIndex_openChatByChatId(d1);
+ 						return true;
+ 					},
+		            'onDisappear' 	: function () { return true;},
+		          };
+		    //> page fullWindow
+
+	  //> init pages const
+	_['pages'] = pages; 
+
+	//@<<< APP BLOCK
+		//@override
+		function getTemplate (iNdata) {
+			iNdata['other'] = VIEW.getChatSenderBlock();
+		}
+		_['getTemplate'] = getTemplate; 
+
+		//@required
+		function onInit () {
+
+		}
+		_['onInit'] = onInit; 
+		
+			//@optional	
+			function onIn () {
+
+			}
+			_['onIn'] = onIn; 
+				//@required
+				function onAppear () {
+					M_VIEW.view.closeLoader();
+
+				}
+				_['onAppear'] = onAppear; 
+				//@required
+				function onDisappear () {
+					// here must be page disapear functions
+					/*
+						безопасно берем pages если есть
+						безопасно узнаем название открывшегося сейчась page +getPageName +setPageName
+						безопасно вызываем pages[openedPageName][onDisapear] функцию
+
+					*/
+
+				}
+			_['onDisappear'] = onDisappear; 
+
+			//@optional	
+			function onOut () {
+				// here must be page onOut functions
+
+			}
+			_['onOut'] = onOut; 
+		//@required
+		function onDeinit () {
+
+		}
+		_['onDeinit'] = onDeinit; 
+	//@>>> APP BLOCK
 
 
 
@@ -23021,29 +21440,7 @@ define(
 
 
 
-	function getChatIconByType (iNchaType,iNobject) {
-        /*
-        	@discr 
-        		get chat icon for private and group chats
-            @inputs
-                iNchatType -> number
-                iNobject
-                    uid -> string
-                    chatId -> string
-        */
-        var chatType = parseInt(iNchaType), result;
-        console.log('getChatIconByType - iNchaType,iNobject',iNchaType,iNobject);
-        if (chatType == 1) {
-            // private chat
 
-            result =  URL.getUserIconByUid(iNobject['userId']);
-
-        } else if(chatType == 2) {
-            // group chat
-            result = URL.getChatIconByChatId(iNobject['chatId']);
-        }
-        return result;
-    } _.getChatIconByType = getChatIconByType;
 
 
 
@@ -23053,40 +21450,30 @@ define(
 				@required
 					iNobject -> object
 						chatId
-						userId
+						uid
 						chatName
-						chatType
-
-
-						userLogin
-
-
 						chatIcon
 
 						userLogin
 						online
 						servise
-						chatType
 
 		*/
 
-		console.log('pageIndex_openChatByChatId start - iNobject',iNobject);
 
+
+		iNobject['chatIcon'] 	= iNobject['chatIcon'];//https://cdn.ramman.net/images/icons/apps/app_sharepay.png';
 		iNobject['chatName']	= iNobject['chatName'];//'SharePay';
 		iNobject['login']	 	= iNobject['userLogin'];// 'sharepay';
-		iNobject['servise'] 	= (iNobject['userType'] == 2)?true:false;//true;
+		iNobject['servise'] = (iNobject['userType'] == 2)?true:false;//true;
 
-		var chatId  		= iNobject['chatId'];
-			uid 			= iNobject['uid'],
-			login 			= iNobject['login'],
-			servise 		= iNobject['servise'],
-			stateOnline 	= iNobject['online'],
-			chatName  		= iNobject['chatName'];
-
-		// get chatIcon
-		var chatType 	= iNobject['chatType']||1,
-			chatIcon  	= getChatIconByType(chatType,iNobject);
-			iNobject['chatIcon'] = chatIcon;
+		var chatId  = iNobject['chatId'];
+		var uid 	= iNobject['uid'];
+		var login 	= iNobject['login'];
+		var servise = iNobject['servise'];
+		var stateOnline 	= iNobject['online'];
+		var chatIcon  = iNobject['chatIcon'];
+		var chatName  = iNobject['chatName'];
 
 
 		// setPreviusChat 
@@ -23117,7 +21504,6 @@ define(
 
 
 		M_MESSAGE.setLastMsgTimeByChatId(chatId,0);
-		
         if ( VIEW.getCountsOfChatContainers(chatId) == 0 ) {
             // need chat isset open it
             VIEW.createChatContainer(chatId);
@@ -23134,7 +21520,7 @@ define(
         VIEW.showChatContainerByChatId(chatId);
         VIEW.effChatViewScrollToBot();
         // M_MESSAGE.setObserverForAppearMessageInVisualScrollByChatId(chatId);
-    } _.pageIndex_openChatByChatId = pageIndex_openChatByChatId;
+    }
 
     
 	//    
@@ -23165,170 +21551,7 @@ define(
 
 	return _;
 });
-define( 'c_app-chat',['m_app-chat', 'v_app-chat', 'm_view', 'm_message', 'm_app'], function ( MODEL, VIEW, M_VIEW, M_MESSAGE, M_APP) {
-
-	console.log('c_app-chat - MODEL',MODEL);
-	console.log('c_app-chat - VIEW',VIEW);
-  // init result const
-  const _ = {};
-	  const name = 'chat'; _['name'] = name;
-	  const pages = {};
-
-  // 
-  _['options'] = {}
-
-  
-  var thisPageName;
-   //< init pages const
-		    //@< page 'index'
-		    	thisPageName = 'index';
-		        pages[thisPageName]  = {'attr':{'id' : 'leftBlockInViewWindow'},'menus':{}};
-		          pages[thisPageName]['functions'] = {
-		            // 'isPage'  : function () {    return true;},
-		            'getTemplate' : function (iNdata) {
-
-		            },
-		            'onOut'  : function () {   return true;},
-		            // 'onView'  : function () {
-		            //   addPageToFullWindow({'id':'sign','uid':'@system'});
-		            //   // V_APP_PAGE.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
-		            //   return true;
-		            // },
-		            // 'onHide'  : function () { return true;},
-		            // 'setPage' : function () {return true;},
-		            'onInit' 		: function () {
-		            	
-		            	console.log("M_APP.getAppFromStoryLog('base')",M_APP.getAppFromStoryLog('base'));
-		            	if( !M_APP.getAppFromStoryLog('base') ) {
-		            		console.log("getAppFromStoryLog",'loa');
-		            		// if app base not open yet -> we load
-	        				M_APP.getGlobalVar('engine').passToApp( {'app':'base','page':'index'} );
-		            	}
-
-
-		            	M_MESSAGE.view.initApp( { 
-		            		// for send simpleTextMessage when click
-		            		'simpleMsgText_onClickSendBtn' : M_MESSAGE.simpleMsgText_onClickSendBtn , 
-		            		// for send flash data for simpleTextMessage
-		            		'simpleMsgText_printing' : M_MESSAGE.msgSimpleText_flashSending } 
-	            		);
-
-
-		            	//
-		            	M_MESSAGE.controller_msgLiveVideo_record_run ();
-		            	M_MESSAGE.controller_msgLiveAudio_record_run ();
-
-		            	return true;
-		            },
-		            'onAppear' 		: function (d1,d2) {
-		            	console.log('app chat page index onAppear - d1,d2',d1,d2);
-		            	MODEL.pageIndex_openChatByChatId(d1);
- 						return true;
- 					},
-		            'onDisappear' 	: function () { return true;},
-		          };
-		    //@> page 'index'
-
-		    //@< page 'createPrivateChat'
-		    	thisPageName = 'createPrivateChat';
-		        pages[thisPageName]  = {'attr':{'id' : 'leftBlockInViewWindow'},'menus':{}};
-		          pages[thisPageName]['functions'] = {
-		            // 'isPage'  : function () {    return true;},
-		            'getTemplate' : function (iNdata) {
-
-		            },
-		            'onOut'  : function () {   return true;},
-		            // 'onView'  : function () {
-		            //   addPageToFullWindow({'id':'sign','uid':'@system'});
-		            //   // V_APP_PAGE.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
-		            //   return true;
-		            // },
-		            // 'onHide'  : function () { return true;},
-		            // 'setPage' : function () {return true;},
-		            'onInit' 		: function () {
-		            	
-	        			M_APP.getGlobalVar('engine').passToApp ( {'app':'base','page':'index','data':''} );
-		            	M_MESSAGE.view.initApp( { 
-		            		// for send simpleTextMessage when click
-		            		'simpleMsgText_onClickSendBtn' : M_MESSAGE.simpleMsgText_onClickSendBtn , 
-		            		// for send flash data for simpleTextMessage
-		            		'simpleMsgText_printing' : M_MESSAGE.msgSimpleText_flashSending } 
-	            		);
-
-
-		            	//
-		            	M_MESSAGE.controller_msgLiveVideo_record_run ();
-		            	M_MESSAGE.controller_msgLiveAudio_record_run ();
-
-		            	return true;
-		            },
-		            'onAppear' 		: function (d1,d2) {
-		            	// M_MESSAGE.view.startAppearObserver();
-		            	MODEL.pageIndex_openChatByChatId(d1);
- 						return true;
- 					},
-		            'onDisappear' 	: function () { return true;},
-		          };
-		    //@> page 'createPrivateChat'
-
-	  //> init pages const
-	_['pages'] = pages; 
-
-	//@<<< APP BLOCK
-		//@override
-		function getTemplate (iNdata) {
-			iNdata['other'] = VIEW.getChatSenderBlock();
-		}
-		_['getTemplate'] = getTemplate; 
-
-		//@required
-		function onInit () {
-
-		}
-		_['onInit'] = onInit; 
-		
-			//@optional	
-			function onIn () {
-
-			}
-			_['onIn'] = onIn; 
-				//@required
-				function onAppear () {
-					M_VIEW.view.closeLoader();
-
-				}
-				_['onAppear'] = onAppear; 
-				//@required
-				function onDisappear () {
-					// here must be page disapear functions
-					/*
-						безопасно берем pages если есть
-						безопасно узнаем название открывшегося сейчась page +getPageName +setPageName
-						безопасно вызываем pages[openedPageName][onDisapear] функцию
-
-					*/
-
-				}
-			_['onDisappear'] = onDisappear; 
-
-			//@optional	
-			function onOut () {
-				// here must be page onOut functions
-
-			}
-			_['onOut'] = onOut; 
-		//@required
-		function onDeinit () {
-
-		}
-		_['onDeinit'] = onDeinit; 
-	//@>>> APP BLOCK
-
-
-
-  return  _;
-});
-define('v_app-base',['jquery','m_user','template7','v_view','v_app','selector', 'localdb'],function($,USER,Template7,V_VIEW,V_APP, SELECTOR, LOCALDB) {
+define('v_app-base',['jquery','m_user','template7','v_view','v_app'],function($,USER,Template7,V_VIEW,V_APP) {
 	const _ = {};
 	const CONST = {'name':'base','pageIndex':'index'};
 	const templates = {};
@@ -23378,17 +21601,6 @@ define('v_app-base',['jquery','m_user','template7','v_view','v_app','selector', 
 		return temp(iNdata);
 	}
 
-	
-
-	function getAppContent (iNdata) {
-		return `
-		<div class="view " view-name="index">
-		  	<div class="scrolBlockForChat" style="" id="MixItUp81681F"></div>
-		</div>
-		`;
-	}
-	_['getAppContent'] = getAppContent; 
-
 	function addUserHeaderInList (iNdata,iNtype) {
 		/*
 			@inputs
@@ -23430,8 +21642,7 @@ define('v_app-base',['jquery','m_user','template7','v_view','v_app','selector', 
 
 	function getRealChatIdByUid (iNuid) {
 		// body...
-
-		var path 		= SELECTOR.db.main.blocks.second.body.toChat + "[connect_uid='"+iNuid+"']";
+		var path 		= ".usersBlockContainerInMenusBlock .scrolBlockForChat .mix.usersBlockInMenusBlock[connect_uid='"+iNuid+"']";
 		var el 			= $(path);
 		var chatId 		= el.attr('connect_chatid');
 		var userLogin 	= el.attr('connect_userlogin');
@@ -23445,170 +21656,7 @@ define('v_app-base',['jquery','m_user','template7','v_view','v_app','selector', 
 	
 
 
-	//@< PSEUDO USER MENU
 
-		templates['menuPseudoUser_box'] = `
-			<div class="appBase_userSelectMenuContainer">
-   				<ul>
-   					{{content}}
-   				</ul>
-			</div>
-		`;
-
-		templates['menuPseudoUser_item'] = `
-			<li>
-		         <div class="appBase_userListHeaderContainer" connect_uid='{{uid}}' connect_owner='{{owner}}'>
-		            <div class="appBase_userIcon"><a href="#"><img src="{{icon}}"></a></div>
-		            <div class="UserNameInMenusBlock">
-		               <div class="appBase_ListHeader_dName">
-		                  <a href="" class="CML">{{name}}</a>
-		               </div>
-		               {{#if owner}}
-		               		<div class="appBase_ListHeader_owner">{{owner}}</div>
-	               	   {{else}}
-		               		<div class="appBase_ListHeader_login">{{login}}</div>
-	               	   {{/if}}
-		            </div>
-		         </div>
-		    </li>
-		`;
-
-		function menuPseudoUser_getBox (iNdata) {
-			/*
-				@inputs
-					@required
-						iNdata
-							@required
-							@optional
-								content -> string
-			*/
-			var temp = Template7.compile(templates['menuPseudoUser_box']);
-			return temp(iNdata);
-		}
-		_['menuPseudoUser_getBox'] = menuPseudoUser_getBox;
-
-		function menuPseudoUser_getCountMenu () {
-
-			var path = SELECTOR.db.main.blocks.second.header.base.index.menuSwitchUserBox.val;
-			return $(path).length;
-		} _.menuPseudoUser_getCountMenu = menuPseudoUser_getCountMenu;
-
-		function menuPseudoUser_addBox (iNdata) {
-			/*
-				@inputs
-					@required
-						iNdata
-							@required
-							@optional
-								content -> string
-			*/
-			var path 		= SELECTOR.db.main.blocks.second.header.base.index.val,// '.topBlockInMenusBlock .menuHeaderInMenusBlock[app-name="base"] .appPage[page-name="index"]',
-				content 	= menuPseudoUser_getBox(iNdata);
-				V_VIEW.d_addDataToViewEl ( path, content, 'start' );
-		}
-
-		function menuPseudoUser_safeAddBox (iNdata) {
-			/*
-				@inputs
-					@required
-						iNdata
-							@required
-							@optional
-								content -> string
-			*/
-			if(typeof iNdata != 'object') iNdata = {};
-			if ( menuPseudoUser_getCountMenu() < 1 ) {
-				menuPseudoUser_addBox(iNdata);
-			}
-		} _.menuPseudoUser_safeAddBox = menuPseudoUser_safeAddBox;
-
-		function menuPseudoUser_getItem (iNdata) {
-			/*
-				@inputs
-					@required
-						iNdata
-							@required
-								name -> string
-								icon -> string
-								ownerLogin -> string
-			*/
-			var temp = Template7.compile(templates['menuPseudoUser_item']);
-			return temp(iNdata);
-		}
-		_['menuPseudoUser_getItem'] = menuPseudoUser_getItem;
-
-
-		function menuPseudoUser_addItem (iNdata) {
-			/*
-				@inputs
-					@required
-						iNdata
-							@required
-								name -> string
-								icon -> string
-								ownerLogin -> string
-			*/
-
-			// add box if not exist
-			menuPseudoUser_safeAddBox();
-
-			// add item
-			var path 	= SELECTOR.db.main.blocks.second.header.base.index.menuSwitchUserBox.item.val,
-				content = menuPseudoUser_getItem(iNdata);
-				V_VIEW.d_addDataToViewEl (path,content,'start');
-
-		}
-		_['menuPseudoUser_addItem'] = menuPseudoUser_addItem;
-
-		function menuPseudoUser_attachOnClickEventForShowMenu () {
-			// when click to icon OR to name
-			var pathToIcon 	= SELECTOR.db.main.blocks.second.header.base.index.userIconWihPseudoFlag.val,//'.appPage > .appBase_userListHeaderContainer.flagHasPseudoUsers .appBase_userIcon',
-				pathToName 	= SELECTOR.db.main.blocks.second.header.base.index.userNameWihPseudoFlag.val,//'.appPage > .appBase_userListHeaderContainer.flagHasPseudoUsers .appBase_ListHeader_dName',
-				path 		= pathToIcon + ', ' + pathToName;
-				// clear of any onclick actions
-				$(path).off('click');
-				// attach action to on click event for view menu
-				$(path).click(
-					function (e) {
-						e.preventDefault();
-						menuPseudoUser_showMenu();
-					}	
-				);
-		} _.menuPseudoUser_attachOnClickEventForShowMenu  = menuPseudoUser_attachOnClickEventForShowMenu;
-
-		function menuPseudoUser_hideMenu() {
-			//hide curtain
-			$(SELECTOR.val.curtain).hide();
-		}
-
-		function menuPseudoUser_showMenu() {
-			// open menu
-			$(SELECTOR.db.main.blocks.second.header.base.index.menuSwitchUserBox.val).show();
-
-			// show curtain
-			V_APP.showBackgroundCurtainWithFunction (
-				() => {
-					// hide menus
-					$(SELECTOR.db.main.blocks.second.header.base.index.menuSwitchUserBox.val).hide();
-
-				}
-			);
-		}
-
-		
-
-		function menuPseudoUser_addFlagToAttachOnClickEventForShowMenu () {
-			var flag = LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser,//'flagHasPseudoUsers',
-				path = SELECTOR.db.main.blocks.second.header.base.index.baseHeader.val;
-			$(path).addClass(flag);
-		} _.menuPseudoUser_addFlagToAttachOnClickEventForShowMenu = menuPseudoUser_addFlagToAttachOnClickEventForShowMenu;
-
-		function menuPseudoUser_removeFlagToAttachOnClickEventForShowMenu() {
-			var flag = LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser,//'flagHasPseudoUsers',
-				path = SELECTOR.db.main.blocks.second.header.base.index.baseHeader.val;
-			$(path).removeClass(flag);
-		} _.menuPseudoUser_removeFlagToAttachOnClickEventForShowMenu = menuPseudoUser_removeFlagToAttachOnClickEventForShowMenu;
-	//@> PSEUDO USER MENU
 
 	return _;
 });
@@ -23628,37 +21676,229 @@ define("jquery.autocomplete", ["jquery"], (function (global) {
 
 define( 
   'm_app-base',[
-    'jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictionary','v_app-base','m_routing', 'm_database', 'url', 'sweetalert2', 'localdb',
+    'jquery','m_firebase','m_category','m_app','m_view', 'm_user','dictionary','v_app-base','m_routing', 'm_database', 'sweetalert2',
     'jquery.autocomplete'
   ] , 
-  function ($ , FIREBASE , M_CATEGORY , M_APP , M_VIEW,USER, DICTIONARY, VIEW , ROUTING, M_DATABASE,URL,SWEETALERT, LOCALDB) {
+  function ($ , FIREBASE , M_CATEGORY , M_APP , M_VIEW,USER, DICTIONARY, VIEW , ROUTING, M_DATABASE,SWEETALERT) {
 
-  const _ = {};
+  const _ = {}; _['name'] = 'base';
   const CONST = {};
-  
+  // init pages const
+  const pages = {}; _['pages'] = pages;
+    //< page menu
+
+        //< page index
+          var thisPageName = 'index';
+          pages[thisPageName]  = {'attr':{},'menus':{},'functions':{}};
+            pages[thisPageName]['attr'] = {
+              'id2' : '2',
+              'id3' : '3',
+            };
+            pages[thisPageName]['menus'] = {
+              'attr' : {
+                'id1' : 'id2',
+                'id3' : 'id4'
+              }
+            };
+            pages[thisPageName]['functions'] = {
+              'isPage'  : function () { 
+                let i =  ( M_APP.view.d_checkPageInListApp({app:'base','page':'index'}) > 0 ) ? true : false;
+                console.log('isPage index i',i); 
+                return i;
+              },
+              'onView'  : function (iNojbectData,iNojbectApp) { 
+                  console.log('onView index iNojbectData,iNojbectApp',iNojbectData,iNojbectApp);
+                if(iNojbectData['back']) {
+                  // add header with back btn for this list app
+                  // addHeaderWithBackBtnInListView();
+                } else {
+                  // clear user menus if we come from 'one' page by click btn
+                  $('.usersBlockContainerInMenusBlock .app[app-name="base"] .view[view-name="index"] .scrolBlockForChat').html('');
+                  // add standart header for this list app
+                  addStandartHeaderForListView();
+                  if ( USER.getMyId() ) {
+                    getMyChats();
+                  }
+                }
+
+                // hide all app in list
+                M_APP.view.d_hideApps('all','list');
+
+                // show this app in list
+                M_APP.view.d_showApps('base','list');
 
 
-  // function checkFunction () {
-  //   VIEW.menuPseudoUser_addItem (
-  //     {
-  //       'name'        : 'Тестовый пользователь',
-  //       'icon'        : 'Тестовый пользователь',
-  //       'ownerLogin'  : 'Тестовый пользователь',
-  //     }
-  //   );
+                // getMyChats();
 
-  //   VIEW.menuPseudoUser_addItem (
-  //     {
-  //       'name'        : 'Тестовый пользователь',
-  //       'icon'        : 'Тестовый пользователь',
-  //       'ownerLogin'  : 'Тестовый пользователь',
-  //     }
-  //   );
-  //   VIEW.menuPseudoUser_attachOnClickEventForShowMenu();
-  // } _.checkFunction = checkFunction;
+                // get chat if we auth user
+                
+
+                return true;
+              },
+              'onHide'  : function () { 
+                  console.log('onHide index');
+                  return true;
+               },
+              'onAppear'  : function () {
+                  console.log('onAppear index');
+                  M_VIEW.view.closeLoader(); 
 
 
-  //CHANGE move to view
+                  M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
+              },
+              'onDisappear'  : function () {
+                  console.log('onDisappear index');
+              },
+              // 'setPage' : function () {console.log('app private','setPage'); return true;},
+              'onCreate' : function (d,d1) { 
+                M_APP.view.d_createPageInListApp({app:'base','page':'index','content': '<div class="scrolBlockForChat" style="" id="MixItUp81681F"></div>'}); 
+              },
+            };
+          //>page index
+
+          //< page one
+            var thisPageName = 'one';
+            pages[thisPageName]  = {'attr':{},'menus':{},'functions':{}};
+              pages[thisPageName]['attr'] = {
+                // 'id2' : '2',
+                // 'id3' : '3',
+              };
+              pages[thisPageName]['menus'] = {
+                'attr' : {
+                  // 'id1' : 'id2',
+                  // 'id3' : 'id4'
+                }
+              };
+              pages[thisPageName]['functions'] = {
+                'isPage'  : function () { 
+                  let i =  ( M_APP.view.d_checkPageInListApp({app:'base','page':'index'}) > 0 ) ? true : false; 
+                  console.log('isPage one i',i); 
+                  return i;
+                },
+                'onView'  : function (d,d1) { 
+                    console.log('onView one');
+                  // hide all app in list
+                  M_APP.view.d_hideApps('all','list');
+
+                  // show this app in list
+                  M_APP.view.d_showApps('base','list');
+
+                  // add header with back btn for this list app
+                  // addHeaderWithBackBtnInListView();
+
+                  //clear other chats
+                  $('.mix.usersBlockInMenusBlock').remove();
+                  
+
+                  createChatByGetUrlUserInfo(d['uid']);
+                  return true;
+                },
+                'onAppear'  : function () {
+                    console.log('onAppear one');
+                    M_VIEW.view.closeLoader(); 
+                    M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
+                },
+                'onDisappear'  : function () {
+                    console.log('onDisappear one');
+                },
+                'onHide'  : function () { 
+                  console.log('onHide one');
+
+                  
+
+                  return true;
+                },
+                // 'setPage' : function () {    return true;},
+                'onCreate' : function (d,d1) { 
+                  M_APP.view.d_createPageInListApp({app:'base','page':'index','content': '<div class="scrolBlockForChat" style="" id="MixItUp81681F"></div>'}); 
+                },
+              };
+          //>page one
+
+
+
+    //> page full window
+
+  const options = {
+    
+  };
+
+  // function onCreate
+  function onCreate (iNstring,iNobject) {
+
+    // create app block in list
+    M_APP.view.d_createListApp({app:'base'}); 
+
+    // init search input autocomplete
+    initForAutocompleteForSearch();
+
+    // get chat if we auth user
+    if ( USER.getMyId() ) {
+      // getMyChats();
+    }
+
+  }
+  _['onCreate'] = onCreate;
+
+  // function isApp
+  function isApp (iNstring,iNobject) {
+    
+    return (M_APP.view.d_checkListApp({app:'base'}) > 0) ? true : false;
+  }
+  _['isApp'] = isApp;
+
+
+  // function onInit
+  function onInit (iNstring,iNobject) {
+    controller_devise_run();
+    
+    //
+
+  }
+  _['onInit'] = onInit;
+
+    // function onIn
+    function onIn (iNstring,iNobject) {
+      
+    }
+    _['onIn'] = onIn;
+
+      //@overide
+      function onAppear (iNstring,iNobject) {
+
+
+      }
+      _['onAppear'] = onAppear;
+
+      //@overide
+      function onDisappear (iNstring,iNobject) {
+
+      }
+      _['onDisappear'] = onDisappear;
+
+    //@overide
+    function onOut (iNstring,iNobject) {
+
+    }
+    _['onOut'] = onOut;
+
+  //@overide
+  function onDeinit (iNstring,iNobject) {
+
+  }
+  _['onDeinit'] = onDeinit;
+
+
+  function onHide () {
+    return true;
+  }
+  _['onHide'] = onHide;
+
+
+
+
+
+
   function initForAutocompleteForSearch () {
     var index = M_DATABASE.algolia.initIndex('connect-search');
     $('.searchInputInSearchBlock').autocomplete({ hint: false }, [
@@ -23684,7 +21924,7 @@ define(
     ]).on('autocomplete:selected', function(event, suggestion, dataset) {
       console.log(suggestion, dataset);
     });
-  } _.initForAutocompleteForSearch = initForAutocompleteForSearch;
+  }
 
 
   function addStandartHeaderForListView () {
@@ -23698,15 +21938,14 @@ define(
       // add header for non auth user
       VIEW.addUserHeaderInList ( 
         {
-          'icon' : USER.getIconNonePhoto(),//URL.db.userNonePhoto,
+          'icon' : 'https://cdn.ramman.net/web/res/images/icons/user/noPhoto.png',
           'name' : DICTIONARY.withString('[system-signIn]/[system-signUp]'),
         },
         'change'
       );
 
     }
-  } _.addStandartHeaderForListView = addStandartHeaderForListView;
-
+  }
 
   function addHeaderWithBackBtnInListView (iNicon,iNname,iNlogin) {
     VIEW.addUserHeaderInList({
@@ -23722,9 +21961,11 @@ define(
         M_APP.getGlobalVar('engine').passToApp({'app':'base','page':'index','data':'back=1'});
       }
     );
-  } _.addHeaderWithBackBtnInListView = addHeaderWithBackBtnInListView;
+  }
 
 
+  const baseSite  = 'https://ramman.net/';
+    const url_getPage   = baseSite + 'api/service/page';
   function openPage (iNuid,iNid) {
     /*
       @discr
@@ -23754,15 +21995,14 @@ define(
         1 - get page object from server 
     */
     $.get (
-      URL.db.api.page.get, 
+      url_getPage, 
       iNdata, 
       function (_) {
         iNfunction(_);
       },
       'json'
     );
-  }
-
+  };
     function processingData (iNdata,iNid) {
       /*
         @example
@@ -23792,110 +22032,102 @@ define(
           }
         }
       }
-    }
+    }; 
+
+  function closePage () {
+    /*
+      @example
+      @discr
+        get page by iNuid and iNid from server
+      @inputs
+        @required
+      @return
+      @algoritm
+        1 - clear page
+    */
+  }
+
+  function getMessagesByChatId () {
+    // M_CATEGORY.view.startEffSortChats();
+    // var myUid       = M_APP.get('uid'),
+    //     chatsRef = FIREBASE.database().ref('chats/'+chatId);
+    // chatsRef.once('value', function(chatData) {
+
+    // });
+  }
 
 
+  function pageOne_getUserInfo (iNuid) {
+    const objectForAjax = {};
+          objectForAjax['userId'] = USER.getMyId();
+          objectForAjax['token']  = USER.getMyToken();
+          objectForAjax['uid']    = iNuid;
+    createChatByGetUrlUserInfo(objectForAjax,
+      function (resultOfAjax) {
+
+      }
+    );
+  }
     CONST['url_getUser']    = 'https://ramman.net/api/user';
+    CONST['url_createChat'] = 'https://ramman.net/api/chat';
 
-
-
-    function chat_openChatWithCreateIfNotExist (iNobjectForCreateChat) {
-      // body...
-      var objForCreateChat = iNobjectForCreateChat;
-
-      // created chat
-      M_CATEGORY.view.createChatListIfNotExist(objForCreateChat);
-
-      // set select effects for this chat
-      M_CATEGORY.view.chat_setSelectOnlyThisChat(objForCreateChat['chatId'],1); 
-
-      //resort this chat (up this to top)
-      M_CATEGORY.view.chatPosition_annihilateForSort ();
-      M_CATEGORY.view.chatPosition_setByChatIdForSort (objForCreateChat['chatId'],1); 
-      // M_CATEGORY.view.startEffSortChats ();
-
-      // show only this chat
-      if(!iNobjectForCreateChat['filter']) M_CATEGORY.view.chat_showChatByChatId(objForCreateChat['chatId']);
-      // add on click for this chat event
-      M_CATEGORY.view.addOnClickActionForChatList ( objForCreateChat['chatId']);
-    } _.chat_openChatWithCreateIfNotExist = chat_openChatWithCreateIfNotExist;
 
 
     /*< USER INFO */
+      function createChatByGetUrlUserInfo (iNlogin) {
 
-
-
-      function request_getUserMenuByLogin (iNlogin, iNfunction) {
-
-        M_VIEW.view.closeLoaderByTimeout(10000, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
-
+        M_VIEW.view.closeLoaderByTimeout(5000, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
         const objectForAjax = {};
               objectForAjax['userId']     = USER.getMyId();
               objectForAjax['token']      = USER.getMyToken();
               objectForAjax['uid']        = iNlogin;
         getByGetRequest_userInfo(objectForAjax,
-          (resultOfAjax) => {
+          function (resultOfAjax) {
+
+            M_VIEW.view.closeLoaderByTimeout(2500, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
 
 
-
-            var icon          = URL.getUserIconByUid(resultOfAjax['user']['uid']),//'https://gstorage.ramman.net/users/'+resultOfAjax['user']['uid']+'/public/icons/1.jpg', //https://cdn.ramman.net/images/icons/apps/app_sharepay.png',
-                userName      = resultOfAjax['user']['name'],
-                userLogin     = resultOfAjax['user']['login'],
-                userId        = resultOfAjax['user']['uid'],
-                chatType      = 1; // private chat
+            var icon        = 'https://cdn.ramman.net/images/icons/apps/app_sharepay.png';
+            var userName    = resultOfAjax['user']['name'];
+            var userLogin    = resultOfAjax['user']['login'];
             
             // add header with back btn for this list app
-            addHeaderWithBackBtnInListView (icon,userName,userLogin);
+            addHeaderWithBackBtnInListView(icon,userName,userLogin);
 
-           // if we does not signed
-            var objForCreateChat = {};
-              // get chatId if we has chat with this user
-              objForCreateChat['chatId']      = resultOfAjax['chat']||userLogin; //because we dont have chat
-              objForCreateChat['userId']      = userId;
-              // objForCreateChat['userHasMenu'] = 1;
-              objForCreateChat['login']       = userLogin;//resultOfAjax['user']['login'];
-              objForCreateChat['icon']        = icon;//'https://cdn.ramman.net/images/icons/apps/app_sharepay.png';
-              objForCreateChat['chatName']    = userName;//resultOfAjax['user']['name'];
-              objForCreateChat['chatType']    = chatType;//resultOfAjax['user']['name'];
+            if (resultOfAjax['chat'] == false ) {
+              if ( USER.getMyLogin() ) {
+                // if we signed -> create chat
+                createPrivateChat( iNlogin , resultOfAjax );
 
-              // check for has menu
-              if(typeof resultOfAjax['categories'] == 'object') {
-                // if this user has categories we add userHasMenuFlag
-                objForCreateChat['userHasMenu']    = 1;
+              } else {
+                // if we does not signed
+                var objForCreateChat = {};
+                  objForCreateChat['chatId']      = resultOfAjax['user']['login']; //because we dont have chat
+                  objForCreateChat['userId']      = resultOfAjax['user']['uid'];
+                  objForCreateChat['login']       = userLogin;//resultOfAjax['user']['login'];
+                  objForCreateChat['icon']        = icon;//'https://cdn.ramman.net/images/icons/apps/app_sharepay.png';
+                  objForCreateChat['chatName']    = userName;//resultOfAjax['user']['name'];
+                  console.log('createChatByGetUrlUserInfo objForCreateChat',objForCreateChat);
+
+                  // created chat
+                  M_CATEGORY.view.createChatList(objForCreateChat);
+
+                  // add user menu  
+                  addServiceMenu (objForCreateChat,resultOfAjax);
               }
-
-              // created chat
-              M_CATEGORY.view.createChatListIfNotExist(objForCreateChat);
-
-              // set select effects for this chat
-              M_CATEGORY.view.chat_setSelectOnlyThisChat(objForCreateChat['userId'],1); 
-
-              //resort this chat (up this to top)
-              M_CATEGORY.view.chatPosition_annihilateForSort ();
-              M_CATEGORY.view.chatPosition_setByUserIdForSort (objForCreateChat['userId'],1); 
-              M_CATEGORY.view.startEffSortChats ();
-
-              // show only this chat
-              M_CATEGORY.view.chat_showChatByUserId(objForCreateChat['userId']);
-
-              // add user menu  
-              addServiceMenu (objForCreateChat,resultOfAjax);
-
-              // show this chat menu
-              M_CATEGORY.view.chat_showOnlyThisChatMenu(objForCreateChat['userId']);
-
-              // M_VIEW.view.closeLoaderByTimeout(2500, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
-
-
-              if(typeof iNfunction == 'function') iNfunction();
+            } else {
+              // create chat static
+              console.log('createChatByGetUrlUserInfo viewThisChatFromFDB');
+              M_VIEW.view.closeLoaderByTimeout(2500, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
+              viewThisChatFromFDB (resultOfAjax['chat'],resultOfAjax);
+            }
           }
         );
-      } _.request_getUserMenuByLogin = request_getUserMenuByLogin;
-
+      }
         function getByGetRequest_userInfo (iNdata,iNfunction) {
           /*
             @example
-              request_getUserMenuByLogin({'uid': '769b72df-6e67-465c-9334-b1a8bfb95a1a2' ,'userId': 'bac255e1-6a59-4181-bfb9-61139e38630e' , 'token' : '1bf92fd8-fe97-44bc-a223-9b7af3019392'},(result) => {console.log(result);})
+              createChatByGetUrlUserInfo({'uid': '769b72df-6e67-465c-9334-b1a8bfb95a1a2' ,'userId': 'bac255e1-6a59-4181-bfb9-61139e38630e' , 'token' : '1bf92fd8-fe97-44bc-a223-9b7af3019392'},(result) => {console.log(result);})
             @discr
               get categories, chatId of UID
             @inputs
@@ -23925,30 +22157,75 @@ define(
     /*> USER INFO */
 
     /*< CHAT */
-
-      CONST['url_createChat'] = URL.db.api.chat.create;// 'https://ramman.net/api/chat';
-      function createPrivateChat (iNuid,/*iNuserData,*/ iNsuccessFunction, iNerrorFunction) {
+      function createPrivateChat (iNuid,iNuserData) {
         const objectForAjax = {};
               objectForAjax['uid']     = USER.getMyId();
               objectForAjax['token']   = USER.getMyToken();
               objectForAjax['userUrl'] = iNuid;
         getByGetRequest_ChatDataBySafeCreate(objectForAjax,
-          (resultOfAjax) => {
-            if (typeof resultOfAjax == 'object' && resultOfAjax['status'] == 1 ) {
-              // SUCCESS we  created chat
-              if(typeof iNsuccessFunction == 'function') iNsuccessFunction(resultOfAjax);
-            } else {
-              // ERROR we cannpt create chats
-              if(typeof iNerrorFunction == 'function') iNerrorFunction(resultOfAjax);
+          function (resultOfAjax) {
+            if(typeof resultOfAjax == 'object' && resultOfAjax['status'] == 1 ) {
+              //SUCCESS we  created chat
+              // create chat if it did not exist
+              viewThisChatFromFDB(resultOfAjax['chat'],iNuserData);
+            }else {
+              //ERROR we cannpt create chats
+
             }
           }
         );
       }
+       
+        function viewThisChatFromFDB (iNchat,iNuserData) {
+            console.log('viewThisChatFromFDB iNchat,iNuserData',iNchat,iNuserData);
+            const objForCreatChat = {};
+            objForCreatChat['chatId']   = iNchat || ('noneChat_'+iNuserData['user']['uid']);
+            objForCreatChat['userId']   = iNuserData['user']['uid'];
+            objForCreatChat['chatName'] = iNuserData['user']['name'];
+            objForCreatChat['icon_min'] = iNuserData['user']['icon'];
+            // if(iNchat) {
+              console.log('viewThisChatFromFDB objForCreatChat',objForCreatChat);
+              M_CATEGORY.userForPrivateChat(objForCreatChat['chatId'],objForCreatChat['userId']);
+
+              // M_CATEGORY.view.safeAddChatList(objForCreatChat);
+              // attach link with chat db
+              safeAttachLiveLinkToChatElement(objForCreatChat['chatId'], 
+                () => {
+                  console.log('safeAttachLiveLinkToChatElement callbackobjForCreatChat - objForCreatChat , iNuserData',objForCreatChat , iNuserData);
+                  // add service category
+                  addServiceMenu (objForCreatChat,iNuserData);
+
+                }
+              );
+            // hide all chat list
+            M_CATEGORY.view.effHideChatLists();
+            // show this chat list
+            M_CATEGORY.view.effShowChatList(objForCreatChat['chatId']);
+        }
+          function addServiceMenu ( objForCreatChat, iNuserData ) {
+              M_VIEW.view.closeLoaderByTimeout(2500, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
+            // add chat if we has chat
+            var chatId = VIEW.getRealChatIdByUid(objForCreatChat['userId']);
+            if ( chatId ) {
+              // we has chatId
+              M_CATEGORY.addChatBlockToCategory (iNuserData,chatId,objForCreatChat['userId']);
+
+            } else {
+              // we has not chatId -> we disable chat btn link
+              M_CATEGORY.addDisabledChatBlockToCategory (iNuserData,objForCreatChat['userId']);
+
+            }
+
+            // add menu to user chat
+            M_CATEGORY.view.addMenuByCategoryList ( iNuserData, objForCreatChat['userId'] );
+            // translated all menu dictionary
+            DICTIONARY.start('.menuListForUsers');
+          }
 
         function getByGetRequest_ChatDataBySafeCreate (iNdata,iNfunction) {
           /*
             @example
-              request_getUserMenuByLogin({'uid': '769b72df-6e67-465c-9334-b1a8bfb95a1a2' ,'userId': 'bac255e1-6a59-4181-bfb9-61139e38630e' , 'token' : '1bf92fd8-fe97-44bc-a223-9b7af3019392'},(result) => {console.log(result);})
+              createChatByGetUrlUserInfo({'uid': '769b72df-6e67-465c-9334-b1a8bfb95a1a2' ,'userId': 'bac255e1-6a59-4181-bfb9-61139e38630e' , 'token' : '1bf92fd8-fe97-44bc-a223-9b7af3019392'},(result) => {console.log(result);})
             @discr
               get categories, chatId of UID
             @inputs
@@ -23975,115 +22252,6 @@ define(
             var type = 'createPrivateChat';
             return CONST['url_createChat'] +'/' + iNuid +'/' + type;
           }
-
-       
-        // function viewThisChatFromFDB (iNchat,iNuserData) {
-        //     //LATER DEL
-        //     const objForCreatChat = {};
-        //     objForCreatChat['chatId']   = iNchat || ('noneChat_'+iNuserData['user']['uid']);
-        //     objForCreatChat['userId']   = iNuserData['user']['uid'];
-        //     objForCreatChat['userLogin']   = iNuserData['user']['login'];
-        //     objForCreatChat['chatName'] = iNuserData['user']['name'];
-        //     objForCreatChat['icon_min'] = iNuserData['user']['icon'];
-        //     // if(iNchat) {
-        //       M_CATEGORY.userForPrivateChat(objForCreatChat['chatId'],objForCreatChat['userId']);
-
-        //       // M_CATEGORY.view.safeAddChatList(objForCreatChat);
-        //       // attach link with chat db
-        //       safeAttachLiveLinkToChatElement(
-        //         objForCreatChat['chatId'], 
-        //         () => {
-        //           // add service category
-        //           addServiceMenu (objForCreatChat,iNuserData);
-
-        //         }
-        //       );
-        //     // hide all chat list
-        //     M_CATEGORY.view.effHideChatLists();
-        //     // show this chat list
-        //     M_CATEGORY.view.effShowChatList(objForCreatChat['chatId']);
-        // }
-
-
-
-
-          function addServiceMenu ( objForCreatChat, iNuserData ) {
-              M_VIEW.view.closeLoaderByTimeout(2500, '#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
-            // add chat if we has chat
-            var chatId = M_CATEGORY.view.getChatIdByUid(objForCreatChat['userId']) || objForCreatChat['chatId'];//  objForCreatChat['chatId']||VIEW.getRealChatIdByUid(objForCreatChat['userId']);
-
-
-            if ( chatId && objForCreatChat['userId'] != chatId) {
-              // we has chatId
-              M_CATEGORY.addChatBlockToCategory (iNuserData,chatId,objForCreatChat['userId']);
-
-            } else {
-
-              // we has not chatId -> we disable chat btn link
-              M_CATEGORY.addDisabledChatBlockToCategory (iNuserData,objForCreatChat['userId'],objForCreatChat['login']);
-
-            }
-
-            // add menu to user chat (creating menu in dom)
-            M_CATEGORY.view.addMenuByCategoryList ( iNuserData, objForCreatChat['userId'] );
-            
-            // attach onclick to 'chat' menu for create chat if it need
-            M_CATEGORY.view.onClickCategoryForCreateChat (
-              (userId, userLogin) => {
-                // SUCCESS -> will do requiest for create chat
-                // show loader
-                M_APP.view.showLoader
-                createPrivateChat (
-                  userId,
-                  ( iNchatObject ) => {
-                    console.log ( 'request_getUserMenuByLogin userLogin', userLogin );
-                    // we created chat -> we update menu && we open chat
-
-                    M_CATEGORY.view.removeChatListByUserId(
-                      userId,
-                      () => {
-                        // get menu -> show menu
-                        request_getUserMenuByLogin ( userLogin , 
-                          () => {
-                            // open chat after reload menu
-                            var chatLinkSelector = M_CATEGORY.view.getPathToChatByUserId(userId);
-                            // trigger click for chat btn for view chat
-                            $(chatLinkSelector + ' .privateChatBtn').trigger('click');
-                          }
-                        );
-                      }
-                    );
-
-
-
-                    //
-
-
-                  }  , 
-                  () => {
-                    // we CANNOT created chat
-
-                  }
-                )
-                console.log('category success');
-
-              },
-              (userId, userLogin) => {
-                // ERROR
-                console.log('category error');
-
-              }
-            );
-
-            // translated all menu dictionary
-            DICTIONARY.start('.menuListForUsers');
-
-            //close loader
-            M_VIEW.view.closeLoader ('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
-
-          }
-
-        
     /*> CHAT */
 
   function pageOne_addChatByChatId() {
@@ -24101,107 +22269,20 @@ define(
   }
 
 
-  function getAllMyChats () {
-    // start effects for chats
-    M_CATEGORY.view.startEffSortChats();
 
-    // get my chats
-    var myUid       = M_APP.get('uid');
-    getChatsByUserId(myUid);
-
-    // get chat for pseudouser
-    getPseudoUsersByUserId(myUid);
-
-  }_.getAllMyChats = getAllMyChats;
-
-
-  function getPseudoUsersByUserId (iNuserId) {
-    // body...
-    console.log('getPseudoUsersByUserId - INVOKE2',iNuserId);
-    var uid = iNuserId;
-    // get data from DB
-    M_DATABASE.getRealtimeDataFromFirestoreDb (
-          'users',
-          uid + '/subusers',
-          {
-            'functionOnOther' : () => {
-
-            },
-            
-            'functionOnChangeFromServer' : (memberData) => {
-            
-            },
-            'functionOnAdd' : (pseudoUserData) => {
-              var pseudoUserBlock   = pseudoUserData.data(),
-                  pseudoUserid      = pseudoUserData.id,
-                  refStatus         = pseudoUserBlock.status,
-                  ref               = pseudoUserBlock.ref;
-
-              // if menu no exist
-              if ( !VIEW.menuPseudoUser_getCountMenu() ) {
-                  // active on click for view menu
-                  VIEW.menuPseudoUser_addFlagToAttachOnClickEventForShowMenu();
-                  // create container if not exist
-                  VIEW.menuPseudoUser_safeAddBox();
-                  // attach onclick event 
-                  VIEW.menuPseudoUser_attachOnClickEventForShowMenu();
-                  // add my user to menu
-                  VIEW.menuPseudoUser_addItem(
-                    {
-                      'uid'     : USER.getMyId(),
-                      'icon'    : URL.getUserIconByUid( USER.getMyId() ),
-                      'login'   : USER.getMyLogin(),
-                      'name'    : USER.getMyDisplayName()
-                    }
-                  );
-              }
-
-              //get pseudo user 
-              ref.get().then(
-                (userData) => {
-                  // get user data from db
-                  var userBlock       = userData.data(),
-                      objForAddToMenu = {};
-
-                  // get user id from db
-                  objForAddToMenu['uid']    = userData.id;
-                  objForAddToMenu['owner']  = userBlock.owner;
-                  objForAddToMenu['login']  = userBlock.info.data.login;
-                  objForAddToMenu['icon']   = URL.getUserIconByUid(objForAddToMenu['uid']);
-                  objForAddToMenu['name']   = userBlock.info.data.name;
-
-                  // delete owner if this user owner is system
-                  if ( objForAddToMenu['owner'] == LOCALDB.db.val.systemUser ) delete objForAddToMenu['owner'];
-
-                  // add menu
-                  VIEW.menuPseudoUser_addItem(objForAddToMenu );
-
-                  // get chats for pseudouserid   
-                  getChatsByUserId(objForAddToMenu['uid']);
-
-                }
-              );
-            }
-          }
-    );
-  } _.getPseudoUsersByUserId = getPseudoUsersByUserId;
-
-  function getChatsByUserId (iNuserId) {
+  function getMyChats () {
     /*
         ovbserver for user chats list
         @depends
             domSortChatsBlock() - for create sort or check
     */
+    M_CATEGORY.view.startEffSortChats();
+    var myUid       = M_APP.get('uid');
+    // membersRef      = FIREBASE.database().ref('members/'+myUid);
 
-    console.log('getChatsByUserId - INVOKE',iNuserId);
-
-    // get my user id
-    var thisUserId       = iNuserId;//M_APP.get('uid');
-
-    // get data from DB
     M_DATABASE.getRealtimeDataFromFirestoreDb (
           'users',
-          thisUserId + '/members',
+          myUid + '/members',
           {
             'functionOnOther' : () => {
 
@@ -24217,18 +22298,27 @@ define(
 
               var memberBlock   = memberData.data();
               var chatId        = memberData.id;
-              var user2         = memberBlock['with'];
+              console.log('M_DATABASE.getRealtimeDataFromFirestoreDb chatId, memberBlock',chatId, memberBlock);
+              var user2         = M_APP.getJsonKey(memberBlock);
               M_CATEGORY.userForPrivateChat(chatId,user2);
                    
-              safeAttachLiveLinkToChatElement(
-                chatId,
-                thisUserId
-              );
+              safeAttachLiveLinkToChatElement(chatId);
             }
           }
     );
+
+
+
+    // membersRef.on('child_added', function(memberData) { 
+    //       var memberBlock   = memberData.val();
+    //       var chatId    = memberData.key;
+    //       var user2     = M_APP.getJsonKey(memberBlock);
+    //       M_CATEGORY.userForPrivateChat(chatId,user2);
+               
+    //       safeAttachLiveLinkToChatElement(chatId);
+    // });
   }
-  _['getChatsByUserId'] = getChatsByUserId;
+  _['getMyChats'] = getMyChats;
 
 
 
@@ -24253,29 +22343,29 @@ define(
     if(number == 0) return false; 
     setMyNewMessagesCountByChatId(iNchatId,number);
     M_CATEGORY.view.domSafeShowNewMsgCountInChatBlock( iNchatId, number );
+
+
+
+    // let chatsMyNewMsgRef = FIREBASE.database().ref('chats/' + iNchatId + '/member/' + iNmyUid + '/newMsg');
+    // chatsMyNewMsgRef.on('value', 
+    //   (iNdata) => {
+    //     let number = iNdata.val()||0;
+    //     // save in local storage in db
+    //     if(number == 0) return false; 
+    //     setMyNewMessagesCountByChatId(iNchatId,number);
+    //     M_CATEGORY.view.domSafeShowNewMsgCountInChatBlock( iNchatId, number );
+    //   }
+    // );
   }
 
 
-  function offAllLinkWithChatDbByChatId () {
-    // body...
-  }
-
-  function safeAttachLiveLinkToChatElement (iNchatId,iNtoUserId,iNfunction) {
-      /*
-        @inputs
-          iNchatId -> string
-          iNuserId -> string
-          iNfunction -> function
-      */
-       console.log('safeAttachLiveLinkToChatElement - INVOKE',iNchatId,iNtoUserId)
+  function safeAttachLiveLinkToChatElement (iNchatId,iNfunction) {
       // of all link with chat db
       offAllLinkWithChatDbByChatId(iNchatId);
       //check chat list for exist
       var  chatId           = iNchatId,
-           myUid            = USER.getMyId(),
-           toUserId         = iNtoUserId;
+           myUid            = USER.getMyId();
 
-       console.log('safeAttachLiveLinkToChatElement - toUserId',iNchatId,toUserId)
        M_DATABASE.getRealtimeDataFromFirestoreDb (
           'chats',
           chatId,
@@ -24307,9 +22397,6 @@ define(
                         chatBlock = chatData.data(),
                         chatType  = chatBlock.type;
 
-                        chatBlock['info']['toUserId'] = toUserId;
-
-                    console.log('safeAttachLiveLinkToChatElement functionOnAdd - toUserId',toUserId);
                     console.log('safeAttachLiveLinkToChatElement functionOnAdd - chatId, chatBlock',chatId, chatBlock);
 
                    //@< creating chat
@@ -24325,8 +22412,41 @@ define(
             }
           }
        );
+       
+      // chatsRef.once ( 'value', (chatData) => {
+      //   var chatId    = chatData.ref.parent.key,
+      //       chatBlock = chatData.val(),
+      //       chatType  = chatBlock.chat.type;
+      //   //@< creating chat
+      //     if (chatType == 1) {
+      //         //create "private" chat
+      //         safeUpdatePrivateChatBlockFromUserDb( chatId,chatBlock, chatType ,iNfunction); // changeObject
+      //     } else if (chatType == 2) {
+      //         //create "common" chat
+      //         safeUpdateCommonChatBlockFromUserDb ( chatId, chatBlock, chatType ,iNfunction);
+      //     }
+      //   //@> creating chat
+
+      //   startNewMsgCounter(chatId,myUid);
+      // });
+      // chatsRef.on ( 'child_changed' , function (chatData) {
+      //     var chatId           = chatData.ref.parent.parent.key;
+      //     var chatKey          = chatData.ref.key;
+      //     var chatDataValue    = chatData.val();
+      //     var chatObject      = {}; 
+      //       chatObject[chatKey] = chatDataValue;
+      //       var chatBlock     = chatData.val();
+      //       var chatType      = chatBlock.type;
+      //       var changeObject  = M_CATEGORY.getObjectForUpdateChatBlock ( chatObject );
+      //             changeObject['chatType'] = chatType;
+      //             changeObject['chatId']   = chatId;
+      //       // change chat
+      //       M_CATEGORY.safeUpdateChatBlock(changeObject,chatType);
+      // });
   }
 
+  function offAllLinkWithChatDbByChatId (iNchatId) {
+  }
 
   function safeUpdateCommonChatBlockFromUserDb (iNchatId,iNobject,iNchatType) {
     /*
@@ -24366,8 +22486,6 @@ define(
     
     M_CATEGORY.safeUpdateChatBlock(changeObject);
   }
-
-
   function checkUserForHasMenuForMe (iNoptions) {
     /*
       @discr
@@ -24380,6 +22498,7 @@ define(
               hasMenuForNoneAuth -> number
               hasMenuForAll -> number
     */
+    console.log('checkUserForHasMenuForMe - iNoptions',iNoptions);
     if(typeof iNoptions == 'object') {
       // check menu for all
       if( typeof iNoptions.hasMenuForAll == 'number' && iNoptions.hasMenuForAll > 0) {
@@ -24399,7 +22518,6 @@ define(
     }
     return false;
   }
-
   function safeUpdatePrivateChatBlockFromUserDb (iNchatId,iNobject,iNchatType,iNsuccessFunction) {
       /*
           @inputs
@@ -24429,11 +22547,6 @@ define(
       console.log('safeUpdatePrivateChatBlockFromUserDb - iNchatId,iNobject,iNchatType',iNchatId,iNobject,iNchatType);
 
       function functWhenGet (usersData) {
-          /*
-            @inputs
-              @required
-
-          */
           var objForCreate  = {};
           var user2id       = usersData.id;
           var user2Object   = usersData.data();
@@ -24446,10 +22559,6 @@ define(
           var user2Icon   = user2Object.info.data.icon;
           var userType    = user2Object.info.data.type;
           var userOnline  = user2Object.info.live.online;
-          var owner  = user2Object.owner||'@system';
-
-          console.log('safeUpdatePrivateChatBlockFromUserDb  functWhenGet - iNobject',iNobject);
-          var toUserId    = iNobject.toUserId;
 
           
           // create object for create chat
@@ -24461,29 +22570,19 @@ define(
               objForCreateChat['icon']      = user2Icon,
               objForCreateChat['login']     = login;
               // user type (business (2) or user(1) or app of system (3) )
-              objForCreateChat['userType']    = userType;
+              objForCreateChat['userType']  = userType;
               objForCreateChat['userOnline']  = userOnline;
-              
-              objForCreateChat['owner']  = owner;
-              objForCreateChat['toUserId']    = toUserId;
 
           // add user options
           if(typeof user2Object.info.options == 'object') {
             // check has menu
             var userHasMenu = checkUserForHasMenuForMe(user2Object.info.options);
+            console.log('safeUpdatePrivateChatBlockFromUserDb userHasMenu',userHasMenu);
             if(userHasMenu) {
               // add
               objForCreateChat['userHasMenu'] = 1;
             }
-          } else {
-            user2Object.info.options = {};
           }
-          // add app for filter by side buttons
-          if (typeof user2Object.info.options.apps == 'object') {
-            // add user apps for filter
-            objForCreateChat['appsForFilter'] = user2Object.info.options.apps.join(' ');
-          }
-
 
           console.log('safeUpdatePrivateChatBlockFromUserDb objForCreateChat',objForCreateChat);
           delete objForCreateChat.liveData;
@@ -24517,6 +22616,43 @@ define(
             }
       );
 
+      // usersRef.on('value', function(usersData) { 
+          // change date if change userDate 
+          // var objForCreate  = {};
+          // var user2id       = usersData.key;
+          // var user2Object   = usersData.val();
+
+          // var chatId = iNchatId; // M_CATEGORY.view.getChatIdByUid(user2id);
+
+          // var chatName    = user2Object.info.data.name;
+          // var login       = user2Object.info.data.login;
+          // var user2Phone  = user2Object.info.data.phone;
+          // var user2Icon   = user2Object.info.data.icon;
+          // var userType    = user2Object.info.data.type;
+          // var userOnline  = user2Object.info.live.online;
+
+          // var objForCreateChat = {}; // objForCreate;
+          //     objForCreateChat['uuid']      = user2id,
+          //     objForCreateChat['chatId']    = chatId,
+          //     objForCreateChat['chatName']  = chatName,
+          //     objForCreateChat['userPhone'] = user2Phone,
+          //     objForCreateChat['icon']      = user2Icon,
+          //     objForCreateChat['login']     = login;
+          //     objForCreateChat['userType']  = userType;
+          //     objForCreateChat['userOnline']  = userOnline;
+
+
+
+          // delete objForCreateChat.liveData;
+          // M_CATEGORY.safeUpdateChatBlock (objForCreateChat,iNchatType);
+          // activeContactChangeInChatBlock(user2Phone);
+
+          // // safe invoke once iNsuccessFunction just one
+          // if (typeof iNsuccessFunction == 'function') {
+          //   iNsuccessFunction();
+          //   iNsuccessFunction = false;
+          // }
+      // });
   }
 
   function activeContactChangeInChatBlock (user2Phone){
@@ -24585,7 +22721,7 @@ define(
         onEvent_devise_MousemoveController();
       });
     }
-  } _.controller_devise_run = controller_devise_run;
+  } 
   
 
   function devise_setStateIOnline () {
@@ -24686,7 +22822,6 @@ define(
         let path = "devises/" + uid + '/' + token;
         return path;
     }
-
     function devise_removeNoteFromDatabase () {
         /*
           @discr
@@ -24761,6 +22896,14 @@ define(
         )
 
 
+        // ref.once('value')
+        // .then(function(dataSnapshot) {
+        //   // handle read data.
+        //     console.log('devise_onDisconectController once dataSnapshot.val()',dataSnapshot.val());
+            
+        // });
+
+
         
     }
   //
@@ -24793,272 +22936,6 @@ define(
 
   return _;
 
-});
-define ( 
-  'c_app-base',[
-    'm_app-base' , 'v_app-base', 'm_app', 'm_view', 'm_user', 'm_category'
-  ] , 
-  function (MODEL, VIEW,  M_APP , M_VIEW, USER, M_CATEGORY ) {
-
-  const _ = {}; _['name'] = 'base';
-  const CONST = {};
-  // init pages const
-  const pages = {}; _['pages'] = pages;
-    //< page menu
-
-        //< page index
-          var thisPageName      = 'index';
-          pages[thisPageName]   = {'attr':{},'menus':{},'functions':{}};
-            pages[thisPageName]['attr'] = {
-              'id2' : '2',
-              'id3' : '3',
-            };
-            pages[thisPageName]['menus'] = {
-              'attr' : {
-                'id1' : 'id2',
-                'id3' : 'id4'
-              }
-            };
-            pages[thisPageName]['functions'] = {
-              'isPage'  : function () { 
-                let i =  ( M_APP.view.d_checkPageInListApp({app:'base','page':'index'}) > 0 ) ? true : false;
-                console.log('isPage index i',i); 
-                return i;
-              },
-              // 'onCreate': function (iNojbectData,iNojbectApp) {
-              //   console.log('page index onCreate -iNojbectData,iNojbectApp',iNojbectData,iNojbectApp)
-
-              //   // show loader
-              //   M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
-
-              //   // get chat list
-              //   if ( USER.getMyId() ) {
-              //     MODEL.getAllMyChats();
-              //   }
-              // },
-              'onView'  : function (iNojbectData,iNojbectApp) { 
-                console.log('onView index iNojbectData,iNojbectApp',iNojbectData,iNojbectApp);
-
-
-                // close loader from first html page
-                M_VIEW.view.closeLoader(); 
-
-                if(iNojbectData['back']) {
-                  // add header with back btn for this list app - if we from page 'one'
-
-                  // hide all menus 
-                  M_CATEGORY.view.chat_offSelectEffects();
-
-                } else {
-                  // clear user menus if we come from 'one' page by click btn
-                  // $('.usersBlockContainerInMenusBlock .app[app-name="base"] .view[view-name="index"] .scrolBlockForChat').html('');
-                  
-                  // view loader
-                  // M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
-                }
-
-                if(iNojbectData['filter']) {
-                  // if clicked side buttons - setGlobalSetFilterForGetChats
-                  M_APP.view.sideButtons_addSelectedEffectsByFilter(iNojbectData['filter']);
-
-                  // set global filter for sort
-                  M_CATEGORY.view.chat_setGlobalFilter(iNojbectData['filter']);
-
-                  //create service chat list and move position to top
-                  MODEL.chat_openChatWithCreateIfNotExist(iNojbectData);
-                }
-
-                // sort all chats
-                M_CATEGORY.view.startEffSortChats();
-
-                // add standart header for this list app
-                MODEL.addStandartHeaderForListView();
-
-                // hide user of menus (we open in page 'one')
-                M_CATEGORY.view.chat_hideUserMenus();
-
-                // hide all app in list
-                M_APP.view.d_hideApps('all','list');
-
-                // show this app in list
-                M_APP.view.d_showApps('base','list');
-                
-
-                return true;
-              },
-              'onHide'  : function () { 
-                  console.log('onHide index');
-                  return true;
-               },
-              'onAppear'  : function () {
-                  console.log('onAppear index');
-                //ddd
-                // MODEL.checkFunction();
-              },
-              'onDisappear'  : function () {
-                  console.log('onDisappear index');
-              },
-              // 'setPage' : function () {console.log('app private','setPage'); return true;},
-              'onCreate' : function (d,d1) { 
-                M_APP.view.d_createPageInListApp({app:'base','page':'index','content': '<div class="scrolBlockForChat" style="" id="MixItUp81681F"></div>'}); 
-              },
-            };
-          //>page index
-
-
-
-          //< page one
-            var thisPageName = 'one';
-            pages[thisPageName]  = {'attr':{},'menus':{},'functions':{}};
-              pages[thisPageName]['attr'] = {
-                // 'id2' : '2',
-                // 'id3' : '3',
-              };
-              pages[thisPageName]['menus'] = {
-                'attr' : {
-                  // 'id1' : 'id2',
-                  // 'id3' : 'id4'
-                }
-              };
-              pages[thisPageName]['functions'] = {
-                'isPage'  : function () { 
-                  let i =  ( M_APP.view.d_checkPageInListApp({app:'base','page':'index'}) > 0 ) ? true : false; 
-                  console.log('isPage one i',i); 
-                  return i;
-                },
-                'onView'  : function (d,d1) { 
-                    console.log('onView one d,d1',d,d1);
-                  // hide all app in list
-                  M_APP.view.d_hideApps('all','list');
-
-                  // show this app in list
-                  M_APP.view.d_showApps('base','list');
-
-                  // create chat
-                  MODEL.request_getUserMenuByLogin(d['uid']);
-                  return true;
-                },
-                'onAppear'  : function () {
-                    console.log('onAppear one');
-                    M_VIEW.view.closeLoader(); 
-                    M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader'); 
-                },
-                'onDisappear'  : function () {
-                    console.log('onDisappear one');
-                },
-                'onHide'  : function () { 
-                  console.log('onHide one');
-
-                  
-
-                  return true;
-                },
-                // 'setPage' : function () {    return true;},
-                'onCreate' : function (d,d1) { 
-                  M_APP.view.d_createPageInListApp({app:'base','page':'index','content': '<div class="scrolBlockForChat" style="" id="MixItUp81681F"></div>'}); 
-                },
-              };
-          //>page one
-
-
-
-    //> page full window
-
-  const options = {
-    
-  };
-  // function overided getTemplate
-  /* 
-  function getTemplate (iNdata) {
-     iNdata['other'] = VIEW.getAppContent();
-   }
-   _['getTemplate'] = getTemplate; 
-   */
-
-  // function overided onInit
-  function onInit (iNstring,iNobject) {
-    console.log('onInit - iNstring,iNobject',iNstring,iNobject);
-    M_CATEGORY.view.initSort();
-    //ddd
-    MODEL.controller_devise_run();
-    // get chat list
-    if ( USER.getMyId() ) {
-      MODEL.getAllMyChats();
-    }
-  }
-  _['onInit'] = onInit;
-
-  // function overided onCreate
-  function onCreate (iNstring,iNobject) {
-    // init global filter for sort
-    M_CATEGORY.view.chat_initGlobalFilter();
-
-
-    // create app block in list
-    M_APP.view.d_createListApp({app:'base','other':VIEW.getAppContent()} ); 
-
-    // init search input autocomplete
-    MODEL.initForAutocompleteForSearch();
-
-  }
-  _['onCreate'] = onCreate;
-
-  // function overided isApp
-  function isApp (iNstring,iNobject) {
-    
-    return (M_APP.view.d_checkListApp({app:'base'}) > 0) ? true : false;
-  }
-  _['isApp'] = isApp;
-
-
-  // function overided onInit
-  // function onInit (iNstring,iNobject) {
-    
-  //   //
-
-  // }
-  // _['onInit'] = onInit;
-
-    // function onIn
-    function onIn (iNstring,iNobject) {
-      
-    }
-    _['onIn'] = onIn;
-
-      //@overide
-      function onAppear (iNstring,iNobject) {
-
-
-      }
-      _['onAppear'] = onAppear;
-
-      //@overide
-      function onDisappear (iNstring,iNobject) {
-
-      }
-      _['onDisappear'] = onDisappear;
-
-    //@overide
-    function onOut (iNstring,iNobject) {
-
-    }
-    _['onOut'] = onOut;
-
-  //@overide
-  function onDeinit (iNstring,iNobject) {
-
-  }
-  _['onDeinit'] = onDeinit;
-
-
-  function onHide () {
-    return true;
-  }
-  _['onHide'] = onHide;
-
-
-
-  return _;
 });
 define('v_app-page',['v_view'],function(v_view){
 	const _ = {};
@@ -25174,222 +23051,7 @@ define('v_app-page',['v_view'],function(v_view){
 
 	return _;
 });
-define( 'm_app-page',['jquery','dictionary','m_view','v_app-page','m_app','m_user','mediaStreamRecorder', 'url'] , function ($,DICTIONARY, M_VIEW,VIEW,M_APP,M_USER,MEDIA, URL) {
-
-  // init result const
-  const _ = {};
-
- 
-
-
-
-
-
-  function openPage (iNuid,iNid) {
-    /*
-      @discr
-        open page by iNuid and iNid
-      @inputs
-        iNuid -> string
-        iNid  -> string
-      @return
-      @algoritm
-        1 - get page object from server
-        2 - safe add js and css
-        3 - view page fullwindow
-    */
-  }
-
-  function getPage (iNdata,iNfunction) {
-    /*
-      @example
-        getPage ({'uid':'@system','id':'sign'}, function (_) { console.log('_',_)})
-      @discr
-        get page by iNuid and iNid from server
-      @inputs
-        iNuid -> string
-        iNid  -> string
-      @return
-      @algoritm
-        1 - get page object from server 
-    */
-    $.get (
-      URL.db.api.page.get, 
-      iNdata,
-      function (iNcontent) {
-        iNfunction(iNcontent);
-      },
-      'json'
-    );
-  };
-    function processingData (iNdata) {
-      /*
-        @example
-          add scrips and styles vire
-        @discr
-          get page by iNuid and iNid from server
-        @inputs
-          iNuid -> string
-          iNid  -> string
-        @return
-        @algoritm
-          1 - get page object from server 
-      */
-      var c = 'pageId' + iNdata['id'] + ' headerFromPage';
-      if(typeof iNdata == 'object') {
-        var obj = iNdata['header'];
-        if ( typeof obj['css']  == 'object' && obj['css'].length > 0 ) {
-          // add css
-          for ( var i in obj['css'] ) {
-            M_APP.view.d_loadCSS (obj['css'][i],c);
-          }
-        }
-        if ( typeof obj['js']   == 'object' && obj['js'].length > 0 ) {
-          // add js
-          for ( var i in obj['js'] ) {
-            M_APP.view.d_loadJS (obj['js'][i],c);
-          }
-        }
-      }
-    }; 
-
-    function addPageToFullWindow (iNdata) {
-        getPage ( 
-          iNdata,
-          function (iNresult){ 
-            // translate content
-            var content = DICTIONARY.withLanguageObject(iNresult['content']);
-            //add content
-            VIEW.addFullWindowByTemplate( { 'content' : content } );
-            //add headers
-            processingData(iNresult);
-            //add events default pages
-            addActionForEvents(iNdata['id']);
-            //hide loader
-            M_VIEW.view.closeLoader(); 
-          }
-        );
-    } _.addPageToFullWindow = addPageToFullWindow;
-
-
-
-    function addMiniPageToAppView (iNdata) {
-        getPage ( 
-          iNdata,
-          function (iNresult){ 
-            //add content head
-            var head = iNresult['head'];
-            if(typeof head == 'object')
-              var objForAddHeader = {
-                'title' : DICTIONARY.withLanguageObject(head['title']),
-                'text'  : DICTIONARY.withLanguageObject(head['text']),
-                'icon'  : DICTIONARY.withLanguageObject(head['icon'])
-              }
-            M_APP.view.safeViewAppHeaderWithContent (
-              {
-                app       : 'page',
-                page      : 'miniPage',
-                content   : VIEW.getMiniPageHeader(objForAddHeader)
-              },
-              'change'
-            );
-
-            //@< add content body 
-            M_APP.view.d_safeCreateChiefApp(
-              {
-                app       : 'page'
-              }
-            );
-
-            // translate content
-            var content = DICTIONARY.withLanguageObject(iNresult['content']);
-
-            M_APP.view.d_safeCreatePageInChiefApp(
-              {
-                app       : 'page',
-                page      : 'miniPage',
-                content   : content
-              }
-            );
-            //@> add content body 
-
-            //add headers
-            processingData(iNresult);
-
-            //add events default pages
-            //hide loader
-            M_VIEW.view.closeLoader(); 
-          }
-        );
-    } _.addMiniPageToAppView = addMiniPageToAppView;
-
-    function clearMiniPage () {
-      deleteHeaders();
-      M_APP.view.d_removeAppHeader({'app':'page'});
-      M_APP.view.d_removeApps('page');
-    }
-
-  function deleteHeaders () {
-    /*
-      @example
-      @discr
-        get page by iNuid and iNid from server
-      @inputs
-        @required
-      @return
-      @algoritm
-        1 - clear page
-    */
-    $('.headerFromPage').remove();
-  }
-  
-  function clearFullWindow () {
-    deleteHeaders();
-    $('.appModalFullWindow').remove();
-  } _.clearFullWindow = clearFullWindow;
-
-  
-  // _['init'] = function () {
-  //   M_APP.setGlobalApp(this);
-  //   return this;
-  // }
-
-  // ever
-    function addActionForEvents (iNid) {
-      if(iNid == 'sign')
-        addActionsForEventsPageSign();
-    }
-
-      function addActionsForEventsPageSign () {
-        $('.appPageCloseButton').click(function(){
-          M_APP.getGlobalVar('engine').passToApp({'app':'base', 'page':'index', 'data': '' }); // 'user':'',
-        });
-      }
-
-      function addActionsForEventsPageSign () {
-        $('.page-formSignIn').submit(function(e){
-          e.preventDefault();
-          return M_USER.sendForm('.page-formSignIn');
-        });
-        $('.page-formSmsCode').submit(function(e){
-          e.preventDefault();
-          return M_USER.checkSmsCode(this);
-        });
-        $('.page-formSignUp').submit(function(e){
-          e.preventDefault();
-          return M_USER.signUpByUserAndPswd(this);
-        });
-        $('.page-reSendSms').click(function(){
-          return M_USER.reSendSms()
-        });
-      }
-  // ever
-
-
-  return _;
-
-});
-define( 'c_app-page',['m_app-page','v_app-page',] , function ( MODEL, VIEW ) {
+define( 'APP_PAGE',['jquery','dictionary','m_view','v_app-page','m_app','m_user','mediaStreamRecorder'] , function ($,DICTIONARY, M_VIEW,VIEW,M_APP,M_USER,MEDIA) {
 
   // init result const
   const _ = {};
@@ -25399,6 +23061,10 @@ define( 'c_app-page',['m_app-page','v_app-page',] , function ( MODEL, VIEW ) {
 
   
   var thisPageName;
+  //
+  // function _ () {
+
+  // }
 
   // init pages const
   const pages = {}; _['pages'] = pages;
@@ -25417,15 +23083,12 @@ define( 'c_app-page',['m_app-page','v_app-page',] , function ( MODEL, VIEW ) {
           pages['fullWindow']['functions'] = {
             'isPage'  : function () {return true;},
             'onOut'  : function () { return true;},
-            // 'onView'  : function (inputData,inputApp) {
-            //   MODEL.addPageToFullWindow({'id':inputData['id'],'uid':inputData['uid']});
-            //   return true;
-            // },
-            'onAppear' : function function_name(inputData,inputApp) {
-              MODEL.addPageToFullWindow({'id':inputData['id'],'uid':inputData['uid']});
+            'onView'  : function (inputData,inputApp) {
+              addPageToFullWindow({'id':inputData['id'],'uid':inputData['uid']});
+              // VIEW.addFullWindowByTemplate({'content':'Hellow World!!!'}); 
+              return true;
             },
-            // 'onHide'  : function () {  return true;},
-            
+            'onHide'  : function () {  return true;},
             // 'setPage' : function () { return true;},
             'onCreate' : function () {  return true;},
             'onDisappear' : function () {return true;},
@@ -25438,42 +23101,24 @@ define( 'c_app-page',['m_app-page','v_app-page',] , function ( MODEL, VIEW ) {
           pages[thisPageName]['attr'] = {};
           pages[thisPageName]['menus'] = {};
           pages[thisPageName]['functions'] = {
-            'onInit' : () => {
-
-                if( !M_APP.getAppFromStoryLog('base') ) {
-                      // if app base not open yet -> we load
-                    M_APP.getGlobalVar('engine').passToApp( {'app':'base','page':'index'} );
-                }
-
-            },
             'isPage'  : function () {
               return true;
             },
             'onOut'  : function () {
               return true;
             },
-            'onAppear' : function (iNdata, iNobject) {
-
+            'onView'  : function (iNdata, iNobject) {
               /*
                 getPage -> checkData
                 create app view with page 
                 create header view with page
               */
-              MODEL.addMiniPageToAppView({'id':iNdata['id'],'uid':iNdata['uid']});
+              addMiniPageToAppView({'id':iNdata['id'],'uid':iNdata['uid']});
               return true;
             },
-            // 'onView'  : function (iNdata, iNobject) {
-              /*
-                getPage -> checkData
-                create app view with page 
-                create header view with page
-              */
-              // MODEL.addMiniPageToAppView({'id':iNdata['id'],'uid':iNdata['uid']});
-              // return true;
-            // },
-            // 'onHide'  : function () {
-            //   return true;
-            // },
+            'onHide'  : function () {
+              return true;
+            },
             'onCreate' : function () {
 
               return true;
@@ -25509,17 +23154,17 @@ define( 'c_app-page',['m_app-page','v_app-page',] , function ( MODEL, VIEW ) {
 
   //@overide
   function onHide (iNstring,iNobject) {
-    MODEL.clearFullWindow();
+    clearFullWindow();
 
   }
   _['onHide'] = onHide;
 
 
     //@overide
-  // function onView (iNstring,iNobject) {
+  function onView (iNstring,iNobject) {
 
-  // }
-  // _['onView'] = onView;
+  }
+  _['onView'] = onView;
 
 
   // function onCreate
@@ -25569,11 +23214,215 @@ define( 'c_app-page',['m_app-page','v_app-page',] , function ( MODEL, VIEW ) {
   _['onDeinit'] = onDeinit;
 
 
-  return  _;
+
+
+
+
+
+  const baseSite  = 'https://ramman.net/';
+    const url_getPage   = baseSite + 'api/service/page';
+  function openPage (iNuid,iNid) {
+    /*
+      @discr
+        open page by iNuid and iNid
+      @inputs
+        iNuid -> string
+        iNid  -> string
+      @return
+      @algoritm
+        1 - get page object from server
+        2 - safe add js and css
+        3 - view page fullwindow
+    */
+  }
+
+  function getPage (iNdata,iNfunction) {
+    /*
+      @example
+        getPage ({'uid':'@system','id':'sign'}, function (_) { console.log('_',_)})
+      @discr
+        get page by iNuid and iNid from server
+      @inputs
+        iNuid -> string
+        iNid  -> string
+      @return
+      @algoritm
+        1 - get page object from server 
+    */
+    $.get (
+      url_getPage, 
+      iNdata,
+      function (iNcontent) {
+        iNfunction(iNcontent);
+      },
+      'json'
+    );
+  };
+    function processingData (iNdata) {
+      /*
+        @example
+          add scrips and styles vire
+        @discr
+          get page by iNuid and iNid from server
+        @inputs
+          iNuid -> string
+          iNid  -> string
+        @return
+        @algoritm
+          1 - get page object from server 
+      */
+      var c = 'pageId' + iNdata['id'] + ' headerFromPage';
+      if(typeof iNdata == 'object') {
+        var obj = iNdata['header'];
+        if ( typeof obj['css']  == 'object' && obj['css'].length > 0 ) {
+          // add css
+          for ( var i in obj['css'] ) {
+            M_APP.view.d_loadCSS (obj['css'][i],c);
+          }
+        }
+        if ( typeof obj['js']   == 'object' && obj['js'].length > 0 ) {
+          // add js
+          for ( var i in obj['js'] ) {
+            M_APP.view.d_loadJS (obj['js'][i],c);
+          }
+        }
+      }
+    }; 
+    function addPageToFullWindow (iNdata) {
+        getPage ( 
+          iNdata,
+          function (iNresult){ 
+            // translate content
+            var content = DICTIONARY.withLanguageObject(iNresult['content']);
+            //add content
+            VIEW.addFullWindowByTemplate( { 'content' : content } );
+            //add headers
+            processingData(iNresult);
+            //add events default pages
+            addActionForEvents(iNdata['id']);
+            //hide loader
+            M_VIEW.view.closeLoader(); 
+          }
+        );
+    }
+
+
+
+    function addMiniPageToAppView (iNdata) {
+        getPage ( 
+          iNdata,
+          function (iNresult){ 
+            //add content head
+            var head = iNresult['head'];
+            if(typeof head == 'object')
+              var objForAddHeader = {
+                'title' : DICTIONARY.withLanguageObject(head['title']),
+                'text'  : DICTIONARY.withLanguageObject(head['text']),
+                'icon'  : DICTIONARY.withLanguageObject(head['icon'])
+              }
+            M_APP.view.safeViewAppHeaderWithContent (
+              {
+                app       : 'page',
+                page      : 'miniPage',
+                content   : VIEW.getMiniPageHeader(objForAddHeader)
+              },
+              'change'
+            );
+
+            //@< add content body 
+            M_APP.view.d_createChiefApp(
+              {
+                app       : 'page'
+              }
+            );
+
+            // translate content
+            var content = DICTIONARY.withLanguageObject(iNresult['content']);
+
+            M_APP.view.d_createPageInChiefApp(
+              {
+                app       : 'page',
+                page      : 'miniPage',
+                content   : content
+              }
+            );
+            //@> add content body 
+
+            //add headers
+            processingData(iNresult);
+
+            //add events default pages
+            //hide loader
+            M_VIEW.view.closeLoader(); 
+          }
+        );
+    }
+    function clearMiniPage () {
+      deleteHeaders();
+      M_APP.view.d_removeAppHeader({'app':'page'});
+      M_APP.view.d_removeApps('page');
+    }
+
+  function deleteHeaders () {
+    /*
+      @example
+      @discr
+        get page by iNuid and iNid from server
+      @inputs
+        @required
+      @return
+      @algoritm
+        1 - clear page
+    */
+    $('.headerFromPage').remove();
+  }
+  function clearFullWindow () {
+    deleteHeaders();
+    $('.appModalFullWindow').remove();
+  }
+
+  
+  _['init'] = function () {
+    M_APP.setGlobalApp(this);
+    return this;
+  }
+
+  // ever
+    function addActionForEvents (iNid) {
+      if(iNid == 'sign')
+        addActionsForEventsPageSign();
+    }
+
+      function addActionsForEventsPageSign () {
+        $('.appPageCloseButton').click(function(){
+          M_APP.getGlobalVar('engine').passToApp({'app':'base', 'page':'index', 'data': '' }); // 'user':'',
+        });
+      }
+
+      function addActionsForEventsPageSign () {
+        $('.page-formSignIn').submit(function(e){
+          e.preventDefault();
+          return M_USER.sendForm('.page-formSignIn');
+        });
+        $('.page-formSmsCode').submit(function(e){
+          e.preventDefault();
+          return M_USER.checkSmsCode(this);
+        });
+        $('.page-formSignUp').submit(function(e){
+          e.preventDefault();
+          return M_USER.signUpByUserAndPswd(this);
+        });
+        $('.page-reSendSms').click(function(){
+          return M_USER.reSendSms()
+        });
+      }
+  // ever
+
+
+  return _;
 
 });
-define('m_engine',['jquery','m_routing','v_view','m_app','c_app-chat','c_app-base','c_app-page','m_user'], function ($,ROUTING,V_VIEW,M_APP,APP_CHAT,APP_BASE,APP_PAGE, USER) {
-
+define('m_engine',['jquery','m_routing','v_view','m_app','m_app-chat','m_app-base','APP_PAGE','m_user'], function ($,ROUTING,V_VIEW,M_APP,APP_CHAT,APP_BASE,APP_PAGE, USER) {
 
 	function _startUrl () {
 		ROUTING.startUrl(this);
@@ -25702,17 +23551,14 @@ define('m_engine',['jquery','m_routing','v_view','m_app','c_app-chat','c_app-bas
 			*/
 			// if we are in subdomain and subdomain == user we delete it
 			if ( 
-				ROUTING.isBrowser() && (
-					( typeof iNdata['user'] != 'undefined' && ROUTING.getUserDomain () == iNdata['user']) || 
-					( typeof iNdata['user'] == 'string' && iNdata['user'] == 'anonym'  && ROUTING.getUserDomain ()) 
-				)
+				( typeof iNdata['user'] != 'undefined' && ROUTING.getUserDomain () == iNdata['user']) || 
+				( typeof iNdata['user'] == 'string' && iNdata['user'] == 'anonym'  && ROUTING.getUserDomain ()) 
+				
 			) {
-				console.log('_passToApp isBrowser del user');
 	        	// delete user
 	        	delete iNdata['user'];
 			}
 
-			console.log('_passToApp iNdata',iNdata);
 			let thisObject = this;
 			if (typeof iNthis != 'undefined') thisObject = iNthis;
 			ROUTING.prepareUrl(iNdata);
@@ -25747,10 +23593,6 @@ define('m_engine',['jquery','m_routing','v_view','m_app','c_app-chat','c_app-bas
 			// get module name by app name
 			var app, page, objForOpenApp = iNdata, appName = objForOpenApp['app'], pageName = objForOpenApp['page'];
 			app = getAppByName(appName);
-			console.log('_openApp objForOpenApp',objForOpenApp);
-			console.log('_openApp app',app);
-			console.log('_openApp iNdata',iNdata);
-			console.log('_openApp iNstring',iNstring);
 			M_APP.openChiefApp (iNdata,app,iNstring,iNfunction);
 		}
 
@@ -25768,7 +23610,6 @@ define('m_engine',['jquery','m_routing','v_view','m_app','c_app-chat','c_app-bas
 		}
 
 		var APP_PAGE_INSTANCE;
-		
 		function getAppByName(iName){
 			/*
 				@disc
@@ -25792,7 +23633,10 @@ define('m_engine',['jquery','m_routing','v_view','m_app','c_app-chat','c_app-bas
 				break;
 
 				case "page":
-					return APP_PAGE;
+					if(typeof APP_PAGE_INSTANCE != 'object') {
+						APP_PAGE_INSTANCE = APP_PAGE.init();
+					}
+					return APP_PAGE_INSTANCE;
 				break;
 
 				case "base":
@@ -26316,7 +24160,10 @@ require2.config({
 
             /*<? views */
                 'v_view'           : 'mvc/view/view',
+                'v_app-chat'       : 'mvc/view/app-chat',
                 'v_app'            : 'mvc/view/app',
+                'v_app-page'       : 'mvc/view/app-page',
+                'v_app-base'       : 'mvc/view/app-base',
                 'v_category'       : 'mvc/view/category',
 
                 'v_call'           : 'mvc/view/call',
@@ -26324,31 +24171,14 @@ require2.config({
                 'v_contact'        : 'mvc/view/contact',
                 'v_push'           : 'https://ramman.net/files/mvc/view/push',
 
-
             /*>! views */
-
-
-            //@< APPS
-                // app base
-                    'v_app-base'       : 'mvc/view/app-base',
-                    'm_app-base'       : 'mvc/model/app-base',
-                    'c_app-base'       : 'mvc/controller/app-base',
-
-                // app page
-                    'v_app-page'       : 'mvc/view/app-page',
-                    'm_app-page'       : 'mvc/model/app-page',
-                    'c_app-page'       : 'mvc/controller/app-page',
-
-                // app chat
-                    'v_app-chat'       : 'mvc/view/app-chat',
-                    'm_app-chat'       : 'mvc/model/app-chat',
-                    'c_app-chat'       : 'mvc/controller/app-chat',
-            //@> APPS
-
 
              /*<? models */
                 'm_view'           : 'mvc/model/view',
+                'm_app-chat'       : 'mvc/model/app-chat',
                 'm_app'            : 'mvc/model/app',
+                'APP_PAGE'         : 'mvc/model/app-page',
+                'm_app-base'       : 'mvc/model/app-base',
 
                 'm_engine'         : 'mvc/model/engine',
                 'm_category'       : 'mvc/model/category',
@@ -26369,11 +24199,6 @@ require2.config({
                 'm_database'       : 'mvc/model/database',
 
                 'm_progressbar'    : 'mvc/model/progressbar', // deps 'progressbar'
-
-                //url db
-                'url'              : 'mvc/model/url',
-                'selector'         : 'mvc/model/selector',
-                'localdb'          : 'mvc/model/localdb',
 
 
             /*>! models */
@@ -26503,9 +24328,9 @@ require2 (
                 M_APP.setGlobalVar('m_routing',ROUTING)
 
                 // set browser || desktop
-                    // ROUTING.setBrowser(); //#if browser
-                    ROUTING.setDesktop(); //#if desktop
-                    ROUTING.setDeviseName('Apple Mac');
+                    ROUTING.setBrowser(); //#if browser
+                    // ROUTING.setDesktop(); //#if desktop
+                    // ROUTING.setDeviseName('Apple Mac');
                     
                 // PUSH.getPermission ( PUSH.getToken( ()=>console.log('PUSH.getToken') ) );
 

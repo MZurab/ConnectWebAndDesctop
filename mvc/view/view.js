@@ -44,6 +44,10 @@ define(['jquery','template7','dictionary'], function ($,Template7, DICTIONARY) {
 				$(iNdomElement).after(iNaddedData);
 			break;
 
+			case "replace":
+				$(iNdomElement).replaceWith(iNaddedData);
+			break;
+
 			default: // start
 				$(iNdomElement).prepend(iNaddedData);
 			break;

@@ -1152,7 +1152,7 @@ define(
   		*/
   		if ( typeof iNdata['simpleMsgText_onClickSendBtn'] == 'function') {
   			// if value is empty
-  			$('#sendTextButtonInSenderBlock').off();
+  			$('#sendTextButtonInSenderBlock').off('click');
 
   			$('#sendTextButtonInSenderBlock').click(function (e) {
   				var value =  $('#forTextInputInSenderBlock textarea').val();
@@ -1165,12 +1165,14 @@ define(
   			
 
   		}
+		$('.buttonChatToBottom').off('click');
   		$('.buttonChatToBottom').click( 
 			function () {
 				$('#leftBlockInViewWindow').scrollBot(0);
 			} 
 		);
 
+  		$("#forTextInputInSenderBlock textarea").off('keydown keyup');
 		$("#forTextInputInSenderBlock textarea").keydown( function(e) { 
 	    var code = e.which; // recommended to use e.which, it's normalized across browsers
 
