@@ -1,4 +1,6 @@
-define(['jquery','v_category','m_view','m_app','m_user','dictionary','sweetalert2', 'url'], function ( $, VIEW, M_VIEW, M_APP,USER, DICTIONARY, SWAL, URL) {
+define(
+    ['jquery','v_category','m_view','m_app','m_user','dictionary','sweetalert2', 'url'], 
+    function ( $, VIEW, M_VIEW, M_APP,USER, DICTIONARY, SWAL, URL ) {
 	const _        = {'view':VIEW};
 	const CONST    = {};
 
@@ -53,7 +55,7 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary','sweetalert
         var  DomBloc, lmsg_text, lmsg_time, countNewMessages, newMsgBlock, verificate;
 
         var chatLength = VIEW.findChatBlock(chatId);
-                console.log('safeUpdateChatBlock - iNdata', iNdata );
+        console.log('safeUpdateChatBlock - iNdata', iNdata , chatLength );
         if (  chatLength < 1 ) {
         		//CHANGE STATIC PARAMS
                 // chatType = 'private';
@@ -63,8 +65,9 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary','sweetalert
         			objForCreateChat['chatType'] 	= chatType;
 
                 // get chat icon
-                var chatIcon    = M_APP.getGlobalVar('m_app-chat').getChatIconByType(chatType,objForCreateChat); objForCreateChat['icon'] = chatIcon;
+                var chatIcon    = M_APP.getGlobalVar('m_app-chat').getChatIconByType(chatType ,objForCreateChat); objForCreateChat['icon'] = chatIcon;
 
+                console.log('safeUpdateChatBlock createChatList - objForCreateChat', objForCreateChat , chatIcon );
                 // create chat
                 VIEW.createChatList (objForCreateChat, () => {
                     // after add chat
@@ -187,7 +190,7 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary','sweetalert
 
         // add chatType > chatIcon > uidType
         var chatName    = VIEW.getChatName (iNchatId),
-            href        = "chatId=" + iNchatId + "&userId=" + iNuserId + "&chatType=1&back=1&chatName=" + chatName;
+            href        = "chatId=" + iNchatId + "&userId=" + iNuserId + "&chatType=1&back=1&chatName=" + chatName + '&forUserId=' + USER.getActiveUserId();
         var objForCreateChat = {
            'app'            : 'chat', 
            'code'           : 'chiefChat',
@@ -195,7 +198,7 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary','sweetalert
            'name'           : DICTIONARY.withString('[app-chat]'),
            'id'             : iNchatId,
            'data'           : href,
-           'classForATeg'   : 'privateChatBtn',//
+           'classForATeg'   : 'privateChatBtn',
         };
         iNuserData['categories']['chat'] = {};
         iNuserData['categories']['chat'][iNchatId] = objForCreateChat;
@@ -214,7 +217,7 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary','sweetalert
                'name'           : DICTIONARY.withString('[app-chat]'),
                'id'             : iNuserId,
                'classForATeg'   : 'viewCategoryPrompt',//
-               'attrForATeg'    : `categoryUserId='${iNuserId}' categoryUserLogin='${iNuserLogin}'`,
+               'attrForATeg'    : `categoryUserId='${iNuserId}' categoryUserLogin='${iNuserLogin}' activeUserId='${USER.getActiveUserId()}'`,
             };
         } else {
             // if we are NON authed user -> we created link for view error
@@ -222,10 +225,10 @@ define(['jquery','v_category','m_view','m_app','m_user','dictionary','sweetalert
                'app'            : 'chat', 
                'code'           : 'chiefChat',
                'page'           : 'index',
-               'name'           : DICTIONARY.withString('[app-chat]'),
-               'id'             : iNuserId,
-               'classForATeg'   : 'viewError',
-               'attrForATeg'    : "errorText='[phrase-needSignForChat]'",
+               'name'           :  DICTIONARY.withString('[app-chat]'),
+               'id'             :  iNuserId,
+               'classForATeg'   :  'viewError',
+               'attrForATeg'    :  "errorText='[phrase-needSignForChat]'",
 
             };
         }

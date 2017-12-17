@@ -42,7 +42,7 @@ define(
 	  	{{/each}}
     `;
     templates['UserList'] = `
-		<div class="mix usersBlockInMenusBlock {{appsForFilter}} {{class}}" connect_uid="{{userId}}" {{#if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" data-sortable="1" data-position-of-chat='{{chatPosition}}' connect_toUserId='{{toUserId}}' connect_owner='{{owner}}' connect_userType='{{userType}}' connect_chatType='{{chatType}}' connect_userLogin='{{login}}'>
+		<div class="mix usersBlockInMenusBlock {{appsForFilter}} {{class}} forUserId_{{toUserId}} owner_{{owner}}" connect_uid="{{userId}}" {{#if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" data-sortable="1" data-position-of-chat='{{chatPosition}}' connect_toUserId='{{toUserId}}' connect_owner='{{owner}}' connect_userType='{{userType}}' connect_chatType='{{chatType}}' connect_userLogin='{{login}}'>
 			<div class='chatDataInUsersBlock'>
 				<div class="iconBlockInUserBlock">
 			      <div class="iconInUserBlock">
@@ -401,7 +401,7 @@ define(
         	M_APP.view.convertDomElementToAppLink (selector,objForCreateLink);
 		} else {
 			// if this has not menu -> open app 'chat' page 'index'
-			var dataForOpenApp = 'chatName='+obj['chatName']+'&chatId='+obj['chatId']+'&chatIcon='+obj['chatIcon']+'&userLogin='+obj['login']+'&uid='+obj['uid']+'&chatType=' + obj['chatType'];
+			var dataForOpenApp = 'chatName='+obj['chatName']+'&chatId='+obj['chatId']+'&chatIcon='+obj['chatIcon']+'&userLogin='+obj['login']+'&userId='+obj['uid']+'&chatType=' + obj['chatType']+'&forUserId=' + USER.getActiveUserId();
 
         	//< safe add online
             	let thisOnline 			= $(pathToThisChat).attr('connect_online');
@@ -691,6 +691,7 @@ define(
 							lastMsgTimeText
 							lastMsgTime
 		*/
+		console.log('createPrivateChatListIfNotExist INVOKE',iNdata);
 		if(typeof iNdata != 'object') iNdata = {};
 		let chatSelector = getPathToChatByUserId(iNdata['userId']);
 		// create if not exist
@@ -715,6 +716,9 @@ define(
 		if(typeof iNdata['chatPosition'] != 'number') iNdata['chatPosition'] = 999;
 		var content = DICTIONARY.withString ( getUserListTemplate ( iNdata ) );
 		let mixer = output['sortMixitUpObject'];
+
+		console.log('createChatList - iNdata',iNdata);
+		console.log('createChatList - content',content);
 
 		mixer.insert($(content)).then(function(state) {
 	        if(typeof iNfunction == 'function') iNfunction();
@@ -867,7 +871,10 @@ define(
 		    	{
 		    		load: {
 		    			'sort' : 'position-of-chat:asc lastmsgtime:desc',
-		    		}
+		    		},
+		    		animation: {
+				        queueLimit: 999
+				    }
 		    	}
 	    	);
 		} _['initSort'] = initSort;
@@ -887,12 +894,28 @@ define(
 		    if(typeof(output['sortMixitUpObject']) != 'undefined') {
 		    	var mixer = output['sortMixitUpObject'],block = {};
 		    	if( typeof(iNdata) != 'object' ) iNdata = {};
-		    		var sort, sortdefault, filter;
+		    		var sort, sortdefault, filter = '', prefixForUserId = '.forUserId_', activeUserId = USER.getActiveUserId();
+
 				    if( typeof(iNdata.filter) == 'string' )      
 				    	filter 		=  iNdata.filter;
 				    else {
 				    	filter 		=  chat_getGlobalFilter();
 				    }
+
+				    // if passed active user we set, but by default is now activeUserId
+				    if( typeof(iNdata.forUserId) == 'string' ) {
+				    	//view  for  
+				    	activeUserId 		==  forUserId;
+				    }
+
+				    if ( filter == 'all' ) {
+				    	// if filter is ALL view without app type
+				    	filter 		=  prefixForUserId + activeUserId;
+				    } else {
+				    	// view special users for active userId
+				    	filter 		+=  prefixForUserId + activeUserId;
+				    }
+				    console.log('startEffSortChats - filter',filter);
 
 				    if( typeof(iNdata.sort)  == 'string' )       
 				    	sort 		=  iNdata.sort;
@@ -1327,14 +1350,15 @@ define(
 	        	$('.viewCategoryPrompt').click( 
 	        		(event) =>  {
 			            var thisUserId          = $(event.target).attr('categoryUserId'),
-			                thisUserLogin       = $(event.target).attr('categoryUserLogin');
+			                thisUserLogin       = $(event.target).attr('categoryUserLogin'),
+			                activeUserId       	= $(event.target).attr('activeUserId');
 
 			            if( thisUserId && thisUserLogin ) {
 			                // SUCCESS we has login and uid for create chat
-			                showPromptQuestionForCreateChat ( iNsuccessFunc, iNerrorFunc, thisUserId , thisUserLogin);
+			                showPromptQuestionForCreateChat ( iNsuccessFunc, iNerrorFunc, thisUserId , thisUserLogin, activeUserId);
 			            } else {
 			                // ERROR we has NOT  login and uid
-			                if (typeof iNerrorFunc == 'function') iNerrorFunc ();
+			                if (typeof iNerrorFunc == 'function') iNerrorFunc (thisUserId , thisUserLogin, activeUserId);
 
 			            }
 	        		}
@@ -1345,7 +1369,7 @@ define(
     } _['onClickCategoryForCreateChat'] = onClickCategoryForCreateChat;
 
 
-    function showPromptQuestionForCreateChat ( iNsuccessFunc, iNerrorFunc, iNuid, iNulogin) {
+    function showPromptQuestionForCreateChat ( iNsuccessFunc, iNerrorFunc, iNuid, iNlogin, iNactiveUserId) {
         (()=>{
 
         	swal({
@@ -1363,11 +1387,11 @@ define(
 	        }).then(
 		        (result) => {
 		          if (result.value) {
-		            if (typeof iNsuccessFunc == 'function') iNsuccessFunc(iNuid,iNulogin);
+		            if (typeof iNsuccessFunc == 'function') iNsuccessFunc(iNuid,iNlogin,iNactiveUserId);
 		            // result.dismiss can be 'cancel', 'overlay',
 		            // 'close', and 'timer'
 		          } else if (result.dismiss === 'cancel') {
-		            if (typeof iNerrorFunc == 'function') iNerrorFunc(iNuid,iNulogin);
+		            if (typeof iNerrorFunc == 'function') iNerrorFunc(iNuid,iNlogin,iNactiveUserId);
 		          }
 		        }
 	        )

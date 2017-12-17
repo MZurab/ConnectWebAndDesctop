@@ -65,7 +65,7 @@ define(
         'icon' : USER.getMyIcon(),
         'name' : USER.getMyDisplayName(),
         'login': USER.getMyLogin(),
-      },'change');
+      },'start');
     } else {
       // add header for non auth user
       VIEW.addUserHeaderInList ( 
@@ -86,7 +86,7 @@ define(
       'name'  : iNname,//USER.getMyDisplayName()
       'login' : iNlogin,//USER.getMyLogin()
       'back'  : true,
-    },'change');
+    },'start','one');
 
     // attach for back btn this func by click for  open index page 
     $('.appBase_backButton').click(
@@ -172,8 +172,17 @@ define(
 
 
     function chat_openChatWithCreateIfNotExist (iNobjectForCreateChat) {
-      // body...
+      /*
+        @discr
+        @inputs
+          @required
+            iNobjectForCreateChat
+              userId
+      */
       var objForCreateChat = iNobjectForCreateChat;
+
+      // add icon 
+      iNobjectForCreateChat['icon'] = URL.getUserIconByUid(iNobjectForCreateChat['userId'])
 
       // created chat
       M_CATEGORY.view.createChatListIfNotExist(objForCreateChat);
@@ -299,11 +308,28 @@ define(
     /*< CHAT */
 
       CONST['url_createChat'] = URL.db.api.chat.create;// 'https://ramman.net/api/chat';
-      function createPrivateChat (iNuid,/*iNuserData,*/ iNsuccessFunction, iNerrorFunction) {
+      function createPrivateChat (iNdata,/*iNuserData,*/ iNsuccessFunction, iNerrorFunction) {
+        /*
+          @discr
+            create main chat with user
+          @inputs
+            @required
+              iNdata -> object
+                @required
+                  uid -> string
+        */
+        var   uid = iNdata.uid;
+
         const objectForAjax = {};
               objectForAjax['uid']     = USER.getMyId();
               objectForAjax['token']   = USER.getMyToken();
-              objectForAjax['userUrl'] = iNuid;
+              objectForAjax['userUrl'] = uid;
+
+              // if we are in pseudoUser mode -> we add to request
+              if ( USER.getActiveUserId() != USER.getMyId() ) {
+                  objectForAjax.pseudoUser = USER.getActiveUserId();
+              }
+
         getByGetRequest_ChatDataBySafeCreate(objectForAjax,
           (resultOfAjax) => {
             if (typeof resultOfAjax == 'object' && resultOfAjax['status'] == 1 ) {
@@ -401,17 +427,16 @@ define(
             
             // attach onclick to 'chat' menu for create chat if it need
             M_CATEGORY.view.onClickCategoryForCreateChat (
-              (userId, userLogin) => {
+              (userId, userLogin, activeUserId) => {
                 // SUCCESS -> will do requiest for create chat
                 // show loader
                 M_APP.view.showLoader
                 createPrivateChat (
-                  userId,
+                  { 'uid' : userId },
                   ( iNchatObject ) => {
-                    console.log ( 'request_getUserMenuByLogin userLogin', userLogin );
                     // we created chat -> we update menu && we open chat
 
-                    M_CATEGORY.view.removeChatListByUserId(
+                    M_CATEGORY.view.removeChatListByUserId (
                       userId,
                       () => {
                         // get menu -> show menu
@@ -425,25 +450,25 @@ define(
                         );
                       }
                     );
-
-
-
-                    //
-
-
-                  }  , 
+                  }, 
                   () => {
                     // we CANNOT created chat
-
+                    swal({
+                      title: 'Ошибка!',
+                      text: "К сожаление создать чат с этим пользователем в данный момент невозможно!",
+                      type: 'error'
+                    });
                   }
                 )
-                console.log('category success');
-
               },
-              (userId, userLogin) => {
+              (userId, userLogin, activeUserId) => {
                 // ERROR
-                console.log('category error');
-
+                console.log('onClickCategoryForCreateChat category error');
+                swal({
+                  title: 'Ошибка!',
+                  text: "К сожаление создать чат с этим пользователем в данный момент невозможно!",
+                  type: 'error'
+                });
               }
             );
 
@@ -494,7 +519,7 @@ define(
     // get data from DB
     M_DATABASE.getRealtimeDataFromFirestoreDb (
           'users',
-          uid + '/subusers',
+          uid + '/pseudouser',
           {
             'functionOnOther' : () => {
 
@@ -506,8 +531,7 @@ define(
             'functionOnAdd' : (pseudoUserData) => {
               var pseudoUserBlock   = pseudoUserData.data(),
                   pseudoUserid      = pseudoUserData.id,
-                  refStatus         = pseudoUserBlock.status,
-                  ref               = pseudoUserBlock.ref;
+                  refStatus         = pseudoUserBlock.status;
 
               // if menu no exist
               if ( !VIEW.menuPseudoUser_getCountMenu() ) {
@@ -529,20 +553,25 @@ define(
               }
 
               //get pseudo user 
-              ref.get().then(
-                (userData) => {
+              console.log('USER.userData_getByUid - pseudoUserid',pseudoUserid);
+              USER.userData_getByUid(
+                pseudoUserid,
+                (errUserData,userData) => {
+                  console.log('USER.userData_getByUid - errUserData, userData',errUserData,userData);
+                  // if this userId not founded in system
+                  if(errUserData)return;
                   // get user data from db
-                  var userBlock       = userData.data(),
+                  var userBlock       = userData,
                       objForAddToMenu = {};
 
                   // get user id from db
-                  objForAddToMenu['uid']    = userData.id;
+                  objForAddToMenu['uid']    = userBlock.id;
                   objForAddToMenu['owner']  = userBlock.owner;
                   objForAddToMenu['login']  = userBlock.info.data.login;
                   objForAddToMenu['icon']   = URL.getUserIconByUid(objForAddToMenu['uid']);
                   objForAddToMenu['name']   = userBlock.info.data.name;
 
-                  // delete owner if this user owner is system
+                  // delete owner if this user owner belongs to system
                   if ( objForAddToMenu['owner'] == LOCALDB.db.val.systemUser ) delete objForAddToMenu['owner'];
 
                   // add menu

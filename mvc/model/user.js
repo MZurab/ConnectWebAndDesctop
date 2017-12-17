@@ -1,5 +1,160 @@
-define(['jquery','m_firebase','dictionary','m_view','m_app','url','jquery.countdown'], function ($,FIREBASE,DICTIONARY,M_VIEW,M_APP,URL) {
+define(
+	['jquery','m_firebase','dictionary','m_view','m_app','url','localdb', 'm_database', 'jquery.countdown'], 
+	function ($, FIREBASE, DICTIONARY, M_VIEW, M_APP, URL, LOCALDB, M_DATABASE ) {
   	const _ = {};
+
+
+  	//@< ACTIVE USER - get choosen user from pseudo OR myUserId
+  		function getActiveUserId () {
+  			/*
+  				@discr
+  					get active user pseudo or i
+  				@inputs
+  					@required
+  			*/
+  			var key = LOCALDB.db.val.activeUser;
+  			return window[key]||getMyId();
+  		} _.getActiveUserId = getActiveUserId;
+
+  		function setActiveUserId (iNuid) {
+  			/*
+  				@discr
+  					set active user pseudo or i
+  				@inputs
+  					@required
+  						iNuid -> string
+  			*/
+  			var key = LOCALDB.db.val.activeUser;
+  			window[key] = iNuid;
+  			return true;
+  		} _.setActiveUserId = setActiveUserId;
+  	//@> ACTIVE USER - get choosen user from pseudo OR myUserId
+
+  	//@< GET USER FROM DB - get user from db
+  		const userData_const_keyForLocalStorage = 'connectUserData';
+
+
+  		function userData_getByUid (iNuid, iNfuntion) {
+  			/*
+  				@discr
+  					get active user pseudo or i
+  				@inputs
+  					@required
+  						iNuid -> string
+  						iNfuntion -> function
+  							@with param (err,dataFromUser)
+  			*/
+  			var objFromLocalStorage = userData_getByUidFromLocalStorage (iNuid)
+  			// if we have data in local storage
+  			if (objFromLocalStorage){
+  				iNfuntion(false,objFromLocalStorage);
+  				return;
+  			}
+  			// if have no dat in local storage we get grom db
+  			userData_getByUidFromDb (iNuid, iNfuntion);
+
+  		} _.userData_getByUid = userData_getByUid;
+
+  		function userData_getByUidFromDb (iNuid, iNfuntion) {
+  			/*
+  				@discr
+  					get active user pseudo or i
+  				@inputs
+  					@required
+  						iNuid -> string
+  						iNfuntion -> function
+  			*/
+  			var uid = iNuid, objForAddToLocalStorage = {};
+  			
+
+            var objectForGetFromDb = {
+                'functionOnAdd'             :    (userData) => {
+                    // if added user
+                    objForAddToLocalStorage 		= userData.data();
+                    // add user id
+                    objForAddToLocalStorage['id'] 	= userData.id;
+                    // safe data
+                    userData_setToLocalStorageByUid (iNuid,objForAddToLocalStorage);
+                    iNfuntion(false, userData.data())
+                },
+                'functionOnChange': (userData) => {
+                    // if change user
+                    objForAddToLocalStorage 		= userData.data();
+                    // add user id
+                    objForAddToLocalStorage['id'] 	= userData.id;
+                    // safe data
+                    userData_setToLocalStorageByUid (iNuid, objForAddToLocalStorage);
+                    iNfuntion(false, userData.data())
+                }
+                ,
+                'functionOnOther'           : () => { 
+                    // if not data
+                    iNfuntion(true);
+                }
+            };
+
+            M_DATABASE.getRealtimeDataFromFirestoreDb('users', uid , objectForGetFromDb);
+  			
+  		}
+
+  		function userData_getByUidFromLocalStorage (iNuid) {
+  			/*
+  				@discr
+  					get active user pseudo or i
+  				@inputs
+  					@required
+  						iNuid -> string
+  			*/
+  			var objFromDb 	= userData_getFromLocalStorage();
+  			if ( typeof objFromDb != 'object' || !objFromDb[iNuid] ) {
+  				// ERROR in we has not data in oject
+  				return false;
+			}
+
+			return objFromDb[iNuid];
+		}
+
+		function userData_getFromLocalStorage () {
+  			/*
+  				@discr
+  					get active user pseudo or i
+  				@inputs
+  					@required
+  			*/
+  			var stringFromDb 		= M_APP.get(userData_const_keyForLocalStorage);
+
+			if( !stringFromDb ) {
+  				// ERROR in local storage has not data
+  				return false;
+  			}
+
+  			return JSON.parse(stringFromDb)||false;
+		}
+
+  		function userData_setToLocalStorageByUid (iNuid,iNdata) {
+  			/*
+  				@discr
+  					set userData to localstorage by uid
+  				@inputs
+  					@required
+  						iNuid -> string
+  						iNdata -> ojbect (from firestor db user/$uid)
+  			*/
+  			var userObject = userData_getFromLocalStorage();
+  			if ( typeof userObject != 'object' ) {
+  				// we has not yet local storage
+  				userObject = {};
+  			}
+  			// add object to userId
+  			userObject[iNuid] = iNdata;
+
+  			// save to db
+  			M_APP.save ( userData_const_keyForLocalStorage, JSON.stringify(userObject) );
+  			
+
+  		}
+  	//@> GET USER FROM DB - get user from db
+
 	//@@@<<< USER
 		function getUserCountry() {
 			return M_APP.get('ConnectUserCountry');

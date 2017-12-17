@@ -121,7 +121,8 @@ define(
                     uid -> string
                     chatId -> string
         */
-        var chatType = parseInt(iNchaType), result;
+        var chatType = parseInt(iNchaType), result,
+        	uid = iNobject['uid']||iNobject['userId'];
         console.log('getChatIconByType - iNchaType,iNobject',iNchaType,iNobject);
         if (chatType == 1) {
             // private chat
@@ -223,7 +224,6 @@ define(
         VIEW.hideChatContainers();
         VIEW.showChatContainerByChatId(chatId);
         VIEW.effChatViewScrollToBot();
-        // M_MESSAGE.setObserverForAppearMessageInVisualScrollByChatId(chatId);
     } _.pageIndex_openChatByChatId = pageIndex_openChatByChatId;
 
     
@@ -250,8 +250,84 @@ define(
         return M_APP.get('connectThisOpenChatUserId');
     }
 
+    //@< COLOR FOR USER IN CHAT
+    	const userColor_keyForLocalStorage = 'connectUserColorForChat';
+    	function userColor_getColorForUser (iNchatId,iNuserId) {
+    		/*
+    			@example
+    				userColor_getColorForUser('chatTestId','userTestId')
+    		*/
+    		// get user number from array
+    		var userNumber = userColor_getUserNumber(iNchatId,iNuserId);
+    		return VIEW.userColor_getByNumber(userNumber);
+
+    	} _.userColor_getColorForUser = userColor_getColorForUser;
+
+    	function userColor_getUserNumber ( iNchatId, iNuserId ) {
+    		/*
+    			@discr
+    			@inputs
+    			@algoritm
+    				1 - getUserNumberFrom
+    		*/
+    		var fullObject = userColor_getObjectFromLocalStorage(),
+    			userNumber = 0;
+
+    		if( !fullObject[iNchatId] ) {
+    			fullObject[iNchatId] = {};
+    		}
+
+    		if ( !fullObject[iNchatId] || !Array.isArray(fullObject[iNchatId]) ) {
+    			fullObject[iNchatId] = [];
+    		}
+
+    		userNumber = fullObject[iNchatId].indexOf(iNuserId);
+
+    		if ( userNumber == -1 ) {
+    			// if this user is not exist in array -> we add to array
+    			fullObject[iNchatId].push(iNuserId);
+    			// set user number last element
+    			userNumber = fullObject[iNchatId].length - 1;
+    			// save to local storage
+    			userColor_saveObjectFromLocalStorage(fullObject);
+    		}
+
+    		return userNumber;
+    		
+    	}
+
+    	function userColor_getObjectFromLocalStorage (iNchatId,iNuserId) {
+    		/*
+    			@discr
+    			@inputs
+    			@algoritm
+    				1 - getUserNumberFrom
+    		*/
+    		var stringFromLs = M_APP.get(userColor_keyForLocalStorage);
+
+    		if ( !stringFromLs ){
+    			//we cant have in db
+    			return {};
+    		}
+    		return JSON.parse(stringFromLs)||{};
+    	}
+    	function userColor_saveObjectFromLocalStorage (iNobject) {
+    		/*
+    			@discr
+    			@inputs
+    			@algoritm
+    				1 - getUserNumberFrom
+    		*/
+    		var objForSave;
+    		if(typeof iNobject == 'object') 
+    			objForSave = JSON.stringify(iNobject);
+    		else 
+    			objForSave = iNobject;
+
+    		M_APP.save( userColor_keyForLocalStorage, objForSave );
+    	}
+	//@> COLOR FOR USER IN CHAT
     
-	
 
 	return _;
 });

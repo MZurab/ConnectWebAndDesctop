@@ -450,6 +450,7 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
         });
     }
     _['getDataFromFirestoreDb'] = getDataFromFirestoreDb;
+
     function getRealtimeDataFromFirestoreDb (iNcollection,iNpath, iNdata) {
         /*
             @inputs
@@ -671,9 +672,13 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
                             if(typeof iNdata['functionOnChangeFromServer'] == 'function') iNdata['functionOnChangeFromServer']( doc );
                         }
                     }
+
                     // increase counter -> we would to recognize difference change and add
                     counterForTypeDoc++;
+                } else if ( typeof iNdata['functionOnOther'] == 'function' ) {
+                    iNdata['functionOnOther']();
                 }
+                            
             }
         });
     }

@@ -69,16 +69,19 @@ define(
 		//@<SECTION common time
 		  	templates['msg_commonTimeFromMeBlock'] = `
 				<div class="lineInFromMeMessage">
-			      <div class="lineInBoxInLine">
-			         
-				         <div class="topCircleInMessages" {{#if timeSentText}}{{else}}{{/if}}></div>
-				         <div class="timeTopInMessages">{{timeSentText}}</div>
-			         
-
-			        <div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
-		         	<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
-
-			      </div>
+					<div class="userIconBlock">
+						<img src="{{userIcon}}">
+				  	</div>
+					<div class="userNameBlock"> 
+					  <span class="userLogin">{{userName}}</span>
+					</div>
+					<div class="lineInBoxInLine">
+						<div class="topCircleInMessages" {{#if timeSentText}}{{else}}{{/if}}></div>
+						<div class="timeTopInMessages">{{timeSentText}}</div>
+					 
+						<div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
+						<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
+					</div>
 			   </div>
 		  	`;
 		  		function msg_getTemplateByNameCommonTimeFromMeBlock (iNdata) {
@@ -93,7 +96,14 @@ define(
 
 			templates['msg_commonTimeToMeBlock'] = `
 				<div class="lineInToMeMessage">
-			   		<div class="lineInBoxInLine">
+					<div class="userIconBlock">
+						<img src="{{userIcon}}"><!-- style='border-color:{{color}}' -->
+				  	</div>
+					<div class="userNameBlock" style='color:{{color}}'> 
+					  <span class="userLogin">{{userName}}</span>
+					</div>
+					
+			   		<div class="lineInBoxInLine" ><!-- style='background-color:{{color}}' -->
 						 
 						<div class="topCircleInMessages" {{#if timeSentText}}{{else}}style="display:none;"{{/if}}></div>
 						<div class="timeTopInMessages" {{#if timeSentText}}{{else}}style="display:none;"{{/if}}>{{timeSentText}}</div>
@@ -1158,7 +1168,11 @@ define(
   				var value =  $('#forTextInputInSenderBlock textarea').val();
   				if(value == '') return true;
 			    iNdata['simpleMsgText_onClickSendBtn'](e);
+			    // clear 'textarea'  
 			    $('#forTextInputInSenderBlock textarea').val('');
+			    // trigger 'keyup' for auto change mode to sendAudio or sendVideo
+			    $('#forTextInputInSenderBlock textarea').trigger('keyup');
+			    // scroll to bot
 			    effChatViewScrollToBotSafe();
   			});
 
@@ -1175,20 +1189,16 @@ define(
   		$("#forTextInputInSenderBlock textarea").off('keydown keyup');
 		$("#forTextInputInSenderBlock textarea").keydown( function(e) { 
 	    var code = e.which; // recommended to use e.which, it's normalized across browsers
-
-
-	    
-	    if (code==13) {
-	    	e.preventDefault();
-	    	$('#sendTextButtonInSenderBlock').trigger('click');
-	    }
+			// if we pressed 'enter' we send message
+		    if (code==13) {
+		    	e.preventDefault();
+		    	$('#sendTextButtonInSenderBlock').trigger('click');
+		    }
 		}).keyup(function (e) {
 			var code = e.which; // recommended to use e.which, it's normalized across browsers
 
-			
-
-
-		    if (code==13) {
+			// if we pressed 'enter' we off line break 
+			if (code==13) {
 		    	e.preventDefault();
 		    } else {
 

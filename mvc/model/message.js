@@ -13,8 +13,8 @@ define(
         }
         //@> copied functions from app-chat module
         function annihilateNewMsgCounterFDB(iNchatId) {
-            var chatId = iNchatId; //msg_getCurrentChatId();
-            var myUID = USER.getMyId();
+            var chatId  = iNchatId; //msg_getCurrentChatId();
+            var myUID   = USER.getActiveUserId();// USER.getMyId();
             let collection = 'chats',
                 pathToDb =  chatId + '/member/' + myUID + '/newMsg';
             M_DATABASE.addRealtimeDb ( collection, pathToDb, 0 )
@@ -153,9 +153,9 @@ define(
             */
 
 
-            var messagesData = iNdataFromFB;
-            var myUID = USER.getMyId();
-            var fullData = messagesData.data()||{};//messagesData.val()
+            var messagesData    = iNdataFromFB;
+            var myUID           = USER.getActiveUserId();// USER.getMyId();
+            var fullData        = messagesData.data()||{};//messagesData.val()
             LOG.print('callbackAddOrChangeMessageForDb fullData',fullData);
 
             var objectForCreateMessage = fullData['info'];
@@ -173,7 +173,6 @@ define(
 
             if (typeof iNobject['functionOnChild'] == 'function') iNobject['functionOnChild'](iNchatId);
 
-            getTimeTextForAllMessages(objectForCreateMessage, fullData, iNchatId, myUID);
 
             if (iNtype == 'child_changed') {
                 // replace message in chat container
@@ -182,80 +181,116 @@ define(
 
                 // VIEW.msgSimpleText_safeReplace( objectForCreateMessage, myUID, iNchatId  );
 
+                // get time text for change message
+                getTimeTextForAllMessages(objectForCreateMessage, fullData, iNchatId, myUID);
+
+                // replace thi message
                 VIEW.msg_replaceMsgByItsType(msgType, objectForCreateMessage, myUID, iNchatId)
 
             } else {
+                // safe invoke functionOnChildAdded func
                 if (typeof iNobject['functionOnChildAdded'] == 'function') iNobject['functionOnChildAdded'](iNchatId);
-                msgSimpleText_safeCreateCenterMessageByPassedTime(objectForCreateMessage, fullData, iNchatId, myUID);
-
 
                 // create message
                 msg_createMsgByItsType ( msgType, fullData, iNchatId, objectForCreateMessage['msgId'] );
 
-                // VIEW.msg_createMsgByItsType(msgType, objectForCreateMessage, myUID, iNchatId)
-                // VIEW.msgSimpleText_createMsg ( objectForCreateMessage, myUID, iNchatId );
-
-                VIEW.effChatViewScrollToBotWithTimeOut(
-                    () => {
-                        if (msg_getCurrentChatId() == iNchatId)
-                            safeHideMessagesCountByChatId(iNchatId);
-                    },
-                    () => {
-                        if (msg_getCurrentChatId() == iNchatId)
-                            if (objectForCreateMessage['uid'] != myUID)
-                                safeViewMessagesCountByChatId(iNchatId);
-                    }
-                );
-
-                msg_setObserverForAppearMessageInVisualScrollByChatId(iNchatId,msgType);
+                
             } // ser observer for income non read message to me
         }
 
+
         function msg_createMsgByItsType (msgType, iNmsgObject, iNchatId, iNmsgId ) {
-            // body...
+            /*
+                @inputs
+                    @required
+                        msgType     -> number
+                        iNmsgObject -> object
+                        iNchatId    -> string
+                        iNmsgId     -> string
+            */
             console.log('msg_createMsgByItsType - msgType, iNmsgObject, iNchatId, iNmsgId',msgType, iNmsgObject, iNchatId, iNmsgId);
-            var myUID = USER.getMyId();
-            switch (msgType) {
-                //@< text messages
-                case 1:     // simpleText 
-                    msgType = VIEW.msg_getNameOfTypeByType(1);
-                    VIEW.msgSimpleText_createMsg( iNmsgObject['info'], myUID, iNchatId );
-                break;
-                //@> text messages
+            var myUID = USER.getActiveUserId();// USER.getMyId();
 
-                //@< live messages
-                    case 20:    // liveAudio 
-                        msgType = VIEW.msg_getNameOfTypeByType(20);
-                        // msgLiveAudio_createMsg( iNobjectForCreateMessage, myUID, iNchatId );
-                        if (iNmsgObject['uid'] == myUID) {
-                            // if msg from me
-                            msgLiveAudio_createFromMe (iNchatId, iNmsgId,  iNmsgObject )
-                        } else {
-                            // if msg to me
-                            msgLiveAudio_createToMe  (iNchatId, iNmsgId,  iNmsgObject );
+            USER.userData_getByUid( iNmsgObject['uid'], 
+                ( errFromUser, dataFromUser ) => {
+                    if(errFromUser) {
+                        //user not found
+                        return;
+                    }
+
+                    // get time text for create message
+                    getTimeTextForAllMessages( iNmsgObject['info'], iNmsgObject, iNchatId, myUID);
+
+                    // safe create center message
+                    msgSimpleText_safeCreateCenterMessageByPassedTime(iNmsgObject['info'], iNmsgObject, iNchatId, myUID);
+
+
+                    iNmsgObject['info']['userLogin']    = dataFromUser['info']['data']['login'];
+                    iNmsgObject['info']['userName']     = dataFromUser['info']['data']['name'];
+                    iNmsgObject['info']['userIcon']     = M_URL.getUserIconByUid( iNmsgObject['uid'] );
+
+                    iNmsgObject['info']['color']        = M_APP.getGlobalVar('m_app-chat').userColor_getColorForUser (iNchatId, iNmsgObject['uid']);
+
+                    console.log("M_URL.getUserIconByUid( iNmsgObject['uid'] )",iNmsgObject['uid'], M_URL.getUserIconByUid( iNmsgObject['uid'] ))
+                    
+                    switch (msgType) {
+                        //@< text messages
+                        case 1:     // simpleText 
+                            msgType = VIEW.msg_getNameOfTypeByType(1);
+                            VIEW.msgSimpleText_createMsg( iNmsgObject['info'], myUID, iNchatId );
+                        break;
+                        //@> text messages
+
+                        //@< live messages
+                            case 20:    // liveAudio 
+                                msgType = VIEW.msg_getNameOfTypeByType(20);
+                                // msgLiveAudio_createMsg( iNobjectForCreateMessage, myUID, iNchatId );
+                                if (iNmsgObject['uid'] == myUID) {
+                                    // if msg from me
+                                    msgLiveAudio_createFromMe (iNchatId, iNmsgId,  iNmsgObject )
+                                } else {
+                                    // if msg to me
+                                    msgLiveAudio_createToMe  (iNchatId, iNmsgId,  iNmsgObject );
+                                }
+                            break;
+
+                            case 21:    // liveVideo
+                                msgType = VIEW.msg_getNameOfTypeByType(21);
+                                // msgLiveVideo_createMsg( iNobjectForCreateMessage, myUID, iNchatId );
+                                // VIEW.msgLiveVideo_safeReplace( iNmsgObject['info'], myUID, iNchatId  );
+                                if (iNmsgObject['uid'] == myUID) {
+                                    // if msg from me
+                                    msgLiveVideo_createFromMe (iNchatId, iNmsgId,  iNmsgObject )
+                                } else {
+                                    // if msg to me
+                                    msgLiveVideo_createToMe  (iNchatId, iNmsgId,  iNmsgObject );
+                                }
+                            break;
+                        //@> live messages
+
+                        //@< file messages
+                        //@< file messages
+
+                        //@< documents messages
+                        //@< documents messages
+                    }
+
+                    VIEW.effChatViewScrollToBotWithTimeOut (
+                        () => {
+                            if (msg_getCurrentChatId() == iNchatId)
+                                safeHideMessagesCountByChatId(iNchatId);
+                        },
+                        () => {
+                            if (msg_getCurrentChatId() == iNchatId)
+                                if (iNmsgObject['info']['uid'] != myUID)
+                                    safeViewMessagesCountByChatId(iNchatId);
                         }
-                    break;
+                    );
 
-                    case 21:    // liveVideo
-                        msgType = VIEW.msg_getNameOfTypeByType(21);
-                        // msgLiveVideo_createMsg( iNobjectForCreateMessage, myUID, iNchatId );
-                        // VIEW.msgLiveVideo_safeReplace( iNmsgObject['info'], myUID, iNchatId  );
-                        if (iNmsgObject['uid'] == myUID) {
-                            // if msg from me
-                            msgLiveVideo_createFromMe (iNchatId, iNmsgId,  iNmsgObject )
-                        } else {
-                            // if msg to me
-                            msgLiveVideo_createToMe  (iNchatId, iNmsgId,  iNmsgObject );
-                        }
-                    break;
-                //@> live messages
-
-                //@< file messages
-                //@< file messages
-
-                //@< documents messages
-                //@< documents messages
-            }
+                    msg_setObserverForAppearMessageInVisualScrollByChatId(iNchatId,msgType);
+                }
+            );
+            
         }
 
         function msg_setObserverForAppearMessageInVisualScrollByChatId(iNchatId, iNMsgType) {
@@ -278,7 +313,7 @@ define(
                 //таймер что бы успело создаться в сообщении counter блок
                 setTimeout(() => {
                     let thisElement = element;
-                    var myUID = USER.getMyId();
+                    var myUID = USER.getActiveUserId();//USER.getMyId();
                     let msgId = VIEW.msg_getDomAttrByNameMsgId(thisElement);
                     msg_setReadState(msgId, chatId, myUID);
                 }, 1200);
@@ -310,7 +345,7 @@ define(
             var msgType     = VIEW.msg_getNameOfTypeByType(iNmsgObject.type),
                 thisUserId  = iNmsgObject.uid,
                 src         = iNmsgObject.info.src,
-                myUID       = USER.getMyId(),
+                myUID       = USER.getActiveUserId(),// USER.getMyId(),
                 path = `chats/${iNchatId}/${thisUserId}/${msgType}/${iNmsgId}/${src}`,
                 msgForCreateObject  = iNmsgObject['info'];
 
@@ -349,16 +384,13 @@ define(
                         iNmsgId     -> string
                         iNmsgObject -> object
             */
-            var myUID               = USER.getMyId(),
+            var myUID               = USER.getMyId(),// USER.getMyId(),
                 path                = M_URL.db.api.getUrl.forChat,
                 msgForCreateObject  = iNmsgObject['info'];
 
             // create msg live auio for fix position
             VIEW.msgLiveAudio_safeReplace( msgForCreateObject, myUID, iNchatId  );
 
-            console.log( 'msgLiveAudio_createToMe   - path'     , path  );
-            console.log( 'msgLiveAudio_createToMe   - myUID'    , myUID );
-            console.log( 'msgLiveAudio_createToMe   - iNmsgObject'     , iNmsgObject  );
             $.getJSON (
                 path,
                 {
@@ -366,6 +398,7 @@ define(
                     'chatId'    : iNchatId,
                     'msgId'     : iNmsgId,
                     'uid'       : myUID,
+                    'pseudouser': USER.getActiveUserId(),
                 },
                 (dataFromServer) => {
                     console.log( 'msgLiveAudio_createToMe - dataFromServer', dataFromServer );
@@ -387,12 +420,11 @@ define(
 
         function msgLiveAudio_safeSetReadState () {
             var msgSelectorText = msg_getPathToDomForMsg (  iNchatId, iNmsgId );
-                    var myUID = USER.getMyId();
+                    var myUID = USER.getActiveUserId();// USER.getMyId();
             msg_getDomAttrByNameMessageTimeSent (msgSelectorText);
 
 
                     let thisElement = element;
-                    var myUID = USER.getMyId();
                     var chatId = msg_getCurrentChatId();
                     let msgId = VIEW.msg_getDomAttrByNameMsgId(thisElement);
                     msg_setReadState(msgId, chatId, myUID);
@@ -535,7 +567,7 @@ define(
                             data
             */
             var chatId = iNchatId||msg_getCurrentChatId();
-            var myUID = USER.getMyId();
+            var myUID = USER.getActiveUserId();// USER.getMyId();
             var objForSendToDb = {
                 'data'  : iNdata['data'],
                 'uid'   : iNdata['uid']||myUID,
@@ -707,7 +739,7 @@ define(
 
 
             // get my user id
-            let myUid = USER.getMyId();//FIREBASE.auth().currentUser.uid;
+            let myUid = USER.getActiveUserId(); // USER.getMyId();//FIREBASE.auth().currentUser.uid;
             // get right object for add to msg db
             let objForSentToDb = prepareObjectForSentToMsgBase(iNdata, myUid);
 
@@ -872,20 +904,15 @@ define(
             var msgType             = VIEW.msg_getNameOfTypeByType(iNmsgObject.type),
                 thisUserId          = iNmsgObject.uid,
                 src                 = iNmsgObject.info.src,
-                myUID               = USER.getMyId(),
+                myUID               = USER.getActiveUserId(),// USER.getMyId(),
                 path                = `chats/${iNchatId}/${thisUserId}/${msgType}/${iNmsgId}/${src}`,
                 msgForCreateObject  = iNmsgObject['info'];
 
             // create msg live auio for fix position
                 VIEW.msgLiveVideo_safeReplace( msgForCreateObject, myUID, iNchatId  );
 
-            console.log( 'msgLiveVideo_createFromMe - iNchatId, iNmsgId,  iNmsgObject',iNchatId, iNmsgId,  iNmsgObject );
-            console.log( 'msgLiveVideo_createFromMe - myUID, src,  thisUserId', myUID, src,  thisUserId );
-            console.log( 'msgLiveVideo_createFromMe - msgType, path', msgType, path );
             M_STORAGE.getDownloadURL (path, 
                 (errUrl, dataUrl) => {
-                    console.log( 'msgLiveVideo_createFromMe - dataUrl', dataUrl );
-                    console.log( 'msgLiveVideo_createFromMe - errUrl', errUrl );
                     if (errUrl) {
                         // ERROR we can not get url
 
@@ -911,16 +938,13 @@ define(
                         iNmsgId     -> string
                         iNmsgObject -> object
             */
-            var myUID               = USER.getMyId(),
+            var myUID               = USER.getMyId(),// USER.getMyId(),
                 path                = M_URL.db.api.getUrl.forChat,
                 msgForCreateObject  = iNmsgObject['info'];
 
             // create msg live auio for fix position
-                VIEW.msgLiveVideo_safeReplace( msgForCreateObject, myUID, iNchatId  );
+            VIEW.msgLiveVideo_safeReplace( msgForCreateObject, myUID, iNchatId  );
 
-            console.log( 'msgLiveVideo_createToMe   - path'     , path  );
-            console.log( 'msgLiveVideo_createToMe   - myUID'    , myUID );
-            console.log( 'msgLiveVideo_createToMe   - iNmsgObject'     , iNmsgObject  );
             $.getJSON (
                 path,
                 {
@@ -928,6 +952,7 @@ define(
                     'chatId'    : iNchatId,
                     'msgId'     : iNmsgId,
                     'uid'       : myUID,
+                    'pseudouser': USER.getActiveUserId(),
                 },
                 (dataFromServer) => {
                     console.log( 'msgLiveVideo_createToMe - dataFromServer', dataFromServer );
@@ -936,8 +961,6 @@ define(
                         return;
                     }
                     var url = dataFromServer.link;
-                    console.log( 'msgLiveVideo_createToMe - url', url );
-                    console.log( 'msgLiveVideo_createToMe - msgForCreateObject', msgForCreateObject );
                     //attach this url to this object    
                     msgForCreateObject['url'] = url;
                     // create msg live auio
@@ -976,9 +999,9 @@ define(
                 var msgParentBlock = $(iNobject).closest('.msgTypeLiveVideo');
                 if( msgParentBlock.hasClass('toMeMessageInChatView') && VIEW.msg_getDomAttrByNameMessageTimeRead(msgParentBlock) < 1 ) {
                     // 
-                    var chatId  = msg_getCurrentChatId();
-                    var myUID   = USER.getMyId();
-                    let msgId   = VIEW.msg_getDomAttrByNameMsgId(msgParentBlock);
+                    var chatId  = msg_getCurrentChatId(),
+                        myUID   = USER.getActiveUserId(),// USER.getMyId();
+                        msgId   = VIEW.msg_getDomAttrByNameMsgId(msgParentBlock)
                     msg_setReadState(msgId, chatId, myUID);
                 }
             //@> add read state for to me message if it need
@@ -1015,10 +1038,31 @@ define(
             iNdata['content']   = '';
             iNdata['uid']       = iNmyUid;
             iNdata['msgId']     = iNmsgId;
-            // create message element
-            VIEW.msgLiveVideo_createMsg(iNdata, iNmyUid, iNchatId);
-            // scroll to bot
-            VIEW.effChatViewScrollToBotWithTimeOut();
+
+            USER.userData_getByUid( USER.getActiveUserId(),// USER.getMyId() , 
+                ( errFromUser, dataFromUser ) => {
+                    if(errFromUser) {
+                        //user not found
+                        return;
+                    }
+
+                    iNdata['userLogin']    = dataFromUser['info']['data']['login'];
+                    iNdata['userName']     = dataFromUser['info']['data']['name'];
+                    iNdata['userIcon']     = M_URL.getUserIconByUid( USER.getActiveUserId() );
+
+                    // create center time
+                    msgSimpleText_createCenterDateText (iNchatId, new Date().getTime() );
+
+                    // create message 
+                    VIEW.msgLiveVideo_createMsg (iNdata, iNmyUid, iNchatId);
+
+                    // scroll to bot
+                    VIEW.effChatViewScrollToBotWithTimeOut();
+                }
+            );
+
+            
+            
         }
 
         function msgLiveVideo_sendMsgFromMe (iNsrc, iNchatId, iNmsgId) {
@@ -1035,11 +1079,14 @@ define(
         //@< COTROLLER msgLiveVideo
         function controller_msgLiveVideo_record_sendVideoToStorage(iNerror, iNblob, iNdata) {
             var blobUrl = URL.createObjectURL(iNblob),
-                iNmyUid = USER.getMyId(),
+                iNmyUid = USER.getActiveUserId(),// USER.getMyId(),
                 iNchatId = msg_getCurrentChatId(iNchatId),
                 iNmsgId = msg_generateMsgIdByChatId(iNchatId);
 
             // create message without load to db
+
+
+
             msgLiveVideo_createMsgFromMe(blobUrl, iNmyUid, iNchatId, iNmsgId);
 
 
@@ -1047,7 +1094,7 @@ define(
             var functionUploadBlob = () => {
                 // init loader
                 var progressBar     = VIEW.msgLiveVideo_initLoader(iNchatId, iNmsgId);
-                var file = '1.webm';
+                var file            = '1.webm';
                 var pathForSaveFile = 'chats/'+iNchatId+'/'+iNmyUid+'/liveVideo/'+iNmsgId+'/' + file;
                 M_STORAGE.uploadBlob(
                     iNblob, {
@@ -1220,7 +1267,7 @@ define(
                 if( msgParentBlock.hasClass('toMeMessageInChatView') && VIEW.msg_getDomAttrByNameMessageTimeRead(msgParentBlock) < 1 ) {
                     // 
                     var chatId  = msg_getCurrentChatId();
-                    var myUID   = USER.getMyId();
+                    var myUID   = USER.getActiveUserId();// USER.getMyId();
                     let msgId   = VIEW.msg_getDomAttrByNameMsgId(msgParentBlock);
                     msg_setReadState(msgId, chatId, myUID);
                 }
@@ -1229,14 +1276,34 @@ define(
 
         function msgLiveAudio_createMsgFromMe ( iNsrc, iNmyUid, iNchatId, iNmsgId ) {
             var iNdata = {};
-            iNdata['url']       = iNsrc;
-            iNdata['uid']       = iNmyUid;
-            iNdata['content']   = '';
-            iNdata['msgId']     = iNmsgId;
-            // create message element
-            VIEW.msgLiveAudio_createMsg(iNdata, iNmyUid, iNchatId);
-            // scroll to bot
-            VIEW.effChatViewScrollToBotWithTimeOut();
+            iNdata['url']          = iNsrc;
+            iNdata['uid']          = iNmyUid;
+            iNdata['content']      = '';
+            iNdata['msgId']        = iNmsgId;
+
+            USER.userData_getByUid( USER.getActiveUserId(),// USER.getMyId(), 
+                ( errFromUser, dataFromUser ) => {
+                    if (errFromUser) {
+                        //user not found
+                        return;
+                    }
+
+                    
+
+                    iNdata['userLogin']    = dataFromUser['info']['data']['login'];
+                    iNdata['userName']     = dataFromUser['info']['data']['name'];
+                    iNdata['userIcon']     = M_URL.getUserIconByUid( USER.getActiveUserId() );// USER.getMyId() );
+
+                    // create center time
+                    msgSimpleText_createCenterDateText (iNchatId, new Date().getTime() );
+
+                    // create message element
+                    VIEW.msgLiveAudio_createMsg(iNdata, iNmyUid, iNchatId);
+
+                    // scroll to bot
+                    VIEW.effChatViewScrollToBotWithTimeOut();
+                }
+            );
         }
 
         function msgLiveAudio_flashSending (iNsecond,iNchatId) {
@@ -1270,7 +1337,7 @@ define(
         //@< COTROLLER msgLiveAudio record
         function controller_msgLiveAudio_record_sendAudioToStorage(iNerror, iNblob, iNdata) {
             var blobUrl     = URL.createObjectURL(iNblob),
-                iNmyUid     = USER.getMyId(),
+                iNmyUid     = USER.getActiveUserId(),// USER.getMyId(),
                 iNchatId    = msg_getCurrentChatId(iNchatId),
                 iNmsgId     = msg_generateMsgIdByChatId(iNchatId);
 

@@ -26,7 +26,20 @@ define(['jquery','m_user','template7','v_view','v_app','selector', 'localdb'],fu
 			</div>
 			<div class="ChoosePlaceInMenusBlock"></div>
 		`;
-	    
+	    templates[''] = `
+	    	<div class="appBase_userListHeaderContainer">
+			   	{{#if back}}
+			   		<div class="appBase_backButton"></div>
+			   	{{/if}}
+			   	<div class="appBase_userIcon"><a href="#"><img src="{{icon}}"></a></div>
+			   	<div class="UserNameInMenusBlock">
+					<div class="appBase_ListHeader_dName">
+					 <a href="{{href}}" class="CML" {{#if nameDictionaryCode}}cmlk="{{nameDictionaryCode}}"{{/if}}>{{name}}</a>
+					</div>
+					{{if login}}<div class="appBase_ListHeader_login">@{{login}}</div>{{/if}}
+			   </div>
+			</div>
+		`;
 	  //https://cdn.ramman.net/images/icons/users/noPhoto.png
 	_['templates'] = templates;
 
@@ -59,7 +72,7 @@ define(['jquery','m_user','template7','v_view','v_app','selector', 'localdb'],fu
 	}
 	_['getAppContent'] = getAppContent; 
 
-	function addUserHeaderInList (iNdata,iNtype) {
+	function addUserHeaderInList (iNdata,iNtype,iNpage) {
 		/*
 			@inputs
 				@required
@@ -79,7 +92,7 @@ define(['jquery','m_user','template7','v_view','v_app','selector', 'localdb'],fu
 
 
 		// if i am anonym user del him and del back btn
-		var myLogin = USER.getMyLogin();
+		var myLogin = USER.getMyLogin(), page = iNpage||CONST['pageIndex'];
 		if( !myLogin ) {
 			delete iNdata['myLogin'];
 			// delete back btn
@@ -88,7 +101,7 @@ define(['jquery','m_user','template7','v_view','v_app','selector', 'localdb'],fu
 			iNdata['myLogin'] = myLogin;
 		}
 
-		var objForAddHeader = {'app':CONST['name'],'page': CONST['pageIndex']};
+		var objForAddHeader = {'app':CONST['name'],'page': page};
 		// add user flag
 		objForAddHeader['content'] = getListHeaderForIndexPage (iNdata);
 
@@ -126,17 +139,19 @@ define(['jquery','m_user','template7','v_view','v_app','selector', 'localdb'],fu
 		`;
 
 		templates['menuPseudoUser_item'] = `
-			<li>
-		         <div class="appBase_userListHeaderContainer" connect_uid='{{uid}}' connect_owner='{{owner}}'>
-		            <div class="appBase_userIcon"><a href="#"><img src="{{icon}}"></a></div>
+			<li class='switchActiveUser appHref connect_href' app-name='base' page-name='index' data='forUserId={{uid}}' connect_uid='{{uid}}' connect_owner='{{owner}}'>
+		         <div class="appBase_userListHeaderContainer">
+		            <div class="appBase_userIcon">
+		            	<img src="{{icon}}">
+	            	</div>
 		            <div class="UserNameInMenusBlock">
 		               <div class="appBase_ListHeader_dName">
-		                  <a href="" class="CML">{{name}}</a>
+		                  <a class="CML">{{name}}</a>
 		               </div>
 		               {{#if owner}}
-		               		<div class="appBase_ListHeader_owner">{{owner}}</div>
+		               		<div class="appBase_ListHeader_owner">@{{owner}}</div>
 	               	   {{else}}
-		               		<div class="appBase_ListHeader_login">{{login}}</div>
+		               		<div class="appBase_ListHeader_login">@{{login}}</div>
 	               	   {{/if}}
 		            </div>
 		         </div>
@@ -175,6 +190,8 @@ define(['jquery','m_user','template7','v_view','v_app','selector', 'localdb'],fu
 			var path 		= SELECTOR.db.main.blocks.second.header.base.index.val,// '.topBlockInMenusBlock .menuHeaderInMenusBlock[app-name="base"] .appPage[page-name="index"]',
 				content 	= menuPseudoUser_getBox(iNdata);
 				V_VIEW.d_addDataToViewEl ( path, content, 'start' );
+
+
 		}
 
 		function menuPseudoUser_safeAddBox (iNdata) {
@@ -230,11 +247,32 @@ define(['jquery','m_user','template7','v_view','v_app','selector', 'localdb'],fu
 		}
 		_['menuPseudoUser_addItem'] = menuPseudoUser_addItem;
 
+		function menuPseudoUser_switchUserInHeaderByUid (iNuid) {
+			/*
+				@discr
+					set choosen pseudo user block to header
+				@inputs
+					@required
+						iNuid -> string
+			*/
+			// body...
+			var pathToMyNameBlok			= SELECTOR.db.main.blocks.second.header.base.index.menuSwitchUserBox.item.val + ' li[connect_uid="'+iNuid+'"] .UserNameInMenusBlock',
+				pathToMyIconBlok    		= SELECTOR.db.main.blocks.second.header.base.index.menuSwitchUserBox.item.val + ' li[connect_uid="'+iNuid+'"] .appBase_userIcon',
+				pathToHeaderNameBlok    	= SELECTOR.db.main.blocks.second.header.base.index.userHeaderBox.val + ' .UserNameInMenusBlock',
+				pathToHeaderIconBlok    	= SELECTOR.db.main.blocks.second.header.base.index.userHeaderBox.val + ' .appBase_userIcon';
+
+				// add name to header
+				$(pathToHeaderNameBlok).replaceWith( $(pathToMyNameBlok).clone() );
+				// add icon to header
+				$(pathToHeaderIconBlok).replaceWith( $(pathToMyIconBlok).clone() );
+		} _.menuPseudoUser_switchUserInHeaderByUid = menuPseudoUser_switchUserInHeaderByUid;
+
 		function menuPseudoUser_attachOnClickEventForShowMenu () {
 			// when click to icon OR to name
-			var pathToIcon 	= SELECTOR.db.main.blocks.second.header.base.index.userIconWihPseudoFlag.val,//'.appPage > .appBase_userListHeaderContainer.flagHasPseudoUsers .appBase_userIcon',
-				pathToName 	= SELECTOR.db.main.blocks.second.header.base.index.userNameWihPseudoFlag.val,//'.appPage > .appBase_userListHeaderContainer.flagHasPseudoUsers .appBase_ListHeader_dName',
-				path 		= pathToIcon + ', ' + pathToName;
+			var 
+				// pathToIcon 	= SELECTOR.db.main.blocks.second.header.base.index.userHeaderBox.val,//'.appPage > .appBase_userListHeaderContainer.flagHasPseudoUsers .appBase_userIcon',
+				// pathToName 	= SELECTOR.db.main.blocks.second.header.base.index.userNameWihPseudoFlag.val,//'.appPage > .appBase_userListHeaderContainer.flagHasPseudoUsers .appBase_ListHeader_dName',
+				path 		= SELECTOR.db.main.blocks.second.header.base.index.userHeaderBox.val;//pathToIcon + ', ' + pathToName;
 				// clear of any onclick actions
 				$(path).off('click');
 				// attach action to on click event for view menu
@@ -248,8 +286,10 @@ define(['jquery','m_user','template7','v_view','v_app','selector', 'localdb'],fu
 
 		function menuPseudoUser_hideMenu() {
 			//hide curtain
-			$(SELECTOR.val.curtain).hide();
-		}
+			V_APP.hideBackgroundCurtain();
+			//hide menu box
+			$(SELECTOR.db.main.blocks.second.header.base.index.menuSwitchUserBox.val).hide();
+		} _.menuPseudoUser_hideMenu = menuPseudoUser_hideMenu;
 
 		function menuPseudoUser_showMenu() {
 			// open menu

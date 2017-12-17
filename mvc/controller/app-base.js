@@ -43,6 +43,7 @@ define (
               'onView'  : function (iNojbectData,iNojbectApp) { 
                 console.log('onView index iNojbectData,iNojbectApp',iNojbectData,iNojbectApp);
 
+                
 
                 // close loader from first html page
                 M_VIEW.view.closeLoader(); 
@@ -61,7 +62,24 @@ define (
                   // M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
                 }
 
-                if(iNojbectData['filter']) {
+                if ( iNojbectData['forUserId'] ) {
+                  // set header chose user
+                  VIEW.menuPseudoUser_switchUserInHeaderByUid(iNojbectData['forUserId']);
+                  // hide pseudo menu
+                  VIEW.menuPseudoUser_hideMenu();
+                  // if we choose user we set for older filter
+                  USER.setActiveUserId(iNojbectData['forUserId']);
+                }
+
+
+                if ( iNojbectData['filter'] ) {
+                  // add userId
+                  if ( USER.getMyId() ){
+                    // if we is auth user 
+                    iNojbectData['toUserId']  = USER.getMyId();
+                    iNojbectData['owner']     = '@system';
+                  }
+
                   // if clicked side buttons - setGlobalSetFilterForGetChats
                   M_APP.view.sideButtons_addSelectedEffectsByFilter(iNojbectData['filter']);
 
@@ -71,6 +89,7 @@ define (
                   //create service chat list and move position to top
                   MODEL.chat_openChatWithCreateIfNotExist(iNojbectData);
                 }
+
 
                 // sort all chats
                 M_CATEGORY.view.startEffSortChats();
@@ -231,7 +250,8 @@ define (
 
       //@overide
       function onAppear (iNstring,iNobject) {
-
+        // hide app header
+        M_APP.view.d_hideAppHeaders();
 
       }
       _['onAppear'] = onAppear;

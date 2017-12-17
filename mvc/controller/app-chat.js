@@ -29,11 +29,16 @@ define( ['m_app-chat', 'v_app-chat', 'm_view', 'm_message', 'm_app'], function (
 		            // },
 		            // 'onHide'  : function () { return true;},
 		            // 'setPage' : function () {return true;},
-		            'onInit' 		: function () {
+		            'onInit' 		: function (iNojbectData,iNojbectApp) {
 		            	
 		            	console.log("M_APP.getAppFromStoryLog('base')",M_APP.getAppFromStoryLog('base'));
 		            	if( !M_APP.getAppFromStoryLog('base') ) {
-		            		console.log("getAppFromStoryLog",'loa');
+
+		            		if ( iNojbectData['forUserId'] ) {
+			                  // if we choose user we set for older filter
+			                  USER.setActiveUserId(iNojbectData['forUserId']);
+			                }
+
 		            		// if app base not open yet -> we load
 	        				M_APP.getGlobalVar('engine').passToApp( {'app':'base','page':'index'} );
 		            	}
@@ -41,9 +46,9 @@ define( ['m_app-chat', 'v_app-chat', 'm_view', 'm_message', 'm_app'], function (
 
 		            	M_MESSAGE.view.initApp( { 
 		            		// for send simpleTextMessage when click
-		            		'simpleMsgText_onClickSendBtn' : M_MESSAGE.simpleMsgText_onClickSendBtn , 
+		            		'simpleMsgText_onClickSendBtn' 	: M_MESSAGE.simpleMsgText_onClickSendBtn , 
 		            		// for send flash data for simpleTextMessage
-		            		'simpleMsgText_printing' : M_MESSAGE.msgSimpleText_flashSending } 
+		            		'simpleMsgText_printing' 		: M_MESSAGE.msgSimpleText_flashSending } 
 	            		);
 
 
@@ -55,7 +60,9 @@ define( ['m_app-chat', 'v_app-chat', 'm_view', 'm_message', 'm_app'], function (
 		            },
 		            'onAppear' 		: function (d1,d2) {
 		            	console.log('app chat page index onAppear - d1,d2',d1,d2);
+
 		            	MODEL.pageIndex_openChatByChatId(d1);
+
  						return true;
  					},
 		            'onDisappear' 	: function () { return true;},

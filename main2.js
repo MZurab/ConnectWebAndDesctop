@@ -6448,6 +6448,7 @@ define( 'localdb',[] , function () {
 		const VAL = {}; DB.val = VAL;
 
 		VAL['systemUser'] = '@system';
+		VAL['activeUser'] = 'connectActiveUserId';
 	//@> db > valuse
 
 
@@ -6621,16 +6622,23 @@ define( 'selector',['localdb'] , function (LOCALDB) {
 
 							// index > userName
 							var USERNAME = {}; PAGE_INDEX['userName'] = USERNAME;
-							USERNAME.val = BASEHEADER.val + ' .appBase_ListHeader_dName';
-							
-							// index > userNameWihPseudoFlag
-							var userNameWihPseudoFlag = {}; PAGE_INDEX['userNameWihPseudoFlag'] = userNameWihPseudoFlag;
-							userNameWihPseudoFlag.val = `${BASEHEADER.val}.${LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser} .appBase_ListHeader_dName`;
+							USERNAME.val = BASEHEADER.val + ' .appBase_ListHeader_dName a';
 
+							// index > userLogin
+							var USERLOGIN = {}; PAGE_INDEX['userLogin'] = USERLOGIN;
+							USERLOGIN.val = BASEHEADER.val + ' .appBase_ListHeader_login';
 							
-							// index > iconNameWihPseudoFlag
-							var userIconWihPseudoFlag = {}; PAGE_INDEX['userIconWihPseudoFlag'] = userIconWihPseudoFlag;
-							userIconWihPseudoFlag.val = `${BASEHEADER.val}.${LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser} .appBase_userIcon`;
+							// // index > userNameWihPseudoFlag
+							// var userNameWihPseudoFlag = {}; PAGE_INDEX['userNameWihPseudoFlag'] = userNameWihPseudoFlag;
+							// userNameWihPseudoFlag.val = `${BASEHEADER.val}.${LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser} .appBase_ListHeader_dName`;
+
+							// index > userHeaderBox
+							var userHeaderBox = {}; PAGE_INDEX['userHeaderBox'] = userHeaderBox;
+							userHeaderBox.val = `${BASEHEADER.val}.${LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser}`;
+							
+							// // index > iconNameWihPseudoFlag
+							// var userIconWihPseudoFlag = {}; PAGE_INDEX['userIconWihPseudoFlag'] = userIconWihPseudoFlag;
+							// userIconWihPseudoFlag.val = `${BASEHEADER.val}.${LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser} .appBase_userIcon`;
 
 							// index > menuSwitchUserBox
 							var menuSwitchUserBox = {}; PAGE_INDEX['menuSwitchUserBox'] = menuSwitchUserBox;
@@ -7305,7 +7313,9 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        		CONST['pathAppHeader'] + ' ' 	+ 
 	        		'.'+CONST['nameInAppHeader']
         		).hide();
-	        }
+	        } _.d_hideAppHeaders = d_hideAppHeaders;
+
+
 	        function d_removeAppHeader (iNdata) {
 	        	/*
 	        		@discr
@@ -7399,7 +7409,7 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        		@inputs
 	        			iNcontent -> string
 	        	*/
-	        	$( CONST['pathAppHeader'] + ' .topBlockInViewBlock' ).html(iNcontent);
+	        	$( CONST['pathAppHeader'] ).html(iNcontent);
 	        } _.d_setAppHeader = d_setAppHeader;
 
 	        function d_getLengthAppHeader (iNdata) {
@@ -7412,9 +7422,12 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
         					@optional
 	        					page
 	        	*/
-	        	var selector = CONST['pathAppHeader'] + ' .topBlockInViewBlock .' + CONST['nameInAppHeader'] + '[app-name="'+iNdata['app']+'"]';
+	        	console.log('d_getLengthAppHeader INVOKE',iNdata);
+	        	var selector = CONST['pathAppHeader'] + ' .' + CONST['nameInAppHeader'] + '[app-name="'+iNdata['app']+'"]';
 	        	if ( typeof iNdata['page'] == 'string' )
-	        		selector += '.' + CONST['pageNameInAppHeader'] + '[page-name="'+ iNdata['page'] +'"]';
+	        		selector += ' .' + CONST['pageNameInAppHeader'] + '[page-name="'+ iNdata['page'] +'"]';
+	        	console.log('d_getLengthAppHeader selector',selector,$(selector).length);
+	        	console.log('d_getLengthAppHeader $(selector)',$(selector));
 	        	return $(selector).length;
 	        } _.d_getLengthAppHeader = d_getLengthAppHeader;
 
@@ -7508,9 +7521,35 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 				d_addAppHeaderByTemplate(iNdata,iNtype);
 			} else if ( typeof iNdata['page'] == 'string' && d_getLengthAppHeader(iNdata) < 1 ) {
 				d_addPageAppHeaderByTemplate( iNdata,iNtype);
+			} else if ( iNdata['withReplace']) {
+				d_setPageAppHeaderByTemplate( iNdata );
 			}
 
 		} _.safeAddAppHeader =safeAddAppHeader;
+
+		 function d_setPageAppHeaderByTemplate (iNdata) {
+        	/*
+        		@discr
+        			add content with page for app into  header block by template
+        		@inputs
+        			iNdata -> object
+        				app
+        				page
+        				content
+    				@optional
+					iNtype -> string 
+						in [end,begin, after, before, change]
+
+        	*/
+        	if( typeof iNtype != 'string') iNtype = 'end';
+        	var selector = CONST['pathAppHeader'] + ' .' + CONST['nameInAppHeader']+'[app-name="'+iNdata['app']+'"]',
+        		content = getPageAppHeader(iNdata);
+
+    		if ( typeof iNdata['page'] == 'string' )
+        		selector += ' .' + CONST['pageNameInAppHeader'] + '[page-name="'+ iNdata['page'] +'"]';
+
+			V_VIEW.d_addDataToViewEl(selector, content /* getPageForListApp(content) */, 'replace'); 
+        } _.d_setPageAppHeaderByTemplate = d_setPageAppHeaderByTemplate;
 
         function d_addPageAppHeaderByTemplate (iNdata,iNtype) {
         	/*
@@ -7529,6 +7568,7 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
         	if( typeof iNtype != 'string') iNtype = 'end';
         	var selector = CONST['pathAppHeader'] + ' .' + CONST['nameInAppHeader']+'[app-name="'+iNdata['app']+'"]',
         		content = getPageAppHeader(iNdata);
+
 			V_VIEW.d_addDataToViewEl(selector, content /* getPageForListApp(content) */, iNtype); 
         } _.d_addPageAppHeaderByTemplate = d_addPageAppHeaderByTemplate;
 
@@ -7700,7 +7740,10 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 						iNtype -> string 
 							in [end,begin, after, before, change]
 				*/
-				if( typeof iNtype != 'string' ) iNtype = 'end';
+				if( typeof iNtype != 'string' ) iNtype = 'start';
+				console.log('safeAddAppMenuHeader INVOKE', iNdata,iNtype );
+				console.log('safeAddAppMenuHeader - d_getLengthMenuHeader',d_getLengthMenuHeader ({'app':iNdata['app']}));
+				console.log('safeAddAppMenuHeader - d_getLengthMenuHeader(iNdata)',d_getLengthMenuHeader(iNdata) );
 				if( d_getLengthMenuHeader ({'app':iNdata['app']}) < 1 ) {
 					// check app container
 					d_addAppMenuHeaderByTemplate(iNdata,iNtype);
@@ -7737,9 +7780,14 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
         					@optional
 	        					page
 	        	*/
+	        	console.log('d_getLengthMenuHeader INVOKE',iNdata);
 	        	var selector = CONST['pathMenuHeader'] + ' .' + CONST['nameInMenuHeader'] + '[app-name="'+iNdata['app']+'"]';
 	        	if ( typeof iNdata['page'] == 'string' )
-	        		selector += '.' + CONST['pageNameInMenuHeader'] + '[page-name="'+ iNdata['page'] +'"]';
+	        		selector += ' .' + CONST['pageNameInMenuHeader'] + '[page-name="'+ iNdata['page'] +'"]';
+
+	        	console.log('d_getLengthMenuHeader selector',selector,$(selector).length);
+	        	console.log('d_getLengthMenuHeader $(selector)',$(selector));
+
 	        	return $(selector).length;
 	        }
 
@@ -7772,10 +7820,13 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	    				iNtype -> string
 	    					in [end,begin, after, before, change]
 	        	*/
+        		console.log('d_addAppMenuHeaderByTemplate INVOKE',iNdata,iNtype);
 				if( typeof iNtype != 'string' ) iNtype = 'end';
 	        	var selector = CONST['pathMenuHeader'],
 	        		content = getAppMenuHeader(iNdata);
 	        	// d_addAppHeaderByTemplate(iNdata,iNtype);
+        		console.log('d_addAppMenuHeaderByTemplate selector',selector,iNtype);
+        		console.log('d_addAppMenuHeaderByTemplate content',content);
 				V_VIEW.d_addDataToViewEl(selector, content ,iNtype);//getPageForListApp(content)
 	        } _.d_addAppMenuHeaderByTemplate = d_addAppMenuHeaderByTemplate;
 	        
@@ -7796,10 +7847,13 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
     						in [end,begin, after, before, change]
 	        	*/
 	    		
-				if( typeof iNtype != 'string' ) iNtype = 'end';		
+        		console.log('d_addPageMenuHeaderByTemplate INVOKE',iNdata,iNtype);
+
+				if( typeof iNtype != 'string' ) iNtype = 'start';		
 	        	var selector = CONST['pathMenuHeader'] + ' .' + CONST['nameInMenuHeader']+'[app-name="'+iNdata['app']+'"]',
 	        		content = getPageMenuHeader(iNdata);
 				V_VIEW.d_addDataToViewEl(selector, content ,iNtype);
+
 	        } _.d_addPageMenuHeaderByTemplate = d_addPageMenuHeaderByTemplate
         //> app headers
 
@@ -8321,7 +8375,7 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 		function clear () {
 			// right header
 			$( SELECTOR.db.main.blocks.second.header.val ).html('');
-			
+
 			// right body
 	        $( SELECTOR.db.main.blocks.second.body.val  ).html('');
 
@@ -9052,12 +9106,6 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 		// right functions OnInit OnUpdate OnDisappear
 		rightInvokePageFunctions (iNapp,iNdata,objectForCreatePage,iNdataForApp);
 
-
-		// safe did appear function for page
-		// if(typeof(iNapp.pages[objectForCreateApp['page']].onAppear) == 'function') iNapp.pages[objectForCreateApp['page']].onAppear();
-		// did show this app + show if need and invoke onEnter if need ADD
-		// VIEW._d_viewPage(objectForCreateApp);
-
 		// safe invoke passed function
 		if (typeof(iNfunction) == 'function')iNfunction();
 	}
@@ -9307,56 +9355,6 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	}
 	_['openListApp'] = _openListApp;
 	
-
-	// function _openApp ( iNdata, iNapp,iNtype) {
-	// 	/*
-	// 		@disc
-	// 			open app
-	// 				check funcitons optional
-	// 				check apps
-	// 				check pages
-					
-	// 		@input
-	// 			@input
-	// 				@required
-	// 					iNdata
-	// 						@required
-	// 							app
-	// 							page
-	// 						@optional
-	// 							extra
-	// 							content
-	// 							other
-	// 					iNapp -> app object
-	// 				@optional
-	// 					iNtype
-
-	// 		@deps
-	// 			function : getAppByName 
-	// 	*/
-
-	// 	//get module name by app name
-	// 	var page, objForOpenApp = iNdata, appName = objForOpenApp['app'], pageName = objForOpenApp['page'];
-	// 	// iNapp = getAppByName(appName);
-	// 	if ( typeof(iNapp.pages) != 'object' || typeof(iNapp.pages[pageName]) != 'object' ) return false;
-	// 	//get data from pages
-	// 	page = iNapp.pages[pageName];
-
-
-
-	// 	_openChiefApp ( objForOpenApp ,iNapp, function () {
-	// 		if( typeof(iNapp['onStart']) == 'function' ) iNapp.onStart();
-	// 		// iNapp.onInit();
-
-	// 		if ( typeof(iNapp['openPage']) != 'function' )
-	// 			d_openPage(appName,pageName, iNtype);
-	// 		else
-	// 			iNapp.openPage( appName, pageName, iNtype);
-	// 		iNapp.onAppear();
-	// 		if( typeof(iNapp['onFinish']) == 'function' ) iNapp.onFinish();
-	// 	});
-	// }
-
 	function _closeApp (iName,iNpage) {
 		/*
 			@disc
@@ -9417,14 +9415,6 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	_['setGlobalVar'] = setGlobalVar;
 
 
-	//@< work with header
-		// var _td_loadCSS  		= VIEW.d_loadCSS;
-		// var _td_removeByClass  	= VIEW.d_removeByClass;
-		// var _td_loadJS  		= VIEW.d_loadJS;
-		// _['d_loadCSS'] = _td_loadCSS;
-	//@< work with header
-
-
 	//@< work with global functions
 	function globalFunctions_invoke (iName) {
 		if(typeof window.GF == 'object' && typeof window.GF[iName] == 'function') {
@@ -9444,63 +9434,6 @@ define('m_app',['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	//@> work with global functions
 
 	return _;
-	// {
-	// 	'globalFunctions_invoke' : globalFunctions_invoke,
-	// 	'globalFunctions_create' : globalFunctions_create,
-
-	//     'openChiefApp'  : _openChiefApp,
-	//     'openListApp'   : _openListApp,
-	//     'readyListApp'  : _readyListApp,
-	//     'readyChiefApp' : _readyChiefApp,
-	//     'invokeOpenApp' : _invokeOpenedApp,
-	//     'invokeApp' 	: _invokeApp,
-	//     'clone' 		: _clone,
-
-	//     'setApp' 		: _setApp,
-	//     'setPage' 		: setOpeningPageByApp,
-	//     'thisApp' 		: getOpeningApp,
-	//     'thisPage' 		: getOpeningPageByApp, 
-
-	//     'd_hidePages'   : _td_hidePages,
-	//     'd_showPages'   : _td_showPages,
-	//     'd_hideApps'    : _td_hideApps,
-	//     'd_showApps'    : _td_showApps,
-	//     'd_openPage'    : _td_openPage,
-
-	//     //work with header
-	//     'd_loadCSS' 		: _td_loadCSS,
-	//     'd_loadJS' 			: _td_loadJS,
-	//     'd_removeByClass' 	: _td_removeByClass,
-	// 	'addScript' 		: _addScript,
-
-	//     //  time functions
-	//     'getSec' : _getSec,
-	// 	'getTime' : _getTime,
-
-	// 	//  local storage
-	// 	'save' : _save,
-	// 	'get' : _get,
-	// 	'del' : _del,
-	// 	'clear' : _clear,
-
-	// 	//  object functions
-	// 	'getJsonKey' : _getJsonKey,
-	// 	'getJsonKeys' : _getJsonKeys,
-	// 	'forEach' : _forEach,
-
-	// 	//  audio functions
-	// 	'playSound' : _playSound,
-	// 		'addSource' : addSource,
-
-
-	// 	//  global resourse
-	// 	'setGlobalApp' : setGlobalApp,
-	// 	'setGlobalVar' : setGlobalVar,
-	// 	'getGlobalVar' : getGlobalVar,
-	// 	'getGlobalApp' : getGlobalApp,
-
-	// 	'view' : VIEW
-	// }
 });
 define( 'url',[] , function () {
 	const URL = {};
@@ -9558,6 +9491,753 @@ define( 'url',[] , function () {
 
 	return _;
 });
+/*! algoliasearch 3.24.6 | © 2014, 2015 Algolia SAS | github.com/algolia/algoliasearch-client-js */
+!function(e){var t;"undefined"!=typeof window?t=window:"undefined"!=typeof self&&(t=self),t.ALGOLIA_MIGRATION_LAYER=e()}(function(){return function e(t,n,r){function o(s,a){if(!n[s]){if(!t[s]){var c="function"==typeof require&&require;if(!a&&c)return c(s,!0);if(i)return i(s,!0);var u=new Error("Cannot find module '"+s+"'");throw u.code="MODULE_NOT_FOUND",u}var l=n[s]={exports:{}};t[s][0].call(l.exports,function(e){var n=t[s][1][e];return o(n?n:e)},l,l.exports,e,t,n,r)}return n[s].exports}for(var i="function"==typeof require&&require,s=0;s<r.length;s++)o(r[s]);return o}({1:[function(e,t,n){function r(e,t){for(var n in t)e.setAttribute(n,t[n])}function o(e,t){e.onload=function(){this.onerror=this.onload=null,t(null,e)},e.onerror=function(){this.onerror=this.onload=null,t(new Error("Failed to load "+this.src),e)}}function i(e,t){e.onreadystatechange=function(){"complete"!=this.readyState&&"loaded"!=this.readyState||(this.onreadystatechange=null,t(null,e))}}t.exports=function(e,t,n){var s=document.head||document.getElementsByTagName("head")[0],a=document.createElement("script");"function"==typeof t&&(n=t,t={}),t=t||{},n=n||function(){},a.type=t.type||"text/javascript",a.charset=t.charset||"utf8",a.async=!("async"in t)||!!t.async,a.src=e,t.attrs&&r(a,t.attrs),t.text&&(a.text=""+t.text);var c="onload"in a?o:i;c(a,n),a.onload||o(a,n),s.appendChild(a)}},{}],2:[function(e,t,n){"use strict";function r(e){for(var t=new RegExp("cdn\\.jsdelivr\\.net/algoliasearch/latest/"+e.replace(".","\\.")+"(?:\\.min)?\\.js$"),n=document.getElementsByTagName("script"),r=!1,o=0,i=n.length;o<i;o++)if(n[o].src&&t.test(n[o].src)){r=!0;break}return r}t.exports=r},{}],3:[function(e,t,n){"use strict";function r(t){var n=e(1),r="//cdn.jsdelivr.net/algoliasearch/2/"+t+".min.js",i="-- AlgoliaSearch `latest` warning --\nWarning, you are using the `latest` version string from jsDelivr to load the AlgoliaSearch library.\nUsing `latest` is no more recommended, you should load //cdn.jsdelivr.net/algoliasearch/2/algoliasearch.min.js\n\nAlso, we updated the AlgoliaSearch JavaScript client to V3. If you want to upgrade,\nplease read our migration guide at https://github.com/algolia/algoliasearch-client-js/wiki/Migration-guide-from-2.x.x-to-3.x.x\n-- /AlgoliaSearch  `latest` warning --";window.console&&(window.console.warn?window.console.warn(i):window.console.log&&window.console.log(i));try{document.write("<script>window.ALGOLIA_SUPPORTS_DOCWRITE = true</script>"),window.ALGOLIA_SUPPORTS_DOCWRITE===!0?(document.write('<script src="'+r+'"></script>'),o("document.write")()):n(r,o("DOMElement"))}catch(s){n(r,o("DOMElement"))}}function o(e){return function(){var t="AlgoliaSearch: loaded V2 script using "+e;window.console&&window.console.log&&window.console.log(t)}}t.exports=r},{1:1}],4:[function(e,t,n){"use strict";function r(){var e="-- AlgoliaSearch V2 => V3 error --\nYou are trying to use a new version of the AlgoliaSearch JavaScript client with an old notation.\nPlease read our migration guide at https://github.com/algolia/algoliasearch-client-js/wiki/Migration-guide-from-2.x.x-to-3.x.x\n-- /AlgoliaSearch V2 => V3 error --";window.AlgoliaSearch=function(){throw new Error(e)},window.AlgoliaSearchHelper=function(){throw new Error(e)},window.AlgoliaExplainResults=function(){throw new Error(e)}}t.exports=r},{}],5:[function(e,t,n){"use strict";function r(t){var n=e(2),r=e(3),o=e(4);n(t)?r(t):o()}r("algoliasearch")},{2:2,3:3,4:4}]},{},[5])(5)}),function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define('algolia',[],e);else{var t;t="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this,t.algoliasearch=e()}}(function(){var e;return function t(e,n,r){function o(s,a){if(!n[s]){if(!e[s]){var c="function"==typeof require&&require;if(!a&&c)return c(s,!0);if(i)return i(s,!0);var u=new Error("Cannot find module '"+s+"'");throw u.code="MODULE_NOT_FOUND",u}var l=n[s]={exports:{}};e[s][0].call(l.exports,function(t){var n=e[s][1][t];return o(n?n:t)},l,l.exports,t,e,n,r)}return n[s].exports}for(var i="function"==typeof require&&require,s=0;s<r.length;s++)o(r[s]);return o}({1:[function(e,t,n){(function(r){function o(){return!("undefined"==typeof window||!window.process||"renderer"!==window.process.type)||("undefined"!=typeof document&&document.documentElement&&document.documentElement.style&&document.documentElement.style.WebkitAppearance||"undefined"!=typeof window&&window.console&&(window.console.firebug||window.console.exception&&window.console.table)||"undefined"!=typeof navigator&&navigator.userAgent&&navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/)&&parseInt(RegExp.$1,10)>=31||"undefined"!=typeof navigator&&navigator.userAgent&&navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/))}function i(e){var t=this.useColors;if(e[0]=(t?"%c":"")+this.namespace+(t?" %c":" ")+e[0]+(t?"%c ":" ")+"+"+n.humanize(this.diff),t){var r="color: "+this.color;e.splice(1,0,r,"color: inherit");var o=0,i=0;e[0].replace(/%[a-zA-Z%]/g,function(e){"%%"!==e&&(o++,"%c"===e&&(i=o))}),e.splice(i,0,r)}}function s(){return"object"==typeof console&&console.log&&Function.prototype.apply.call(console.log,console,arguments)}function a(e){try{null==e?n.storage.removeItem("debug"):n.storage.debug=e}catch(t){}}function c(){var e;try{e=n.storage.debug}catch(t){}return!e&&"undefined"!=typeof r&&"env"in r&&(e=r.env.DEBUG),e}function u(){try{return window.localStorage}catch(e){}}n=t.exports=e(2),n.log=s,n.formatArgs=i,n.save=a,n.load=c,n.useColors=o,n.storage="undefined"!=typeof chrome&&"undefined"!=typeof chrome.storage?chrome.storage.local:u(),n.colors=["lightseagreen","forestgreen","goldenrod","dodgerblue","darkorchid","crimson"],n.formatters.j=function(e){try{return JSON.stringify(e)}catch(t){return"[UnexpectedJSONParseError]: "+t.message}},n.enable(c())}).call(this,e(12))},{12:12,2:2}],2:[function(e,t,n){function r(e){var t,r=0;for(t in e)r=(r<<5)-r+e.charCodeAt(t),r|=0;return n.colors[Math.abs(r)%n.colors.length]}function o(e){function t(){if(t.enabled){var e=t,r=+new Date,o=r-(u||r);e.diff=o,e.prev=u,e.curr=r,u=r;for(var i=new Array(arguments.length),s=0;s<i.length;s++)i[s]=arguments[s];i[0]=n.coerce(i[0]),"string"!=typeof i[0]&&i.unshift("%O");var a=0;i[0]=i[0].replace(/%([a-zA-Z%])/g,function(t,r){if("%%"===t)return t;a++;var o=n.formatters[r];if("function"==typeof o){var s=i[a];t=o.call(e,s),i.splice(a,1),a--}return t}),n.formatArgs.call(e,i);var c=t.log||n.log||console.log.bind(console);c.apply(e,i)}}return t.namespace=e,t.enabled=n.enabled(e),t.useColors=n.useColors(),t.color=r(e),"function"==typeof n.init&&n.init(t),t}function i(e){n.save(e),n.names=[],n.skips=[];for(var t=("string"==typeof e?e:"").split(/[\s,]+/),r=t.length,o=0;o<r;o++)t[o]&&(e=t[o].replace(/\*/g,".*?"),"-"===e[0]?n.skips.push(new RegExp("^"+e.substr(1)+"$")):n.names.push(new RegExp("^"+e+"$")))}function s(){n.enable("")}function a(e){var t,r;for(t=0,r=n.skips.length;t<r;t++)if(n.skips[t].test(e))return!1;for(t=0,r=n.names.length;t<r;t++)if(n.names[t].test(e))return!0;return!1}function c(e){return e instanceof Error?e.stack||e.message:e}n=t.exports=o.debug=o["default"]=o,n.coerce=c,n.disable=s,n.enable=i,n.enabled=a,n.humanize=e(9),n.names=[],n.skips=[],n.formatters={};var u},{9:9}],3:[function(t,n,r){(function(o,i){!function(t,o){"object"==typeof r&&"undefined"!=typeof n?n.exports=o():"function"==typeof e&&e.amd?e(o):t.ES6Promise=o()}(this,function(){"use strict";function e(e){return"function"==typeof e||"object"==typeof e&&null!==e}function n(e){return"function"==typeof e}function r(e){X=e}function s(e){W=e}function a(){return function(){return o.nextTick(d)}}function c(){return"undefined"!=typeof V?function(){V(d)}:p()}function u(){var e=0,t=new Z(d),n=document.createTextNode("");return t.observe(n,{characterData:!0}),function(){n.data=e=++e%2}}function l(){var e=new MessageChannel;return e.port1.onmessage=d,function(){return e.port2.postMessage(0)}}function p(){var e=setTimeout;return function(){return e(d,1)}}function d(){for(var e=0;e<G;e+=2){var t=ne[e],n=ne[e+1];t(n),ne[e]=void 0,ne[e+1]=void 0}G=0}function h(){try{var e=t,n=e("vertx");return V=n.runOnLoop||n.runOnContext,c()}catch(r){return p()}}function f(e,t){var n=arguments,r=this,o=new this.constructor(m);void 0===o[oe]&&C(o);var i=r._state;return i?!function(){var e=n[i-1];W(function(){return P(i,o,e,r._result)})}():I(r,o,e,t),o}function y(e){var t=this;if(e&&"object"==typeof e&&e.constructor===t)return e;var n=new t(m);return R(n,e),n}function m(){}function v(){return new TypeError("You cannot resolve a promise with itself")}function g(){return new TypeError("A promises callback cannot return that same promise.")}function b(e){try{return e.then}catch(t){return ce.error=t,ce}}function w(e,t,n,r){try{e.call(t,n,r)}catch(o){return o}}function _(e,t,n){W(function(e){var r=!1,o=w(n,t,function(n){r||(r=!0,t!==n?R(e,n):S(e,n))},function(t){r||(r=!0,A(e,t))},"Settle: "+(e._label||" unknown promise"));!r&&o&&(r=!0,A(e,o))},e)}function x(e,t){t._state===se?S(e,t._result):t._state===ae?A(e,t._result):I(t,void 0,function(t){return R(e,t)},function(t){return A(e,t)})}function T(e,t,r){t.constructor===e.constructor&&r===f&&t.constructor.resolve===y?x(e,t):r===ce?(A(e,ce.error),ce.error=null):void 0===r?S(e,t):n(r)?_(e,t,r):S(e,t)}function R(t,n){t===n?A(t,v()):e(n)?T(t,n,b(n)):S(t,n)}function j(e){e._onerror&&e._onerror(e._result),k(e)}function S(e,t){e._state===ie&&(e._result=t,e._state=se,0!==e._subscribers.length&&W(k,e))}function A(e,t){e._state===ie&&(e._state=ae,e._result=t,W(j,e))}function I(e,t,n,r){var o=e._subscribers,i=o.length;e._onerror=null,o[i]=t,o[i+se]=n,o[i+ae]=r,0===i&&e._state&&W(k,e)}function k(e){var t=e._subscribers,n=e._state;if(0!==t.length){for(var r=void 0,o=void 0,i=e._result,s=0;s<t.length;s+=3)r=t[s],o=t[s+n],r?P(n,r,o,i):o(i);e._subscribers.length=0}}function O(){this.error=null}function E(e,t){try{return e(t)}catch(n){return ue.error=n,ue}}function P(e,t,r,o){var i=n(r),s=void 0,a=void 0,c=void 0,u=void 0;if(i){if(s=E(r,o),s===ue?(u=!0,a=s.error,s.error=null):c=!0,t===s)return void A(t,g())}else s=o,c=!0;t._state!==ie||(i&&c?R(t,s):u?A(t,a):e===se?S(t,s):e===ae&&A(t,s))}function U(e,t){try{t(function(t){R(e,t)},function(t){A(e,t)})}catch(n){A(e,n)}}function q(){return le++}function C(e){e[oe]=le++,e._state=void 0,e._result=void 0,e._subscribers=[]}function N(e,t){this._instanceConstructor=e,this.promise=new e(m),this.promise[oe]||C(this.promise),$(t)?(this._input=t,this.length=t.length,this._remaining=t.length,this._result=new Array(this.length),0===this.length?S(this.promise,this._result):(this.length=this.length||0,this._enumerate(),0===this._remaining&&S(this.promise,this._result))):A(this.promise,D())}function D(){return new Error("Array Methods must be provided an Array")}function L(e){return new N(this,e).promise}function K(e){var t=this;return new t($(e)?function(n,r){for(var o=e.length,i=0;i<o;i++)t.resolve(e[i]).then(n,r)}:function(e,t){return t(new TypeError("You must pass an array to race."))})}function H(e){var t=this,n=new t(m);return A(n,e),n}function M(){throw new TypeError("You must pass a resolver function as the first argument to the promise constructor")}function J(){throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.")}function F(e){this[oe]=q(),this._result=this._state=void 0,this._subscribers=[],m!==e&&("function"!=typeof e&&M(),this instanceof F?U(this,e):J())}function B(){var e=void 0;if("undefined"!=typeof i)e=i;else if("undefined"!=typeof self)e=self;else try{e=Function("return this")()}catch(t){throw new Error("polyfill failed because global object is unavailable in this environment")}var n=e.Promise;if(n){var r=null;try{r=Object.prototype.toString.call(n.resolve())}catch(t){}if("[object Promise]"===r&&!n.cast)return}e.Promise=F}var Q=void 0;Q=Array.isArray?Array.isArray:function(e){return"[object Array]"===Object.prototype.toString.call(e)};var $=Q,G=0,V=void 0,X=void 0,W=function(e,t){ne[G]=e,ne[G+1]=t,G+=2,2===G&&(X?X(d):re())},Y="undefined"!=typeof window?window:void 0,z=Y||{},Z=z.MutationObserver||z.WebKitMutationObserver,ee="undefined"==typeof self&&"undefined"!=typeof o&&"[object process]"==={}.toString.call(o),te="undefined"!=typeof Uint8ClampedArray&&"undefined"!=typeof importScripts&&"undefined"!=typeof MessageChannel,ne=new Array(1e3),re=void 0;re=ee?a():Z?u():te?l():void 0===Y&&"function"==typeof t?h():p();var oe=Math.random().toString(36).substring(16),ie=void 0,se=1,ae=2,ce=new O,ue=new O,le=0;return N.prototype._enumerate=function(){for(var e=this.length,t=this._input,n=0;this._state===ie&&n<e;n++)this._eachEntry(t[n],n)},N.prototype._eachEntry=function(e,t){var n=this._instanceConstructor,r=n.resolve;if(r===y){var o=b(e);if(o===f&&e._state!==ie)this._settledAt(e._state,t,e._result);else if("function"!=typeof o)this._remaining--,this._result[t]=e;else if(n===F){var i=new n(m);T(i,e,o),this._willSettleAt(i,t)}else this._willSettleAt(new n(function(t){return t(e)}),t)}else this._willSettleAt(r(e),t)},N.prototype._settledAt=function(e,t,n){var r=this.promise;r._state===ie&&(this._remaining--,e===ae?A(r,n):this._result[t]=n),0===this._remaining&&S(r,this._result)},N.prototype._willSettleAt=function(e,t){var n=this;I(e,void 0,function(e){return n._settledAt(se,t,e)},function(e){return n._settledAt(ae,t,e)})},F.all=L,F.race=K,F.resolve=y,F.reject=H,F._setScheduler=r,F._setAsap=s,F._asap=W,F.prototype={constructor:F,then:f,"catch":function(e){return this.then(null,e)}},F.polyfill=B,F.Promise=F,F})}).call(this,t(12),"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{12:12}],4:[function(e,t,n){function r(){this._events=this._events||{},this._maxListeners=this._maxListeners||void 0}function o(e){return"function"==typeof e}function i(e){return"number"==typeof e}function s(e){return"object"==typeof e&&null!==e}function a(e){return void 0===e}t.exports=r,r.EventEmitter=r,r.prototype._events=void 0,r.prototype._maxListeners=void 0,r.defaultMaxListeners=10,r.prototype.setMaxListeners=function(e){if(!i(e)||e<0||isNaN(e))throw TypeError("n must be a positive number");return this._maxListeners=e,this},r.prototype.emit=function(e){var t,n,r,i,c,u;if(this._events||(this._events={}),"error"===e&&(!this._events.error||s(this._events.error)&&!this._events.error.length)){if(t=arguments[1],t instanceof Error)throw t;var l=new Error('Uncaught, unspecified "error" event. ('+t+")");throw l.context=t,l}if(n=this._events[e],a(n))return!1;if(o(n))switch(arguments.length){case 1:n.call(this);break;case 2:n.call(this,arguments[1]);break;case 3:n.call(this,arguments[1],arguments[2]);break;default:i=Array.prototype.slice.call(arguments,1),n.apply(this,i)}else if(s(n))for(i=Array.prototype.slice.call(arguments,1),u=n.slice(),r=u.length,c=0;c<r;c++)u[c].apply(this,i);return!0},r.prototype.addListener=function(e,t){var n;if(!o(t))throw TypeError("listener must be a function");return this._events||(this._events={}),this._events.newListener&&this.emit("newListener",e,o(t.listener)?t.listener:t),this._events[e]?s(this._events[e])?this._events[e].push(t):this._events[e]=[this._events[e],t]:this._events[e]=t,s(this._events[e])&&!this._events[e].warned&&(n=a(this._maxListeners)?r.defaultMaxListeners:this._maxListeners,n&&n>0&&this._events[e].length>n&&(this._events[e].warned=!0,console.error("(node) warning: possible EventEmitter memory leak detected. %d listeners added. Use emitter.setMaxListeners() to increase limit.",this._events[e].length),"function"==typeof console.trace&&console.trace())),this},r.prototype.on=r.prototype.addListener,r.prototype.once=function(e,t){function n(){this.removeListener(e,n),r||(r=!0,t.apply(this,arguments))}if(!o(t))throw TypeError("listener must be a function");var r=!1;return n.listener=t,this.on(e,n),this},r.prototype.removeListener=function(e,t){var n,r,i,a;if(!o(t))throw TypeError("listener must be a function");if(!this._events||!this._events[e])return this;if(n=this._events[e],i=n.length,r=-1,n===t||o(n.listener)&&n.listener===t)delete this._events[e],this._events.removeListener&&this.emit("removeListener",e,t);else if(s(n)){for(a=i;a-- >0;)if(n[a]===t||n[a].listener&&n[a].listener===t){r=a;break}if(r<0)return this;1===n.length?(n.length=0,delete this._events[e]):n.splice(r,1),this._events.removeListener&&this.emit("removeListener",e,t)}return this},r.prototype.removeAllListeners=function(e){var t,n;if(!this._events)return this;if(!this._events.removeListener)return 0===arguments.length?this._events={}:this._events[e]&&delete this._events[e],this;if(0===arguments.length){for(t in this._events)"removeListener"!==t&&this.removeAllListeners(t);return this.removeAllListeners("removeListener"),this._events={},this}if(n=this._events[e],o(n))this.removeListener(e,n);else if(n)for(;n.length;)this.removeListener(e,n[n.length-1]);return delete this._events[e],this},r.prototype.listeners=function(e){var t;return t=this._events&&this._events[e]?o(this._events[e])?[this._events[e]]:this._events[e].slice():[]},r.prototype.listenerCount=function(e){if(this._events){var t=this._events[e];if(o(t))return 1;if(t)return t.length}return 0},r.listenerCount=function(e,t){return e.listenerCount(t)}},{}],5:[function(e,t,n){var r=Object.prototype.hasOwnProperty,o=Object.prototype.toString;t.exports=function(e,t,n){if("[object Function]"!==o.call(t))throw new TypeError("iterator must be a function");var i=e.length;if(i===+i)for(var s=0;s<i;s++)t.call(n,e[s],s,e);else for(var a in e)r.call(e,a)&&t.call(n,e[a],a,e)}},{}],6:[function(e,t,n){(function(e){var n;n="undefined"!=typeof window?window:"undefined"!=typeof e?e:"undefined"!=typeof self?self:{},t.exports=n}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],7:[function(e,t,n){"function"==typeof Object.create?t.exports=function(e,t){e.super_=t,e.prototype=Object.create(t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}})}:t.exports=function(e,t){e.super_=t;var n=function(){};n.prototype=t.prototype,e.prototype=new n,e.prototype.constructor=e}},{}],8:[function(e,t,n){var r={}.toString;t.exports=Array.isArray||function(e){return"[object Array]"==r.call(e)}},{}],9:[function(e,t,n){function r(e){if(e=String(e),!(e.length>100)){var t=/^((?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|years?|yrs?|y)?$/i.exec(e);if(t){var n=parseFloat(t[1]),r=(t[2]||"ms").toLowerCase();switch(r){case"years":case"year":case"yrs":case"yr":case"y":return n*p;case"days":case"day":case"d":return n*l;case"hours":case"hour":case"hrs":case"hr":case"h":return n*u;case"minutes":case"minute":case"mins":case"min":case"m":return n*c;case"seconds":case"second":case"secs":case"sec":case"s":return n*a;case"milliseconds":case"millisecond":case"msecs":case"msec":case"ms":return n;default:return}}}}function o(e){return e>=l?Math.round(e/l)+"d":e>=u?Math.round(e/u)+"h":e>=c?Math.round(e/c)+"m":e>=a?Math.round(e/a)+"s":e+"ms"}function i(e){return s(e,l,"day")||s(e,u,"hour")||s(e,c,"minute")||s(e,a,"second")||e+" ms"}function s(e,t,n){if(!(e<t))return e<1.5*t?Math.floor(e/t)+" "+n:Math.ceil(e/t)+" "+n+"s"}var a=1e3,c=60*a,u=60*c,l=24*u,p=365.25*l;t.exports=function(e,t){t=t||{};var n=typeof e;if("string"===n&&e.length>0)return r(e);if("number"===n&&isNaN(e)===!1)return t["long"]?i(e):o(e);throw new Error("val is not a non-empty string or a valid number. val="+JSON.stringify(e))}},{}],10:[function(e,t,n){"use strict";var r=Object.prototype.hasOwnProperty,o=Object.prototype.toString,i=Array.prototype.slice,s=e(11),a=Object.prototype.propertyIsEnumerable,c=!a.call({toString:null},"toString"),u=a.call(function(){},"prototype"),l=["toString","toLocaleString","valueOf","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],p=function(e){var t=e.constructor;return t&&t.prototype===e},d={$console:!0,$external:!0,$frame:!0,$frameElement:!0,$frames:!0,$innerHeight:!0,$innerWidth:!0,$outerHeight:!0,$outerWidth:!0,$pageXOffset:!0,$pageYOffset:!0,$parent:!0,$scrollLeft:!0,$scrollTop:!0,$scrollX:!0,$scrollY:!0,$self:!0,$webkitIndexedDB:!0,$webkitStorageInfo:!0,$window:!0},h=function(){if("undefined"==typeof window)return!1;for(var e in window)try{if(!d["$"+e]&&r.call(window,e)&&null!==window[e]&&"object"==typeof window[e])try{p(window[e])}catch(t){return!0}}catch(t){return!0}return!1}(),f=function(e){if("undefined"==typeof window||!h)return p(e);try{return p(e)}catch(t){return!1}},y=function(e){var t=null!==e&&"object"==typeof e,n="[object Function]"===o.call(e),i=s(e),a=t&&"[object String]"===o.call(e),p=[];if(!t&&!n&&!i)throw new TypeError("Object.keys called on a non-object");var d=u&&n;if(a&&e.length>0&&!r.call(e,0))for(var h=0;h<e.length;++h)p.push(String(h));if(i&&e.length>0)for(var y=0;y<e.length;++y)p.push(String(y));else for(var m in e)d&&"prototype"===m||!r.call(e,m)||p.push(String(m));if(c)for(var v=f(e),g=0;g<l.length;++g)v&&"constructor"===l[g]||!r.call(e,l[g])||p.push(l[g]);return p};y.shim=function(){if(Object.keys){var e=function(){return 2===(Object.keys(arguments)||"").length}(1,2);if(!e){var t=Object.keys;Object.keys=function(e){return t(s(e)?i.call(e):e)}}}else Object.keys=y;return Object.keys||y},t.exports=y},{11:11}],11:[function(e,t,n){"use strict";var r=Object.prototype.toString;t.exports=function(e){var t=r.call(e),n="[object Arguments]"===t;return n||(n="[object Array]"!==t&&null!==e&&"object"==typeof e&&"number"==typeof e.length&&e.length>=0&&"[object Function]"===r.call(e.callee)),n}},{}],12:[function(e,t,n){function r(){throw new Error("setTimeout has not been defined")}function o(){throw new Error("clearTimeout has not been defined")}function i(e){if(p===setTimeout)return setTimeout(e,0);if((p===r||!p)&&setTimeout)return p=setTimeout,setTimeout(e,0);try{return p(e,0)}catch(t){try{return p.call(null,e,0)}catch(t){return p.call(this,e,0)}}}function s(e){if(d===clearTimeout)return clearTimeout(e);if((d===o||!d)&&clearTimeout)return d=clearTimeout,clearTimeout(e);try{return d(e)}catch(t){try{return d.call(null,e)}catch(t){return d.call(this,e)}}}function a(){m&&f&&(m=!1,f.length?y=f.concat(y):v=-1,y.length&&c())}function c(){if(!m){var e=i(a);m=!0;for(var t=y.length;t;){for(f=y,y=[];++v<t;)f&&f[v].run();v=-1,t=y.length}f=null,m=!1,s(e)}}function u(e,t){this.fun=e,this.array=t}function l(){}var p,d,h=t.exports={};!function(){try{p="function"==typeof setTimeout?setTimeout:r}catch(e){p=r}try{d="function"==typeof clearTimeout?clearTimeout:o}catch(e){d=o}}();var f,y=[],m=!1,v=-1;h.nextTick=function(e){var t=new Array(arguments.length-1);if(arguments.length>1)for(var n=1;n<arguments.length;n++)t[n-1]=arguments[n];y.push(new u(e,t)),1!==y.length||m||i(c)},u.prototype.run=function(){this.fun.apply(null,this.array)},h.title="browser",h.browser=!0,h.env={},h.argv=[],h.version="",h.versions={},h.on=l,h.addListener=l,h.once=l,h.off=l,h.removeListener=l,h.removeAllListeners=l,h.emit=l,h.binding=function(e){throw new Error("process.binding is not supported")},h.cwd=function(){return"/"},h.chdir=function(e){throw new Error("process.chdir is not supported")},h.umask=function(){return 0}},{}],13:[function(e,t,n){"use strict";function r(e,t){if(e.map)return e.map(t);for(var n=[],r=0;r<e.length;r++)n.push(t(e[r],r));return n}var o=function(e){switch(typeof e){case"string":return e;case"boolean":return e?"true":"false";case"number":return isFinite(e)?e:"";default:return""}};t.exports=function(e,t,n,a){return t=t||"&",n=n||"=",null===e&&(e=void 0),"object"==typeof e?r(s(e),function(s){var a=encodeURIComponent(o(s))+n;return i(e[s])?r(e[s],function(e){return a+encodeURIComponent(o(e))}).join(t):a+encodeURIComponent(o(e[s]))}).join(t):a?encodeURIComponent(o(a))+n+encodeURIComponent(o(e)):""};var i=Array.isArray||function(e){return"[object Array]"===Object.prototype.toString.call(e)},s=Object.keys||function(e){var t=[];for(var n in e)Object.prototype.hasOwnProperty.call(e,n)&&t.push(n);return t}},{}],14:[function(e,t,n){function r(){c.apply(this,arguments)}function o(){var e="Not implemented in this environment.\nIf you feel this is a mistake, write to support@algolia.com";throw new l.AlgoliaSearchError(e)}t.exports=r;var i=e(16),s=e(26),a=e(27),c=e(15),u=e(7),l=e(28);u(r,c),r.prototype.deleteIndex=function(e,t){return this._jsonRequest({method:"DELETE",url:"/1/indexes/"+encodeURIComponent(e),hostType:"write",callback:t})},r.prototype.moveIndex=function(e,t,n){var r={operation:"move",destination:t};return this._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(e)+"/operation",body:r,hostType:"write",callback:n})},r.prototype.copyIndex=function(e,t,n,r){var o={operation:"copy",destination:t},i=r;if("function"==typeof n)i=n;else{if(!(Array.isArray(n)&&n.length>0))throw new Error("the scope given to `copyIndex` was not an array with settings, synonyms or rules");o.scope=n}return this._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(e)+"/operation",body:o,hostType:"write",callback:i})},r.prototype.getLogs=function(t,n,r){var o=e(25),i={};return"object"==typeof t?(i=o(t),r=n):0===arguments.length||"function"==typeof t?r=t:1===arguments.length||"function"==typeof n?(r=n,i.offset=t):(i.offset=t,i.length=n),void 0===i.offset&&(i.offset=0),void 0===i.length&&(i.length=10),this._jsonRequest({method:"GET",url:"/1/logs?"+this._getSearchParams(i,""),hostType:"read",callback:r})},r.prototype.listIndexes=function(e,t){var n="";return void 0===e||"function"==typeof e?t=e:n="?page="+e,this._jsonRequest({method:"GET",url:"/1/indexes"+n,hostType:"read",callback:t})},r.prototype.initIndex=function(e){return new i(this,e)},r.prototype.listUserKeys=s(function(e){return this.listApiKeys(e)},a("client.listUserKeys()","client.listApiKeys()")),r.prototype.listApiKeys=function(e){return this._jsonRequest({method:"GET",url:"/1/keys",hostType:"read",callback:e})},r.prototype.getUserKeyACL=s(function(e,t){return this.getApiKey(e,t)},a("client.getUserKeyACL()","client.getApiKey()")),r.prototype.getApiKey=function(e,t){return this._jsonRequest({method:"GET",url:"/1/keys/"+e,hostType:"read",callback:t})},r.prototype.deleteUserKey=s(function(e,t){return this.deleteApiKey(e,t)},a("client.deleteUserKey()","client.deleteApiKey()")),r.prototype.deleteApiKey=function(e,t){return this._jsonRequest({method:"DELETE",url:"/1/keys/"+e,hostType:"write",callback:t})},r.prototype.addUserKey=s(function(e,t,n){return this.addApiKey(e,t,n)},a("client.addUserKey()","client.addApiKey()")),r.prototype.addApiKey=function(t,n,r){var o=e(8),i="Usage: client.addApiKey(arrayOfAcls[, params, callback])";if(!o(t))throw new Error(i);1!==arguments.length&&"function"!=typeof n||(r=n,n=null);var s={acl:t};return n&&(s.validity=n.validity,s.maxQueriesPerIPPerHour=n.maxQueriesPerIPPerHour,s.maxHitsPerQuery=n.maxHitsPerQuery,s.indexes=n.indexes,s.description=n.description,n.queryParameters&&(s.queryParameters=this._getSearchParams(n.queryParameters,"")),s.referers=n.referers),this._jsonRequest({method:"POST",url:"/1/keys",body:s,hostType:"write",callback:r})},r.prototype.addUserKeyWithValidity=s(function(e,t,n){return this.addApiKey(e,t,n)},a("client.addUserKeyWithValidity()","client.addApiKey()")),r.prototype.updateUserKey=s(function(e,t,n,r){return this.updateApiKey(e,t,n,r)},a("client.updateUserKey()","client.updateApiKey()")),r.prototype.updateApiKey=function(t,n,r,o){var i=e(8),s="Usage: client.updateApiKey(key, arrayOfAcls[, params, callback])";if(!i(n))throw new Error(s);2!==arguments.length&&"function"!=typeof r||(o=r,r=null);var a={acl:n};return r&&(a.validity=r.validity,a.maxQueriesPerIPPerHour=r.maxQueriesPerIPPerHour,a.maxHitsPerQuery=r.maxHitsPerQuery,a.indexes=r.indexes,a.description=r.description,r.queryParameters&&(a.queryParameters=this._getSearchParams(r.queryParameters,"")),a.referers=r.referers),this._jsonRequest({method:"PUT",url:"/1/keys/"+t,body:a,hostType:"write",callback:o})},r.prototype.startQueriesBatch=s(function(){this._batch=[]},a("client.startQueriesBatch()","client.search()")),r.prototype.addQueryInBatch=s(function(e,t,n){this._batch.push({indexName:e,query:t,params:n})},a("client.addQueryInBatch()","client.search()")),r.prototype.sendQueriesBatch=s(function(e){return this.search(this._batch,e)},a("client.sendQueriesBatch()","client.search()")),r.prototype.batch=function(t,n){var r=e(8),o="Usage: client.batch(operations[, callback])";if(!r(t))throw new Error(o);return this._jsonRequest({method:"POST",url:"/1/indexes/*/batch",body:{requests:t},hostType:"write",callback:n})},r.prototype.destroy=o,r.prototype.enableRateLimitForward=o,r.prototype.disableRateLimitForward=o,r.prototype.useSecuredAPIKey=o,r.prototype.disableSecuredAPIKey=o,r.prototype.generateSecuredApiKey=o},{15:15,16:16,25:25,26:26,27:27,28:28,7:7,8:8}],15:[function(e,t,n){(function(n){function r(t,n,r){var i=e(1)("algoliasearch"),s=e(25),a=e(8),u=e(30),l="Usage: algoliasearch(applicationID, apiKey, opts)";if(r._allowEmptyCredentials!==!0&&!t)throw new c.AlgoliaSearchError("Please provide an application ID. "+l);if(r._allowEmptyCredentials!==!0&&!n)throw new c.AlgoliaSearchError("Please provide an API key. "+l);this.applicationID=t,this.apiKey=n,this.hosts={read:[],write:[]},r=r||{};var p=r.protocol||"https:";if(this._timeouts=r.timeouts||{connect:1e3,read:2e3,write:3e4},r.timeout&&(this._timeouts.connect=this._timeouts.read=this._timeouts.write=r.timeout),/:$/.test(p)||(p+=":"),"http:"!==r.protocol&&"https:"!==r.protocol)throw new c.AlgoliaSearchError("protocol must be `http:` or `https:` (was `"+r.protocol+"`)");if(this._checkAppIdData(),r.hosts)a(r.hosts)?(this.hosts.read=s(r.hosts),this.hosts.write=s(r.hosts)):(this.hosts.read=s(r.hosts.read),this.hosts.write=s(r.hosts.write));else{var d=u(this._shuffleResult,function(e){return t+"-"+e+".algolianet.com"});this.hosts.read=[this.applicationID+"-dsn.algolia.net"].concat(d),this.hosts.write=[this.applicationID+".algolia.net"].concat(d)}this.hosts.read=u(this.hosts.read,o(p)),this.hosts.write=u(this.hosts.write,o(p)),this.extraHeaders={},this.cache=r._cache||{},this._ua=r._ua,this._useCache=!(void 0!==r._useCache&&!r._cache)||r._useCache,this._useFallback=void 0===r.useFallback||r.useFallback,this._setTimeout=r._setTimeout,i("init done, %j",this)}function o(e){return function(t){return e+"//"+t.toLowerCase()}}function i(e){if(void 0===Array.prototype.toJSON)return JSON.stringify(e);var t=Array.prototype.toJSON;delete Array.prototype.toJSON;var n=JSON.stringify(e);return Array.prototype.toJSON=t,n}function s(e){for(var t,n,r=e.length;0!==r;)n=Math.floor(Math.random()*r),r-=1,t=e[r],e[r]=e[n],e[n]=t;return e}function a(e){var t={};for(var n in e)if(Object.prototype.hasOwnProperty.call(e,n)){var r;r="x-algolia-api-key"===n||"x-algolia-application-id"===n?"**hidden for security purposes**":e[n],t[n]=r}return t}t.exports=r;var c=e(28),u=e(29),l=e(18),p=e(34),d=500,h=n.env.RESET_APP_DATA_TIMER&&parseInt(n.env.RESET_APP_DATA_TIMER,10)||12e4;r.prototype.initIndex=function(e){return new l(this,e)},r.prototype.setExtraHeader=function(e,t){this.extraHeaders[e.toLowerCase()]=t},r.prototype.getExtraHeader=function(e){return this.extraHeaders[e.toLowerCase()]},r.prototype.unsetExtraHeader=function(e){delete this.extraHeaders[e.toLowerCase()]},r.prototype.addAlgoliaAgent=function(e){this._ua.indexOf(";"+e)===-1&&(this._ua+=";"+e)},r.prototype._jsonRequest=function(t){function n(e,u){function d(e){var t=e&&e.body&&e.body.message&&e.body.status||e.statusCode||e&&e.body&&200;s("received response: statusCode: %s, computed statusCode: %d, headers: %j",e.statusCode,t,e.headers);var n=2===Math.floor(t/100),i=new Date;if(v.push({currentHost:T,headers:a(o),content:r||null,contentLength:void 0!==r?r.length:null,method:u.method,timeouts:u.timeouts,url:u.url,startTime:x,endTime:i,duration:i-x,statusCode:t}),
+n)return h._useCache&&p&&(p[_]=e.responseText),e.body;var l=4!==Math.floor(t/100);if(l)return f+=1,b();s("unrecoverable error");var d=new c.AlgoliaSearchError(e.body&&e.body.message,{debugData:v,statusCode:t});return h._promise.reject(d)}function g(e){s("error: %s, stack: %s",e.message,e.stack);var n=new Date;return v.push({currentHost:T,headers:a(o),content:r||null,contentLength:void 0!==r?r.length:null,method:u.method,timeouts:u.timeouts,url:u.url,startTime:x,endTime:n,duration:n-x}),e instanceof c.AlgoliaSearchError||(e=new c.Unknown(e&&e.message,e)),f+=1,e instanceof c.Unknown||e instanceof c.UnparsableJSON||f>=h.hosts[t.hostType].length&&(y||!m)?(e.debugData=v,h._promise.reject(e)):e instanceof c.RequestTimeout?w():b()}function b(){return s("retrying request"),h._incrementHostIndex(t.hostType),n(e,u)}function w(){return s("retrying request with higher timeout"),h._incrementHostIndex(t.hostType),h._incrementTimeoutMultipler(),u.timeouts=h._getTimeoutsForRequest(t.hostType),n(e,u)}h._checkAppIdData();var _,x=new Date;if(h._useCache&&(_=t.url),h._useCache&&r&&(_+="_body_"+u.body),h._useCache&&p&&void 0!==p[_])return s("serving response from cache"),h._promise.resolve(JSON.parse(p[_]));if(f>=h.hosts[t.hostType].length)return!m||y?(s("could not get any response"),h._promise.reject(new c.AlgoliaSearchError("Cannot connect to the AlgoliaSearch API. Send an email to support@algolia.com to report and resolve the issue. Application id was: "+h.applicationID,{debugData:v}))):(s("switching to fallback"),f=0,u.method=t.fallback.method,u.url=t.fallback.url,u.jsonBody=t.fallback.body,u.jsonBody&&(u.body=i(u.jsonBody)),o=h._computeRequestHeaders(l),u.timeouts=h._getTimeoutsForRequest(t.hostType),h._setHostIndexByType(0,t.hostType),y=!0,n(h._request.fallback,u));var T=h._getHostByType(t.hostType),R=T+u.url,j={body:u.body,jsonBody:u.jsonBody,method:u.method,headers:o,timeouts:u.timeouts,debug:s};return s("method: %s, url: %s, headers: %j, timeouts: %d",j.method,R,j.headers,j.timeouts),e===h._request.fallback&&s("using fallback"),e.call(h,R,j).then(d,g)}this._checkAppIdData();var r,o,s=e(1)("algoliasearch:"+t.url),l=t.additionalUA||"",p=t.cache,h=this,f=0,y=!1,m=h._useFallback&&h._request.fallback&&t.fallback;this.apiKey.length>d&&void 0!==t.body&&(void 0!==t.body.params||void 0!==t.body.requests)?(t.body.apiKey=this.apiKey,o=this._computeRequestHeaders(l,!1)):o=this._computeRequestHeaders(l),void 0!==t.body&&(r=i(t.body)),s("request start");var v=[],g=n(h._request,{url:t.url,method:t.method,body:r,jsonBody:t.body,timeouts:h._getTimeoutsForRequest(t.hostType)});return"function"!=typeof t.callback?g:void g.then(function(e){u(function(){t.callback(null,e)},h._setTimeout||setTimeout)},function(e){u(function(){t.callback(e)},h._setTimeout||setTimeout)})},r.prototype._getSearchParams=function(e,t){if(void 0===e||null===e)return t;for(var n in e)null!==n&&void 0!==e[n]&&e.hasOwnProperty(n)&&(t+=""===t?"":"&",t+=n+"="+encodeURIComponent("[object Array]"===Object.prototype.toString.call(e[n])?i(e[n]):e[n]));return t},r.prototype._computeRequestHeaders=function(t,n){var r=e(5),o=t?this._ua+";"+t:this._ua,i={"x-algolia-agent":o,"x-algolia-application-id":this.applicationID};return n!==!1&&(i["x-algolia-api-key"]=this.apiKey),this.userToken&&(i["x-algolia-usertoken"]=this.userToken),this.securityTags&&(i["x-algolia-tagfilters"]=this.securityTags),r(this.extraHeaders,function(e,t){i[t]=e}),i},r.prototype.search=function(t,n,r){var o=e(8),i=e(30),s="Usage: client.search(arrayOfQueries[, callback])";if(!o(t))throw new Error(s);"function"==typeof n?(r=n,n={}):void 0===n&&(n={});var a=this,c={requests:i(t,function(e){var t="";return void 0!==e.query&&(t+="query="+encodeURIComponent(e.query)),{indexName:e.indexName,params:a._getSearchParams(e.params,t)}})},u=i(c.requests,function(e,t){return t+"="+encodeURIComponent("/1/indexes/"+encodeURIComponent(e.indexName)+"?"+e.params)}).join("&"),l="/1/indexes/*/queries";return void 0!==n.strategy&&(l+="?strategy="+n.strategy),this._jsonRequest({cache:this.cache,method:"POST",url:l,body:c,hostType:"read",fallback:{method:"GET",url:"/1/indexes/*",body:{params:u}},callback:r})},r.prototype.setSecurityTags=function(e){if("[object Array]"===Object.prototype.toString.call(e)){for(var t=[],n=0;n<e.length;++n)if("[object Array]"===Object.prototype.toString.call(e[n])){for(var r=[],o=0;o<e[n].length;++o)r.push(e[n][o]);t.push("("+r.join(",")+")")}else t.push(e[n]);e=t.join(",")}this.securityTags=e},r.prototype.setUserToken=function(e){this.userToken=e},r.prototype.clearCache=function(){this.cache={}},r.prototype.setRequestTimeout=function(e){e&&(this._timeouts.connect=this._timeouts.read=this._timeouts.write=e)},r.prototype.setTimeouts=function(e){this._timeouts=e},r.prototype.getTimeouts=function(){return this._timeouts},r.prototype._getAppIdData=function(){var e=p.get(this.applicationID);return null!==e&&this._cacheAppIdData(e),e},r.prototype._setAppIdData=function(e){return e.lastChange=(new Date).getTime(),this._cacheAppIdData(e),p.set(this.applicationID,e)},r.prototype._checkAppIdData=function(){var e=this._getAppIdData(),t=(new Date).getTime();return null===e||t-e.lastChange>h?this._resetInitialAppIdData(e):e},r.prototype._resetInitialAppIdData=function(e){var t=e||{};return t.hostIndexes={read:0,write:0},t.timeoutMultiplier=1,t.shuffleResult=t.shuffleResult||s([1,2,3]),this._setAppIdData(t)},r.prototype._cacheAppIdData=function(e){this._hostIndexes=e.hostIndexes,this._timeoutMultiplier=e.timeoutMultiplier,this._shuffleResult=e.shuffleResult},r.prototype._partialAppIdDataUpdate=function(t){var n=e(5),r=this._getAppIdData();return n(t,function(e,t){r[t]=e}),this._setAppIdData(r)},r.prototype._getHostByType=function(e){return this.hosts[e][this._getHostIndexByType(e)]},r.prototype._getTimeoutMultiplier=function(){return this._timeoutMultiplier},r.prototype._getHostIndexByType=function(e){return this._hostIndexes[e]},r.prototype._setHostIndexByType=function(t,n){var r=e(25),o=r(this._hostIndexes);return o[n]=t,this._partialAppIdDataUpdate({hostIndexes:o}),t},r.prototype._incrementHostIndex=function(e){return this._setHostIndexByType((this._getHostIndexByType(e)+1)%this.hosts[e].length,e)},r.prototype._incrementTimeoutMultipler=function(){var e=Math.max(this._timeoutMultiplier+1,4);return this._partialAppIdDataUpdate({timeoutMultiplier:e})},r.prototype._getTimeoutsForRequest=function(e){return{connect:this._timeouts.connect*this._timeoutMultiplier,complete:this._timeouts[e]*this._timeoutMultiplier}}}).call(this,e(12))},{1:1,12:12,18:18,25:25,28:28,29:29,30:30,34:34,5:5,8:8}],16:[function(e,t,n){function r(){s.apply(this,arguments)}function o(e,t,n){function r(n,o){var i={page:n||0,hitsPerPage:t||100},s=o||[];return e(i).then(function(e){var t=e.hits,n=e.nbHits,o=t.map(function(e){return delete e._highlightResult,e}),a=s.concat(o);return a.length<n?r(i.page+1,a):a})}return r().then(function(e){return"function"==typeof n&&n(e),e})}var i=e(7),s=e(18),a=e(26),c=e(27),u=e(29),l=e(28),p=a(function(){},c("forwardToSlaves","forwardToReplicas"));t.exports=r,i(r,s),r.prototype.addObject=function(e,t,n){var r=this;return 1!==arguments.length&&"function"!=typeof t||(n=t,t=void 0),this.as._jsonRequest({method:void 0!==t?"PUT":"POST",url:"/1/indexes/"+encodeURIComponent(r.indexName)+(void 0!==t?"/"+encodeURIComponent(t):""),body:e,hostType:"write",callback:n})},r.prototype.addObjects=function(t,n){var r=e(8),o="Usage: index.addObjects(arrayOfObjects[, callback])";if(!r(t))throw new Error(o);for(var i=this,s={requests:[]},a=0;a<t.length;++a){var c={action:"addObject",body:t[a]};s.requests.push(c)}return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(i.indexName)+"/batch",body:s,hostType:"write",callback:n})},r.prototype.partialUpdateObject=function(e,t,n){1!==arguments.length&&"function"!=typeof t||(n=t,t=void 0);var r=this,o="/1/indexes/"+encodeURIComponent(r.indexName)+"/"+encodeURIComponent(e.objectID)+"/partial";return t===!1&&(o+="?createIfNotExists=false"),this.as._jsonRequest({method:"POST",url:o,body:e,hostType:"write",callback:n})},r.prototype.partialUpdateObjects=function(t,n,r){1!==arguments.length&&"function"!=typeof n||(r=n,n=!0);var o=e(8),i="Usage: index.partialUpdateObjects(arrayOfObjects[, callback])";if(!o(t))throw new Error(i);for(var s=this,a={requests:[]},c=0;c<t.length;++c){var u={action:n===!0?"partialUpdateObject":"partialUpdateObjectNoCreate",objectID:t[c].objectID,body:t[c]};a.requests.push(u)}return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(s.indexName)+"/batch",body:a,hostType:"write",callback:r})},r.prototype.saveObject=function(e,t){var n=this;return this.as._jsonRequest({method:"PUT",url:"/1/indexes/"+encodeURIComponent(n.indexName)+"/"+encodeURIComponent(e.objectID),body:e,hostType:"write",callback:t})},r.prototype.saveObjects=function(t,n){var r=e(8),o="Usage: index.saveObjects(arrayOfObjects[, callback])";if(!r(t))throw new Error(o);for(var i=this,s={requests:[]},a=0;a<t.length;++a){var c={action:"updateObject",objectID:t[a].objectID,body:t[a]};s.requests.push(c)}return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(i.indexName)+"/batch",body:s,hostType:"write",callback:n})},r.prototype.deleteObject=function(e,t){if("function"==typeof e||"string"!=typeof e&&"number"!=typeof e){var n=new l.AlgoliaSearchError("Cannot delete an object without an objectID");return t=e,"function"==typeof t?t(n):this.as._promise.reject(n)}var r=this;return this.as._jsonRequest({method:"DELETE",url:"/1/indexes/"+encodeURIComponent(r.indexName)+"/"+encodeURIComponent(e),hostType:"write",callback:t})},r.prototype.deleteObjects=function(t,n){var r=e(8),o=e(30),i="Usage: index.deleteObjects(arrayOfObjectIDs[, callback])";if(!r(t))throw new Error(i);var s=this,a={requests:o(t,function(e){return{action:"deleteObject",objectID:e,body:{objectID:e}}})};return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(s.indexName)+"/batch",body:a,hostType:"write",callback:n})},r.prototype.deleteByQuery=a(function(t,n,r){function o(e){if(0===e.nbHits)return e;var t=p(e.hits,function(e){return e.objectID});return d.deleteObjects(t).then(i).then(s)}function i(e){return d.waitTask(e.taskID)}function s(){return d.deleteByQuery(t,n)}function a(){u(function(){r(null)},h._setTimeout||setTimeout)}function c(e){u(function(){r(e)},h._setTimeout||setTimeout)}var l=e(25),p=e(30),d=this,h=d.as;1===arguments.length||"function"==typeof n?(r=n,n={}):n=l(n),n.attributesToRetrieve="objectID",n.hitsPerPage=1e3,n.distinct=!1,this.clearCache();var f=this.search(t,n).then(o);return r?void f.then(a,c):f},c("index.deleteByQuery()","index.deleteBy()")),r.prototype.deleteBy=function(e,t){var n=this;return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(n.indexName)+"/deleteByQuery",body:{params:n.as._getSearchParams(e,"")},hostType:"write",callback:t})},r.prototype.browseAll=function(t,n){function r(e){if(!a._stopped){var t;t=void 0!==e?{cursor:e}:{params:l},c._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(u.indexName)+"/browse",hostType:"read",body:t,callback:o})}}function o(e,t){if(!a._stopped)return e?void a._error(e):(a._result(t),void 0===t.cursor?void a._end():void r(t.cursor))}"object"==typeof t&&(n=t,t=void 0);var i=e(31),s=e(17),a=new s,c=this.as,u=this,l=c._getSearchParams(i({},n||{},{query:t}),"");return r(),a},r.prototype.ttAdapter=a(function(e){var t=this;return function(n,r,o){var i;i="function"==typeof o?o:r,t.search(n,e,function(e,t){return e?void i(e):void i(t.hits)})}},"ttAdapter is not necessary anymore and will be removed in the next version,\nhave a look at autocomplete.js (https://github.com/algolia/autocomplete.js)"),r.prototype.waitTask=function(e,t){function n(){return l._jsonRequest({method:"GET",hostType:"read",url:"/1/indexes/"+encodeURIComponent(c.indexName)+"/task/"+e}).then(function(e){a++;var t=i*a*a;return t>s&&(t=s),"published"!==e.status?l._promise.delay(t).then(n):e})}function r(e){u(function(){t(null,e)},l._setTimeout||setTimeout)}function o(e){u(function(){t(e)},l._setTimeout||setTimeout)}var i=100,s=5e3,a=0,c=this,l=c.as,p=n();return t?void p.then(r,o):p},r.prototype.clearIndex=function(e){var t=this;return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(t.indexName)+"/clear",hostType:"write",callback:e})},r.prototype.getSettings=function(e){var t=this;return this.as._jsonRequest({method:"GET",url:"/1/indexes/"+encodeURIComponent(t.indexName)+"/settings?getVersion=2",hostType:"read",callback:e})},r.prototype.searchSynonyms=function(e,t){return"function"==typeof e?(t=e,e={}):void 0===e&&(e={}),this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/synonyms/search",body:e,hostType:"read",callback:t})},r.prototype.exportSynonyms=function(e,t){return o(this.searchSynonyms,e,t)},r.prototype.saveSynonym=function(e,t,n){"function"==typeof t?(n=t,t={}):void 0===t&&(t={}),void 0!==t.forwardToSlaves&&p();var r=t.forwardToSlaves||t.forwardToReplicas?"true":"false";return this.as._jsonRequest({method:"PUT",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/synonyms/"+encodeURIComponent(e.objectID)+"?forwardToReplicas="+r,body:e,hostType:"write",callback:n})},r.prototype.getSynonym=function(e,t){return this.as._jsonRequest({method:"GET",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/synonyms/"+encodeURIComponent(e),hostType:"read",callback:t})},r.prototype.deleteSynonym=function(e,t,n){"function"==typeof t?(n=t,t={}):void 0===t&&(t={}),void 0!==t.forwardToSlaves&&p();var r=t.forwardToSlaves||t.forwardToReplicas?"true":"false";return this.as._jsonRequest({method:"DELETE",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/synonyms/"+encodeURIComponent(e)+"?forwardToReplicas="+r,hostType:"write",callback:n})},r.prototype.clearSynonyms=function(e,t){"function"==typeof e?(t=e,e={}):void 0===e&&(e={}),void 0!==e.forwardToSlaves&&p();var n=e.forwardToSlaves||e.forwardToReplicas?"true":"false";return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/synonyms/clear?forwardToReplicas="+n,hostType:"write",callback:t})},r.prototype.batchSynonyms=function(e,t,n){"function"==typeof t?(n=t,t={}):void 0===t&&(t={}),void 0!==t.forwardToSlaves&&p();var r=t.forwardToSlaves||t.forwardToReplicas?"true":"false";return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/synonyms/batch?forwardToReplicas="+r+"&replaceExistingSynonyms="+(t.replaceExistingSynonyms?"true":"false"),hostType:"write",body:e,callback:n})},r.prototype.searchRules=function(e,t){return"function"==typeof e?(t=e,e={}):void 0===e&&(e={}),this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/rules/search",body:e,hostType:"read",callback:t})},r.prototype.exportRules=function(e,t){return o(this.searchRules,e,t)},r.prototype.saveRule=function(e,t,n){"function"==typeof t?(n=t,t={}):void 0===t&&(t={});var r=t.forwardToReplicas===!0?"true":"false";return this.as._jsonRequest({method:"PUT",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/rules/"+encodeURIComponent(e.objectID)+"?forwardToReplicas="+r,body:e,hostType:"write",callback:n})},r.prototype.getRule=function(e,t){return this.as._jsonRequest({method:"GET",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/rules/"+encodeURIComponent(e),hostType:"read",callback:t})},r.prototype.deleteRule=function(e,t,n){"function"==typeof t?(n=t,t={}):void 0===t&&(t={});var r=t.forwardToReplicas===!0?"true":"false";return this.as._jsonRequest({method:"DELETE",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/rules/"+encodeURIComponent(e)+"?forwardToReplicas="+r,hostType:"write",callback:n})},r.prototype.clearRules=function(e,t){"function"==typeof e?(t=e,e={}):void 0===e&&(e={});var n=e.forwardToReplicas===!0?"true":"false";return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/rules/clear?forwardToReplicas="+n,hostType:"write",callback:t})},r.prototype.batchRules=function(e,t,n){"function"==typeof t?(n=t,t={}):void 0===t&&(t={});var r=t.forwardToReplicas===!0?"true":"false";return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/rules/batch?forwardToReplicas="+r+"&clearExistingRules="+(t.clearExistingRules===!0?"true":"false"),hostType:"write",body:e,callback:n})},r.prototype.setSettings=function(e,t,n){1!==arguments.length&&"function"!=typeof t||(n=t,t={}),void 0!==t.forwardToSlaves&&p();var r=t.forwardToSlaves||t.forwardToReplicas?"true":"false",o=this;return this.as._jsonRequest({method:"PUT",url:"/1/indexes/"+encodeURIComponent(o.indexName)+"/settings?forwardToReplicas="+r,hostType:"write",body:e,callback:n})},r.prototype.listUserKeys=a(function(e){return this.listApiKeys(e)},c("index.listUserKeys()","index.listApiKeys()")),r.prototype.listApiKeys=function(e){var t=this;return this.as._jsonRequest({method:"GET",url:"/1/indexes/"+encodeURIComponent(t.indexName)+"/keys",hostType:"read",callback:e})},r.prototype.getUserKeyACL=a(function(e,t){return this.getApiKey(e,t)},c("index.getUserKeyACL()","index.getApiKey()")),r.prototype.getApiKey=function(e,t){var n=this;return this.as._jsonRequest({method:"GET",url:"/1/indexes/"+encodeURIComponent(n.indexName)+"/keys/"+e,hostType:"read",callback:t})},r.prototype.deleteUserKey=a(function(e,t){return this.deleteApiKey(e,t)},c("index.deleteUserKey()","index.deleteApiKey()")),r.prototype.deleteApiKey=function(e,t){var n=this;return this.as._jsonRequest({method:"DELETE",url:"/1/indexes/"+encodeURIComponent(n.indexName)+"/keys/"+e,hostType:"write",callback:t})},r.prototype.addUserKey=a(function(e,t,n){return this.addApiKey(e,t,n)},c("index.addUserKey()","index.addApiKey()")),r.prototype.addApiKey=function(t,n,r){var o=e(8),i="Usage: index.addApiKey(arrayOfAcls[, params, callback])";if(!o(t))throw new Error(i);1!==arguments.length&&"function"!=typeof n||(r=n,n=null);var s={acl:t};return n&&(s.validity=n.validity,s.maxQueriesPerIPPerHour=n.maxQueriesPerIPPerHour,s.maxHitsPerQuery=n.maxHitsPerQuery,s.description=n.description,n.queryParameters&&(s.queryParameters=this.as._getSearchParams(n.queryParameters,"")),s.referers=n.referers),this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/keys",body:s,hostType:"write",callback:r})},r.prototype.addUserKeyWithValidity=a(function(e,t,n){return this.addApiKey(e,t,n)},c("index.addUserKeyWithValidity()","index.addApiKey()")),r.prototype.updateUserKey=a(function(e,t,n,r){return this.updateApiKey(e,t,n,r)},c("index.updateUserKey()","index.updateApiKey()")),r.prototype.updateApiKey=function(t,n,r,o){var i=e(8),s="Usage: index.updateApiKey(key, arrayOfAcls[, params, callback])";if(!i(n))throw new Error(s);2!==arguments.length&&"function"!=typeof r||(o=r,r=null);var a={acl:n};return r&&(a.validity=r.validity,a.maxQueriesPerIPPerHour=r.maxQueriesPerIPPerHour,a.maxHitsPerQuery=r.maxHitsPerQuery,a.description=r.description,r.queryParameters&&(a.queryParameters=this.as._getSearchParams(r.queryParameters,"")),a.referers=r.referers),this.as._jsonRequest({method:"PUT",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/keys/"+t,body:a,hostType:"write",callback:o})}},{17:17,18:18,25:25,26:26,27:27,28:28,29:29,30:30,31:31,7:7,8:8}],17:[function(e,t,n){"use strict";function r(){}t.exports=r;var o=e(7),i=e(4).EventEmitter;o(r,i),r.prototype.stop=function(){this._stopped=!0,this._clean()},r.prototype._end=function(){this.emit("end"),this._clean()},r.prototype._error=function(e){this.emit("error",e),this._clean()},r.prototype._result=function(e){this.emit("result",e)},r.prototype._clean=function(){this.removeAllListeners("stop"),this.removeAllListeners("end"),this.removeAllListeners("error"),this.removeAllListeners("result")}},{4:4,7:7}],18:[function(e,t,n){function r(e,t){this.indexName=t,this.as=e,this.typeAheadArgs=null,this.typeAheadValueOption=null,this.cache={}}var o=e(24),i=e(26),s=e(27);t.exports=r,r.prototype.clearCache=function(){this.cache={}},r.prototype.search=o("query"),r.prototype.similarSearch=o("similarQuery"),r.prototype.browse=function(t,n,r){var o,i,s=e(31),a=this;0===arguments.length||1===arguments.length&&"function"==typeof arguments[0]?(o=0,r=arguments[0],t=void 0):"number"==typeof arguments[0]?(o=arguments[0],"number"==typeof arguments[1]?i=arguments[1]:"function"==typeof arguments[1]&&(r=arguments[1],i=void 0),t=void 0,n=void 0):"object"==typeof arguments[0]?("function"==typeof arguments[1]&&(r=arguments[1]),n=arguments[0],t=void 0):"string"==typeof arguments[0]&&"function"==typeof arguments[1]&&(r=arguments[1],n=void 0),n=s({},n||{},{page:o,hitsPerPage:i,query:t});var c=this.as._getSearchParams(n,"");return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(a.indexName)+"/browse",body:{params:c},hostType:"read",callback:r})},r.prototype.browseFrom=function(e,t){return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/browse",body:{cursor:e},hostType:"read",callback:t})},r.prototype.searchForFacetValues=function(t,n){var r=e(25),o=e(32),i="Usage: index.searchForFacetValues({facetName, facetQuery, ...params}[, callback])";if(void 0===t.facetName||void 0===t.facetQuery)throw new Error(i);var s=t.facetName,a=o(r(t),function(e){return"facetName"===e}),c=this.as._getSearchParams(a,"");return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/facets/"+encodeURIComponent(s)+"/query",hostType:"read",body:{params:c},callback:n})},r.prototype.searchFacet=i(function(e,t){return this.searchForFacetValues(e,t)},s("index.searchFacet(params[, callback])","index.searchForFacetValues(params[, callback])")),r.prototype._search=function(e,t,n,r){return this.as._jsonRequest({cache:this.cache,method:"POST",url:t||"/1/indexes/"+encodeURIComponent(this.indexName)+"/query",body:{params:e},hostType:"read",fallback:{method:"GET",url:"/1/indexes/"+encodeURIComponent(this.indexName),body:{params:e}},callback:n,additionalUA:r})},r.prototype.getObject=function(e,t,n){var r=this;1!==arguments.length&&"function"!=typeof t||(n=t,t=void 0);var o="";if(void 0!==t){o="?attributes=";for(var i=0;i<t.length;++i)0!==i&&(o+=","),o+=t[i]}return this.as._jsonRequest({method:"GET",url:"/1/indexes/"+encodeURIComponent(r.indexName)+"/"+encodeURIComponent(e)+o,hostType:"read",callback:n})},r.prototype.getObjects=function(t,n,r){var o=e(8),i=e(30),s="Usage: index.getObjects(arrayOfObjectIDs[, callback])";if(!o(t))throw new Error(s);var a=this;1!==arguments.length&&"function"!=typeof n||(r=n,n=void 0);var c={requests:i(t,function(e){var t={indexName:a.indexName,objectID:e};return n&&(t.attributesToRetrieve=n.join(",")),t})};return this.as._jsonRequest({method:"POST",url:"/1/indexes/*/objects",hostType:"read",body:c,callback:r})},r.prototype.as=null,r.prototype.indexName=null,r.prototype.typeAheadArgs=null,r.prototype.typeAheadValueOption=null},{24:24,25:25,26:26,27:27,30:30,31:31,32:32,8:8}],19:[function(e,t,n){"use strict";var r=e(14),o=e(20);t.exports=o(r)},{14:14,20:20}],20:[function(e,t,n){(function(n){"use strict";var r=e(6),o=r.Promise||e(3).Promise;t.exports=function(t,i){function s(t,n,r){var o=e(25),i=e(21);return r=o(r||{}),void 0===r.protocol&&(r.protocol=i()),r._ua=r._ua||s.ua,new a(t,n,r)}function a(){t.apply(this,arguments)}var c=e(7),u=e(28),l=e(22),p=e(23),d=e(33);i=i||"","debug"===n.env.NODE_ENV&&e(1).enable("algoliasearch*"),s.version=e(35),s.ua="Algolia for vanilla JavaScript "+i+s.version,s.initPlaces=d(s),r.__algolia={debug:e(1),algoliasearch:s};var h={hasXMLHttpRequest:"XMLHttpRequest"in r,hasXDomainRequest:"XDomainRequest"in r};return h.hasXMLHttpRequest&&(h.cors="withCredentials"in new XMLHttpRequest),c(a,t),a.prototype._request=function(e,t){return new o(function(n,r){function o(){if(!f){clearTimeout(d);var e;try{e={body:JSON.parse(m.responseText),responseText:m.responseText,statusCode:m.status,headers:m.getAllResponseHeaders&&m.getAllResponseHeaders()||{}}}catch(t){e=new u.UnparsableJSON({more:m.responseText})}e instanceof u.UnparsableJSON?r(e):n(e)}}function i(e){f||(clearTimeout(d),r(new u.Network({more:e})))}function s(){f=!0,m.abort(),r(new u.RequestTimeout)}function a(){v=!0,clearTimeout(d),d=setTimeout(s,t.timeouts.complete)}function c(){v||a()}function p(){!v&&m.readyState>1&&a()}if(!h.cors&&!h.hasXDomainRequest)return void r(new u.Network("CORS not supported"));e=l(e,t.headers);var d,f,y=t.body,m=h.cors?new XMLHttpRequest:new XDomainRequest,v=!1;d=setTimeout(s,t.timeouts.connect),m.onprogress=c,"onreadystatechange"in m&&(m.onreadystatechange=p),m.onload=o,m.onerror=i,m instanceof XMLHttpRequest?m.open(t.method,e,!0):m.open(t.method,e),h.cors&&(y&&("POST"===t.method?m.setRequestHeader("content-type","application/x-www-form-urlencoded"):m.setRequestHeader("content-type","application/json")),m.setRequestHeader("accept","application/json")),m.send(y)})},a.prototype._request.fallback=function(e,t){return e=l(e,t.headers),new o(function(n,r){p(e,t,function(e,t){return e?void r(e):void n(t)})})},a.prototype._promise={reject:function(e){return o.reject(e)},resolve:function(e){return o.resolve(e)},delay:function(e){return new o(function(t){setTimeout(t,e)})}},s}}).call(this,e(12))},{1:1,12:12,21:21,22:22,23:23,25:25,28:28,3:3,33:33,35:35,6:6,7:7}],21:[function(e,t,n){"use strict";function r(){var e=window.document.location.protocol;return"http:"!==e&&"https:"!==e&&(e="http:"),e}t.exports=r},{}],22:[function(e,t,n){"use strict";function r(e,t){return e+=/\?/.test(e)?"&":"?",e+o(t)}t.exports=r;var o=e(13)},{13:13}],23:[function(e,t,n){"use strict";function r(e,t,n){function r(){t.debug("JSONP: success"),m||d||(m=!0,p||(t.debug("JSONP: Fail. Script loaded but did not call the callback"),a(),n(new o.JSONPScriptFail)))}function s(){"loaded"!==this.readyState&&"complete"!==this.readyState||r()}function a(){clearTimeout(v),f.onload=null,f.onreadystatechange=null,f.onerror=null,h.removeChild(f)}function c(){try{delete window[y],delete window[y+"_loaded"]}catch(e){window[y]=window[y+"_loaded"]=void 0}}function u(){t.debug("JSONP: Script timeout"),d=!0,a(),n(new o.RequestTimeout)}function l(){t.debug("JSONP: Script error"),m||d||(a(),n(new o.JSONPScriptError))}if("GET"!==t.method)return void n(new Error("Method "+t.method+" "+e+" is not supported by JSONP."));t.debug("JSONP: start");var p=!1,d=!1;i+=1;var h=document.getElementsByTagName("head")[0],f=document.createElement("script"),y="algoliaJSONP_"+i,m=!1;window[y]=function(e){return c(),d?void t.debug("JSONP: Late answer, ignoring"):(p=!0,a(),void n(null,{body:e}))},e+="&callback="+y,t.jsonBody&&t.jsonBody.params&&(e+="&"+t.jsonBody.params);var v=setTimeout(u,t.timeouts.complete);f.onreadystatechange=s,f.onload=r,f.onerror=l,f.async=!0,f.defer=!0,f.src=e,h.appendChild(f)}t.exports=r;var o=e(28),i=0},{28:28}],24:[function(e,t,n){function r(e,t){return function(n,r,i){if("function"==typeof n&&"object"==typeof r||"object"==typeof i)throw new o.AlgoliaSearchError("index.search usage is index.search(query, params, cb)");0===arguments.length||"function"==typeof n?(i=n,n=""):1!==arguments.length&&"function"!=typeof r||(i=r,r=void 0),"object"==typeof n&&null!==n?(r=n,n=void 0):void 0!==n&&null!==n||(n="");var s="";void 0!==n&&(s+=e+"="+encodeURIComponent(n));var a;return void 0!==r&&(r.additionalUA&&(a=r.additionalUA,delete r.additionalUA),s=this.as._getSearchParams(r,s)),this._search(s,t,i,a)}}t.exports=r;var o=e(28)},{28:28}],25:[function(e,t,n){t.exports=function(e){return JSON.parse(JSON.stringify(e))}},{}],26:[function(e,t,n){t.exports=function(e,t){function n(){return r||(console.warn(t),r=!0),e.apply(this,arguments)}var r=!1;return n}},{}],27:[function(e,t,n){t.exports=function(e,t){var n=e.toLowerCase().replace(/[\.\(\)]/g,"");return"algoliasearch: `"+e+"` was replaced by `"+t+"`. Please see https://github.com/algolia/algoliasearch-client-javascript/wiki/Deprecated#"+n}},{}],28:[function(e,t,n){"use strict";function r(t,n){var r=e(5),o=this;"function"==typeof Error.captureStackTrace?Error.captureStackTrace(this,this.constructor):o.stack=(new Error).stack||"Cannot get a stacktrace, browser is too old",this.name="AlgoliaSearchError",this.message=t||"Unknown error",n&&r(n,function(e,t){o[t]=e})}function o(e,t){function n(){var n=Array.prototype.slice.call(arguments,0);"string"!=typeof n[0]&&n.unshift(t),r.apply(this,n),this.name="AlgoliaSearch"+e+"Error"}return i(n,r),n}var i=e(7);i(r,Error),t.exports={AlgoliaSearchError:r,UnparsableJSON:o("UnparsableJSON","Could not parse the incoming response as JSON, see err.more for details"),RequestTimeout:o("RequestTimeout","Request timedout before getting a response"),Network:o("Network","Network issue, see err.more for details"),JSONPScriptFail:o("JSONPScriptFail","<script> was loaded but did not call our provided callback"),JSONPScriptError:o("JSONPScriptError","<script> unable to load due to an `error` event on it"),Unknown:o("Unknown","Unknown error occured")}},{5:5,7:7}],29:[function(e,t,n){t.exports=function(e,t){t(e,0)}},{}],30:[function(e,t,n){var r=e(5);t.exports=function(e,t){var n=[];return r(e,function(r,o){n.push(t(r,o,e))}),n}},{5:5}],31:[function(e,t,n){var r=e(5);t.exports=function o(e){var t=Array.prototype.slice.call(arguments);return r(t,function(t){for(var n in t)t.hasOwnProperty(n)&&("object"==typeof e[n]&&"object"==typeof t[n]?e[n]=o({},e[n],t[n]):void 0!==t[n]&&(e[n]=t[n]))}),e}},{5:5}],32:[function(e,t,n){t.exports=function(t,n){var r=e(10),o=e(5),i={};return o(r(t),function(e){n(e)!==!0&&(i[e]=t[e])}),i}},{10:10,5:5}],33:[function(e,t,n){function r(t){return function(n,r,i){var s=e(25);i=i&&s(i)||{},i.hosts=i.hosts||["places-dsn.algolia.net","places-1.algolianet.com","places-2.algolianet.com","places-3.algolianet.com"],0!==arguments.length&&"object"!=typeof n&&void 0!==n||(n="",r="",i._allowEmptyCredentials=!0);var a=t(n,r,i),c=a.initIndex("places");return c.search=o("query","/1/places/query"),c.getObject=function(e,t){return this.as._jsonRequest({method:"GET",url:"/1/places/"+encodeURIComponent(e),hostType:"read",callback:t})},c}}t.exports=r;var o=e(24)},{24:24,25:25}],34:[function(e,t,n){(function(n){function r(e,t){return c("localStorage failed with",t),s(),a=l,a.get(e)}function o(e,t){return 1===arguments.length?a.get(e):a.set(e,t)}function i(){try{return"localStorage"in n&&null!==n.localStorage&&(n.localStorage[u]||n.localStorage.setItem(u,JSON.stringify({})),!0)}catch(e){return!1}}function s(){try{n.localStorage.removeItem(u)}catch(e){}}var a,c=e(1)("algoliasearch:src/hostIndexState.js"),u="algoliasearch-client-js",l={state:{},set:function(e,t){return this.state[e]=t,this.state[e]},get:function(e){return this.state[e]||null}},p={set:function(e,t){l.set(e,t);try{var o=JSON.parse(n.localStorage[u]);return o[e]=t,n.localStorage[u]=JSON.stringify(o),o[e]}catch(i){return r(e,i)}},get:function(e){try{return JSON.parse(n.localStorage[u])[e]||null}catch(t){return r(e,t)}}};a=i()?p:l,t.exports={get:o,set:o,supportsLocalStorage:i}}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{1:1}],35:[function(e,t,n){"use strict";t.exports="3.24.6"},{}]},{},[19])(19)});
+define('m_database',['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
+    const _ = {};
+    const CONST = {};
+
+    //@< algolia
+        var algoliaClient = ALGOLIA('OKSL1FNILG', 'c6cadc6f629b4daf66c5b78e4a9ab343');
+        _['algolia'] = algoliaClient;
+        // var index = client.initIndex('YourIndex');
+    //@> algolia
+
+    // set firebase realtime db framework 
+    const Datebase      = FIREBASE.database;
+    const Datebase2     = FIREBASE.firestore;
+    const fstore        = _;
+          window.fstore = fstore;
+    window.db2 = Datebase2;
+
+
+    function getBatchFirestoreDb (iNdb) {
+        return iNdb.batch();
+    }
+    _['getBatchFirestoreDb'] = getBatchFirestoreDb;
+
+    function runBatchFirestoreDb (iNfirestoreBatch, iNfunctions) {
+        if(typeof iNfunctions != 'object') iNfunctions = {};
+          // Commit the batch
+          iNfirestoreBatch.commit().then(function () {
+              if(typeof iNfunctions['onSuccess'] == 'function') iNfunctions['onSuccess'] ();
+          });
+    }
+    _['runBatchFirestoreDb'] = runBatchFirestoreDb;
+
+    function getFirestoreDb () {
+        return Datebase2();
+    }
+    _['getFirestoreDb'] = getFirestoreDb;
+
+
+    function updateRealtimeDb ( iNcollection, iNpath, iNdata ) {
+            /*
+                @disrc
+                    start sendidng flesh msg to firebase db
+                @inputs
+                    @required
+                        iNdata -> object
+                            type
+                            data
+            */
+            var baseKey = iNcollection + '/' + iNpath;
+            var updateArray = {};
+                updateArray[baseKey] = iNdata;
+            Datebase().ref().update(updateArray);
+    }
+    _['updateRealtimeDb'] = updateRealtimeDb;
+
+        function updateFirestoreDb ( iNcollection, iNpath, iNdata, iNfunctions) {
+            /*
+                @disrc
+                    start sendidng flesh msg to firebase db
+                @inputs
+                    @required
+                        iNdata -> object
+                            type
+                            data
+                    @optional
+                        iNfunctions -> function
+                            onSuccess -> function
+                            onError -> function
+            */
+            if(typeof iNfunctions != 'object') iNfunctions = {};
+
+            var baseKey = iNcollection + '/' + iNpath;
+
+            var docRef = Datebase2().doc(baseKey);
+            console.log("updateFirestoreDb baseKey ", baseKey);
+            console.log("updateFirestoreDb iNdata ", iNdata);
+            // Update the timestamp field with the value from the server
+            var updateTimestamp = docRef.update(iNdata).then(function(docRef) {
+                console.log("updateFirestoreDb Document written with ID: ", docRef.id);
+                if(typeof iNfunctions['onSuccess'] == 'function' ) iNfunctions['onSuccess'](docRef);
+            })
+            .catch(function(error) {
+                console.log(" updateFirestoreDb error", error);
+                if(typeof iNfunctions['onError'] == 'function' ) iNfunctions['onError']();
+            });
+        }
+        _['updateFirestoreDb'] = updateFirestoreDb;
+
+        function safeUpdateFirestoreDb ( iNcollection, iNpath, iNdata, iNfunctions , iNdb) {
+            /*
+                @disrc
+                    safe update firestore db
+                @inputs
+                    @required
+                        iNcollection -> string
+                        iNpath -> string
+                        iNdata -> object
+                            type
+                            data
+                    @optional
+                        iNfunctions -> function
+                            onSuccess -> function
+                            onError -> function
+            */
+            if(typeof iNfunctions != 'object') iNfunctions = {};
+
+            var baseKey = iNcollection + '/' + iNpath, docRef;
+
+            if ( typeof iNdb != 'undefined')
+                docRef = iNdb.doc(baseKey);
+            else
+                docRef = Datebase2().doc(baseKey);
+
+            console.log('safeUpdateFirestoreDb baseKey, iNdata',baseKey, iNdata);
+            // Update the timestamp field with the value from the server
+            var updateTimestamp = docRef.set(iNdata,{ merge : true }).then(function(docRef) {
+                console.log('safeUpdateFirestoreDb SUCCESS baseKey, docRef',baseKey, docRef);
+                if(typeof iNfunctions['onSuccess'] == 'function' ) iNfunctions['onSuccess'](docRef);
+            })
+            .catch(function(error) {
+                console.log('safeUpdateFirestoreDb EROR baseKey, error',baseKey, error);
+                if(typeof iNfunctions['onError'] == 'function' ) iNfunctions['onError']();
+            });
+        }
+        _['safeUpdateFirestoreDb'] = safeUpdateFirestoreDb;
+
+
+    function addRealtimeDb ( iNcollection, iNpath, iNdata ) {
+            /*
+                @disrc
+                    start sendidng flesh msg to firebase db
+                @inputs
+                    @required
+                        iNdata -> object
+                            type
+                            data
+            */
+            var baseKey = iNcollection + '/' + iNpath;
+            Datebase().ref(baseKey).set(iNdata);
+    }
+    _['addRealtimeDb'] = addRealtimeDb;
+
+    function addFirestoreDb ( iNcollection, iNpath, iNdata , iNfunctions) {
+            /*
+                @disrc
+                @inputs
+                    @required
+                        iNdata -> object
+                            type
+                            data
+                    @optional
+                        iNfunctions -> function
+                            onSuccess -> function
+                            onError -> function
+            */
+            if(typeof iNfunctions != 'object') iNfunctions = {}
+            var baseKey = iNcollection + '/' + iNpath,
+                ref,
+                typeAdd;
+
+
+            var lengthBaseKey = baseKey.split('/').length;
+            console.log('addFirestoreDb baseKey,lengthBaseKey',baseKey,lengthBaseKey );
+            if(lengthBaseKey  % 2 == 0) {
+                ref = Datebase2().doc(baseKey);
+                typeAdd = 'set';
+            } else {
+                ref = Datebase2().collection(baseKey);
+                typeAdd = 'add';
+            }
+
+
+            console.log("addFirestoreDb typeAdd ", typeAdd);
+            console.log("addFirestoreDb iNdata ", iNdata);
+            return ref[typeAdd](iNdata).then(function(docRef) {
+                console.log("addFirestoreDb Document written with ID: ", docRef);
+                if(typeof iNfunctions['onSuccess'] == 'function' ) iNfunctions['onSuccess']();
+            })
+            .catch(function(error) {
+                console.log("addFirestoreDb  error", error);
+                if(typeof iNfunctions['onError'] == 'function' ) iNfunctions['onError']();
+            });
+    }
+    _['addFirestoreDb'] = addFirestoreDb;
+
+
+    function getSeverVarTimestamp () {
+        return FIREBASE.database.ServerValue.TIMESTAMP ;
+    }
+    _['getSeverVarTimestamp'] = getSeverVarTimestamp;
+
+    function getFirestoreSeverVarTimestamp () {
+        return FIREBASE.firestore.FieldValue.serverTimestamp();
+    }
+    _['getFirestoreSeverVarTimestamp'] = getFirestoreSeverVarTimestamp;
+
+
+    function isFirestoreLocalMutation (doc) {
+        console.log('isFirestoreLocalMutation doc',doc);
+        return doc.et.hasLocalMutations;
+    }
+    _['isFirestoreLocalMutation'] = isFirestoreLocalMutation;
+
+
+
+    function generateIdForRealtimeDbByFullPathToDb (iNcollection,iNpath) {
+      var path = iNcollection + '/' + iNpath;
+      var generateIdForRealtimeDbByFullPathToDb = Datebase().ref().child(path).push().key;
+      return generateIdForRealtimeDbByFullPathToDb;
+    }
+    _['generateIdForRealtimeDbByFullPathToDb'] = generateIdForRealtimeDbByFullPathToDb;
+
+
+    function generateIdForFirestoreByFullPathToDb (iNcollection,iNpath) {
+      var path = iNcollection + '/' + iNpath;
+
+      console.log('generateIdForFirestoreByFullPathToDb path', path);
+      var generateIdForRealtimeDbByFullPathToDb = Datebase2().collection(path).doc();
+      return generateIdForRealtimeDbByFullPathToDb.id;
+    }
+    _['generateIdForFirestoreByFullPathToDb'] = generateIdForFirestoreByFullPathToDb;
+
+    function getDataFromRealtimeDb (iNcollection, iNpath, iNdata) {
+        /*
+            @inputs
+                @required
+                    iNcollection    -> string
+                    iNpath          -> string
+                @optional
+                    iNdata -> object
+                        limitToLast -> number
+                        order       -> array
+                        type        -> string
+                            all (Default)
+                            child_added
+                            child_removed
+                            child_changed
+                            child_moved
+                        functionOnSuccess
+        */
+        if( typeof iNdata != 'object') iNdata = {};
+        var path    = iNcollection + '/' + iNpath;
+        var ref     = Datebase().ref(path);
+        var type    = iNdata['type']||'all';
+        var functionOnSuccess   = iNdata['functionOnSuccess']||function(){};
+        var functionOnError     = iNdata['functionOnError']||function(){};
+        
+        if( typeof iNdata['order'] != 'undefined' ) {
+            var order = iNdata['order'];
+            if ( !Array.isArray(order)  ) order = [order];
+            for (var iKey in order ) {
+                ref.orderByChild( order[iKey] );
+            }
+        }
+
+        if( typeof iNdata['limitToLast'] == 'number' ) {
+            var limit = iNdata['limitToLast'];
+            ref.limitToLast( limit );
+        }
+
+        switch (type) {
+            case "all": 
+                ref.on('value',functionOnSuccess,functionOnError)
+            break;
+            case "child_added": 
+                ref.on('child_added',functionOnSuccess,functionOnError)
+            break;
+            case "child_removed": 
+                ref.on('child_removed',functionOnSuccess,functionOnError)
+            break;
+            case "child_moved": 
+                ref.on('child_moved',functionOnSuccess,functionOnError)
+            break;
+        }
+
+    }
+    _['getDataFromRealtimeDb'] = getDataFromRealtimeDb;
+
+    function getDataFromFirestoreDb (iNcollection,iNpath, iNdata) {
+        /*
+            @inputs
+                @required
+                    iNcollection    -> string
+                    iNpath          -> string
+                @optional
+                    iNdata -> object
+                        limitToLast -> number
+                        order       -> array
+
+                        functionOnGetEmpty 
+                        functionOnGetData
+
+        */
+         var path    = iNcollection, ref, where, type, counterForTypeDoc = 0;
+            if(typeof(iNpath) == 'string' &&  iNpath.length > 0) 
+                path = path + '/' +  iNpath;
+
+            if(path.split('/').length % 2 == 0) {
+                // its document
+                    ref = Datebase2().doc(path);
+                    type = 'document';
+            } else {
+                // its collection
+                    ref = Datebase2().collection(path);
+                    type = 'collection';
+            }
+                
+        console.log('getRealtimeDataFromFirestoreDb path',path);
+
+        iNdata['where'] = iNdata['where'] || [];
+
+        //@<ORDER
+            if( typeof iNdata['order'] != 'undefined' || typeof iNdata['orderByAsc'] != 'undefined') {
+                var order = iNdata['order']||iNdata['orderByAsc'];
+                if ( !Array.isArray(order)  ) order = [order];
+                for (var iKey in order ) {
+                    ref = ref.orderBy( order[iKey] );
+                }
+            }
+
+            if( typeof iNdata['orderByDesc'] != 'undefined' ) {
+                var order = iNdata['orderByDesc'];
+                if ( !Array.isArray(order)  ) order = [order];
+                for (var iKey in order ) {
+                    ref = ref.orderBy ( order[iKey] , "desc" );
+                }
+            }
+        //@ORDER>
+
+        //@<WHERE
+            console.log( 'whereEquilTo', typeof iNdata['whereEquilTo'] , Array.isArray( iNdata['whereEquilTo'] ) );
+            if( typeof iNdata['whereEquilTo'] == 'object' && Array.isArray(iNdata['whereEquilTo']) ) {   // ==
+                    where = iNdata['whereEquilTo'];
+                    console.log('whereEquilTo', where);
+                    for(var iKey in where) {
+                        let key     = Object.keys( where[iKey] )[0],
+                            value   = where[iKey][key];
+                        iNdata['where'].push(
+                            {
+                                'key'   : key,
+                                'value' : value,
+                                'mark'  : '==',
+                            }
+                        );
+                    }
+                    console.log('whereEquilTo where',iNdata['where']);
+            }
+            if( typeof iNdata['whereMore'] == 'object' ) {      // ==
+                    where = iNdata['whereMore'];
+                    for(var iKey in where) {
+                        let key     = Object.keys( where[iKey] )[0],
+                            value   = where[iKey][key];
+                        iNdata['where'].push(
+                            {
+                                'key'   : key,
+                                'value' : value,
+                                'mark'  : ">"
+                            }
+                        );
+                    }
+            }
+            if( typeof iNdata['whereMoreOrEquil'] == 'object' ) { // ==
+                    where = iNdata['whereMoreOrEquil'];
+                    for(var iKey in where) {
+                        let key     = Object.keys( where[iKey] )[0],
+                            value   = where[iKey][key];
+                        iNdata['where'].push(
+                            {
+                                'key'   : key,
+                                'value' : value,
+                                'mark'  : ">="
+                            }
+                        );
+                    }
+            }
+
+            if( typeof iNdata['whereLess'] == 'object' ) { // ==
+                    where = iNdata['whereLess'];
+                    for(var iKey in where) {
+                        iNdata['where'].push(
+                            {
+                                'key'   : iKey,
+                                'value' : where[iKey],
+                                'mark'  : "<"
+                            }
+                        );
+                    }
+            }
+            if( typeof iNdata['whereLessOrEquil'] == 'object' ) { // ==
+                    where = iNdata['whereLessOrEquil'];
+                    for(var iKey in where) {
+                        iNdata['where'].push(
+                            {
+                                'key'   : iKey,
+                                'value' : where[iKey],
+                                'mark'  : "<="
+                            }
+                        );
+                    }
+            }
+
+            //add all
+            if( typeof iNdata['where'] == 'object' ) {
+                var where = iNdata['where'];
+                    console.log("getRealtimeDataFromFirestoreDb where", JSON.stringify(where) );
+
+                for(var iKey in where) {
+                    var thisWhere = where[iKey];
+                    console.log("getRealtimeDataFromFirestoreDb iNdata['where']",thisWhere['key'], thisWhere['mark'], thisWhere['value'])
+                    ref = ref.where(thisWhere['key'], thisWhere['mark'], thisWhere['value'])
+                }
+            }
+        //@WHERE>
+
+        //@<LIMIT
+            if( typeof iNdata['limit'] == 'number' ) {
+                var limit = iNdata['limit'];
+                ref = ref.limit( limit );
+            }
+                //
+                if( typeof iNdata['limitToLast'] == 'number' ) {
+                    var limit = iNdata['limitToLast'];
+                    ref = ref.orderBy("time", "desc")
+                    ref = ref.limit( limit );
+                }
+                //
+                if( typeof iNdata['limitToFirst'] == 'number' ) {
+                    var limit = iNdata['limitToFirst'];
+                    ref = ref.orderBy("time", "asc")
+                    ref = ref.limit( limit );
+                }
+        //@LIMIT>
+
+        ref.get( 
+        (doc) => {
+            if(type == 'collection') {
+                    // if collection
+                    if ( !doc.empty ) {
+                        if(typeof iNdata['functionOnGetData'] == 'function') iNdata['functionOnGet'](doc,type);
+                    } else {
+                        if(typeof iNdata['functionOnGetEmpty'] == 'function') iNdata['functionOnGetEmpty'](type);
+                    }
+            } else {
+                if (doc.exists) {
+                    if(typeof iNdata['functionOnGetData'] == 'function') iNdata['functionOnGet']([doc],type);
+                } else {
+                    if(typeof iNdata['functionOnGetEmpty'] == 'function') iNdata['functionOnGetEmpty'](type);
+                }
+            }
+        });
+    }
+    _['getDataFromFirestoreDb'] = getDataFromFirestoreDb;
+
+    function getRealtimeDataFromFirestoreDb (iNcollection,iNpath, iNdata) {
+        /*
+            @inputs
+                @required
+                    iNcollection    -> string
+                    iNpath          -> string
+                @optional
+                    iNdata -> object
+                        limitToLast -> number
+                        order       -> array
+                        functionOnSuccess
+                        functionOnError
+                        functionOnDelete
+                        functionOnAdd
+
+                        functionOnChange
+                        functionOnChangeFromLocal 
+                        functionOnChangeFromServer
+
+                        functionOnOther
+
+        */
+        var path    = iNcollection, ref, where, type, counterForTypeDoc = 0;
+            if(typeof(iNpath) == 'string' &&  iNpath.length > 0) 
+                path = path + '/' +  iNpath;
+
+            if(path.split('/').length % 2 == 0) {
+                // its document
+                    ref = Datebase2().doc(path);
+                    type = 'document';
+            } else {
+                // its collection
+                    ref = Datebase2().collection(path);
+                    type = 'collection';
+            }
+                
+        console.log('getRealtimeDataFromFirestoreDb path',path);
+
+        iNdata['where'] = iNdata['where'] || [];
+
+        //@<ORDER
+            if( typeof iNdata['order'] != 'undefined' || typeof iNdata['orderByAsc'] != 'undefined') {
+                var order = iNdata['order']||iNdata['orderByAsc'];
+                if ( !Array.isArray(order)  ) order = [order];
+                for (var iKey in order ) {
+                    ref = ref.orderBy( order[iKey] );
+                }
+            }
+
+            if( typeof iNdata['orderByDesc'] != 'undefined' ) {
+                var order = iNdata['orderByDesc'];
+                if ( !Array.isArray(order)  ) order = [order];
+                for (var iKey in order ) {
+                    ref = ref.orderBy ( order[iKey] , "desc" );
+                }
+            }
+        //@ORDER>
+
+        //@<WHERE
+            console.log( 'whereEquilTo', typeof iNdata['whereEquilTo'] , Array.isArray( iNdata['whereEquilTo'] ) );
+            if( typeof iNdata['whereEquilTo'] == 'object' && Array.isArray(iNdata['whereEquilTo']) ) {   // ==
+                    where = iNdata['whereEquilTo'];
+                    console.log('whereEquilTo', where);
+                    for(var iKey in where) {
+                        let key     = Object.keys( where[iKey] )[0],
+                            value   = where[iKey][key];
+                        iNdata['where'].push(
+                            {
+                                'key'   : key,
+                                'value' : value,
+                                'mark'  : '==',
+                            }
+                        );
+                    }
+                    console.log('whereEquilTo where',iNdata['where']);
+            }
+            if( typeof iNdata['whereMore'] == 'object' ) {      // ==
+                    where = iNdata['whereMore'];
+                    for(var iKey in where) {
+                        let key     = Object.keys( where[iKey] )[0],
+                            value   = where[iKey][key];
+                        iNdata['where'].push(
+                            {
+                                'key'   : key,
+                                'value' : value,
+                                'mark'  : ">"
+                            }
+                        );
+                    }
+            }
+            if( typeof iNdata['whereMoreOrEquil'] == 'object' ) { // ==
+                    where = iNdata['whereMoreOrEquil'];
+                    for(var iKey in where) {
+                        let key     = Object.keys( where[iKey] )[0],
+                            value   = where[iKey][key];
+                        iNdata['where'].push(
+                            {
+                                'key'   : key,
+                                'value' : value,
+                                'mark'  : ">="
+                            }
+                        );
+                    }
+            }
+
+            if( typeof iNdata['whereLess'] == 'object' ) { // ==
+                    where = iNdata['whereLess'];
+                    for(var iKey in where) {
+                        iNdata['where'].push(
+                            {
+                                'key'   : iKey,
+                                'value' : where[iKey],
+                                'mark'  : "<"
+                            }
+                        );
+                    }
+            }
+            if( typeof iNdata['whereLessOrEquil'] == 'object' ) { // ==
+                    where = iNdata['whereLessOrEquil'];
+                    for(var iKey in where) {
+                        iNdata['where'].push(
+                            {
+                                'key'   : iKey,
+                                'value' : where[iKey],
+                                'mark'  : "<="
+                            }
+                        );
+                    }
+            }
+
+            //add all
+            if( typeof iNdata['where'] == 'object' ) {
+                var where = iNdata['where'];
+                    console.log("getRealtimeDataFromFirestoreDb where", JSON.stringify(where) );
+
+                for(var iKey in where) {
+                    var thisWhere = where[iKey];
+                    console.log("getRealtimeDataFromFirestoreDb iNdata['where']",thisWhere['key'], thisWhere['mark'], thisWhere['value'])
+                    ref = ref.where(thisWhere['key'], thisWhere['mark'], thisWhere['value'])
+                }
+            }
+        //@WHERE>
+
+        //@<LIMIT
+            if( typeof iNdata['limit'] == 'number' ) {
+                var limit = iNdata['limit'];
+                ref = ref.limit( limit );
+            }
+                //
+                if( typeof iNdata['limitToLast'] == 'number' ) {
+                    var limit = iNdata['limitToLast'];
+                    ref = ref.orderBy("time", "desc")
+                    ref = ref.limit( limit );
+                }
+                //
+                if( typeof iNdata['limitToFirst'] == 'number' ) {
+                    var limit = iNdata['limitToFirst'];
+                    ref = ref.orderBy("time", "asc")
+                    ref = ref.limit( limit );
+                }
+        //@LIMIT>
+
+        ref.onSnapshot( 
+        (snapshot) => {
+            if(type == 'collection') {
+                    if ( snapshot.docChanges.length > 0 )
+                        snapshot.docChanges.forEach( function (change) {
+                            if (change.type === "added") {
+                                if(typeof iNdata['functionOnAdd'] == 'function')
+                                    iNdata['functionOnAdd'](change.doc);
+                            }
+                            if (change.type === "modified") {
+
+                                if(typeof iNdata['functionOnChange'] == 'function')
+                                    iNdata['functionOnChange'](change.doc);
+
+                                if(isFirestoreLocalMutation(change.doc)) {
+                                    if(typeof iNdata['functionOnChangeFromLocal'] == 'function')
+                                        iNdata['functionOnChangeFromLocal'](change.doc);
+
+                                } else { 
+                                    if(typeof iNdata['functionOnChangeFromServer'] == 'function')
+                                        iNdata['functionOnChangeFromServer'](change.doc);
+
+                                }
+                            }
+                            if (change.type === "removed") {
+                                if(typeof iNdata['functionOnDelete'] == 'function')
+                                    iNdata['functionOnDelete'](change.doc);
+                            }
+                        });
+                    else {
+                        if(typeof iNdata['functionOnOther'] == 'function')
+                            iNdata['functionOnOther'](snapshot);
+                    } 
+            } else {
+                var doc = snapshot;
+                if (doc.exists)  {
+                    var source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+
+                    if (counterForTypeDoc < 1) {
+                        // if firt get add from db
+                        if(typeof iNdata['functionOnAdd'] == 'function') iNdata['functionOnAdd']( doc );
+                        if (source == 'Local') {
+                            // if local add functionOnChangeFromLocal
+                            if(typeof iNdata['functionOnAddFromLocal'] == 'function') iNdata['functionOnAddFromLocal']( doc );
+                        } else {
+                            // if server add functionOnAddFromServer
+                            if(typeof iNdata['functionOnAddFromServer'] == 'function') iNdata['functionOnAddFromServer']( doc );
+                        }
+                    } else {
+                        // if we get change 
+                        if(typeof iNdata['functionOnChange'] == 'function') iNdata['functionOnChange']( doc );
+                        if (source == 'Local') {
+                            // if local add functionOnChangeFromLocal
+                            if(typeof iNdata['functionOnChangeFromLocal'] == 'function') iNdata['functionOnChangeFromLocal']( doc );
+                        } else {
+                            // if server add functionOnAddFromServer
+                            if(typeof iNdata['functionOnChangeFromServer'] == 'function') iNdata['functionOnChangeFromServer']( doc );
+                        }
+                    }
+
+                    // increase counter -> we would to recognize difference change and add
+                    counterForTypeDoc++;
+                } else if ( typeof iNdata['functionOnOther'] == 'function' ) {
+                    iNdata['functionOnOther']();
+                }
+                            
+            }
+        });
+    }
+    _['getRealtimeDataFromFirestoreDb'] = getRealtimeDataFromFirestoreDb;
+
+    function getData (iNcollection, iNpath, iNdata) {
+        /*
+            @inputs
+                @required
+                    iNcollection    -> string
+                    iNpath          -> string
+                @optional
+                    iNdata -> object
+                        limitToLast -> number
+                        order       -> array
+                        type        -> string
+                            all
+                            child_added
+                            child_removed
+                            child_changed
+                            child_moved
+                        functionOnSuccess
+        */
+        if( typeof iNdata != 'object') iNdata = {};
+        var path    = iNcollection + '/' + iNpath;
+        var ref     = Datebase().ref(path);
+        var type    = iNdata['type']||'all';
+        var functionOnSuccess   = iNdata['functionOnSuccess']||function(){};
+        var functionOnError     = iNdata['functionOnError']||function(){};
+        
+        if( typeof iNdata['order'] != 'undefined' ) {
+            var order = iNdata['order'];
+            if ( !Array.isArray(order)  ) order = [order];
+            for (var iKey in order ) {
+                ref.orderByChild( order[iKey] );
+            }
+        }
+
+        if( typeof iNdata['limitToLast'] == 'number' ) {
+            var limit = iNdata['limitToLast'];
+            ref.limitToLast( limit );
+        }
+
+        switch (type) {
+            case "all": 
+                ref.once('value',functionOnSuccess,functionOnError)
+            break;
+            case "child_added": 
+                ref.once('child_added',functionOnSuccess,functionOnError)
+            break;
+            case "child_removed": 
+                ref.once('child_removed',functionOnSuccess,functionOnError)
+            break;
+            case "child_moved": 
+                ref.once('child_moved',functionOnSuccess,functionOnError)
+            break;
+        }
+
+    }
+    _['getData'] = getData;
+
+    return _;
+});
 /*! Simple JavaScript Inheritance
  * By John Resig http://ejohn.org/
  * MIT Licensed.
@@ -9588,8 +10268,163 @@ define("jquery.countdown", ["jquery","jquery.plugin"], (function (global) {
     };
 }(this)));
 
-define('m_user',['jquery','m_firebase','dictionary','m_view','m_app','url','jquery.countdown'], function ($,FIREBASE,DICTIONARY,M_VIEW,M_APP,URL) {
+define(
+	'm_user',['jquery','m_firebase','dictionary','m_view','m_app','url','localdb', 'm_database', 'jquery.countdown'], 
+	function ($, FIREBASE, DICTIONARY, M_VIEW, M_APP, URL, LOCALDB, M_DATABASE ) {
   	const _ = {};
+
+
+  	//@< ACTIVE USER - get choosen user from pseudo OR myUserId
+  		function getActiveUserId () {
+  			/*
+  				@discr
+  					get active user pseudo or i
+  				@inputs
+  					@required
+  			*/
+  			var key = LOCALDB.db.val.activeUser;
+  			return window[key]||getMyId();
+  		} _.getActiveUserId = getActiveUserId;
+
+  		function setActiveUserId (iNuid) {
+  			/*
+  				@discr
+  					set active user pseudo or i
+  				@inputs
+  					@required
+  						iNuid -> string
+  			*/
+  			var key = LOCALDB.db.val.activeUser;
+  			window[key] = iNuid;
+  			return true;
+  		} _.setActiveUserId = setActiveUserId;
+  	//@> ACTIVE USER - get choosen user from pseudo OR myUserId
+
+  	//@< GET USER FROM DB - get user from db
+  		const userData_const_keyForLocalStorage = 'connectUserData';
+
+
+  		function userData_getByUid (iNuid, iNfuntion) {
+  			/*
+  				@discr
+  					get active user pseudo or i
+  				@inputs
+  					@required
+  						iNuid -> string
+  						iNfuntion -> function
+  							@with param (err,dataFromUser)
+  			*/
+  			var objFromLocalStorage = userData_getByUidFromLocalStorage (iNuid)
+  			// if we have data in local storage
+  			if (objFromLocalStorage){
+  				iNfuntion(false,objFromLocalStorage);
+  				return;
+  			}
+  			// if have no dat in local storage we get grom db
+  			userData_getByUidFromDb (iNuid, iNfuntion);
+
+  		} _.userData_getByUid = userData_getByUid;
+
+  		function userData_getByUidFromDb (iNuid, iNfuntion) {
+  			/*
+  				@discr
+  					get active user pseudo or i
+  				@inputs
+  					@required
+  						iNuid -> string
+  						iNfuntion -> function
+  			*/
+  			var uid = iNuid, objForAddToLocalStorage = {};
+  			
+
+            var objectForGetFromDb = {
+                'functionOnAdd'             :    (userData) => {
+                    // if added user
+                    objForAddToLocalStorage 		= userData.data();
+                    // add user id
+                    objForAddToLocalStorage['id'] 	= userData.id;
+                    // safe data
+                    userData_setToLocalStorageByUid (iNuid,objForAddToLocalStorage);
+                    iNfuntion(false, userData.data())
+                },
+                'functionOnChange': (userData) => {
+                    // if change user
+                    objForAddToLocalStorage 		= userData.data();
+                    // add user id
+                    objForAddToLocalStorage['id'] 	= userData.id;
+                    // safe data
+                    userData_setToLocalStorageByUid (iNuid, objForAddToLocalStorage);
+                    iNfuntion(false, userData.data())
+                }
+                ,
+                'functionOnOther'           : () => { 
+                    // if not data
+                    iNfuntion(true);
+                }
+            };
+
+            M_DATABASE.getRealtimeDataFromFirestoreDb('users', uid , objectForGetFromDb);
+  			
+  		}
+
+  		function userData_getByUidFromLocalStorage (iNuid) {
+  			/*
+  				@discr
+  					get active user pseudo or i
+  				@inputs
+  					@required
+  						iNuid -> string
+  			*/
+  			var objFromDb 	= userData_getFromLocalStorage();
+  			if ( typeof objFromDb != 'object' || !objFromDb[iNuid] ) {
+  				// ERROR in we has not data in oject
+  				return false;
+			}
+
+			return objFromDb[iNuid];
+		}
+
+		function userData_getFromLocalStorage () {
+  			/*
+  				@discr
+  					get active user pseudo or i
+  				@inputs
+  					@required
+  			*/
+  			var stringFromDb 		= M_APP.get(userData_const_keyForLocalStorage);
+
+			if( !stringFromDb ) {
+  				// ERROR in local storage has not data
+  				return false;
+  			}
+
+  			return JSON.parse(stringFromDb)||false;
+		}
+
+  		function userData_setToLocalStorageByUid (iNuid,iNdata) {
+  			/*
+  				@discr
+  					set userData to localstorage by uid
+  				@inputs
+  					@required
+  						iNuid -> string
+  						iNdata -> ojbect (from firestor db user/$uid)
+  			*/
+  			var userObject = userData_getFromLocalStorage();
+  			if ( typeof userObject != 'object' ) {
+  				// we has not yet local storage
+  				userObject = {};
+  			}
+  			// add object to userId
+  			userObject[iNuid] = iNdata;
+
+  			// save to db
+  			M_APP.save ( userData_const_keyForLocalStorage, JSON.stringify(userObject) );
+  			
+
+  		}
+  	//@> GET USER FROM DB - get user from db
+
 	//@@@<<< USER
 		function getUserCountry() {
 			return M_APP.get('ConnectUserCountry');
@@ -12636,7 +13471,7 @@ define("jquery.appear", ["jquery"], (function (global) {
     };
 }(this)));
 
-define('v_app-chat',[ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'jquery.appear'],function( $, Template7,V_APP ,DICTIONARY,MOMENT) {
+define('v_app-chat',[ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'jquery.appear'], function ( $, Template7, V_APP , DICTIONARY, MOMENT ) {
 	const _ = {};
 	const CONST = {'name':'base','pageIndex':'index'};
 	const templates = {};
@@ -12826,6 +13661,9 @@ define('v_app-chat',[ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'j
 		}
 		var objForAddHeader = {'app':CONST['name'],page: CONST['pageIndex']};
 			objForAddHeader['content'] = getAppHeaderForIndexPage (iNdata);
+
+			objForAddHeader['withReplace'] = 1;
+			
 		V_APP.safeViewAppHeaderWithContent(objForAddHeader,iNtype);
 	}
 
@@ -12883,6 +13721,34 @@ define('v_app-chat',[ 'jquery', 'template7', 'v_app','dictionary','m_moment', 'j
 			var temp = Template7.compile(templates['chatContainer']);
 			return temp(iNdata);
     	}
+
+
+
+	//@< COLOR FOR USER IN CHAT
+		const userColor_array = 
+["#9A12B3","#005031","#205E3B","#3C1362","#3B0053","#AA0000","#B11030","#552F00","#2A5547","#00008B","#114C2A","#0000B5","#4B6A88","#000036","#804600","#804028","#522032","#34385E","#5A4586","#550000","#600060","#294429","#552A1B","#345A5E","#002A15","#1E824C","#2A150D","#332533","#634806","#545454","#123622","#007A7C","#7659B6","#004055","#591D77","#8B0000","#5A440D","#3E3E3E","#0000E0","#483C0C","#360000","#4D6066","#22313F","#5D1212","#34495E","#4B5555","#555555","#32050E","#0C2231","#D50000","#2B0000","#8E44AD","#8D6708","#16405B","#4F5A65","#2E456D","#406098","#34515E","#152A23","#886288","#E00000","#2C3E50","#34415E","#0A3055","#923026","#A74165","#2A2A22","#00552A","#1F3A93","#555344","#2A002A","#600000","#856514","#320A0A","#360036","#C0392B","#336E7B","#002A2A","#002A00","#3A539B","#382903","#9932CC","#1C2833","#554800","#008040","#006060","#552118","#BC3E31","#806C00","#00202A","#561B8D","#913D88","#3A4D13","#20603C","#765AB0","#1460AA","#726012","#3D2F5B","#39134C","#1C2A43","#252A2A","#80503D","#58007E","#674172","#663399","#4A321D","#77448B","#B22222","#003636","#292929","#7600A8","#1D0029","#2B390E","#800000","#2E1B36","#1B7742","#2E343B","#CF000F","#134D13","#7023B7","#7928A1","#008000","#67221B","#002627","#2B2B2B","#3455DB","#3C2109","#871A1A","#006080","#005051","#002517","#4B6319","#5E50B5","#870C25","#8859B6","#1C1836","#8B008B","#800080","#AA2E00","#005555","#D91E18","#7D314C","#082213","#744E2E","#696969","#802200","#000060","#9400D3","#315131","#AA5535","#436E43","#172617","#3D1410","#803224","#96281B","#1A2309","#220B38","#2D383C","#05182A","#8A2BE2","#0F4880","#66380F","#1D781D","#2574A9","#005500","#205D86","#550055","#007a4b","#2A2A2A","#113321","#5D445D","#AA422F","#B50000","#483D8B","#AA00AA","#B500B5","#211931","#322A60","#5C0819","#532F61"];
+
+
+		
+		function userColor_getByNumber (iNumber) {
+			/*
+				@discr
+					safe get color by number for user from collorArray
+				@inputs
+					@required
+						iNumber -> number
+			*/
+			iNumber = Math.abs(iNumber)
+
+			if ( iNumber >= userColor_array.length ) {
+				var exceedCount = Math.floor ( iNumber / userColor_array.length )
+
+				iNumber = iNumber - (userColor_array.length * exceedCount);
+			}
+
+			return userColor_array[iNumber];//
+		} _.userColor_getByNumber = userColor_getByNumber;
+	//@> COLOR FOR USER IN CHAT
 
 	return _;
 });
@@ -13052,16 +13918,19 @@ define(
 		//@<SECTION common time
 		  	templates['msg_commonTimeFromMeBlock'] = `
 				<div class="lineInFromMeMessage">
-			      <div class="lineInBoxInLine">
-			         
-				         <div class="topCircleInMessages" {{#if timeSentText}}{{else}}{{/if}}></div>
-				         <div class="timeTopInMessages">{{timeSentText}}</div>
-			         
-
-			        <div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
-		         	<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
-
-			      </div>
+					<div class="userIconBlock">
+						<img src="{{userIcon}}">
+				  	</div>
+					<div class="userNameBlock"> 
+					  <span class="userLogin">{{userName}}</span>
+					</div>
+					<div class="lineInBoxInLine">
+						<div class="topCircleInMessages" {{#if timeSentText}}{{else}}{{/if}}></div>
+						<div class="timeTopInMessages">{{timeSentText}}</div>
+					 
+						<div class="botCircleInMessages" {{#if timeDeliveredText}}{{else}}style="display:none;"{{/if}}  {{#if timeDeliveredText}}title="{{timeDeliveredText}}"{{/if}}></div>
+						<div class="timeBotInMessages" {{#if timeReadText}}{{else}}style="display:none;"{{/if}}>{{#if timeReadText}}{{timeReadText}}{{/if}}</div>
+					</div>
 			   </div>
 		  	`;
 		  		function msg_getTemplateByNameCommonTimeFromMeBlock (iNdata) {
@@ -13076,7 +13945,14 @@ define(
 
 			templates['msg_commonTimeToMeBlock'] = `
 				<div class="lineInToMeMessage">
-			   		<div class="lineInBoxInLine">
+					<div class="userIconBlock">
+						<img src="{{userIcon}}"><!-- style='border-color:{{color}}' -->
+				  	</div>
+					<div class="userNameBlock" style='color:{{color}}'> 
+					  <span class="userLogin">{{userName}}</span>
+					</div>
+					
+			   		<div class="lineInBoxInLine" ><!-- style='background-color:{{color}}' -->
 						 
 						<div class="topCircleInMessages" {{#if timeSentText}}{{else}}style="display:none;"{{/if}}></div>
 						<div class="timeTopInMessages" {{#if timeSentText}}{{else}}style="display:none;"{{/if}}>{{timeSentText}}</div>
@@ -14141,7 +15017,11 @@ define(
   				var value =  $('#forTextInputInSenderBlock textarea').val();
   				if(value == '') return true;
 			    iNdata['simpleMsgText_onClickSendBtn'](e);
+			    // clear 'textarea'  
 			    $('#forTextInputInSenderBlock textarea').val('');
+			    // trigger 'keyup' for auto change mode to sendAudio or sendVideo
+			    $('#forTextInputInSenderBlock textarea').trigger('keyup');
+			    // scroll to bot
 			    effChatViewScrollToBotSafe();
   			});
 
@@ -14158,20 +15038,16 @@ define(
   		$("#forTextInputInSenderBlock textarea").off('keydown keyup');
 		$("#forTextInputInSenderBlock textarea").keydown( function(e) { 
 	    var code = e.which; // recommended to use e.which, it's normalized across browsers
-
-
-	    
-	    if (code==13) {
-	    	e.preventDefault();
-	    	$('#sendTextButtonInSenderBlock').trigger('click');
-	    }
+			// if we pressed 'enter' we send message
+		    if (code==13) {
+		    	e.preventDefault();
+		    	$('#sendTextButtonInSenderBlock').trigger('click');
+		    }
 		}).keyup(function (e) {
 			var code = e.which; // recommended to use e.which, it's normalized across browsers
 
-			
-
-
-		    if (code==13) {
+			// if we pressed 'enter' we off line break 
+			if (code==13) {
 		    	e.preventDefault();
 		    } else {
 
@@ -15495,7 +16371,7 @@ define(
 	  	{{/each}}
     `;
     templates['UserList'] = `
-		<div class="mix usersBlockInMenusBlock {{appsForFilter}} {{class}}" connect_uid="{{userId}}" {{#if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" data-sortable="1" data-position-of-chat='{{chatPosition}}' connect_toUserId='{{toUserId}}' connect_owner='{{owner}}' connect_userType='{{userType}}' connect_chatType='{{chatType}}' connect_userLogin='{{login}}'>
+		<div class="mix usersBlockInMenusBlock {{appsForFilter}} {{class}} forUserId_{{toUserId}} owner_{{owner}}" connect_uid="{{userId}}" {{#if userHasMenu}}connect_userHasMenu = '1' {{/if}} connect_chatid="{{chatId}}" data-lastmsgtime="{{lmsgTime}}" data-sortable="1" data-position-of-chat='{{chatPosition}}' connect_toUserId='{{toUserId}}' connect_owner='{{owner}}' connect_userType='{{userType}}' connect_chatType='{{chatType}}' connect_userLogin='{{login}}'>
 			<div class='chatDataInUsersBlock'>
 				<div class="iconBlockInUserBlock">
 			      <div class="iconInUserBlock">
@@ -15854,7 +16730,7 @@ define(
         	M_APP.view.convertDomElementToAppLink (selector,objForCreateLink);
 		} else {
 			// if this has not menu -> open app 'chat' page 'index'
-			var dataForOpenApp = 'chatName='+obj['chatName']+'&chatId='+obj['chatId']+'&chatIcon='+obj['chatIcon']+'&userLogin='+obj['login']+'&uid='+obj['uid']+'&chatType=' + obj['chatType'];
+			var dataForOpenApp = 'chatName='+obj['chatName']+'&chatId='+obj['chatId']+'&chatIcon='+obj['chatIcon']+'&userLogin='+obj['login']+'&userId='+obj['uid']+'&chatType=' + obj['chatType']+'&forUserId=' + USER.getActiveUserId();
 
         	//< safe add online
             	let thisOnline 			= $(pathToThisChat).attr('connect_online');
@@ -16144,6 +17020,7 @@ define(
 							lastMsgTimeText
 							lastMsgTime
 		*/
+		console.log('createPrivateChatListIfNotExist INVOKE',iNdata);
 		if(typeof iNdata != 'object') iNdata = {};
 		let chatSelector = getPathToChatByUserId(iNdata['userId']);
 		// create if not exist
@@ -16168,6 +17045,9 @@ define(
 		if(typeof iNdata['chatPosition'] != 'number') iNdata['chatPosition'] = 999;
 		var content = DICTIONARY.withString ( getUserListTemplate ( iNdata ) );
 		let mixer = output['sortMixitUpObject'];
+
+		console.log('createChatList - iNdata',iNdata);
+		console.log('createChatList - content',content);
 
 		mixer.insert($(content)).then(function(state) {
 	        if(typeof iNfunction == 'function') iNfunction();
@@ -16320,7 +17200,10 @@ define(
 		    	{
 		    		load: {
 		    			'sort' : 'position-of-chat:asc lastmsgtime:desc',
-		    		}
+		    		},
+		    		animation: {
+				        queueLimit: 999
+				    }
 		    	}
 	    	);
 		} _['initSort'] = initSort;
@@ -16340,12 +17223,28 @@ define(
 		    if(typeof(output['sortMixitUpObject']) != 'undefined') {
 		    	var mixer = output['sortMixitUpObject'],block = {};
 		    	if( typeof(iNdata) != 'object' ) iNdata = {};
-		    		var sort, sortdefault, filter;
+		    		var sort, sortdefault, filter = '', prefixForUserId = '.forUserId_', activeUserId = USER.getActiveUserId();
+
 				    if( typeof(iNdata.filter) == 'string' )      
 				    	filter 		=  iNdata.filter;
 				    else {
 				    	filter 		=  chat_getGlobalFilter();
 				    }
+
+				    // if passed active user we set, but by default is now activeUserId
+				    if( typeof(iNdata.forUserId) == 'string' ) {
+				    	//view  for  
+				    	activeUserId 		==  forUserId;
+				    }
+
+				    if ( filter == 'all' ) {
+				    	// if filter is ALL view without app type
+				    	filter 		=  prefixForUserId + activeUserId;
+				    } else {
+				    	// view special users for active userId
+				    	filter 		+=  prefixForUserId + activeUserId;
+				    }
+				    console.log('startEffSortChats - filter',filter);
 
 				    if( typeof(iNdata.sort)  == 'string' )       
 				    	sort 		=  iNdata.sort;
@@ -16780,14 +17679,15 @@ define(
 	        	$('.viewCategoryPrompt').click( 
 	        		(event) =>  {
 			            var thisUserId          = $(event.target).attr('categoryUserId'),
-			                thisUserLogin       = $(event.target).attr('categoryUserLogin');
+			                thisUserLogin       = $(event.target).attr('categoryUserLogin'),
+			                activeUserId       	= $(event.target).attr('activeUserId');
 
 			            if( thisUserId && thisUserLogin ) {
 			                // SUCCESS we has login and uid for create chat
-			                showPromptQuestionForCreateChat ( iNsuccessFunc, iNerrorFunc, thisUserId , thisUserLogin);
+			                showPromptQuestionForCreateChat ( iNsuccessFunc, iNerrorFunc, thisUserId , thisUserLogin, activeUserId);
 			            } else {
 			                // ERROR we has NOT  login and uid
-			                if (typeof iNerrorFunc == 'function') iNerrorFunc ();
+			                if (typeof iNerrorFunc == 'function') iNerrorFunc (thisUserId , thisUserLogin, activeUserId);
 
 			            }
 	        		}
@@ -16798,7 +17698,7 @@ define(
     } _['onClickCategoryForCreateChat'] = onClickCategoryForCreateChat;
 
 
-    function showPromptQuestionForCreateChat ( iNsuccessFunc, iNerrorFunc, iNuid, iNulogin) {
+    function showPromptQuestionForCreateChat ( iNsuccessFunc, iNerrorFunc, iNuid, iNlogin, iNactiveUserId) {
         (()=>{
 
         	swal({
@@ -16816,11 +17716,11 @@ define(
 	        }).then(
 		        (result) => {
 		          if (result.value) {
-		            if (typeof iNsuccessFunc == 'function') iNsuccessFunc(iNuid,iNulogin);
+		            if (typeof iNsuccessFunc == 'function') iNsuccessFunc(iNuid,iNlogin,iNactiveUserId);
 		            // result.dismiss can be 'cancel', 'overlay',
 		            // 'close', and 'timer'
 		          } else if (result.dismiss === 'cancel') {
-		            if (typeof iNerrorFunc == 'function') iNerrorFunc(iNuid,iNulogin);
+		            if (typeof iNerrorFunc == 'function') iNerrorFunc(iNuid,iNlogin,iNactiveUserId);
 		          }
 		        }
 	        )
@@ -16830,7 +17730,9 @@ define(
 
 	return _;
 });
-define('m_category',['jquery','v_category','m_view','m_app','m_user','dictionary','sweetalert2', 'url'], function ( $, VIEW, M_VIEW, M_APP,USER, DICTIONARY, SWAL, URL) {
+define(
+    'm_category',['jquery','v_category','m_view','m_app','m_user','dictionary','sweetalert2', 'url'], 
+    function ( $, VIEW, M_VIEW, M_APP,USER, DICTIONARY, SWAL, URL ) {
 	const _        = {'view':VIEW};
 	const CONST    = {};
 
@@ -16885,7 +17787,7 @@ define('m_category',['jquery','v_category','m_view','m_app','m_user','dictionary
         var  DomBloc, lmsg_text, lmsg_time, countNewMessages, newMsgBlock, verificate;
 
         var chatLength = VIEW.findChatBlock(chatId);
-                console.log('safeUpdateChatBlock - iNdata', iNdata );
+        console.log('safeUpdateChatBlock - iNdata', iNdata , chatLength );
         if (  chatLength < 1 ) {
         		//CHANGE STATIC PARAMS
                 // chatType = 'private';
@@ -16895,8 +17797,9 @@ define('m_category',['jquery','v_category','m_view','m_app','m_user','dictionary
         			objForCreateChat['chatType'] 	= chatType;
 
                 // get chat icon
-                var chatIcon    = M_APP.getGlobalVar('m_app-chat').getChatIconByType(chatType,objForCreateChat); objForCreateChat['icon'] = chatIcon;
+                var chatIcon    = M_APP.getGlobalVar('m_app-chat').getChatIconByType(chatType ,objForCreateChat); objForCreateChat['icon'] = chatIcon;
 
+                console.log('safeUpdateChatBlock createChatList - objForCreateChat', objForCreateChat , chatIcon );
                 // create chat
                 VIEW.createChatList (objForCreateChat, () => {
                     // after add chat
@@ -17019,7 +17922,7 @@ define('m_category',['jquery','v_category','m_view','m_app','m_user','dictionary
 
         // add chatType > chatIcon > uidType
         var chatName    = VIEW.getChatName (iNchatId),
-            href        = "chatId=" + iNchatId + "&userId=" + iNuserId + "&chatType=1&back=1&chatName=" + chatName;
+            href        = "chatId=" + iNchatId + "&userId=" + iNuserId + "&chatType=1&back=1&chatName=" + chatName + '&forUserId=' + USER.getActiveUserId();
         var objForCreateChat = {
            'app'            : 'chat', 
            'code'           : 'chiefChat',
@@ -17027,7 +17930,7 @@ define('m_category',['jquery','v_category','m_view','m_app','m_user','dictionary
            'name'           : DICTIONARY.withString('[app-chat]'),
            'id'             : iNchatId,
            'data'           : href,
-           'classForATeg'   : 'privateChatBtn',//
+           'classForATeg'   : 'privateChatBtn',
         };
         iNuserData['categories']['chat'] = {};
         iNuserData['categories']['chat'][iNchatId] = objForCreateChat;
@@ -17046,7 +17949,7 @@ define('m_category',['jquery','v_category','m_view','m_app','m_user','dictionary
                'name'           : DICTIONARY.withString('[app-chat]'),
                'id'             : iNuserId,
                'classForATeg'   : 'viewCategoryPrompt',//
-               'attrForATeg'    : `categoryUserId='${iNuserId}' categoryUserLogin='${iNuserLogin}'`,
+               'attrForATeg'    : `categoryUserId='${iNuserId}' categoryUserLogin='${iNuserLogin}' activeUserId='${USER.getActiveUserId()}'`,
             };
         } else {
             // if we are NON authed user -> we created link for view error
@@ -17054,10 +17957,10 @@ define('m_category',['jquery','v_category','m_view','m_app','m_user','dictionary
                'app'            : 'chat', 
                'code'           : 'chiefChat',
                'page'           : 'index',
-               'name'           : DICTIONARY.withString('[app-chat]'),
-               'id'             : iNuserId,
-               'classForATeg'   : 'viewError',
-               'attrForATeg'    : "errorText='[phrase-needSignForChat]'",
+               'name'           :  DICTIONARY.withString('[app-chat]'),
+               'id'             :  iNuserId,
+               'classForATeg'   :  'viewError',
+               'attrForATeg'    :  "errorText='[phrase-needSignForChat]'",
 
             };
         }
@@ -20682,748 +21585,6 @@ define('m_record',['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder
 
 	return _;
 });
-/*! algoliasearch 3.24.6 | © 2014, 2015 Algolia SAS | github.com/algolia/algoliasearch-client-js */
-!function(e){var t;"undefined"!=typeof window?t=window:"undefined"!=typeof self&&(t=self),t.ALGOLIA_MIGRATION_LAYER=e()}(function(){return function e(t,n,r){function o(s,a){if(!n[s]){if(!t[s]){var c="function"==typeof require&&require;if(!a&&c)return c(s,!0);if(i)return i(s,!0);var u=new Error("Cannot find module '"+s+"'");throw u.code="MODULE_NOT_FOUND",u}var l=n[s]={exports:{}};t[s][0].call(l.exports,function(e){var n=t[s][1][e];return o(n?n:e)},l,l.exports,e,t,n,r)}return n[s].exports}for(var i="function"==typeof require&&require,s=0;s<r.length;s++)o(r[s]);return o}({1:[function(e,t,n){function r(e,t){for(var n in t)e.setAttribute(n,t[n])}function o(e,t){e.onload=function(){this.onerror=this.onload=null,t(null,e)},e.onerror=function(){this.onerror=this.onload=null,t(new Error("Failed to load "+this.src),e)}}function i(e,t){e.onreadystatechange=function(){"complete"!=this.readyState&&"loaded"!=this.readyState||(this.onreadystatechange=null,t(null,e))}}t.exports=function(e,t,n){var s=document.head||document.getElementsByTagName("head")[0],a=document.createElement("script");"function"==typeof t&&(n=t,t={}),t=t||{},n=n||function(){},a.type=t.type||"text/javascript",a.charset=t.charset||"utf8",a.async=!("async"in t)||!!t.async,a.src=e,t.attrs&&r(a,t.attrs),t.text&&(a.text=""+t.text);var c="onload"in a?o:i;c(a,n),a.onload||o(a,n),s.appendChild(a)}},{}],2:[function(e,t,n){"use strict";function r(e){for(var t=new RegExp("cdn\\.jsdelivr\\.net/algoliasearch/latest/"+e.replace(".","\\.")+"(?:\\.min)?\\.js$"),n=document.getElementsByTagName("script"),r=!1,o=0,i=n.length;o<i;o++)if(n[o].src&&t.test(n[o].src)){r=!0;break}return r}t.exports=r},{}],3:[function(e,t,n){"use strict";function r(t){var n=e(1),r="//cdn.jsdelivr.net/algoliasearch/2/"+t+".min.js",i="-- AlgoliaSearch `latest` warning --\nWarning, you are using the `latest` version string from jsDelivr to load the AlgoliaSearch library.\nUsing `latest` is no more recommended, you should load //cdn.jsdelivr.net/algoliasearch/2/algoliasearch.min.js\n\nAlso, we updated the AlgoliaSearch JavaScript client to V3. If you want to upgrade,\nplease read our migration guide at https://github.com/algolia/algoliasearch-client-js/wiki/Migration-guide-from-2.x.x-to-3.x.x\n-- /AlgoliaSearch  `latest` warning --";window.console&&(window.console.warn?window.console.warn(i):window.console.log&&window.console.log(i));try{document.write("<script>window.ALGOLIA_SUPPORTS_DOCWRITE = true</script>"),window.ALGOLIA_SUPPORTS_DOCWRITE===!0?(document.write('<script src="'+r+'"></script>'),o("document.write")()):n(r,o("DOMElement"))}catch(s){n(r,o("DOMElement"))}}function o(e){return function(){var t="AlgoliaSearch: loaded V2 script using "+e;window.console&&window.console.log&&window.console.log(t)}}t.exports=r},{1:1}],4:[function(e,t,n){"use strict";function r(){var e="-- AlgoliaSearch V2 => V3 error --\nYou are trying to use a new version of the AlgoliaSearch JavaScript client with an old notation.\nPlease read our migration guide at https://github.com/algolia/algoliasearch-client-js/wiki/Migration-guide-from-2.x.x-to-3.x.x\n-- /AlgoliaSearch V2 => V3 error --";window.AlgoliaSearch=function(){throw new Error(e)},window.AlgoliaSearchHelper=function(){throw new Error(e)},window.AlgoliaExplainResults=function(){throw new Error(e)}}t.exports=r},{}],5:[function(e,t,n){"use strict";function r(t){var n=e(2),r=e(3),o=e(4);n(t)?r(t):o()}r("algoliasearch")},{2:2,3:3,4:4}]},{},[5])(5)}),function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define('algolia',[],e);else{var t;t="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this,t.algoliasearch=e()}}(function(){var e;return function t(e,n,r){function o(s,a){if(!n[s]){if(!e[s]){var c="function"==typeof require&&require;if(!a&&c)return c(s,!0);if(i)return i(s,!0);var u=new Error("Cannot find module '"+s+"'");throw u.code="MODULE_NOT_FOUND",u}var l=n[s]={exports:{}};e[s][0].call(l.exports,function(t){var n=e[s][1][t];return o(n?n:t)},l,l.exports,t,e,n,r)}return n[s].exports}for(var i="function"==typeof require&&require,s=0;s<r.length;s++)o(r[s]);return o}({1:[function(e,t,n){(function(r){function o(){return!("undefined"==typeof window||!window.process||"renderer"!==window.process.type)||("undefined"!=typeof document&&document.documentElement&&document.documentElement.style&&document.documentElement.style.WebkitAppearance||"undefined"!=typeof window&&window.console&&(window.console.firebug||window.console.exception&&window.console.table)||"undefined"!=typeof navigator&&navigator.userAgent&&navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/)&&parseInt(RegExp.$1,10)>=31||"undefined"!=typeof navigator&&navigator.userAgent&&navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/))}function i(e){var t=this.useColors;if(e[0]=(t?"%c":"")+this.namespace+(t?" %c":" ")+e[0]+(t?"%c ":" ")+"+"+n.humanize(this.diff),t){var r="color: "+this.color;e.splice(1,0,r,"color: inherit");var o=0,i=0;e[0].replace(/%[a-zA-Z%]/g,function(e){"%%"!==e&&(o++,"%c"===e&&(i=o))}),e.splice(i,0,r)}}function s(){return"object"==typeof console&&console.log&&Function.prototype.apply.call(console.log,console,arguments)}function a(e){try{null==e?n.storage.removeItem("debug"):n.storage.debug=e}catch(t){}}function c(){var e;try{e=n.storage.debug}catch(t){}return!e&&"undefined"!=typeof r&&"env"in r&&(e=r.env.DEBUG),e}function u(){try{return window.localStorage}catch(e){}}n=t.exports=e(2),n.log=s,n.formatArgs=i,n.save=a,n.load=c,n.useColors=o,n.storage="undefined"!=typeof chrome&&"undefined"!=typeof chrome.storage?chrome.storage.local:u(),n.colors=["lightseagreen","forestgreen","goldenrod","dodgerblue","darkorchid","crimson"],n.formatters.j=function(e){try{return JSON.stringify(e)}catch(t){return"[UnexpectedJSONParseError]: "+t.message}},n.enable(c())}).call(this,e(12))},{12:12,2:2}],2:[function(e,t,n){function r(e){var t,r=0;for(t in e)r=(r<<5)-r+e.charCodeAt(t),r|=0;return n.colors[Math.abs(r)%n.colors.length]}function o(e){function t(){if(t.enabled){var e=t,r=+new Date,o=r-(u||r);e.diff=o,e.prev=u,e.curr=r,u=r;for(var i=new Array(arguments.length),s=0;s<i.length;s++)i[s]=arguments[s];i[0]=n.coerce(i[0]),"string"!=typeof i[0]&&i.unshift("%O");var a=0;i[0]=i[0].replace(/%([a-zA-Z%])/g,function(t,r){if("%%"===t)return t;a++;var o=n.formatters[r];if("function"==typeof o){var s=i[a];t=o.call(e,s),i.splice(a,1),a--}return t}),n.formatArgs.call(e,i);var c=t.log||n.log||console.log.bind(console);c.apply(e,i)}}return t.namespace=e,t.enabled=n.enabled(e),t.useColors=n.useColors(),t.color=r(e),"function"==typeof n.init&&n.init(t),t}function i(e){n.save(e),n.names=[],n.skips=[];for(var t=("string"==typeof e?e:"").split(/[\s,]+/),r=t.length,o=0;o<r;o++)t[o]&&(e=t[o].replace(/\*/g,".*?"),"-"===e[0]?n.skips.push(new RegExp("^"+e.substr(1)+"$")):n.names.push(new RegExp("^"+e+"$")))}function s(){n.enable("")}function a(e){var t,r;for(t=0,r=n.skips.length;t<r;t++)if(n.skips[t].test(e))return!1;for(t=0,r=n.names.length;t<r;t++)if(n.names[t].test(e))return!0;return!1}function c(e){return e instanceof Error?e.stack||e.message:e}n=t.exports=o.debug=o["default"]=o,n.coerce=c,n.disable=s,n.enable=i,n.enabled=a,n.humanize=e(9),n.names=[],n.skips=[],n.formatters={};var u},{9:9}],3:[function(t,n,r){(function(o,i){!function(t,o){"object"==typeof r&&"undefined"!=typeof n?n.exports=o():"function"==typeof e&&e.amd?e(o):t.ES6Promise=o()}(this,function(){"use strict";function e(e){return"function"==typeof e||"object"==typeof e&&null!==e}function n(e){return"function"==typeof e}function r(e){X=e}function s(e){W=e}function a(){return function(){return o.nextTick(d)}}function c(){return"undefined"!=typeof V?function(){V(d)}:p()}function u(){var e=0,t=new Z(d),n=document.createTextNode("");return t.observe(n,{characterData:!0}),function(){n.data=e=++e%2}}function l(){var e=new MessageChannel;return e.port1.onmessage=d,function(){return e.port2.postMessage(0)}}function p(){var e=setTimeout;return function(){return e(d,1)}}function d(){for(var e=0;e<G;e+=2){var t=ne[e],n=ne[e+1];t(n),ne[e]=void 0,ne[e+1]=void 0}G=0}function h(){try{var e=t,n=e("vertx");return V=n.runOnLoop||n.runOnContext,c()}catch(r){return p()}}function f(e,t){var n=arguments,r=this,o=new this.constructor(m);void 0===o[oe]&&C(o);var i=r._state;return i?!function(){var e=n[i-1];W(function(){return P(i,o,e,r._result)})}():I(r,o,e,t),o}function y(e){var t=this;if(e&&"object"==typeof e&&e.constructor===t)return e;var n=new t(m);return R(n,e),n}function m(){}function v(){return new TypeError("You cannot resolve a promise with itself")}function g(){return new TypeError("A promises callback cannot return that same promise.")}function b(e){try{return e.then}catch(t){return ce.error=t,ce}}function w(e,t,n,r){try{e.call(t,n,r)}catch(o){return o}}function _(e,t,n){W(function(e){var r=!1,o=w(n,t,function(n){r||(r=!0,t!==n?R(e,n):S(e,n))},function(t){r||(r=!0,A(e,t))},"Settle: "+(e._label||" unknown promise"));!r&&o&&(r=!0,A(e,o))},e)}function x(e,t){t._state===se?S(e,t._result):t._state===ae?A(e,t._result):I(t,void 0,function(t){return R(e,t)},function(t){return A(e,t)})}function T(e,t,r){t.constructor===e.constructor&&r===f&&t.constructor.resolve===y?x(e,t):r===ce?(A(e,ce.error),ce.error=null):void 0===r?S(e,t):n(r)?_(e,t,r):S(e,t)}function R(t,n){t===n?A(t,v()):e(n)?T(t,n,b(n)):S(t,n)}function j(e){e._onerror&&e._onerror(e._result),k(e)}function S(e,t){e._state===ie&&(e._result=t,e._state=se,0!==e._subscribers.length&&W(k,e))}function A(e,t){e._state===ie&&(e._state=ae,e._result=t,W(j,e))}function I(e,t,n,r){var o=e._subscribers,i=o.length;e._onerror=null,o[i]=t,o[i+se]=n,o[i+ae]=r,0===i&&e._state&&W(k,e)}function k(e){var t=e._subscribers,n=e._state;if(0!==t.length){for(var r=void 0,o=void 0,i=e._result,s=0;s<t.length;s+=3)r=t[s],o=t[s+n],r?P(n,r,o,i):o(i);e._subscribers.length=0}}function O(){this.error=null}function E(e,t){try{return e(t)}catch(n){return ue.error=n,ue}}function P(e,t,r,o){var i=n(r),s=void 0,a=void 0,c=void 0,u=void 0;if(i){if(s=E(r,o),s===ue?(u=!0,a=s.error,s.error=null):c=!0,t===s)return void A(t,g())}else s=o,c=!0;t._state!==ie||(i&&c?R(t,s):u?A(t,a):e===se?S(t,s):e===ae&&A(t,s))}function U(e,t){try{t(function(t){R(e,t)},function(t){A(e,t)})}catch(n){A(e,n)}}function q(){return le++}function C(e){e[oe]=le++,e._state=void 0,e._result=void 0,e._subscribers=[]}function N(e,t){this._instanceConstructor=e,this.promise=new e(m),this.promise[oe]||C(this.promise),$(t)?(this._input=t,this.length=t.length,this._remaining=t.length,this._result=new Array(this.length),0===this.length?S(this.promise,this._result):(this.length=this.length||0,this._enumerate(),0===this._remaining&&S(this.promise,this._result))):A(this.promise,D())}function D(){return new Error("Array Methods must be provided an Array")}function L(e){return new N(this,e).promise}function K(e){var t=this;return new t($(e)?function(n,r){for(var o=e.length,i=0;i<o;i++)t.resolve(e[i]).then(n,r)}:function(e,t){return t(new TypeError("You must pass an array to race."))})}function H(e){var t=this,n=new t(m);return A(n,e),n}function M(){throw new TypeError("You must pass a resolver function as the first argument to the promise constructor")}function J(){throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.")}function F(e){this[oe]=q(),this._result=this._state=void 0,this._subscribers=[],m!==e&&("function"!=typeof e&&M(),this instanceof F?U(this,e):J())}function B(){var e=void 0;if("undefined"!=typeof i)e=i;else if("undefined"!=typeof self)e=self;else try{e=Function("return this")()}catch(t){throw new Error("polyfill failed because global object is unavailable in this environment")}var n=e.Promise;if(n){var r=null;try{r=Object.prototype.toString.call(n.resolve())}catch(t){}if("[object Promise]"===r&&!n.cast)return}e.Promise=F}var Q=void 0;Q=Array.isArray?Array.isArray:function(e){return"[object Array]"===Object.prototype.toString.call(e)};var $=Q,G=0,V=void 0,X=void 0,W=function(e,t){ne[G]=e,ne[G+1]=t,G+=2,2===G&&(X?X(d):re())},Y="undefined"!=typeof window?window:void 0,z=Y||{},Z=z.MutationObserver||z.WebKitMutationObserver,ee="undefined"==typeof self&&"undefined"!=typeof o&&"[object process]"==={}.toString.call(o),te="undefined"!=typeof Uint8ClampedArray&&"undefined"!=typeof importScripts&&"undefined"!=typeof MessageChannel,ne=new Array(1e3),re=void 0;re=ee?a():Z?u():te?l():void 0===Y&&"function"==typeof t?h():p();var oe=Math.random().toString(36).substring(16),ie=void 0,se=1,ae=2,ce=new O,ue=new O,le=0;return N.prototype._enumerate=function(){for(var e=this.length,t=this._input,n=0;this._state===ie&&n<e;n++)this._eachEntry(t[n],n)},N.prototype._eachEntry=function(e,t){var n=this._instanceConstructor,r=n.resolve;if(r===y){var o=b(e);if(o===f&&e._state!==ie)this._settledAt(e._state,t,e._result);else if("function"!=typeof o)this._remaining--,this._result[t]=e;else if(n===F){var i=new n(m);T(i,e,o),this._willSettleAt(i,t)}else this._willSettleAt(new n(function(t){return t(e)}),t)}else this._willSettleAt(r(e),t)},N.prototype._settledAt=function(e,t,n){var r=this.promise;r._state===ie&&(this._remaining--,e===ae?A(r,n):this._result[t]=n),0===this._remaining&&S(r,this._result)},N.prototype._willSettleAt=function(e,t){var n=this;I(e,void 0,function(e){return n._settledAt(se,t,e)},function(e){return n._settledAt(ae,t,e)})},F.all=L,F.race=K,F.resolve=y,F.reject=H,F._setScheduler=r,F._setAsap=s,F._asap=W,F.prototype={constructor:F,then:f,"catch":function(e){return this.then(null,e)}},F.polyfill=B,F.Promise=F,F})}).call(this,t(12),"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{12:12}],4:[function(e,t,n){function r(){this._events=this._events||{},this._maxListeners=this._maxListeners||void 0}function o(e){return"function"==typeof e}function i(e){return"number"==typeof e}function s(e){return"object"==typeof e&&null!==e}function a(e){return void 0===e}t.exports=r,r.EventEmitter=r,r.prototype._events=void 0,r.prototype._maxListeners=void 0,r.defaultMaxListeners=10,r.prototype.setMaxListeners=function(e){if(!i(e)||e<0||isNaN(e))throw TypeError("n must be a positive number");return this._maxListeners=e,this},r.prototype.emit=function(e){var t,n,r,i,c,u;if(this._events||(this._events={}),"error"===e&&(!this._events.error||s(this._events.error)&&!this._events.error.length)){if(t=arguments[1],t instanceof Error)throw t;var l=new Error('Uncaught, unspecified "error" event. ('+t+")");throw l.context=t,l}if(n=this._events[e],a(n))return!1;if(o(n))switch(arguments.length){case 1:n.call(this);break;case 2:n.call(this,arguments[1]);break;case 3:n.call(this,arguments[1],arguments[2]);break;default:i=Array.prototype.slice.call(arguments,1),n.apply(this,i)}else if(s(n))for(i=Array.prototype.slice.call(arguments,1),u=n.slice(),r=u.length,c=0;c<r;c++)u[c].apply(this,i);return!0},r.prototype.addListener=function(e,t){var n;if(!o(t))throw TypeError("listener must be a function");return this._events||(this._events={}),this._events.newListener&&this.emit("newListener",e,o(t.listener)?t.listener:t),this._events[e]?s(this._events[e])?this._events[e].push(t):this._events[e]=[this._events[e],t]:this._events[e]=t,s(this._events[e])&&!this._events[e].warned&&(n=a(this._maxListeners)?r.defaultMaxListeners:this._maxListeners,n&&n>0&&this._events[e].length>n&&(this._events[e].warned=!0,console.error("(node) warning: possible EventEmitter memory leak detected. %d listeners added. Use emitter.setMaxListeners() to increase limit.",this._events[e].length),"function"==typeof console.trace&&console.trace())),this},r.prototype.on=r.prototype.addListener,r.prototype.once=function(e,t){function n(){this.removeListener(e,n),r||(r=!0,t.apply(this,arguments))}if(!o(t))throw TypeError("listener must be a function");var r=!1;return n.listener=t,this.on(e,n),this},r.prototype.removeListener=function(e,t){var n,r,i,a;if(!o(t))throw TypeError("listener must be a function");if(!this._events||!this._events[e])return this;if(n=this._events[e],i=n.length,r=-1,n===t||o(n.listener)&&n.listener===t)delete this._events[e],this._events.removeListener&&this.emit("removeListener",e,t);else if(s(n)){for(a=i;a-- >0;)if(n[a]===t||n[a].listener&&n[a].listener===t){r=a;break}if(r<0)return this;1===n.length?(n.length=0,delete this._events[e]):n.splice(r,1),this._events.removeListener&&this.emit("removeListener",e,t)}return this},r.prototype.removeAllListeners=function(e){var t,n;if(!this._events)return this;if(!this._events.removeListener)return 0===arguments.length?this._events={}:this._events[e]&&delete this._events[e],this;if(0===arguments.length){for(t in this._events)"removeListener"!==t&&this.removeAllListeners(t);return this.removeAllListeners("removeListener"),this._events={},this}if(n=this._events[e],o(n))this.removeListener(e,n);else if(n)for(;n.length;)this.removeListener(e,n[n.length-1]);return delete this._events[e],this},r.prototype.listeners=function(e){var t;return t=this._events&&this._events[e]?o(this._events[e])?[this._events[e]]:this._events[e].slice():[]},r.prototype.listenerCount=function(e){if(this._events){var t=this._events[e];if(o(t))return 1;if(t)return t.length}return 0},r.listenerCount=function(e,t){return e.listenerCount(t)}},{}],5:[function(e,t,n){var r=Object.prototype.hasOwnProperty,o=Object.prototype.toString;t.exports=function(e,t,n){if("[object Function]"!==o.call(t))throw new TypeError("iterator must be a function");var i=e.length;if(i===+i)for(var s=0;s<i;s++)t.call(n,e[s],s,e);else for(var a in e)r.call(e,a)&&t.call(n,e[a],a,e)}},{}],6:[function(e,t,n){(function(e){var n;n="undefined"!=typeof window?window:"undefined"!=typeof e?e:"undefined"!=typeof self?self:{},t.exports=n}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],7:[function(e,t,n){"function"==typeof Object.create?t.exports=function(e,t){e.super_=t,e.prototype=Object.create(t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}})}:t.exports=function(e,t){e.super_=t;var n=function(){};n.prototype=t.prototype,e.prototype=new n,e.prototype.constructor=e}},{}],8:[function(e,t,n){var r={}.toString;t.exports=Array.isArray||function(e){return"[object Array]"==r.call(e)}},{}],9:[function(e,t,n){function r(e){if(e=String(e),!(e.length>100)){var t=/^((?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|years?|yrs?|y)?$/i.exec(e);if(t){var n=parseFloat(t[1]),r=(t[2]||"ms").toLowerCase();switch(r){case"years":case"year":case"yrs":case"yr":case"y":return n*p;case"days":case"day":case"d":return n*l;case"hours":case"hour":case"hrs":case"hr":case"h":return n*u;case"minutes":case"minute":case"mins":case"min":case"m":return n*c;case"seconds":case"second":case"secs":case"sec":case"s":return n*a;case"milliseconds":case"millisecond":case"msecs":case"msec":case"ms":return n;default:return}}}}function o(e){return e>=l?Math.round(e/l)+"d":e>=u?Math.round(e/u)+"h":e>=c?Math.round(e/c)+"m":e>=a?Math.round(e/a)+"s":e+"ms"}function i(e){return s(e,l,"day")||s(e,u,"hour")||s(e,c,"minute")||s(e,a,"second")||e+" ms"}function s(e,t,n){if(!(e<t))return e<1.5*t?Math.floor(e/t)+" "+n:Math.ceil(e/t)+" "+n+"s"}var a=1e3,c=60*a,u=60*c,l=24*u,p=365.25*l;t.exports=function(e,t){t=t||{};var n=typeof e;if("string"===n&&e.length>0)return r(e);if("number"===n&&isNaN(e)===!1)return t["long"]?i(e):o(e);throw new Error("val is not a non-empty string or a valid number. val="+JSON.stringify(e))}},{}],10:[function(e,t,n){"use strict";var r=Object.prototype.hasOwnProperty,o=Object.prototype.toString,i=Array.prototype.slice,s=e(11),a=Object.prototype.propertyIsEnumerable,c=!a.call({toString:null},"toString"),u=a.call(function(){},"prototype"),l=["toString","toLocaleString","valueOf","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],p=function(e){var t=e.constructor;return t&&t.prototype===e},d={$console:!0,$external:!0,$frame:!0,$frameElement:!0,$frames:!0,$innerHeight:!0,$innerWidth:!0,$outerHeight:!0,$outerWidth:!0,$pageXOffset:!0,$pageYOffset:!0,$parent:!0,$scrollLeft:!0,$scrollTop:!0,$scrollX:!0,$scrollY:!0,$self:!0,$webkitIndexedDB:!0,$webkitStorageInfo:!0,$window:!0},h=function(){if("undefined"==typeof window)return!1;for(var e in window)try{if(!d["$"+e]&&r.call(window,e)&&null!==window[e]&&"object"==typeof window[e])try{p(window[e])}catch(t){return!0}}catch(t){return!0}return!1}(),f=function(e){if("undefined"==typeof window||!h)return p(e);try{return p(e)}catch(t){return!1}},y=function(e){var t=null!==e&&"object"==typeof e,n="[object Function]"===o.call(e),i=s(e),a=t&&"[object String]"===o.call(e),p=[];if(!t&&!n&&!i)throw new TypeError("Object.keys called on a non-object");var d=u&&n;if(a&&e.length>0&&!r.call(e,0))for(var h=0;h<e.length;++h)p.push(String(h));if(i&&e.length>0)for(var y=0;y<e.length;++y)p.push(String(y));else for(var m in e)d&&"prototype"===m||!r.call(e,m)||p.push(String(m));if(c)for(var v=f(e),g=0;g<l.length;++g)v&&"constructor"===l[g]||!r.call(e,l[g])||p.push(l[g]);return p};y.shim=function(){if(Object.keys){var e=function(){return 2===(Object.keys(arguments)||"").length}(1,2);if(!e){var t=Object.keys;Object.keys=function(e){return t(s(e)?i.call(e):e)}}}else Object.keys=y;return Object.keys||y},t.exports=y},{11:11}],11:[function(e,t,n){"use strict";var r=Object.prototype.toString;t.exports=function(e){var t=r.call(e),n="[object Arguments]"===t;return n||(n="[object Array]"!==t&&null!==e&&"object"==typeof e&&"number"==typeof e.length&&e.length>=0&&"[object Function]"===r.call(e.callee)),n}},{}],12:[function(e,t,n){function r(){throw new Error("setTimeout has not been defined")}function o(){throw new Error("clearTimeout has not been defined")}function i(e){if(p===setTimeout)return setTimeout(e,0);if((p===r||!p)&&setTimeout)return p=setTimeout,setTimeout(e,0);try{return p(e,0)}catch(t){try{return p.call(null,e,0)}catch(t){return p.call(this,e,0)}}}function s(e){if(d===clearTimeout)return clearTimeout(e);if((d===o||!d)&&clearTimeout)return d=clearTimeout,clearTimeout(e);try{return d(e)}catch(t){try{return d.call(null,e)}catch(t){return d.call(this,e)}}}function a(){m&&f&&(m=!1,f.length?y=f.concat(y):v=-1,y.length&&c())}function c(){if(!m){var e=i(a);m=!0;for(var t=y.length;t;){for(f=y,y=[];++v<t;)f&&f[v].run();v=-1,t=y.length}f=null,m=!1,s(e)}}function u(e,t){this.fun=e,this.array=t}function l(){}var p,d,h=t.exports={};!function(){try{p="function"==typeof setTimeout?setTimeout:r}catch(e){p=r}try{d="function"==typeof clearTimeout?clearTimeout:o}catch(e){d=o}}();var f,y=[],m=!1,v=-1;h.nextTick=function(e){var t=new Array(arguments.length-1);if(arguments.length>1)for(var n=1;n<arguments.length;n++)t[n-1]=arguments[n];y.push(new u(e,t)),1!==y.length||m||i(c)},u.prototype.run=function(){this.fun.apply(null,this.array)},h.title="browser",h.browser=!0,h.env={},h.argv=[],h.version="",h.versions={},h.on=l,h.addListener=l,h.once=l,h.off=l,h.removeListener=l,h.removeAllListeners=l,h.emit=l,h.binding=function(e){throw new Error("process.binding is not supported")},h.cwd=function(){return"/"},h.chdir=function(e){throw new Error("process.chdir is not supported")},h.umask=function(){return 0}},{}],13:[function(e,t,n){"use strict";function r(e,t){if(e.map)return e.map(t);for(var n=[],r=0;r<e.length;r++)n.push(t(e[r],r));return n}var o=function(e){switch(typeof e){case"string":return e;case"boolean":return e?"true":"false";case"number":return isFinite(e)?e:"";default:return""}};t.exports=function(e,t,n,a){return t=t||"&",n=n||"=",null===e&&(e=void 0),"object"==typeof e?r(s(e),function(s){var a=encodeURIComponent(o(s))+n;return i(e[s])?r(e[s],function(e){return a+encodeURIComponent(o(e))}).join(t):a+encodeURIComponent(o(e[s]))}).join(t):a?encodeURIComponent(o(a))+n+encodeURIComponent(o(e)):""};var i=Array.isArray||function(e){return"[object Array]"===Object.prototype.toString.call(e)},s=Object.keys||function(e){var t=[];for(var n in e)Object.prototype.hasOwnProperty.call(e,n)&&t.push(n);return t}},{}],14:[function(e,t,n){function r(){c.apply(this,arguments)}function o(){var e="Not implemented in this environment.\nIf you feel this is a mistake, write to support@algolia.com";throw new l.AlgoliaSearchError(e)}t.exports=r;var i=e(16),s=e(26),a=e(27),c=e(15),u=e(7),l=e(28);u(r,c),r.prototype.deleteIndex=function(e,t){return this._jsonRequest({method:"DELETE",url:"/1/indexes/"+encodeURIComponent(e),hostType:"write",callback:t})},r.prototype.moveIndex=function(e,t,n){var r={operation:"move",destination:t};return this._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(e)+"/operation",body:r,hostType:"write",callback:n})},r.prototype.copyIndex=function(e,t,n,r){var o={operation:"copy",destination:t},i=r;if("function"==typeof n)i=n;else{if(!(Array.isArray(n)&&n.length>0))throw new Error("the scope given to `copyIndex` was not an array with settings, synonyms or rules");o.scope=n}return this._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(e)+"/operation",body:o,hostType:"write",callback:i})},r.prototype.getLogs=function(t,n,r){var o=e(25),i={};return"object"==typeof t?(i=o(t),r=n):0===arguments.length||"function"==typeof t?r=t:1===arguments.length||"function"==typeof n?(r=n,i.offset=t):(i.offset=t,i.length=n),void 0===i.offset&&(i.offset=0),void 0===i.length&&(i.length=10),this._jsonRequest({method:"GET",url:"/1/logs?"+this._getSearchParams(i,""),hostType:"read",callback:r})},r.prototype.listIndexes=function(e,t){var n="";return void 0===e||"function"==typeof e?t=e:n="?page="+e,this._jsonRequest({method:"GET",url:"/1/indexes"+n,hostType:"read",callback:t})},r.prototype.initIndex=function(e){return new i(this,e)},r.prototype.listUserKeys=s(function(e){return this.listApiKeys(e)},a("client.listUserKeys()","client.listApiKeys()")),r.prototype.listApiKeys=function(e){return this._jsonRequest({method:"GET",url:"/1/keys",hostType:"read",callback:e})},r.prototype.getUserKeyACL=s(function(e,t){return this.getApiKey(e,t)},a("client.getUserKeyACL()","client.getApiKey()")),r.prototype.getApiKey=function(e,t){return this._jsonRequest({method:"GET",url:"/1/keys/"+e,hostType:"read",callback:t})},r.prototype.deleteUserKey=s(function(e,t){return this.deleteApiKey(e,t)},a("client.deleteUserKey()","client.deleteApiKey()")),r.prototype.deleteApiKey=function(e,t){return this._jsonRequest({method:"DELETE",url:"/1/keys/"+e,hostType:"write",callback:t})},r.prototype.addUserKey=s(function(e,t,n){return this.addApiKey(e,t,n)},a("client.addUserKey()","client.addApiKey()")),r.prototype.addApiKey=function(t,n,r){var o=e(8),i="Usage: client.addApiKey(arrayOfAcls[, params, callback])";if(!o(t))throw new Error(i);1!==arguments.length&&"function"!=typeof n||(r=n,n=null);var s={acl:t};return n&&(s.validity=n.validity,s.maxQueriesPerIPPerHour=n.maxQueriesPerIPPerHour,s.maxHitsPerQuery=n.maxHitsPerQuery,s.indexes=n.indexes,s.description=n.description,n.queryParameters&&(s.queryParameters=this._getSearchParams(n.queryParameters,"")),s.referers=n.referers),this._jsonRequest({method:"POST",url:"/1/keys",body:s,hostType:"write",callback:r})},r.prototype.addUserKeyWithValidity=s(function(e,t,n){return this.addApiKey(e,t,n)},a("client.addUserKeyWithValidity()","client.addApiKey()")),r.prototype.updateUserKey=s(function(e,t,n,r){return this.updateApiKey(e,t,n,r)},a("client.updateUserKey()","client.updateApiKey()")),r.prototype.updateApiKey=function(t,n,r,o){var i=e(8),s="Usage: client.updateApiKey(key, arrayOfAcls[, params, callback])";if(!i(n))throw new Error(s);2!==arguments.length&&"function"!=typeof r||(o=r,r=null);var a={acl:n};return r&&(a.validity=r.validity,a.maxQueriesPerIPPerHour=r.maxQueriesPerIPPerHour,a.maxHitsPerQuery=r.maxHitsPerQuery,a.indexes=r.indexes,a.description=r.description,r.queryParameters&&(a.queryParameters=this._getSearchParams(r.queryParameters,"")),a.referers=r.referers),this._jsonRequest({method:"PUT",url:"/1/keys/"+t,body:a,hostType:"write",callback:o})},r.prototype.startQueriesBatch=s(function(){this._batch=[]},a("client.startQueriesBatch()","client.search()")),r.prototype.addQueryInBatch=s(function(e,t,n){this._batch.push({indexName:e,query:t,params:n})},a("client.addQueryInBatch()","client.search()")),r.prototype.sendQueriesBatch=s(function(e){return this.search(this._batch,e)},a("client.sendQueriesBatch()","client.search()")),r.prototype.batch=function(t,n){var r=e(8),o="Usage: client.batch(operations[, callback])";if(!r(t))throw new Error(o);return this._jsonRequest({method:"POST",url:"/1/indexes/*/batch",body:{requests:t},hostType:"write",callback:n})},r.prototype.destroy=o,r.prototype.enableRateLimitForward=o,r.prototype.disableRateLimitForward=o,r.prototype.useSecuredAPIKey=o,r.prototype.disableSecuredAPIKey=o,r.prototype.generateSecuredApiKey=o},{15:15,16:16,25:25,26:26,27:27,28:28,7:7,8:8}],15:[function(e,t,n){(function(n){function r(t,n,r){var i=e(1)("algoliasearch"),s=e(25),a=e(8),u=e(30),l="Usage: algoliasearch(applicationID, apiKey, opts)";if(r._allowEmptyCredentials!==!0&&!t)throw new c.AlgoliaSearchError("Please provide an application ID. "+l);if(r._allowEmptyCredentials!==!0&&!n)throw new c.AlgoliaSearchError("Please provide an API key. "+l);this.applicationID=t,this.apiKey=n,this.hosts={read:[],write:[]},r=r||{};var p=r.protocol||"https:";if(this._timeouts=r.timeouts||{connect:1e3,read:2e3,write:3e4},r.timeout&&(this._timeouts.connect=this._timeouts.read=this._timeouts.write=r.timeout),/:$/.test(p)||(p+=":"),"http:"!==r.protocol&&"https:"!==r.protocol)throw new c.AlgoliaSearchError("protocol must be `http:` or `https:` (was `"+r.protocol+"`)");if(this._checkAppIdData(),r.hosts)a(r.hosts)?(this.hosts.read=s(r.hosts),this.hosts.write=s(r.hosts)):(this.hosts.read=s(r.hosts.read),this.hosts.write=s(r.hosts.write));else{var d=u(this._shuffleResult,function(e){return t+"-"+e+".algolianet.com"});this.hosts.read=[this.applicationID+"-dsn.algolia.net"].concat(d),this.hosts.write=[this.applicationID+".algolia.net"].concat(d)}this.hosts.read=u(this.hosts.read,o(p)),this.hosts.write=u(this.hosts.write,o(p)),this.extraHeaders={},this.cache=r._cache||{},this._ua=r._ua,this._useCache=!(void 0!==r._useCache&&!r._cache)||r._useCache,this._useFallback=void 0===r.useFallback||r.useFallback,this._setTimeout=r._setTimeout,i("init done, %j",this)}function o(e){return function(t){return e+"//"+t.toLowerCase()}}function i(e){if(void 0===Array.prototype.toJSON)return JSON.stringify(e);var t=Array.prototype.toJSON;delete Array.prototype.toJSON;var n=JSON.stringify(e);return Array.prototype.toJSON=t,n}function s(e){for(var t,n,r=e.length;0!==r;)n=Math.floor(Math.random()*r),r-=1,t=e[r],e[r]=e[n],e[n]=t;return e}function a(e){var t={};for(var n in e)if(Object.prototype.hasOwnProperty.call(e,n)){var r;r="x-algolia-api-key"===n||"x-algolia-application-id"===n?"**hidden for security purposes**":e[n],t[n]=r}return t}t.exports=r;var c=e(28),u=e(29),l=e(18),p=e(34),d=500,h=n.env.RESET_APP_DATA_TIMER&&parseInt(n.env.RESET_APP_DATA_TIMER,10)||12e4;r.prototype.initIndex=function(e){return new l(this,e)},r.prototype.setExtraHeader=function(e,t){this.extraHeaders[e.toLowerCase()]=t},r.prototype.getExtraHeader=function(e){return this.extraHeaders[e.toLowerCase()]},r.prototype.unsetExtraHeader=function(e){delete this.extraHeaders[e.toLowerCase()]},r.prototype.addAlgoliaAgent=function(e){this._ua.indexOf(";"+e)===-1&&(this._ua+=";"+e)},r.prototype._jsonRequest=function(t){function n(e,u){function d(e){var t=e&&e.body&&e.body.message&&e.body.status||e.statusCode||e&&e.body&&200;s("received response: statusCode: %s, computed statusCode: %d, headers: %j",e.statusCode,t,e.headers);var n=2===Math.floor(t/100),i=new Date;if(v.push({currentHost:T,headers:a(o),content:r||null,contentLength:void 0!==r?r.length:null,method:u.method,timeouts:u.timeouts,url:u.url,startTime:x,endTime:i,duration:i-x,statusCode:t}),
-n)return h._useCache&&p&&(p[_]=e.responseText),e.body;var l=4!==Math.floor(t/100);if(l)return f+=1,b();s("unrecoverable error");var d=new c.AlgoliaSearchError(e.body&&e.body.message,{debugData:v,statusCode:t});return h._promise.reject(d)}function g(e){s("error: %s, stack: %s",e.message,e.stack);var n=new Date;return v.push({currentHost:T,headers:a(o),content:r||null,contentLength:void 0!==r?r.length:null,method:u.method,timeouts:u.timeouts,url:u.url,startTime:x,endTime:n,duration:n-x}),e instanceof c.AlgoliaSearchError||(e=new c.Unknown(e&&e.message,e)),f+=1,e instanceof c.Unknown||e instanceof c.UnparsableJSON||f>=h.hosts[t.hostType].length&&(y||!m)?(e.debugData=v,h._promise.reject(e)):e instanceof c.RequestTimeout?w():b()}function b(){return s("retrying request"),h._incrementHostIndex(t.hostType),n(e,u)}function w(){return s("retrying request with higher timeout"),h._incrementHostIndex(t.hostType),h._incrementTimeoutMultipler(),u.timeouts=h._getTimeoutsForRequest(t.hostType),n(e,u)}h._checkAppIdData();var _,x=new Date;if(h._useCache&&(_=t.url),h._useCache&&r&&(_+="_body_"+u.body),h._useCache&&p&&void 0!==p[_])return s("serving response from cache"),h._promise.resolve(JSON.parse(p[_]));if(f>=h.hosts[t.hostType].length)return!m||y?(s("could not get any response"),h._promise.reject(new c.AlgoliaSearchError("Cannot connect to the AlgoliaSearch API. Send an email to support@algolia.com to report and resolve the issue. Application id was: "+h.applicationID,{debugData:v}))):(s("switching to fallback"),f=0,u.method=t.fallback.method,u.url=t.fallback.url,u.jsonBody=t.fallback.body,u.jsonBody&&(u.body=i(u.jsonBody)),o=h._computeRequestHeaders(l),u.timeouts=h._getTimeoutsForRequest(t.hostType),h._setHostIndexByType(0,t.hostType),y=!0,n(h._request.fallback,u));var T=h._getHostByType(t.hostType),R=T+u.url,j={body:u.body,jsonBody:u.jsonBody,method:u.method,headers:o,timeouts:u.timeouts,debug:s};return s("method: %s, url: %s, headers: %j, timeouts: %d",j.method,R,j.headers,j.timeouts),e===h._request.fallback&&s("using fallback"),e.call(h,R,j).then(d,g)}this._checkAppIdData();var r,o,s=e(1)("algoliasearch:"+t.url),l=t.additionalUA||"",p=t.cache,h=this,f=0,y=!1,m=h._useFallback&&h._request.fallback&&t.fallback;this.apiKey.length>d&&void 0!==t.body&&(void 0!==t.body.params||void 0!==t.body.requests)?(t.body.apiKey=this.apiKey,o=this._computeRequestHeaders(l,!1)):o=this._computeRequestHeaders(l),void 0!==t.body&&(r=i(t.body)),s("request start");var v=[],g=n(h._request,{url:t.url,method:t.method,body:r,jsonBody:t.body,timeouts:h._getTimeoutsForRequest(t.hostType)});return"function"!=typeof t.callback?g:void g.then(function(e){u(function(){t.callback(null,e)},h._setTimeout||setTimeout)},function(e){u(function(){t.callback(e)},h._setTimeout||setTimeout)})},r.prototype._getSearchParams=function(e,t){if(void 0===e||null===e)return t;for(var n in e)null!==n&&void 0!==e[n]&&e.hasOwnProperty(n)&&(t+=""===t?"":"&",t+=n+"="+encodeURIComponent("[object Array]"===Object.prototype.toString.call(e[n])?i(e[n]):e[n]));return t},r.prototype._computeRequestHeaders=function(t,n){var r=e(5),o=t?this._ua+";"+t:this._ua,i={"x-algolia-agent":o,"x-algolia-application-id":this.applicationID};return n!==!1&&(i["x-algolia-api-key"]=this.apiKey),this.userToken&&(i["x-algolia-usertoken"]=this.userToken),this.securityTags&&(i["x-algolia-tagfilters"]=this.securityTags),r(this.extraHeaders,function(e,t){i[t]=e}),i},r.prototype.search=function(t,n,r){var o=e(8),i=e(30),s="Usage: client.search(arrayOfQueries[, callback])";if(!o(t))throw new Error(s);"function"==typeof n?(r=n,n={}):void 0===n&&(n={});var a=this,c={requests:i(t,function(e){var t="";return void 0!==e.query&&(t+="query="+encodeURIComponent(e.query)),{indexName:e.indexName,params:a._getSearchParams(e.params,t)}})},u=i(c.requests,function(e,t){return t+"="+encodeURIComponent("/1/indexes/"+encodeURIComponent(e.indexName)+"?"+e.params)}).join("&"),l="/1/indexes/*/queries";return void 0!==n.strategy&&(l+="?strategy="+n.strategy),this._jsonRequest({cache:this.cache,method:"POST",url:l,body:c,hostType:"read",fallback:{method:"GET",url:"/1/indexes/*",body:{params:u}},callback:r})},r.prototype.setSecurityTags=function(e){if("[object Array]"===Object.prototype.toString.call(e)){for(var t=[],n=0;n<e.length;++n)if("[object Array]"===Object.prototype.toString.call(e[n])){for(var r=[],o=0;o<e[n].length;++o)r.push(e[n][o]);t.push("("+r.join(",")+")")}else t.push(e[n]);e=t.join(",")}this.securityTags=e},r.prototype.setUserToken=function(e){this.userToken=e},r.prototype.clearCache=function(){this.cache={}},r.prototype.setRequestTimeout=function(e){e&&(this._timeouts.connect=this._timeouts.read=this._timeouts.write=e)},r.prototype.setTimeouts=function(e){this._timeouts=e},r.prototype.getTimeouts=function(){return this._timeouts},r.prototype._getAppIdData=function(){var e=p.get(this.applicationID);return null!==e&&this._cacheAppIdData(e),e},r.prototype._setAppIdData=function(e){return e.lastChange=(new Date).getTime(),this._cacheAppIdData(e),p.set(this.applicationID,e)},r.prototype._checkAppIdData=function(){var e=this._getAppIdData(),t=(new Date).getTime();return null===e||t-e.lastChange>h?this._resetInitialAppIdData(e):e},r.prototype._resetInitialAppIdData=function(e){var t=e||{};return t.hostIndexes={read:0,write:0},t.timeoutMultiplier=1,t.shuffleResult=t.shuffleResult||s([1,2,3]),this._setAppIdData(t)},r.prototype._cacheAppIdData=function(e){this._hostIndexes=e.hostIndexes,this._timeoutMultiplier=e.timeoutMultiplier,this._shuffleResult=e.shuffleResult},r.prototype._partialAppIdDataUpdate=function(t){var n=e(5),r=this._getAppIdData();return n(t,function(e,t){r[t]=e}),this._setAppIdData(r)},r.prototype._getHostByType=function(e){return this.hosts[e][this._getHostIndexByType(e)]},r.prototype._getTimeoutMultiplier=function(){return this._timeoutMultiplier},r.prototype._getHostIndexByType=function(e){return this._hostIndexes[e]},r.prototype._setHostIndexByType=function(t,n){var r=e(25),o=r(this._hostIndexes);return o[n]=t,this._partialAppIdDataUpdate({hostIndexes:o}),t},r.prototype._incrementHostIndex=function(e){return this._setHostIndexByType((this._getHostIndexByType(e)+1)%this.hosts[e].length,e)},r.prototype._incrementTimeoutMultipler=function(){var e=Math.max(this._timeoutMultiplier+1,4);return this._partialAppIdDataUpdate({timeoutMultiplier:e})},r.prototype._getTimeoutsForRequest=function(e){return{connect:this._timeouts.connect*this._timeoutMultiplier,complete:this._timeouts[e]*this._timeoutMultiplier}}}).call(this,e(12))},{1:1,12:12,18:18,25:25,28:28,29:29,30:30,34:34,5:5,8:8}],16:[function(e,t,n){function r(){s.apply(this,arguments)}function o(e,t,n){function r(n,o){var i={page:n||0,hitsPerPage:t||100},s=o||[];return e(i).then(function(e){var t=e.hits,n=e.nbHits,o=t.map(function(e){return delete e._highlightResult,e}),a=s.concat(o);return a.length<n?r(i.page+1,a):a})}return r().then(function(e){return"function"==typeof n&&n(e),e})}var i=e(7),s=e(18),a=e(26),c=e(27),u=e(29),l=e(28),p=a(function(){},c("forwardToSlaves","forwardToReplicas"));t.exports=r,i(r,s),r.prototype.addObject=function(e,t,n){var r=this;return 1!==arguments.length&&"function"!=typeof t||(n=t,t=void 0),this.as._jsonRequest({method:void 0!==t?"PUT":"POST",url:"/1/indexes/"+encodeURIComponent(r.indexName)+(void 0!==t?"/"+encodeURIComponent(t):""),body:e,hostType:"write",callback:n})},r.prototype.addObjects=function(t,n){var r=e(8),o="Usage: index.addObjects(arrayOfObjects[, callback])";if(!r(t))throw new Error(o);for(var i=this,s={requests:[]},a=0;a<t.length;++a){var c={action:"addObject",body:t[a]};s.requests.push(c)}return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(i.indexName)+"/batch",body:s,hostType:"write",callback:n})},r.prototype.partialUpdateObject=function(e,t,n){1!==arguments.length&&"function"!=typeof t||(n=t,t=void 0);var r=this,o="/1/indexes/"+encodeURIComponent(r.indexName)+"/"+encodeURIComponent(e.objectID)+"/partial";return t===!1&&(o+="?createIfNotExists=false"),this.as._jsonRequest({method:"POST",url:o,body:e,hostType:"write",callback:n})},r.prototype.partialUpdateObjects=function(t,n,r){1!==arguments.length&&"function"!=typeof n||(r=n,n=!0);var o=e(8),i="Usage: index.partialUpdateObjects(arrayOfObjects[, callback])";if(!o(t))throw new Error(i);for(var s=this,a={requests:[]},c=0;c<t.length;++c){var u={action:n===!0?"partialUpdateObject":"partialUpdateObjectNoCreate",objectID:t[c].objectID,body:t[c]};a.requests.push(u)}return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(s.indexName)+"/batch",body:a,hostType:"write",callback:r})},r.prototype.saveObject=function(e,t){var n=this;return this.as._jsonRequest({method:"PUT",url:"/1/indexes/"+encodeURIComponent(n.indexName)+"/"+encodeURIComponent(e.objectID),body:e,hostType:"write",callback:t})},r.prototype.saveObjects=function(t,n){var r=e(8),o="Usage: index.saveObjects(arrayOfObjects[, callback])";if(!r(t))throw new Error(o);for(var i=this,s={requests:[]},a=0;a<t.length;++a){var c={action:"updateObject",objectID:t[a].objectID,body:t[a]};s.requests.push(c)}return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(i.indexName)+"/batch",body:s,hostType:"write",callback:n})},r.prototype.deleteObject=function(e,t){if("function"==typeof e||"string"!=typeof e&&"number"!=typeof e){var n=new l.AlgoliaSearchError("Cannot delete an object without an objectID");return t=e,"function"==typeof t?t(n):this.as._promise.reject(n)}var r=this;return this.as._jsonRequest({method:"DELETE",url:"/1/indexes/"+encodeURIComponent(r.indexName)+"/"+encodeURIComponent(e),hostType:"write",callback:t})},r.prototype.deleteObjects=function(t,n){var r=e(8),o=e(30),i="Usage: index.deleteObjects(arrayOfObjectIDs[, callback])";if(!r(t))throw new Error(i);var s=this,a={requests:o(t,function(e){return{action:"deleteObject",objectID:e,body:{objectID:e}}})};return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(s.indexName)+"/batch",body:a,hostType:"write",callback:n})},r.prototype.deleteByQuery=a(function(t,n,r){function o(e){if(0===e.nbHits)return e;var t=p(e.hits,function(e){return e.objectID});return d.deleteObjects(t).then(i).then(s)}function i(e){return d.waitTask(e.taskID)}function s(){return d.deleteByQuery(t,n)}function a(){u(function(){r(null)},h._setTimeout||setTimeout)}function c(e){u(function(){r(e)},h._setTimeout||setTimeout)}var l=e(25),p=e(30),d=this,h=d.as;1===arguments.length||"function"==typeof n?(r=n,n={}):n=l(n),n.attributesToRetrieve="objectID",n.hitsPerPage=1e3,n.distinct=!1,this.clearCache();var f=this.search(t,n).then(o);return r?void f.then(a,c):f},c("index.deleteByQuery()","index.deleteBy()")),r.prototype.deleteBy=function(e,t){var n=this;return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(n.indexName)+"/deleteByQuery",body:{params:n.as._getSearchParams(e,"")},hostType:"write",callback:t})},r.prototype.browseAll=function(t,n){function r(e){if(!a._stopped){var t;t=void 0!==e?{cursor:e}:{params:l},c._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(u.indexName)+"/browse",hostType:"read",body:t,callback:o})}}function o(e,t){if(!a._stopped)return e?void a._error(e):(a._result(t),void 0===t.cursor?void a._end():void r(t.cursor))}"object"==typeof t&&(n=t,t=void 0);var i=e(31),s=e(17),a=new s,c=this.as,u=this,l=c._getSearchParams(i({},n||{},{query:t}),"");return r(),a},r.prototype.ttAdapter=a(function(e){var t=this;return function(n,r,o){var i;i="function"==typeof o?o:r,t.search(n,e,function(e,t){return e?void i(e):void i(t.hits)})}},"ttAdapter is not necessary anymore and will be removed in the next version,\nhave a look at autocomplete.js (https://github.com/algolia/autocomplete.js)"),r.prototype.waitTask=function(e,t){function n(){return l._jsonRequest({method:"GET",hostType:"read",url:"/1/indexes/"+encodeURIComponent(c.indexName)+"/task/"+e}).then(function(e){a++;var t=i*a*a;return t>s&&(t=s),"published"!==e.status?l._promise.delay(t).then(n):e})}function r(e){u(function(){t(null,e)},l._setTimeout||setTimeout)}function o(e){u(function(){t(e)},l._setTimeout||setTimeout)}var i=100,s=5e3,a=0,c=this,l=c.as,p=n();return t?void p.then(r,o):p},r.prototype.clearIndex=function(e){var t=this;return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(t.indexName)+"/clear",hostType:"write",callback:e})},r.prototype.getSettings=function(e){var t=this;return this.as._jsonRequest({method:"GET",url:"/1/indexes/"+encodeURIComponent(t.indexName)+"/settings?getVersion=2",hostType:"read",callback:e})},r.prototype.searchSynonyms=function(e,t){return"function"==typeof e?(t=e,e={}):void 0===e&&(e={}),this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/synonyms/search",body:e,hostType:"read",callback:t})},r.prototype.exportSynonyms=function(e,t){return o(this.searchSynonyms,e,t)},r.prototype.saveSynonym=function(e,t,n){"function"==typeof t?(n=t,t={}):void 0===t&&(t={}),void 0!==t.forwardToSlaves&&p();var r=t.forwardToSlaves||t.forwardToReplicas?"true":"false";return this.as._jsonRequest({method:"PUT",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/synonyms/"+encodeURIComponent(e.objectID)+"?forwardToReplicas="+r,body:e,hostType:"write",callback:n})},r.prototype.getSynonym=function(e,t){return this.as._jsonRequest({method:"GET",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/synonyms/"+encodeURIComponent(e),hostType:"read",callback:t})},r.prototype.deleteSynonym=function(e,t,n){"function"==typeof t?(n=t,t={}):void 0===t&&(t={}),void 0!==t.forwardToSlaves&&p();var r=t.forwardToSlaves||t.forwardToReplicas?"true":"false";return this.as._jsonRequest({method:"DELETE",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/synonyms/"+encodeURIComponent(e)+"?forwardToReplicas="+r,hostType:"write",callback:n})},r.prototype.clearSynonyms=function(e,t){"function"==typeof e?(t=e,e={}):void 0===e&&(e={}),void 0!==e.forwardToSlaves&&p();var n=e.forwardToSlaves||e.forwardToReplicas?"true":"false";return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/synonyms/clear?forwardToReplicas="+n,hostType:"write",callback:t})},r.prototype.batchSynonyms=function(e,t,n){"function"==typeof t?(n=t,t={}):void 0===t&&(t={}),void 0!==t.forwardToSlaves&&p();var r=t.forwardToSlaves||t.forwardToReplicas?"true":"false";return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/synonyms/batch?forwardToReplicas="+r+"&replaceExistingSynonyms="+(t.replaceExistingSynonyms?"true":"false"),hostType:"write",body:e,callback:n})},r.prototype.searchRules=function(e,t){return"function"==typeof e?(t=e,e={}):void 0===e&&(e={}),this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/rules/search",body:e,hostType:"read",callback:t})},r.prototype.exportRules=function(e,t){return o(this.searchRules,e,t)},r.prototype.saveRule=function(e,t,n){"function"==typeof t?(n=t,t={}):void 0===t&&(t={});var r=t.forwardToReplicas===!0?"true":"false";return this.as._jsonRequest({method:"PUT",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/rules/"+encodeURIComponent(e.objectID)+"?forwardToReplicas="+r,body:e,hostType:"write",callback:n})},r.prototype.getRule=function(e,t){return this.as._jsonRequest({method:"GET",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/rules/"+encodeURIComponent(e),hostType:"read",callback:t})},r.prototype.deleteRule=function(e,t,n){"function"==typeof t?(n=t,t={}):void 0===t&&(t={});var r=t.forwardToReplicas===!0?"true":"false";return this.as._jsonRequest({method:"DELETE",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/rules/"+encodeURIComponent(e)+"?forwardToReplicas="+r,hostType:"write",callback:n})},r.prototype.clearRules=function(e,t){"function"==typeof e?(t=e,e={}):void 0===e&&(e={});var n=e.forwardToReplicas===!0?"true":"false";return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/rules/clear?forwardToReplicas="+n,hostType:"write",callback:t})},r.prototype.batchRules=function(e,t,n){"function"==typeof t?(n=t,t={}):void 0===t&&(t={});var r=t.forwardToReplicas===!0?"true":"false";return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/rules/batch?forwardToReplicas="+r+"&clearExistingRules="+(t.clearExistingRules===!0?"true":"false"),hostType:"write",body:e,callback:n})},r.prototype.setSettings=function(e,t,n){1!==arguments.length&&"function"!=typeof t||(n=t,t={}),void 0!==t.forwardToSlaves&&p();var r=t.forwardToSlaves||t.forwardToReplicas?"true":"false",o=this;return this.as._jsonRequest({method:"PUT",url:"/1/indexes/"+encodeURIComponent(o.indexName)+"/settings?forwardToReplicas="+r,hostType:"write",body:e,callback:n})},r.prototype.listUserKeys=a(function(e){return this.listApiKeys(e)},c("index.listUserKeys()","index.listApiKeys()")),r.prototype.listApiKeys=function(e){var t=this;return this.as._jsonRequest({method:"GET",url:"/1/indexes/"+encodeURIComponent(t.indexName)+"/keys",hostType:"read",callback:e})},r.prototype.getUserKeyACL=a(function(e,t){return this.getApiKey(e,t)},c("index.getUserKeyACL()","index.getApiKey()")),r.prototype.getApiKey=function(e,t){var n=this;return this.as._jsonRequest({method:"GET",url:"/1/indexes/"+encodeURIComponent(n.indexName)+"/keys/"+e,hostType:"read",callback:t})},r.prototype.deleteUserKey=a(function(e,t){return this.deleteApiKey(e,t)},c("index.deleteUserKey()","index.deleteApiKey()")),r.prototype.deleteApiKey=function(e,t){var n=this;return this.as._jsonRequest({method:"DELETE",url:"/1/indexes/"+encodeURIComponent(n.indexName)+"/keys/"+e,hostType:"write",callback:t})},r.prototype.addUserKey=a(function(e,t,n){return this.addApiKey(e,t,n)},c("index.addUserKey()","index.addApiKey()")),r.prototype.addApiKey=function(t,n,r){var o=e(8),i="Usage: index.addApiKey(arrayOfAcls[, params, callback])";if(!o(t))throw new Error(i);1!==arguments.length&&"function"!=typeof n||(r=n,n=null);var s={acl:t};return n&&(s.validity=n.validity,s.maxQueriesPerIPPerHour=n.maxQueriesPerIPPerHour,s.maxHitsPerQuery=n.maxHitsPerQuery,s.description=n.description,n.queryParameters&&(s.queryParameters=this.as._getSearchParams(n.queryParameters,"")),s.referers=n.referers),this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/keys",body:s,hostType:"write",callback:r})},r.prototype.addUserKeyWithValidity=a(function(e,t,n){return this.addApiKey(e,t,n)},c("index.addUserKeyWithValidity()","index.addApiKey()")),r.prototype.updateUserKey=a(function(e,t,n,r){return this.updateApiKey(e,t,n,r)},c("index.updateUserKey()","index.updateApiKey()")),r.prototype.updateApiKey=function(t,n,r,o){var i=e(8),s="Usage: index.updateApiKey(key, arrayOfAcls[, params, callback])";if(!i(n))throw new Error(s);2!==arguments.length&&"function"!=typeof r||(o=r,r=null);var a={acl:n};return r&&(a.validity=r.validity,a.maxQueriesPerIPPerHour=r.maxQueriesPerIPPerHour,a.maxHitsPerQuery=r.maxHitsPerQuery,a.description=r.description,r.queryParameters&&(a.queryParameters=this.as._getSearchParams(r.queryParameters,"")),a.referers=r.referers),this.as._jsonRequest({method:"PUT",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/keys/"+t,body:a,hostType:"write",callback:o})}},{17:17,18:18,25:25,26:26,27:27,28:28,29:29,30:30,31:31,7:7,8:8}],17:[function(e,t,n){"use strict";function r(){}t.exports=r;var o=e(7),i=e(4).EventEmitter;o(r,i),r.prototype.stop=function(){this._stopped=!0,this._clean()},r.prototype._end=function(){this.emit("end"),this._clean()},r.prototype._error=function(e){this.emit("error",e),this._clean()},r.prototype._result=function(e){this.emit("result",e)},r.prototype._clean=function(){this.removeAllListeners("stop"),this.removeAllListeners("end"),this.removeAllListeners("error"),this.removeAllListeners("result")}},{4:4,7:7}],18:[function(e,t,n){function r(e,t){this.indexName=t,this.as=e,this.typeAheadArgs=null,this.typeAheadValueOption=null,this.cache={}}var o=e(24),i=e(26),s=e(27);t.exports=r,r.prototype.clearCache=function(){this.cache={}},r.prototype.search=o("query"),r.prototype.similarSearch=o("similarQuery"),r.prototype.browse=function(t,n,r){var o,i,s=e(31),a=this;0===arguments.length||1===arguments.length&&"function"==typeof arguments[0]?(o=0,r=arguments[0],t=void 0):"number"==typeof arguments[0]?(o=arguments[0],"number"==typeof arguments[1]?i=arguments[1]:"function"==typeof arguments[1]&&(r=arguments[1],i=void 0),t=void 0,n=void 0):"object"==typeof arguments[0]?("function"==typeof arguments[1]&&(r=arguments[1]),n=arguments[0],t=void 0):"string"==typeof arguments[0]&&"function"==typeof arguments[1]&&(r=arguments[1],n=void 0),n=s({},n||{},{page:o,hitsPerPage:i,query:t});var c=this.as._getSearchParams(n,"");return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(a.indexName)+"/browse",body:{params:c},hostType:"read",callback:r})},r.prototype.browseFrom=function(e,t){return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/browse",body:{cursor:e},hostType:"read",callback:t})},r.prototype.searchForFacetValues=function(t,n){var r=e(25),o=e(32),i="Usage: index.searchForFacetValues({facetName, facetQuery, ...params}[, callback])";if(void 0===t.facetName||void 0===t.facetQuery)throw new Error(i);var s=t.facetName,a=o(r(t),function(e){return"facetName"===e}),c=this.as._getSearchParams(a,"");return this.as._jsonRequest({method:"POST",url:"/1/indexes/"+encodeURIComponent(this.indexName)+"/facets/"+encodeURIComponent(s)+"/query",hostType:"read",body:{params:c},callback:n})},r.prototype.searchFacet=i(function(e,t){return this.searchForFacetValues(e,t)},s("index.searchFacet(params[, callback])","index.searchForFacetValues(params[, callback])")),r.prototype._search=function(e,t,n,r){return this.as._jsonRequest({cache:this.cache,method:"POST",url:t||"/1/indexes/"+encodeURIComponent(this.indexName)+"/query",body:{params:e},hostType:"read",fallback:{method:"GET",url:"/1/indexes/"+encodeURIComponent(this.indexName),body:{params:e}},callback:n,additionalUA:r})},r.prototype.getObject=function(e,t,n){var r=this;1!==arguments.length&&"function"!=typeof t||(n=t,t=void 0);var o="";if(void 0!==t){o="?attributes=";for(var i=0;i<t.length;++i)0!==i&&(o+=","),o+=t[i]}return this.as._jsonRequest({method:"GET",url:"/1/indexes/"+encodeURIComponent(r.indexName)+"/"+encodeURIComponent(e)+o,hostType:"read",callback:n})},r.prototype.getObjects=function(t,n,r){var o=e(8),i=e(30),s="Usage: index.getObjects(arrayOfObjectIDs[, callback])";if(!o(t))throw new Error(s);var a=this;1!==arguments.length&&"function"!=typeof n||(r=n,n=void 0);var c={requests:i(t,function(e){var t={indexName:a.indexName,objectID:e};return n&&(t.attributesToRetrieve=n.join(",")),t})};return this.as._jsonRequest({method:"POST",url:"/1/indexes/*/objects",hostType:"read",body:c,callback:r})},r.prototype.as=null,r.prototype.indexName=null,r.prototype.typeAheadArgs=null,r.prototype.typeAheadValueOption=null},{24:24,25:25,26:26,27:27,30:30,31:31,32:32,8:8}],19:[function(e,t,n){"use strict";var r=e(14),o=e(20);t.exports=o(r)},{14:14,20:20}],20:[function(e,t,n){(function(n){"use strict";var r=e(6),o=r.Promise||e(3).Promise;t.exports=function(t,i){function s(t,n,r){var o=e(25),i=e(21);return r=o(r||{}),void 0===r.protocol&&(r.protocol=i()),r._ua=r._ua||s.ua,new a(t,n,r)}function a(){t.apply(this,arguments)}var c=e(7),u=e(28),l=e(22),p=e(23),d=e(33);i=i||"","debug"===n.env.NODE_ENV&&e(1).enable("algoliasearch*"),s.version=e(35),s.ua="Algolia for vanilla JavaScript "+i+s.version,s.initPlaces=d(s),r.__algolia={debug:e(1),algoliasearch:s};var h={hasXMLHttpRequest:"XMLHttpRequest"in r,hasXDomainRequest:"XDomainRequest"in r};return h.hasXMLHttpRequest&&(h.cors="withCredentials"in new XMLHttpRequest),c(a,t),a.prototype._request=function(e,t){return new o(function(n,r){function o(){if(!f){clearTimeout(d);var e;try{e={body:JSON.parse(m.responseText),responseText:m.responseText,statusCode:m.status,headers:m.getAllResponseHeaders&&m.getAllResponseHeaders()||{}}}catch(t){e=new u.UnparsableJSON({more:m.responseText})}e instanceof u.UnparsableJSON?r(e):n(e)}}function i(e){f||(clearTimeout(d),r(new u.Network({more:e})))}function s(){f=!0,m.abort(),r(new u.RequestTimeout)}function a(){v=!0,clearTimeout(d),d=setTimeout(s,t.timeouts.complete)}function c(){v||a()}function p(){!v&&m.readyState>1&&a()}if(!h.cors&&!h.hasXDomainRequest)return void r(new u.Network("CORS not supported"));e=l(e,t.headers);var d,f,y=t.body,m=h.cors?new XMLHttpRequest:new XDomainRequest,v=!1;d=setTimeout(s,t.timeouts.connect),m.onprogress=c,"onreadystatechange"in m&&(m.onreadystatechange=p),m.onload=o,m.onerror=i,m instanceof XMLHttpRequest?m.open(t.method,e,!0):m.open(t.method,e),h.cors&&(y&&("POST"===t.method?m.setRequestHeader("content-type","application/x-www-form-urlencoded"):m.setRequestHeader("content-type","application/json")),m.setRequestHeader("accept","application/json")),m.send(y)})},a.prototype._request.fallback=function(e,t){return e=l(e,t.headers),new o(function(n,r){p(e,t,function(e,t){return e?void r(e):void n(t)})})},a.prototype._promise={reject:function(e){return o.reject(e)},resolve:function(e){return o.resolve(e)},delay:function(e){return new o(function(t){setTimeout(t,e)})}},s}}).call(this,e(12))},{1:1,12:12,21:21,22:22,23:23,25:25,28:28,3:3,33:33,35:35,6:6,7:7}],21:[function(e,t,n){"use strict";function r(){var e=window.document.location.protocol;return"http:"!==e&&"https:"!==e&&(e="http:"),e}t.exports=r},{}],22:[function(e,t,n){"use strict";function r(e,t){return e+=/\?/.test(e)?"&":"?",e+o(t)}t.exports=r;var o=e(13)},{13:13}],23:[function(e,t,n){"use strict";function r(e,t,n){function r(){t.debug("JSONP: success"),m||d||(m=!0,p||(t.debug("JSONP: Fail. Script loaded but did not call the callback"),a(),n(new o.JSONPScriptFail)))}function s(){"loaded"!==this.readyState&&"complete"!==this.readyState||r()}function a(){clearTimeout(v),f.onload=null,f.onreadystatechange=null,f.onerror=null,h.removeChild(f)}function c(){try{delete window[y],delete window[y+"_loaded"]}catch(e){window[y]=window[y+"_loaded"]=void 0}}function u(){t.debug("JSONP: Script timeout"),d=!0,a(),n(new o.RequestTimeout)}function l(){t.debug("JSONP: Script error"),m||d||(a(),n(new o.JSONPScriptError))}if("GET"!==t.method)return void n(new Error("Method "+t.method+" "+e+" is not supported by JSONP."));t.debug("JSONP: start");var p=!1,d=!1;i+=1;var h=document.getElementsByTagName("head")[0],f=document.createElement("script"),y="algoliaJSONP_"+i,m=!1;window[y]=function(e){return c(),d?void t.debug("JSONP: Late answer, ignoring"):(p=!0,a(),void n(null,{body:e}))},e+="&callback="+y,t.jsonBody&&t.jsonBody.params&&(e+="&"+t.jsonBody.params);var v=setTimeout(u,t.timeouts.complete);f.onreadystatechange=s,f.onload=r,f.onerror=l,f.async=!0,f.defer=!0,f.src=e,h.appendChild(f)}t.exports=r;var o=e(28),i=0},{28:28}],24:[function(e,t,n){function r(e,t){return function(n,r,i){if("function"==typeof n&&"object"==typeof r||"object"==typeof i)throw new o.AlgoliaSearchError("index.search usage is index.search(query, params, cb)");0===arguments.length||"function"==typeof n?(i=n,n=""):1!==arguments.length&&"function"!=typeof r||(i=r,r=void 0),"object"==typeof n&&null!==n?(r=n,n=void 0):void 0!==n&&null!==n||(n="");var s="";void 0!==n&&(s+=e+"="+encodeURIComponent(n));var a;return void 0!==r&&(r.additionalUA&&(a=r.additionalUA,delete r.additionalUA),s=this.as._getSearchParams(r,s)),this._search(s,t,i,a)}}t.exports=r;var o=e(28)},{28:28}],25:[function(e,t,n){t.exports=function(e){return JSON.parse(JSON.stringify(e))}},{}],26:[function(e,t,n){t.exports=function(e,t){function n(){return r||(console.warn(t),r=!0),e.apply(this,arguments)}var r=!1;return n}},{}],27:[function(e,t,n){t.exports=function(e,t){var n=e.toLowerCase().replace(/[\.\(\)]/g,"");return"algoliasearch: `"+e+"` was replaced by `"+t+"`. Please see https://github.com/algolia/algoliasearch-client-javascript/wiki/Deprecated#"+n}},{}],28:[function(e,t,n){"use strict";function r(t,n){var r=e(5),o=this;"function"==typeof Error.captureStackTrace?Error.captureStackTrace(this,this.constructor):o.stack=(new Error).stack||"Cannot get a stacktrace, browser is too old",this.name="AlgoliaSearchError",this.message=t||"Unknown error",n&&r(n,function(e,t){o[t]=e})}function o(e,t){function n(){var n=Array.prototype.slice.call(arguments,0);"string"!=typeof n[0]&&n.unshift(t),r.apply(this,n),this.name="AlgoliaSearch"+e+"Error"}return i(n,r),n}var i=e(7);i(r,Error),t.exports={AlgoliaSearchError:r,UnparsableJSON:o("UnparsableJSON","Could not parse the incoming response as JSON, see err.more for details"),RequestTimeout:o("RequestTimeout","Request timedout before getting a response"),Network:o("Network","Network issue, see err.more for details"),JSONPScriptFail:o("JSONPScriptFail","<script> was loaded but did not call our provided callback"),JSONPScriptError:o("JSONPScriptError","<script> unable to load due to an `error` event on it"),Unknown:o("Unknown","Unknown error occured")}},{5:5,7:7}],29:[function(e,t,n){t.exports=function(e,t){t(e,0)}},{}],30:[function(e,t,n){var r=e(5);t.exports=function(e,t){var n=[];return r(e,function(r,o){n.push(t(r,o,e))}),n}},{5:5}],31:[function(e,t,n){var r=e(5);t.exports=function o(e){var t=Array.prototype.slice.call(arguments);return r(t,function(t){for(var n in t)t.hasOwnProperty(n)&&("object"==typeof e[n]&&"object"==typeof t[n]?e[n]=o({},e[n],t[n]):void 0!==t[n]&&(e[n]=t[n]))}),e}},{5:5}],32:[function(e,t,n){t.exports=function(t,n){var r=e(10),o=e(5),i={};return o(r(t),function(e){n(e)!==!0&&(i[e]=t[e])}),i}},{10:10,5:5}],33:[function(e,t,n){function r(t){return function(n,r,i){var s=e(25);i=i&&s(i)||{},i.hosts=i.hosts||["places-dsn.algolia.net","places-1.algolianet.com","places-2.algolianet.com","places-3.algolianet.com"],0!==arguments.length&&"object"!=typeof n&&void 0!==n||(n="",r="",i._allowEmptyCredentials=!0);var a=t(n,r,i),c=a.initIndex("places");return c.search=o("query","/1/places/query"),c.getObject=function(e,t){return this.as._jsonRequest({method:"GET",url:"/1/places/"+encodeURIComponent(e),hostType:"read",callback:t})},c}}t.exports=r;var o=e(24)},{24:24,25:25}],34:[function(e,t,n){(function(n){function r(e,t){return c("localStorage failed with",t),s(),a=l,a.get(e)}function o(e,t){return 1===arguments.length?a.get(e):a.set(e,t)}function i(){try{return"localStorage"in n&&null!==n.localStorage&&(n.localStorage[u]||n.localStorage.setItem(u,JSON.stringify({})),!0)}catch(e){return!1}}function s(){try{n.localStorage.removeItem(u)}catch(e){}}var a,c=e(1)("algoliasearch:src/hostIndexState.js"),u="algoliasearch-client-js",l={state:{},set:function(e,t){return this.state[e]=t,this.state[e]},get:function(e){return this.state[e]||null}},p={set:function(e,t){l.set(e,t);try{var o=JSON.parse(n.localStorage[u]);return o[e]=t,n.localStorage[u]=JSON.stringify(o),o[e]}catch(i){return r(e,i)}},get:function(e){try{return JSON.parse(n.localStorage[u])[e]||null}catch(t){return r(e,t)}}};a=i()?p:l,t.exports={get:o,set:o,supportsLocalStorage:i}}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{1:1}],35:[function(e,t,n){"use strict";t.exports="3.24.6"},{}]},{},[19])(19)});
-define('m_database',['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
-    const _ = {};
-    const CONST = {};
-
-    //@< algolia
-        var algoliaClient = ALGOLIA('OKSL1FNILG', 'c6cadc6f629b4daf66c5b78e4a9ab343');
-        _['algolia'] = algoliaClient;
-        // var index = client.initIndex('YourIndex');
-    //@> algolia
-
-    // set firebase realtime db framework 
-    const Datebase      = FIREBASE.database;
-    const Datebase2     = FIREBASE.firestore;
-    const fstore        = _;
-          window.fstore = fstore;
-    window.db2 = Datebase2;
-
-
-    function getBatchFirestoreDb (iNdb) {
-        return iNdb.batch();
-    }
-    _['getBatchFirestoreDb'] = getBatchFirestoreDb;
-
-    function runBatchFirestoreDb (iNfirestoreBatch, iNfunctions) {
-        if(typeof iNfunctions != 'object') iNfunctions = {};
-          // Commit the batch
-          iNfirestoreBatch.commit().then(function () {
-              if(typeof iNfunctions['onSuccess'] == 'function') iNfunctions['onSuccess'] ();
-          });
-    }
-    _['runBatchFirestoreDb'] = runBatchFirestoreDb;
-
-    function getFirestoreDb () {
-        return Datebase2();
-    }
-    _['getFirestoreDb'] = getFirestoreDb;
-
-
-    function updateRealtimeDb ( iNcollection, iNpath, iNdata ) {
-            /*
-                @disrc
-                    start sendidng flesh msg to firebase db
-                @inputs
-                    @required
-                        iNdata -> object
-                            type
-                            data
-            */
-            var baseKey = iNcollection + '/' + iNpath;
-            var updateArray = {};
-                updateArray[baseKey] = iNdata;
-            Datebase().ref().update(updateArray);
-    }
-    _['updateRealtimeDb'] = updateRealtimeDb;
-
-        function updateFirestoreDb ( iNcollection, iNpath, iNdata, iNfunctions) {
-            /*
-                @disrc
-                    start sendidng flesh msg to firebase db
-                @inputs
-                    @required
-                        iNdata -> object
-                            type
-                            data
-                    @optional
-                        iNfunctions -> function
-                            onSuccess -> function
-                            onError -> function
-            */
-            if(typeof iNfunctions != 'object') iNfunctions = {};
-
-            var baseKey = iNcollection + '/' + iNpath;
-
-            var docRef = Datebase2().doc(baseKey);
-            console.log("updateFirestoreDb baseKey ", baseKey);
-            console.log("updateFirestoreDb iNdata ", iNdata);
-            // Update the timestamp field with the value from the server
-            var updateTimestamp = docRef.update(iNdata).then(function(docRef) {
-                console.log("updateFirestoreDb Document written with ID: ", docRef.id);
-                if(typeof iNfunctions['onSuccess'] == 'function' ) iNfunctions['onSuccess'](docRef);
-            })
-            .catch(function(error) {
-                console.log(" updateFirestoreDb error", error);
-                if(typeof iNfunctions['onError'] == 'function' ) iNfunctions['onError']();
-            });
-        }
-        _['updateFirestoreDb'] = updateFirestoreDb;
-
-        function safeUpdateFirestoreDb ( iNcollection, iNpath, iNdata, iNfunctions , iNdb) {
-            /*
-                @disrc
-                    safe update firestore db
-                @inputs
-                    @required
-                        iNcollection -> string
-                        iNpath -> string
-                        iNdata -> object
-                            type
-                            data
-                    @optional
-                        iNfunctions -> function
-                            onSuccess -> function
-                            onError -> function
-            */
-            if(typeof iNfunctions != 'object') iNfunctions = {};
-
-            var baseKey = iNcollection + '/' + iNpath, docRef;
-
-            if ( typeof iNdb != 'undefined')
-                docRef = iNdb.doc(baseKey);
-            else
-                docRef = Datebase2().doc(baseKey);
-
-            console.log('safeUpdateFirestoreDb baseKey, iNdata',baseKey, iNdata);
-            // Update the timestamp field with the value from the server
-            var updateTimestamp = docRef.set(iNdata,{ merge : true }).then(function(docRef) {
-                console.log('safeUpdateFirestoreDb SUCCESS baseKey, docRef',baseKey, docRef);
-                if(typeof iNfunctions['onSuccess'] == 'function' ) iNfunctions['onSuccess'](docRef);
-            })
-            .catch(function(error) {
-                console.log('safeUpdateFirestoreDb EROR baseKey, error',baseKey, error);
-                if(typeof iNfunctions['onError'] == 'function' ) iNfunctions['onError']();
-            });
-        }
-        _['safeUpdateFirestoreDb'] = safeUpdateFirestoreDb;
-
-
-    function addRealtimeDb ( iNcollection, iNpath, iNdata ) {
-            /*
-                @disrc
-                    start sendidng flesh msg to firebase db
-                @inputs
-                    @required
-                        iNdata -> object
-                            type
-                            data
-            */
-            var baseKey = iNcollection + '/' + iNpath;
-            Datebase().ref(baseKey).set(iNdata);
-    }
-    _['addRealtimeDb'] = addRealtimeDb;
-
-    function addFirestoreDb ( iNcollection, iNpath, iNdata , iNfunctions) {
-            /*
-                @disrc
-                @inputs
-                    @required
-                        iNdata -> object
-                            type
-                            data
-                    @optional
-                        iNfunctions -> function
-                            onSuccess -> function
-                            onError -> function
-            */
-            if(typeof iNfunctions != 'object') iNfunctions = {}
-            var baseKey = iNcollection + '/' + iNpath,
-                ref,
-                typeAdd;
-
-
-            var lengthBaseKey = baseKey.split('/').length;
-            console.log('addFirestoreDb baseKey,lengthBaseKey',baseKey,lengthBaseKey );
-            if(lengthBaseKey  % 2 == 0) {
-                ref = Datebase2().doc(baseKey);
-                typeAdd = 'set';
-            } else {
-                ref = Datebase2().collection(baseKey);
-                typeAdd = 'add';
-            }
-
-
-            console.log("addFirestoreDb typeAdd ", typeAdd);
-            console.log("addFirestoreDb iNdata ", iNdata);
-            return ref[typeAdd](iNdata).then(function(docRef) {
-                console.log("addFirestoreDb Document written with ID: ", docRef);
-                if(typeof iNfunctions['onSuccess'] == 'function' ) iNfunctions['onSuccess']();
-            })
-            .catch(function(error) {
-                console.log("addFirestoreDb  error", error);
-                if(typeof iNfunctions['onError'] == 'function' ) iNfunctions['onError']();
-            });
-    }
-    _['addFirestoreDb'] = addFirestoreDb;
-
-
-    function getSeverVarTimestamp () {
-        return FIREBASE.database.ServerValue.TIMESTAMP ;
-    }
-    _['getSeverVarTimestamp'] = getSeverVarTimestamp;
-
-    function getFirestoreSeverVarTimestamp () {
-        return FIREBASE.firestore.FieldValue.serverTimestamp();
-    }
-    _['getFirestoreSeverVarTimestamp'] = getFirestoreSeverVarTimestamp;
-
-
-    function isFirestoreLocalMutation (doc) {
-        console.log('isFirestoreLocalMutation doc',doc);
-        return doc.et.hasLocalMutations;
-    }
-    _['isFirestoreLocalMutation'] = isFirestoreLocalMutation;
-
-
-
-    function generateIdForRealtimeDbByFullPathToDb (iNcollection,iNpath) {
-      var path = iNcollection + '/' + iNpath;
-      var generateIdForRealtimeDbByFullPathToDb = Datebase().ref().child(path).push().key;
-      return generateIdForRealtimeDbByFullPathToDb;
-    }
-    _['generateIdForRealtimeDbByFullPathToDb'] = generateIdForRealtimeDbByFullPathToDb;
-
-
-    function generateIdForFirestoreByFullPathToDb (iNcollection,iNpath) {
-      var path = iNcollection + '/' + iNpath;
-
-      console.log('generateIdForFirestoreByFullPathToDb path', path);
-      var generateIdForRealtimeDbByFullPathToDb = Datebase2().collection(path).doc();
-      return generateIdForRealtimeDbByFullPathToDb.id;
-    }
-    _['generateIdForFirestoreByFullPathToDb'] = generateIdForFirestoreByFullPathToDb;
-
-    function getDataFromRealtimeDb (iNcollection, iNpath, iNdata) {
-        /*
-            @inputs
-                @required
-                    iNcollection    -> string
-                    iNpath          -> string
-                @optional
-                    iNdata -> object
-                        limitToLast -> number
-                        order       -> array
-                        type        -> string
-                            all (Default)
-                            child_added
-                            child_removed
-                            child_changed
-                            child_moved
-                        functionOnSuccess
-        */
-        if( typeof iNdata != 'object') iNdata = {};
-        var path    = iNcollection + '/' + iNpath;
-        var ref     = Datebase().ref(path);
-        var type    = iNdata['type']||'all';
-        var functionOnSuccess   = iNdata['functionOnSuccess']||function(){};
-        var functionOnError     = iNdata['functionOnError']||function(){};
-        
-        if( typeof iNdata['order'] != 'undefined' ) {
-            var order = iNdata['order'];
-            if ( !Array.isArray(order)  ) order = [order];
-            for (var iKey in order ) {
-                ref.orderByChild( order[iKey] );
-            }
-        }
-
-        if( typeof iNdata['limitToLast'] == 'number' ) {
-            var limit = iNdata['limitToLast'];
-            ref.limitToLast( limit );
-        }
-
-        switch (type) {
-            case "all": 
-                ref.on('value',functionOnSuccess,functionOnError)
-            break;
-            case "child_added": 
-                ref.on('child_added',functionOnSuccess,functionOnError)
-            break;
-            case "child_removed": 
-                ref.on('child_removed',functionOnSuccess,functionOnError)
-            break;
-            case "child_moved": 
-                ref.on('child_moved',functionOnSuccess,functionOnError)
-            break;
-        }
-
-    }
-    _['getDataFromRealtimeDb'] = getDataFromRealtimeDb;
-
-    function getDataFromFirestoreDb (iNcollection,iNpath, iNdata) {
-        /*
-            @inputs
-                @required
-                    iNcollection    -> string
-                    iNpath          -> string
-                @optional
-                    iNdata -> object
-                        limitToLast -> number
-                        order       -> array
-
-                        functionOnGetEmpty 
-                        functionOnGetData
-
-        */
-         var path    = iNcollection, ref, where, type, counterForTypeDoc = 0;
-            if(typeof(iNpath) == 'string' &&  iNpath.length > 0) 
-                path = path + '/' +  iNpath;
-
-            if(path.split('/').length % 2 == 0) {
-                // its document
-                    ref = Datebase2().doc(path);
-                    type = 'document';
-            } else {
-                // its collection
-                    ref = Datebase2().collection(path);
-                    type = 'collection';
-            }
-                
-        console.log('getRealtimeDataFromFirestoreDb path',path);
-
-        iNdata['where'] = iNdata['where'] || [];
-
-        //@<ORDER
-            if( typeof iNdata['order'] != 'undefined' || typeof iNdata['orderByAsc'] != 'undefined') {
-                var order = iNdata['order']||iNdata['orderByAsc'];
-                if ( !Array.isArray(order)  ) order = [order];
-                for (var iKey in order ) {
-                    ref = ref.orderBy( order[iKey] );
-                }
-            }
-
-            if( typeof iNdata['orderByDesc'] != 'undefined' ) {
-                var order = iNdata['orderByDesc'];
-                if ( !Array.isArray(order)  ) order = [order];
-                for (var iKey in order ) {
-                    ref = ref.orderBy ( order[iKey] , "desc" );
-                }
-            }
-        //@ORDER>
-
-        //@<WHERE
-            console.log( 'whereEquilTo', typeof iNdata['whereEquilTo'] , Array.isArray( iNdata['whereEquilTo'] ) );
-            if( typeof iNdata['whereEquilTo'] == 'object' && Array.isArray(iNdata['whereEquilTo']) ) {   // ==
-                    where = iNdata['whereEquilTo'];
-                    console.log('whereEquilTo', where);
-                    for(var iKey in where) {
-                        let key     = Object.keys( where[iKey] )[0],
-                            value   = where[iKey][key];
-                        iNdata['where'].push(
-                            {
-                                'key'   : key,
-                                'value' : value,
-                                'mark'  : '==',
-                            }
-                        );
-                    }
-                    console.log('whereEquilTo where',iNdata['where']);
-            }
-            if( typeof iNdata['whereMore'] == 'object' ) {      // ==
-                    where = iNdata['whereMore'];
-                    for(var iKey in where) {
-                        let key     = Object.keys( where[iKey] )[0],
-                            value   = where[iKey][key];
-                        iNdata['where'].push(
-                            {
-                                'key'   : key,
-                                'value' : value,
-                                'mark'  : ">"
-                            }
-                        );
-                    }
-            }
-            if( typeof iNdata['whereMoreOrEquil'] == 'object' ) { // ==
-                    where = iNdata['whereMoreOrEquil'];
-                    for(var iKey in where) {
-                        let key     = Object.keys( where[iKey] )[0],
-                            value   = where[iKey][key];
-                        iNdata['where'].push(
-                            {
-                                'key'   : key,
-                                'value' : value,
-                                'mark'  : ">="
-                            }
-                        );
-                    }
-            }
-
-            if( typeof iNdata['whereLess'] == 'object' ) { // ==
-                    where = iNdata['whereLess'];
-                    for(var iKey in where) {
-                        iNdata['where'].push(
-                            {
-                                'key'   : iKey,
-                                'value' : where[iKey],
-                                'mark'  : "<"
-                            }
-                        );
-                    }
-            }
-            if( typeof iNdata['whereLessOrEquil'] == 'object' ) { // ==
-                    where = iNdata['whereLessOrEquil'];
-                    for(var iKey in where) {
-                        iNdata['where'].push(
-                            {
-                                'key'   : iKey,
-                                'value' : where[iKey],
-                                'mark'  : "<="
-                            }
-                        );
-                    }
-            }
-
-            //add all
-            if( typeof iNdata['where'] == 'object' ) {
-                var where = iNdata['where'];
-                    console.log("getRealtimeDataFromFirestoreDb where", JSON.stringify(where) );
-
-                for(var iKey in where) {
-                    var thisWhere = where[iKey];
-                    console.log("getRealtimeDataFromFirestoreDb iNdata['where']",thisWhere['key'], thisWhere['mark'], thisWhere['value'])
-                    ref = ref.where(thisWhere['key'], thisWhere['mark'], thisWhere['value'])
-                }
-            }
-        //@WHERE>
-
-        //@<LIMIT
-            if( typeof iNdata['limit'] == 'number' ) {
-                var limit = iNdata['limit'];
-                ref = ref.limit( limit );
-            }
-                //
-                if( typeof iNdata['limitToLast'] == 'number' ) {
-                    var limit = iNdata['limitToLast'];
-                    ref = ref.orderBy("time", "desc")
-                    ref = ref.limit( limit );
-                }
-                //
-                if( typeof iNdata['limitToFirst'] == 'number' ) {
-                    var limit = iNdata['limitToFirst'];
-                    ref = ref.orderBy("time", "asc")
-                    ref = ref.limit( limit );
-                }
-        //@LIMIT>
-
-        ref.get( 
-        (doc) => {
-            if(type == 'collection') {
-                    // if collection
-                    if ( !doc.empty ) {
-                        if(typeof iNdata['functionOnGetData'] == 'function') iNdata['functionOnGet'](doc,type);
-                    } else {
-                        if(typeof iNdata['functionOnGetEmpty'] == 'function') iNdata['functionOnGetEmpty'](type);
-                    }
-            } else {
-                if (doc.exists) {
-                    if(typeof iNdata['functionOnGetData'] == 'function') iNdata['functionOnGet']([doc],type);
-                } else {
-                    if(typeof iNdata['functionOnGetEmpty'] == 'function') iNdata['functionOnGetEmpty'](type);
-                }
-            }
-        });
-    }
-    _['getDataFromFirestoreDb'] = getDataFromFirestoreDb;
-    function getRealtimeDataFromFirestoreDb (iNcollection,iNpath, iNdata) {
-        /*
-            @inputs
-                @required
-                    iNcollection    -> string
-                    iNpath          -> string
-                @optional
-                    iNdata -> object
-                        limitToLast -> number
-                        order       -> array
-                        functionOnSuccess
-                        functionOnError
-                        functionOnDelete
-                        functionOnAdd
-
-                        functionOnChange
-                        functionOnChangeFromLocal 
-                        functionOnChangeFromServer
-
-                        functionOnOther
-
-        */
-        var path    = iNcollection, ref, where, type, counterForTypeDoc = 0;
-            if(typeof(iNpath) == 'string' &&  iNpath.length > 0) 
-                path = path + '/' +  iNpath;
-
-            if(path.split('/').length % 2 == 0) {
-                // its document
-                    ref = Datebase2().doc(path);
-                    type = 'document';
-            } else {
-                // its collection
-                    ref = Datebase2().collection(path);
-                    type = 'collection';
-            }
-                
-        console.log('getRealtimeDataFromFirestoreDb path',path);
-
-        iNdata['where'] = iNdata['where'] || [];
-
-        //@<ORDER
-            if( typeof iNdata['order'] != 'undefined' || typeof iNdata['orderByAsc'] != 'undefined') {
-                var order = iNdata['order']||iNdata['orderByAsc'];
-                if ( !Array.isArray(order)  ) order = [order];
-                for (var iKey in order ) {
-                    ref = ref.orderBy( order[iKey] );
-                }
-            }
-
-            if( typeof iNdata['orderByDesc'] != 'undefined' ) {
-                var order = iNdata['orderByDesc'];
-                if ( !Array.isArray(order)  ) order = [order];
-                for (var iKey in order ) {
-                    ref = ref.orderBy ( order[iKey] , "desc" );
-                }
-            }
-        //@ORDER>
-
-        //@<WHERE
-            console.log( 'whereEquilTo', typeof iNdata['whereEquilTo'] , Array.isArray( iNdata['whereEquilTo'] ) );
-            if( typeof iNdata['whereEquilTo'] == 'object' && Array.isArray(iNdata['whereEquilTo']) ) {   // ==
-                    where = iNdata['whereEquilTo'];
-                    console.log('whereEquilTo', where);
-                    for(var iKey in where) {
-                        let key     = Object.keys( where[iKey] )[0],
-                            value   = where[iKey][key];
-                        iNdata['where'].push(
-                            {
-                                'key'   : key,
-                                'value' : value,
-                                'mark'  : '==',
-                            }
-                        );
-                    }
-                    console.log('whereEquilTo where',iNdata['where']);
-            }
-            if( typeof iNdata['whereMore'] == 'object' ) {      // ==
-                    where = iNdata['whereMore'];
-                    for(var iKey in where) {
-                        let key     = Object.keys( where[iKey] )[0],
-                            value   = where[iKey][key];
-                        iNdata['where'].push(
-                            {
-                                'key'   : key,
-                                'value' : value,
-                                'mark'  : ">"
-                            }
-                        );
-                    }
-            }
-            if( typeof iNdata['whereMoreOrEquil'] == 'object' ) { // ==
-                    where = iNdata['whereMoreOrEquil'];
-                    for(var iKey in where) {
-                        let key     = Object.keys( where[iKey] )[0],
-                            value   = where[iKey][key];
-                        iNdata['where'].push(
-                            {
-                                'key'   : key,
-                                'value' : value,
-                                'mark'  : ">="
-                            }
-                        );
-                    }
-            }
-
-            if( typeof iNdata['whereLess'] == 'object' ) { // ==
-                    where = iNdata['whereLess'];
-                    for(var iKey in where) {
-                        iNdata['where'].push(
-                            {
-                                'key'   : iKey,
-                                'value' : where[iKey],
-                                'mark'  : "<"
-                            }
-                        );
-                    }
-            }
-            if( typeof iNdata['whereLessOrEquil'] == 'object' ) { // ==
-                    where = iNdata['whereLessOrEquil'];
-                    for(var iKey in where) {
-                        iNdata['where'].push(
-                            {
-                                'key'   : iKey,
-                                'value' : where[iKey],
-                                'mark'  : "<="
-                            }
-                        );
-                    }
-            }
-
-            //add all
-            if( typeof iNdata['where'] == 'object' ) {
-                var where = iNdata['where'];
-                    console.log("getRealtimeDataFromFirestoreDb where", JSON.stringify(where) );
-
-                for(var iKey in where) {
-                    var thisWhere = where[iKey];
-                    console.log("getRealtimeDataFromFirestoreDb iNdata['where']",thisWhere['key'], thisWhere['mark'], thisWhere['value'])
-                    ref = ref.where(thisWhere['key'], thisWhere['mark'], thisWhere['value'])
-                }
-            }
-        //@WHERE>
-
-        //@<LIMIT
-            if( typeof iNdata['limit'] == 'number' ) {
-                var limit = iNdata['limit'];
-                ref = ref.limit( limit );
-            }
-                //
-                if( typeof iNdata['limitToLast'] == 'number' ) {
-                    var limit = iNdata['limitToLast'];
-                    ref = ref.orderBy("time", "desc")
-                    ref = ref.limit( limit );
-                }
-                //
-                if( typeof iNdata['limitToFirst'] == 'number' ) {
-                    var limit = iNdata['limitToFirst'];
-                    ref = ref.orderBy("time", "asc")
-                    ref = ref.limit( limit );
-                }
-        //@LIMIT>
-
-        ref.onSnapshot( 
-        (snapshot) => {
-            if(type == 'collection') {
-                    if ( snapshot.docChanges.length > 0 )
-                        snapshot.docChanges.forEach( function (change) {
-                            if (change.type === "added") {
-                                if(typeof iNdata['functionOnAdd'] == 'function')
-                                    iNdata['functionOnAdd'](change.doc);
-                            }
-                            if (change.type === "modified") {
-
-                                if(typeof iNdata['functionOnChange'] == 'function')
-                                    iNdata['functionOnChange'](change.doc);
-
-                                if(isFirestoreLocalMutation(change.doc)) {
-                                    if(typeof iNdata['functionOnChangeFromLocal'] == 'function')
-                                        iNdata['functionOnChangeFromLocal'](change.doc);
-
-                                } else { 
-                                    if(typeof iNdata['functionOnChangeFromServer'] == 'function')
-                                        iNdata['functionOnChangeFromServer'](change.doc);
-
-                                }
-                            }
-                            if (change.type === "removed") {
-                                if(typeof iNdata['functionOnDelete'] == 'function')
-                                    iNdata['functionOnDelete'](change.doc);
-                            }
-                        });
-                    else {
-                        if(typeof iNdata['functionOnOther'] == 'function')
-                            iNdata['functionOnOther'](snapshot);
-                    } 
-            } else {
-                var doc = snapshot;
-                if (doc.exists)  {
-                    var source = doc.metadata.hasPendingWrites ? "Local" : "Server";
-
-                    if (counterForTypeDoc < 1) {
-                        // if firt get add from db
-                        if(typeof iNdata['functionOnAdd'] == 'function') iNdata['functionOnAdd']( doc );
-                        if (source == 'Local') {
-                            // if local add functionOnChangeFromLocal
-                            if(typeof iNdata['functionOnAddFromLocal'] == 'function') iNdata['functionOnAddFromLocal']( doc );
-                        } else {
-                            // if server add functionOnAddFromServer
-                            if(typeof iNdata['functionOnAddFromServer'] == 'function') iNdata['functionOnAddFromServer']( doc );
-                        }
-                    } else {
-                        // if we get change 
-                        if(typeof iNdata['functionOnChange'] == 'function') iNdata['functionOnChange']( doc );
-                        if (source == 'Local') {
-                            // if local add functionOnChangeFromLocal
-                            if(typeof iNdata['functionOnChangeFromLocal'] == 'function') iNdata['functionOnChangeFromLocal']( doc );
-                        } else {
-                            // if server add functionOnAddFromServer
-                            if(typeof iNdata['functionOnChangeFromServer'] == 'function') iNdata['functionOnChangeFromServer']( doc );
-                        }
-                    }
-                    // increase counter -> we would to recognize difference change and add
-                    counterForTypeDoc++;
-                }
-            }
-        });
-    }
-    _['getRealtimeDataFromFirestoreDb'] = getRealtimeDataFromFirestoreDb;
-
-    function getData (iNcollection, iNpath, iNdata) {
-        /*
-            @inputs
-                @required
-                    iNcollection    -> string
-                    iNpath          -> string
-                @optional
-                    iNdata -> object
-                        limitToLast -> number
-                        order       -> array
-                        type        -> string
-                            all
-                            child_added
-                            child_removed
-                            child_changed
-                            child_moved
-                        functionOnSuccess
-        */
-        if( typeof iNdata != 'object') iNdata = {};
-        var path    = iNcollection + '/' + iNpath;
-        var ref     = Datebase().ref(path);
-        var type    = iNdata['type']||'all';
-        var functionOnSuccess   = iNdata['functionOnSuccess']||function(){};
-        var functionOnError     = iNdata['functionOnError']||function(){};
-        
-        if( typeof iNdata['order'] != 'undefined' ) {
-            var order = iNdata['order'];
-            if ( !Array.isArray(order)  ) order = [order];
-            for (var iKey in order ) {
-                ref.orderByChild( order[iKey] );
-            }
-        }
-
-        if( typeof iNdata['limitToLast'] == 'number' ) {
-            var limit = iNdata['limitToLast'];
-            ref.limitToLast( limit );
-        }
-
-        switch (type) {
-            case "all": 
-                ref.once('value',functionOnSuccess,functionOnError)
-            break;
-            case "child_added": 
-                ref.once('child_added',functionOnSuccess,functionOnError)
-            break;
-            case "child_removed": 
-                ref.once('child_removed',functionOnSuccess,functionOnError)
-            break;
-            case "child_moved": 
-                ref.once('child_moved',functionOnSuccess,functionOnError)
-            break;
-        }
-
-    }
-    _['getData'] = getData;
-
-    return _;
-});
 define('log',['m_firebase'],function( FIREBASE ) {
   const CONST = {};
   const _ = {};
@@ -21509,8 +21670,8 @@ define(
         }
         //@> copied functions from app-chat module
         function annihilateNewMsgCounterFDB(iNchatId) {
-            var chatId = iNchatId; //msg_getCurrentChatId();
-            var myUID = USER.getMyId();
+            var chatId  = iNchatId; //msg_getCurrentChatId();
+            var myUID   = USER.getActiveUserId();// USER.getMyId();
             let collection = 'chats',
                 pathToDb =  chatId + '/member/' + myUID + '/newMsg';
             M_DATABASE.addRealtimeDb ( collection, pathToDb, 0 )
@@ -21649,9 +21810,9 @@ define(
             */
 
 
-            var messagesData = iNdataFromFB;
-            var myUID = USER.getMyId();
-            var fullData = messagesData.data()||{};//messagesData.val()
+            var messagesData    = iNdataFromFB;
+            var myUID           = USER.getActiveUserId();// USER.getMyId();
+            var fullData        = messagesData.data()||{};//messagesData.val()
             LOG.print('callbackAddOrChangeMessageForDb fullData',fullData);
 
             var objectForCreateMessage = fullData['info'];
@@ -21669,7 +21830,6 @@ define(
 
             if (typeof iNobject['functionOnChild'] == 'function') iNobject['functionOnChild'](iNchatId);
 
-            getTimeTextForAllMessages(objectForCreateMessage, fullData, iNchatId, myUID);
 
             if (iNtype == 'child_changed') {
                 // replace message in chat container
@@ -21678,80 +21838,116 @@ define(
 
                 // VIEW.msgSimpleText_safeReplace( objectForCreateMessage, myUID, iNchatId  );
 
+                // get time text for change message
+                getTimeTextForAllMessages(objectForCreateMessage, fullData, iNchatId, myUID);
+
+                // replace thi message
                 VIEW.msg_replaceMsgByItsType(msgType, objectForCreateMessage, myUID, iNchatId)
 
             } else {
+                // safe invoke functionOnChildAdded func
                 if (typeof iNobject['functionOnChildAdded'] == 'function') iNobject['functionOnChildAdded'](iNchatId);
-                msgSimpleText_safeCreateCenterMessageByPassedTime(objectForCreateMessage, fullData, iNchatId, myUID);
-
 
                 // create message
                 msg_createMsgByItsType ( msgType, fullData, iNchatId, objectForCreateMessage['msgId'] );
 
-                // VIEW.msg_createMsgByItsType(msgType, objectForCreateMessage, myUID, iNchatId)
-                // VIEW.msgSimpleText_createMsg ( objectForCreateMessage, myUID, iNchatId );
-
-                VIEW.effChatViewScrollToBotWithTimeOut(
-                    () => {
-                        if (msg_getCurrentChatId() == iNchatId)
-                            safeHideMessagesCountByChatId(iNchatId);
-                    },
-                    () => {
-                        if (msg_getCurrentChatId() == iNchatId)
-                            if (objectForCreateMessage['uid'] != myUID)
-                                safeViewMessagesCountByChatId(iNchatId);
-                    }
-                );
-
-                msg_setObserverForAppearMessageInVisualScrollByChatId(iNchatId,msgType);
+                
             } // ser observer for income non read message to me
         }
 
+
         function msg_createMsgByItsType (msgType, iNmsgObject, iNchatId, iNmsgId ) {
-            // body...
+            /*
+                @inputs
+                    @required
+                        msgType     -> number
+                        iNmsgObject -> object
+                        iNchatId    -> string
+                        iNmsgId     -> string
+            */
             console.log('msg_createMsgByItsType - msgType, iNmsgObject, iNchatId, iNmsgId',msgType, iNmsgObject, iNchatId, iNmsgId);
-            var myUID = USER.getMyId();
-            switch (msgType) {
-                //@< text messages
-                case 1:     // simpleText 
-                    msgType = VIEW.msg_getNameOfTypeByType(1);
-                    VIEW.msgSimpleText_createMsg( iNmsgObject['info'], myUID, iNchatId );
-                break;
-                //@> text messages
+            var myUID = USER.getActiveUserId();// USER.getMyId();
 
-                //@< live messages
-                    case 20:    // liveAudio 
-                        msgType = VIEW.msg_getNameOfTypeByType(20);
-                        // msgLiveAudio_createMsg( iNobjectForCreateMessage, myUID, iNchatId );
-                        if (iNmsgObject['uid'] == myUID) {
-                            // if msg from me
-                            msgLiveAudio_createFromMe (iNchatId, iNmsgId,  iNmsgObject )
-                        } else {
-                            // if msg to me
-                            msgLiveAudio_createToMe  (iNchatId, iNmsgId,  iNmsgObject );
+            USER.userData_getByUid( iNmsgObject['uid'], 
+                ( errFromUser, dataFromUser ) => {
+                    if(errFromUser) {
+                        //user not found
+                        return;
+                    }
+
+                    // get time text for create message
+                    getTimeTextForAllMessages( iNmsgObject['info'], iNmsgObject, iNchatId, myUID);
+
+                    // safe create center message
+                    msgSimpleText_safeCreateCenterMessageByPassedTime(iNmsgObject['info'], iNmsgObject, iNchatId, myUID);
+
+
+                    iNmsgObject['info']['userLogin']    = dataFromUser['info']['data']['login'];
+                    iNmsgObject['info']['userName']     = dataFromUser['info']['data']['name'];
+                    iNmsgObject['info']['userIcon']     = M_URL.getUserIconByUid( iNmsgObject['uid'] );
+
+                    iNmsgObject['info']['color']        = M_APP.getGlobalVar('m_app-chat').userColor_getColorForUser (iNchatId, iNmsgObject['uid']);
+
+                    console.log("M_URL.getUserIconByUid( iNmsgObject['uid'] )",iNmsgObject['uid'], M_URL.getUserIconByUid( iNmsgObject['uid'] ))
+                    
+                    switch (msgType) {
+                        //@< text messages
+                        case 1:     // simpleText 
+                            msgType = VIEW.msg_getNameOfTypeByType(1);
+                            VIEW.msgSimpleText_createMsg( iNmsgObject['info'], myUID, iNchatId );
+                        break;
+                        //@> text messages
+
+                        //@< live messages
+                            case 20:    // liveAudio 
+                                msgType = VIEW.msg_getNameOfTypeByType(20);
+                                // msgLiveAudio_createMsg( iNobjectForCreateMessage, myUID, iNchatId );
+                                if (iNmsgObject['uid'] == myUID) {
+                                    // if msg from me
+                                    msgLiveAudio_createFromMe (iNchatId, iNmsgId,  iNmsgObject )
+                                } else {
+                                    // if msg to me
+                                    msgLiveAudio_createToMe  (iNchatId, iNmsgId,  iNmsgObject );
+                                }
+                            break;
+
+                            case 21:    // liveVideo
+                                msgType = VIEW.msg_getNameOfTypeByType(21);
+                                // msgLiveVideo_createMsg( iNobjectForCreateMessage, myUID, iNchatId );
+                                // VIEW.msgLiveVideo_safeReplace( iNmsgObject['info'], myUID, iNchatId  );
+                                if (iNmsgObject['uid'] == myUID) {
+                                    // if msg from me
+                                    msgLiveVideo_createFromMe (iNchatId, iNmsgId,  iNmsgObject )
+                                } else {
+                                    // if msg to me
+                                    msgLiveVideo_createToMe  (iNchatId, iNmsgId,  iNmsgObject );
+                                }
+                            break;
+                        //@> live messages
+
+                        //@< file messages
+                        //@< file messages
+
+                        //@< documents messages
+                        //@< documents messages
+                    }
+
+                    VIEW.effChatViewScrollToBotWithTimeOut (
+                        () => {
+                            if (msg_getCurrentChatId() == iNchatId)
+                                safeHideMessagesCountByChatId(iNchatId);
+                        },
+                        () => {
+                            if (msg_getCurrentChatId() == iNchatId)
+                                if (iNmsgObject['info']['uid'] != myUID)
+                                    safeViewMessagesCountByChatId(iNchatId);
                         }
-                    break;
+                    );
 
-                    case 21:    // liveVideo
-                        msgType = VIEW.msg_getNameOfTypeByType(21);
-                        // msgLiveVideo_createMsg( iNobjectForCreateMessage, myUID, iNchatId );
-                        // VIEW.msgLiveVideo_safeReplace( iNmsgObject['info'], myUID, iNchatId  );
-                        if (iNmsgObject['uid'] == myUID) {
-                            // if msg from me
-                            msgLiveVideo_createFromMe (iNchatId, iNmsgId,  iNmsgObject )
-                        } else {
-                            // if msg to me
-                            msgLiveVideo_createToMe  (iNchatId, iNmsgId,  iNmsgObject );
-                        }
-                    break;
-                //@> live messages
-
-                //@< file messages
-                //@< file messages
-
-                //@< documents messages
-                //@< documents messages
-            }
+                    msg_setObserverForAppearMessageInVisualScrollByChatId(iNchatId,msgType);
+                }
+            );
+            
         }
 
         function msg_setObserverForAppearMessageInVisualScrollByChatId(iNchatId, iNMsgType) {
@@ -21774,7 +21970,7 @@ define(
                 //таймер что бы успело создаться в сообщении counter блок
                 setTimeout(() => {
                     let thisElement = element;
-                    var myUID = USER.getMyId();
+                    var myUID = USER.getActiveUserId();//USER.getMyId();
                     let msgId = VIEW.msg_getDomAttrByNameMsgId(thisElement);
                     msg_setReadState(msgId, chatId, myUID);
                 }, 1200);
@@ -21806,7 +22002,7 @@ define(
             var msgType     = VIEW.msg_getNameOfTypeByType(iNmsgObject.type),
                 thisUserId  = iNmsgObject.uid,
                 src         = iNmsgObject.info.src,
-                myUID       = USER.getMyId(),
+                myUID       = USER.getActiveUserId(),// USER.getMyId(),
                 path = `chats/${iNchatId}/${thisUserId}/${msgType}/${iNmsgId}/${src}`,
                 msgForCreateObject  = iNmsgObject['info'];
 
@@ -21845,16 +22041,13 @@ define(
                         iNmsgId     -> string
                         iNmsgObject -> object
             */
-            var myUID               = USER.getMyId(),
+            var myUID               = USER.getMyId(),// USER.getMyId(),
                 path                = M_URL.db.api.getUrl.forChat,
                 msgForCreateObject  = iNmsgObject['info'];
 
             // create msg live auio for fix position
             VIEW.msgLiveAudio_safeReplace( msgForCreateObject, myUID, iNchatId  );
 
-            console.log( 'msgLiveAudio_createToMe   - path'     , path  );
-            console.log( 'msgLiveAudio_createToMe   - myUID'    , myUID );
-            console.log( 'msgLiveAudio_createToMe   - iNmsgObject'     , iNmsgObject  );
             $.getJSON (
                 path,
                 {
@@ -21862,6 +22055,7 @@ define(
                     'chatId'    : iNchatId,
                     'msgId'     : iNmsgId,
                     'uid'       : myUID,
+                    'pseudouser': USER.getActiveUserId(),
                 },
                 (dataFromServer) => {
                     console.log( 'msgLiveAudio_createToMe - dataFromServer', dataFromServer );
@@ -21883,12 +22077,11 @@ define(
 
         function msgLiveAudio_safeSetReadState () {
             var msgSelectorText = msg_getPathToDomForMsg (  iNchatId, iNmsgId );
-                    var myUID = USER.getMyId();
+                    var myUID = USER.getActiveUserId();// USER.getMyId();
             msg_getDomAttrByNameMessageTimeSent (msgSelectorText);
 
 
                     let thisElement = element;
-                    var myUID = USER.getMyId();
                     var chatId = msg_getCurrentChatId();
                     let msgId = VIEW.msg_getDomAttrByNameMsgId(thisElement);
                     msg_setReadState(msgId, chatId, myUID);
@@ -22031,7 +22224,7 @@ define(
                             data
             */
             var chatId = iNchatId||msg_getCurrentChatId();
-            var myUID = USER.getMyId();
+            var myUID = USER.getActiveUserId();// USER.getMyId();
             var objForSendToDb = {
                 'data'  : iNdata['data'],
                 'uid'   : iNdata['uid']||myUID,
@@ -22203,7 +22396,7 @@ define(
 
 
             // get my user id
-            let myUid = USER.getMyId();//FIREBASE.auth().currentUser.uid;
+            let myUid = USER.getActiveUserId(); // USER.getMyId();//FIREBASE.auth().currentUser.uid;
             // get right object for add to msg db
             let objForSentToDb = prepareObjectForSentToMsgBase(iNdata, myUid);
 
@@ -22368,20 +22561,15 @@ define(
             var msgType             = VIEW.msg_getNameOfTypeByType(iNmsgObject.type),
                 thisUserId          = iNmsgObject.uid,
                 src                 = iNmsgObject.info.src,
-                myUID               = USER.getMyId(),
+                myUID               = USER.getActiveUserId(),// USER.getMyId(),
                 path                = `chats/${iNchatId}/${thisUserId}/${msgType}/${iNmsgId}/${src}`,
                 msgForCreateObject  = iNmsgObject['info'];
 
             // create msg live auio for fix position
                 VIEW.msgLiveVideo_safeReplace( msgForCreateObject, myUID, iNchatId  );
 
-            console.log( 'msgLiveVideo_createFromMe - iNchatId, iNmsgId,  iNmsgObject',iNchatId, iNmsgId,  iNmsgObject );
-            console.log( 'msgLiveVideo_createFromMe - myUID, src,  thisUserId', myUID, src,  thisUserId );
-            console.log( 'msgLiveVideo_createFromMe - msgType, path', msgType, path );
             M_STORAGE.getDownloadURL (path, 
                 (errUrl, dataUrl) => {
-                    console.log( 'msgLiveVideo_createFromMe - dataUrl', dataUrl );
-                    console.log( 'msgLiveVideo_createFromMe - errUrl', errUrl );
                     if (errUrl) {
                         // ERROR we can not get url
 
@@ -22407,16 +22595,13 @@ define(
                         iNmsgId     -> string
                         iNmsgObject -> object
             */
-            var myUID               = USER.getMyId(),
+            var myUID               = USER.getMyId(),// USER.getMyId(),
                 path                = M_URL.db.api.getUrl.forChat,
                 msgForCreateObject  = iNmsgObject['info'];
 
             // create msg live auio for fix position
-                VIEW.msgLiveVideo_safeReplace( msgForCreateObject, myUID, iNchatId  );
+            VIEW.msgLiveVideo_safeReplace( msgForCreateObject, myUID, iNchatId  );
 
-            console.log( 'msgLiveVideo_createToMe   - path'     , path  );
-            console.log( 'msgLiveVideo_createToMe   - myUID'    , myUID );
-            console.log( 'msgLiveVideo_createToMe   - iNmsgObject'     , iNmsgObject  );
             $.getJSON (
                 path,
                 {
@@ -22424,6 +22609,7 @@ define(
                     'chatId'    : iNchatId,
                     'msgId'     : iNmsgId,
                     'uid'       : myUID,
+                    'pseudouser': USER.getActiveUserId(),
                 },
                 (dataFromServer) => {
                     console.log( 'msgLiveVideo_createToMe - dataFromServer', dataFromServer );
@@ -22432,8 +22618,6 @@ define(
                         return;
                     }
                     var url = dataFromServer.link;
-                    console.log( 'msgLiveVideo_createToMe - url', url );
-                    console.log( 'msgLiveVideo_createToMe - msgForCreateObject', msgForCreateObject );
                     //attach this url to this object    
                     msgForCreateObject['url'] = url;
                     // create msg live auio
@@ -22472,9 +22656,9 @@ define(
                 var msgParentBlock = $(iNobject).closest('.msgTypeLiveVideo');
                 if( msgParentBlock.hasClass('toMeMessageInChatView') && VIEW.msg_getDomAttrByNameMessageTimeRead(msgParentBlock) < 1 ) {
                     // 
-                    var chatId  = msg_getCurrentChatId();
-                    var myUID   = USER.getMyId();
-                    let msgId   = VIEW.msg_getDomAttrByNameMsgId(msgParentBlock);
+                    var chatId  = msg_getCurrentChatId(),
+                        myUID   = USER.getActiveUserId(),// USER.getMyId();
+                        msgId   = VIEW.msg_getDomAttrByNameMsgId(msgParentBlock)
                     msg_setReadState(msgId, chatId, myUID);
                 }
             //@> add read state for to me message if it need
@@ -22511,10 +22695,31 @@ define(
             iNdata['content']   = '';
             iNdata['uid']       = iNmyUid;
             iNdata['msgId']     = iNmsgId;
-            // create message element
-            VIEW.msgLiveVideo_createMsg(iNdata, iNmyUid, iNchatId);
-            // scroll to bot
-            VIEW.effChatViewScrollToBotWithTimeOut();
+
+            USER.userData_getByUid( USER.getActiveUserId(),// USER.getMyId() , 
+                ( errFromUser, dataFromUser ) => {
+                    if(errFromUser) {
+                        //user not found
+                        return;
+                    }
+
+                    iNdata['userLogin']    = dataFromUser['info']['data']['login'];
+                    iNdata['userName']     = dataFromUser['info']['data']['name'];
+                    iNdata['userIcon']     = M_URL.getUserIconByUid( USER.getActiveUserId() );
+
+                    // create center time
+                    msgSimpleText_createCenterDateText (iNchatId, new Date().getTime() );
+
+                    // create message 
+                    VIEW.msgLiveVideo_createMsg (iNdata, iNmyUid, iNchatId);
+
+                    // scroll to bot
+                    VIEW.effChatViewScrollToBotWithTimeOut();
+                }
+            );
+
+            
+            
         }
 
         function msgLiveVideo_sendMsgFromMe (iNsrc, iNchatId, iNmsgId) {
@@ -22531,11 +22736,14 @@ define(
         //@< COTROLLER msgLiveVideo
         function controller_msgLiveVideo_record_sendVideoToStorage(iNerror, iNblob, iNdata) {
             var blobUrl = URL.createObjectURL(iNblob),
-                iNmyUid = USER.getMyId(),
+                iNmyUid = USER.getActiveUserId(),// USER.getMyId(),
                 iNchatId = msg_getCurrentChatId(iNchatId),
                 iNmsgId = msg_generateMsgIdByChatId(iNchatId);
 
             // create message without load to db
+
+
+
             msgLiveVideo_createMsgFromMe(blobUrl, iNmyUid, iNchatId, iNmsgId);
 
 
@@ -22543,7 +22751,7 @@ define(
             var functionUploadBlob = () => {
                 // init loader
                 var progressBar     = VIEW.msgLiveVideo_initLoader(iNchatId, iNmsgId);
-                var file = '1.webm';
+                var file            = '1.webm';
                 var pathForSaveFile = 'chats/'+iNchatId+'/'+iNmyUid+'/liveVideo/'+iNmsgId+'/' + file;
                 M_STORAGE.uploadBlob(
                     iNblob, {
@@ -22716,7 +22924,7 @@ define(
                 if( msgParentBlock.hasClass('toMeMessageInChatView') && VIEW.msg_getDomAttrByNameMessageTimeRead(msgParentBlock) < 1 ) {
                     // 
                     var chatId  = msg_getCurrentChatId();
-                    var myUID   = USER.getMyId();
+                    var myUID   = USER.getActiveUserId();// USER.getMyId();
                     let msgId   = VIEW.msg_getDomAttrByNameMsgId(msgParentBlock);
                     msg_setReadState(msgId, chatId, myUID);
                 }
@@ -22725,14 +22933,34 @@ define(
 
         function msgLiveAudio_createMsgFromMe ( iNsrc, iNmyUid, iNchatId, iNmsgId ) {
             var iNdata = {};
-            iNdata['url']       = iNsrc;
-            iNdata['uid']       = iNmyUid;
-            iNdata['content']   = '';
-            iNdata['msgId']     = iNmsgId;
-            // create message element
-            VIEW.msgLiveAudio_createMsg(iNdata, iNmyUid, iNchatId);
-            // scroll to bot
-            VIEW.effChatViewScrollToBotWithTimeOut();
+            iNdata['url']          = iNsrc;
+            iNdata['uid']          = iNmyUid;
+            iNdata['content']      = '';
+            iNdata['msgId']        = iNmsgId;
+
+            USER.userData_getByUid( USER.getActiveUserId(),// USER.getMyId(), 
+                ( errFromUser, dataFromUser ) => {
+                    if (errFromUser) {
+                        //user not found
+                        return;
+                    }
+
+                    
+
+                    iNdata['userLogin']    = dataFromUser['info']['data']['login'];
+                    iNdata['userName']     = dataFromUser['info']['data']['name'];
+                    iNdata['userIcon']     = M_URL.getUserIconByUid( USER.getActiveUserId() );// USER.getMyId() );
+
+                    // create center time
+                    msgSimpleText_createCenterDateText (iNchatId, new Date().getTime() );
+
+                    // create message element
+                    VIEW.msgLiveAudio_createMsg(iNdata, iNmyUid, iNchatId);
+
+                    // scroll to bot
+                    VIEW.effChatViewScrollToBotWithTimeOut();
+                }
+            );
         }
 
         function msgLiveAudio_flashSending (iNsecond,iNchatId) {
@@ -22766,7 +22994,7 @@ define(
         //@< COTROLLER msgLiveAudio record
         function controller_msgLiveAudio_record_sendAudioToStorage(iNerror, iNblob, iNdata) {
             var blobUrl     = URL.createObjectURL(iNblob),
-                iNmyUid     = USER.getMyId(),
+                iNmyUid     = USER.getActiveUserId(),// USER.getMyId(),
                 iNchatId    = msg_getCurrentChatId(iNchatId),
                 iNmsgId     = msg_generateMsgIdByChatId(iNchatId);
 
@@ -23031,7 +23259,8 @@ define(
                     uid -> string
                     chatId -> string
         */
-        var chatType = parseInt(iNchaType), result;
+        var chatType = parseInt(iNchaType), result,
+        	uid = iNobject['uid']||iNobject['userId'];
         console.log('getChatIconByType - iNchaType,iNobject',iNchaType,iNobject);
         if (chatType == 1) {
             // private chat
@@ -23133,7 +23362,6 @@ define(
         VIEW.hideChatContainers();
         VIEW.showChatContainerByChatId(chatId);
         VIEW.effChatViewScrollToBot();
-        // M_MESSAGE.setObserverForAppearMessageInVisualScrollByChatId(chatId);
     } _.pageIndex_openChatByChatId = pageIndex_openChatByChatId;
 
     
@@ -23160,8 +23388,84 @@ define(
         return M_APP.get('connectThisOpenChatUserId');
     }
 
+    //@< COLOR FOR USER IN CHAT
+    	const userColor_keyForLocalStorage = 'connectUserColorForChat';
+    	function userColor_getColorForUser (iNchatId,iNuserId) {
+    		/*
+    			@example
+    				userColor_getColorForUser('chatTestId','userTestId')
+    		*/
+    		// get user number from array
+    		var userNumber = userColor_getUserNumber(iNchatId,iNuserId);
+    		return VIEW.userColor_getByNumber(userNumber);
+
+    	} _.userColor_getColorForUser = userColor_getColorForUser;
+
+    	function userColor_getUserNumber ( iNchatId, iNuserId ) {
+    		/*
+    			@discr
+    			@inputs
+    			@algoritm
+    				1 - getUserNumberFrom
+    		*/
+    		var fullObject = userColor_getObjectFromLocalStorage(),
+    			userNumber = 0;
+
+    		if( !fullObject[iNchatId] ) {
+    			fullObject[iNchatId] = {};
+    		}
+
+    		if ( !fullObject[iNchatId] || !Array.isArray(fullObject[iNchatId]) ) {
+    			fullObject[iNchatId] = [];
+    		}
+
+    		userNumber = fullObject[iNchatId].indexOf(iNuserId);
+
+    		if ( userNumber == -1 ) {
+    			// if this user is not exist in array -> we add to array
+    			fullObject[iNchatId].push(iNuserId);
+    			// set user number last element
+    			userNumber = fullObject[iNchatId].length - 1;
+    			// save to local storage
+    			userColor_saveObjectFromLocalStorage(fullObject);
+    		}
+
+    		return userNumber;
+    		
+    	}
+
+    	function userColor_getObjectFromLocalStorage (iNchatId,iNuserId) {
+    		/*
+    			@discr
+    			@inputs
+    			@algoritm
+    				1 - getUserNumberFrom
+    		*/
+    		var stringFromLs = M_APP.get(userColor_keyForLocalStorage);
+
+    		if ( !stringFromLs ){
+    			//we cant have in db
+    			return {};
+    		}
+    		return JSON.parse(stringFromLs)||{};
+    	}
+    	function userColor_saveObjectFromLocalStorage (iNobject) {
+    		/*
+    			@discr
+    			@inputs
+    			@algoritm
+    				1 - getUserNumberFrom
+    		*/
+    		var objForSave;
+    		if(typeof iNobject == 'object') 
+    			objForSave = JSON.stringify(iNobject);
+    		else 
+    			objForSave = iNobject;
+
+    		M_APP.save( userColor_keyForLocalStorage, objForSave );
+    	}
+	//@> COLOR FOR USER IN CHAT
     
-	
 
 	return _;
 });
@@ -23196,11 +23500,16 @@ define( 'c_app-chat',['m_app-chat', 'v_app-chat', 'm_view', 'm_message', 'm_app'
 		            // },
 		            // 'onHide'  : function () { return true;},
 		            // 'setPage' : function () {return true;},
-		            'onInit' 		: function () {
+		            'onInit' 		: function (iNojbectData,iNojbectApp) {
 		            	
 		            	console.log("M_APP.getAppFromStoryLog('base')",M_APP.getAppFromStoryLog('base'));
 		            	if( !M_APP.getAppFromStoryLog('base') ) {
-		            		console.log("getAppFromStoryLog",'loa');
+
+		            		if ( iNojbectData['forUserId'] ) {
+			                  // if we choose user we set for older filter
+			                  USER.setActiveUserId(iNojbectData['forUserId']);
+			                }
+
 		            		// if app base not open yet -> we load
 	        				M_APP.getGlobalVar('engine').passToApp( {'app':'base','page':'index'} );
 		            	}
@@ -23208,9 +23517,9 @@ define( 'c_app-chat',['m_app-chat', 'v_app-chat', 'm_view', 'm_message', 'm_app'
 
 		            	M_MESSAGE.view.initApp( { 
 		            		// for send simpleTextMessage when click
-		            		'simpleMsgText_onClickSendBtn' : M_MESSAGE.simpleMsgText_onClickSendBtn , 
+		            		'simpleMsgText_onClickSendBtn' 	: M_MESSAGE.simpleMsgText_onClickSendBtn , 
 		            		// for send flash data for simpleTextMessage
-		            		'simpleMsgText_printing' : M_MESSAGE.msgSimpleText_flashSending } 
+		            		'simpleMsgText_printing' 		: M_MESSAGE.msgSimpleText_flashSending } 
 	            		);
 
 
@@ -23222,7 +23531,9 @@ define( 'c_app-chat',['m_app-chat', 'v_app-chat', 'm_view', 'm_message', 'm_app'
 		            },
 		            'onAppear' 		: function (d1,d2) {
 		            	console.log('app chat page index onAppear - d1,d2',d1,d2);
+
 		            	MODEL.pageIndex_openChatByChatId(d1);
+
  						return true;
  					},
 		            'onDisappear' 	: function () { return true;},
@@ -23356,7 +23667,20 @@ define('v_app-base',['jquery','m_user','template7','v_view','v_app','selector', 
 			</div>
 			<div class="ChoosePlaceInMenusBlock"></div>
 		`;
-	    
+	    templates[''] = `
+	    	<div class="appBase_userListHeaderContainer">
+			   	{{#if back}}
+			   		<div class="appBase_backButton"></div>
+			   	{{/if}}
+			   	<div class="appBase_userIcon"><a href="#"><img src="{{icon}}"></a></div>
+			   	<div class="UserNameInMenusBlock">
+					<div class="appBase_ListHeader_dName">
+					 <a href="{{href}}" class="CML" {{#if nameDictionaryCode}}cmlk="{{nameDictionaryCode}}"{{/if}}>{{name}}</a>
+					</div>
+					{{if login}}<div class="appBase_ListHeader_login">@{{login}}</div>{{/if}}
+			   </div>
+			</div>
+		`;
 	  //https://cdn.ramman.net/images/icons/users/noPhoto.png
 	_['templates'] = templates;
 
@@ -23389,7 +23713,7 @@ define('v_app-base',['jquery','m_user','template7','v_view','v_app','selector', 
 	}
 	_['getAppContent'] = getAppContent; 
 
-	function addUserHeaderInList (iNdata,iNtype) {
+	function addUserHeaderInList (iNdata,iNtype,iNpage) {
 		/*
 			@inputs
 				@required
@@ -23409,7 +23733,7 @@ define('v_app-base',['jquery','m_user','template7','v_view','v_app','selector', 
 
 
 		// if i am anonym user del him and del back btn
-		var myLogin = USER.getMyLogin();
+		var myLogin = USER.getMyLogin(), page = iNpage||CONST['pageIndex'];
 		if( !myLogin ) {
 			delete iNdata['myLogin'];
 			// delete back btn
@@ -23418,7 +23742,7 @@ define('v_app-base',['jquery','m_user','template7','v_view','v_app','selector', 
 			iNdata['myLogin'] = myLogin;
 		}
 
-		var objForAddHeader = {'app':CONST['name'],'page': CONST['pageIndex']};
+		var objForAddHeader = {'app':CONST['name'],'page': page};
 		// add user flag
 		objForAddHeader['content'] = getListHeaderForIndexPage (iNdata);
 
@@ -23456,17 +23780,19 @@ define('v_app-base',['jquery','m_user','template7','v_view','v_app','selector', 
 		`;
 
 		templates['menuPseudoUser_item'] = `
-			<li>
-		         <div class="appBase_userListHeaderContainer" connect_uid='{{uid}}' connect_owner='{{owner}}'>
-		            <div class="appBase_userIcon"><a href="#"><img src="{{icon}}"></a></div>
+			<li class='switchActiveUser appHref connect_href' app-name='base' page-name='index' data='forUserId={{uid}}' connect_uid='{{uid}}' connect_owner='{{owner}}'>
+		         <div class="appBase_userListHeaderContainer">
+		            <div class="appBase_userIcon">
+		            	<img src="{{icon}}">
+	            	</div>
 		            <div class="UserNameInMenusBlock">
 		               <div class="appBase_ListHeader_dName">
-		                  <a href="" class="CML">{{name}}</a>
+		                  <a class="CML">{{name}}</a>
 		               </div>
 		               {{#if owner}}
-		               		<div class="appBase_ListHeader_owner">{{owner}}</div>
+		               		<div class="appBase_ListHeader_owner">@{{owner}}</div>
 	               	   {{else}}
-		               		<div class="appBase_ListHeader_login">{{login}}</div>
+		               		<div class="appBase_ListHeader_login">@{{login}}</div>
 	               	   {{/if}}
 		            </div>
 		         </div>
@@ -23505,6 +23831,8 @@ define('v_app-base',['jquery','m_user','template7','v_view','v_app','selector', 
 			var path 		= SELECTOR.db.main.blocks.second.header.base.index.val,// '.topBlockInMenusBlock .menuHeaderInMenusBlock[app-name="base"] .appPage[page-name="index"]',
 				content 	= menuPseudoUser_getBox(iNdata);
 				V_VIEW.d_addDataToViewEl ( path, content, 'start' );
+
+
 		}
 
 		function menuPseudoUser_safeAddBox (iNdata) {
@@ -23560,11 +23888,32 @@ define('v_app-base',['jquery','m_user','template7','v_view','v_app','selector', 
 		}
 		_['menuPseudoUser_addItem'] = menuPseudoUser_addItem;
 
+		function menuPseudoUser_switchUserInHeaderByUid (iNuid) {
+			/*
+				@discr
+					set choosen pseudo user block to header
+				@inputs
+					@required
+						iNuid -> string
+			*/
+			// body...
+			var pathToMyNameBlok			= SELECTOR.db.main.blocks.second.header.base.index.menuSwitchUserBox.item.val + ' li[connect_uid="'+iNuid+'"] .UserNameInMenusBlock',
+				pathToMyIconBlok    		= SELECTOR.db.main.blocks.second.header.base.index.menuSwitchUserBox.item.val + ' li[connect_uid="'+iNuid+'"] .appBase_userIcon',
+				pathToHeaderNameBlok    	= SELECTOR.db.main.blocks.second.header.base.index.userHeaderBox.val + ' .UserNameInMenusBlock',
+				pathToHeaderIconBlok    	= SELECTOR.db.main.blocks.second.header.base.index.userHeaderBox.val + ' .appBase_userIcon';
+
+				// add name to header
+				$(pathToHeaderNameBlok).replaceWith( $(pathToMyNameBlok).clone() );
+				// add icon to header
+				$(pathToHeaderIconBlok).replaceWith( $(pathToMyIconBlok).clone() );
+		} _.menuPseudoUser_switchUserInHeaderByUid = menuPseudoUser_switchUserInHeaderByUid;
+
 		function menuPseudoUser_attachOnClickEventForShowMenu () {
 			// when click to icon OR to name
-			var pathToIcon 	= SELECTOR.db.main.blocks.second.header.base.index.userIconWihPseudoFlag.val,//'.appPage > .appBase_userListHeaderContainer.flagHasPseudoUsers .appBase_userIcon',
-				pathToName 	= SELECTOR.db.main.blocks.second.header.base.index.userNameWihPseudoFlag.val,//'.appPage > .appBase_userListHeaderContainer.flagHasPseudoUsers .appBase_ListHeader_dName',
-				path 		= pathToIcon + ', ' + pathToName;
+			var 
+				// pathToIcon 	= SELECTOR.db.main.blocks.second.header.base.index.userHeaderBox.val,//'.appPage > .appBase_userListHeaderContainer.flagHasPseudoUsers .appBase_userIcon',
+				// pathToName 	= SELECTOR.db.main.blocks.second.header.base.index.userNameWihPseudoFlag.val,//'.appPage > .appBase_userListHeaderContainer.flagHasPseudoUsers .appBase_ListHeader_dName',
+				path 		= SELECTOR.db.main.blocks.second.header.base.index.userHeaderBox.val;//pathToIcon + ', ' + pathToName;
 				// clear of any onclick actions
 				$(path).off('click');
 				// attach action to on click event for view menu
@@ -23578,8 +23927,10 @@ define('v_app-base',['jquery','m_user','template7','v_view','v_app','selector', 
 
 		function menuPseudoUser_hideMenu() {
 			//hide curtain
-			$(SELECTOR.val.curtain).hide();
-		}
+			V_APP.hideBackgroundCurtain();
+			//hide menu box
+			$(SELECTOR.db.main.blocks.second.header.base.index.menuSwitchUserBox.val).hide();
+		} _.menuPseudoUser_hideMenu = menuPseudoUser_hideMenu;
 
 		function menuPseudoUser_showMenu() {
 			// open menu
@@ -23693,7 +24044,7 @@ define(
         'icon' : USER.getMyIcon(),
         'name' : USER.getMyDisplayName(),
         'login': USER.getMyLogin(),
-      },'change');
+      },'start');
     } else {
       // add header for non auth user
       VIEW.addUserHeaderInList ( 
@@ -23714,7 +24065,7 @@ define(
       'name'  : iNname,//USER.getMyDisplayName()
       'login' : iNlogin,//USER.getMyLogin()
       'back'  : true,
-    },'change');
+    },'start','one');
 
     // attach for back btn this func by click for  open index page 
     $('.appBase_backButton').click(
@@ -23800,8 +24151,17 @@ define(
 
 
     function chat_openChatWithCreateIfNotExist (iNobjectForCreateChat) {
-      // body...
+      /*
+        @discr
+        @inputs
+          @required
+            iNobjectForCreateChat
+              userId
+      */
       var objForCreateChat = iNobjectForCreateChat;
+
+      // add icon 
+      iNobjectForCreateChat['icon'] = URL.getUserIconByUid(iNobjectForCreateChat['userId'])
 
       // created chat
       M_CATEGORY.view.createChatListIfNotExist(objForCreateChat);
@@ -23927,11 +24287,28 @@ define(
     /*< CHAT */
 
       CONST['url_createChat'] = URL.db.api.chat.create;// 'https://ramman.net/api/chat';
-      function createPrivateChat (iNuid,/*iNuserData,*/ iNsuccessFunction, iNerrorFunction) {
+      function createPrivateChat (iNdata,/*iNuserData,*/ iNsuccessFunction, iNerrorFunction) {
+        /*
+          @discr
+            create main chat with user
+          @inputs
+            @required
+              iNdata -> object
+                @required
+                  uid -> string
+        */
+        var   uid = iNdata.uid;
+
         const objectForAjax = {};
               objectForAjax['uid']     = USER.getMyId();
               objectForAjax['token']   = USER.getMyToken();
-              objectForAjax['userUrl'] = iNuid;
+              objectForAjax['userUrl'] = uid;
+
+              // if we are in pseudoUser mode -> we add to request
+              if ( USER.getActiveUserId() != USER.getMyId() ) {
+                  objectForAjax.pseudoUser = USER.getActiveUserId();
+              }
+
         getByGetRequest_ChatDataBySafeCreate(objectForAjax,
           (resultOfAjax) => {
             if (typeof resultOfAjax == 'object' && resultOfAjax['status'] == 1 ) {
@@ -24029,17 +24406,16 @@ define(
             
             // attach onclick to 'chat' menu for create chat if it need
             M_CATEGORY.view.onClickCategoryForCreateChat (
-              (userId, userLogin) => {
+              (userId, userLogin, activeUserId) => {
                 // SUCCESS -> will do requiest for create chat
                 // show loader
                 M_APP.view.showLoader
                 createPrivateChat (
-                  userId,
+                  { 'uid' : userId },
                   ( iNchatObject ) => {
-                    console.log ( 'request_getUserMenuByLogin userLogin', userLogin );
                     // we created chat -> we update menu && we open chat
 
-                    M_CATEGORY.view.removeChatListByUserId(
+                    M_CATEGORY.view.removeChatListByUserId (
                       userId,
                       () => {
                         // get menu -> show menu
@@ -24053,25 +24429,25 @@ define(
                         );
                       }
                     );
-
-
-
-                    //
-
-
-                  }  , 
+                  }, 
                   () => {
                     // we CANNOT created chat
-
+                    swal({
+                      title: 'Ошибка!',
+                      text: "К сожаление создать чат с этим пользователем в данный момент невозможно!",
+                      type: 'error'
+                    });
                   }
                 )
-                console.log('category success');
-
               },
-              (userId, userLogin) => {
+              (userId, userLogin, activeUserId) => {
                 // ERROR
-                console.log('category error');
-
+                console.log('onClickCategoryForCreateChat category error');
+                swal({
+                  title: 'Ошибка!',
+                  text: "К сожаление создать чат с этим пользователем в данный момент невозможно!",
+                  type: 'error'
+                });
               }
             );
 
@@ -24122,7 +24498,7 @@ define(
     // get data from DB
     M_DATABASE.getRealtimeDataFromFirestoreDb (
           'users',
-          uid + '/subusers',
+          uid + '/pseudouser',
           {
             'functionOnOther' : () => {
 
@@ -24134,8 +24510,7 @@ define(
             'functionOnAdd' : (pseudoUserData) => {
               var pseudoUserBlock   = pseudoUserData.data(),
                   pseudoUserid      = pseudoUserData.id,
-                  refStatus         = pseudoUserBlock.status,
-                  ref               = pseudoUserBlock.ref;
+                  refStatus         = pseudoUserBlock.status;
 
               // if menu no exist
               if ( !VIEW.menuPseudoUser_getCountMenu() ) {
@@ -24157,20 +24532,25 @@ define(
               }
 
               //get pseudo user 
-              ref.get().then(
-                (userData) => {
+              console.log('USER.userData_getByUid - pseudoUserid',pseudoUserid);
+              USER.userData_getByUid(
+                pseudoUserid,
+                (errUserData,userData) => {
+                  console.log('USER.userData_getByUid - errUserData, userData',errUserData,userData);
+                  // if this userId not founded in system
+                  if(errUserData)return;
                   // get user data from db
-                  var userBlock       = userData.data(),
+                  var userBlock       = userData,
                       objForAddToMenu = {};
 
                   // get user id from db
-                  objForAddToMenu['uid']    = userData.id;
+                  objForAddToMenu['uid']    = userBlock.id;
                   objForAddToMenu['owner']  = userBlock.owner;
                   objForAddToMenu['login']  = userBlock.info.data.login;
                   objForAddToMenu['icon']   = URL.getUserIconByUid(objForAddToMenu['uid']);
                   objForAddToMenu['name']   = userBlock.info.data.name;
 
-                  // delete owner if this user owner is system
+                  // delete owner if this user owner belongs to system
                   if ( objForAddToMenu['owner'] == LOCALDB.db.val.systemUser ) delete objForAddToMenu['owner'];
 
                   // add menu
@@ -24839,6 +25219,7 @@ define (
               'onView'  : function (iNojbectData,iNojbectApp) { 
                 console.log('onView index iNojbectData,iNojbectApp',iNojbectData,iNojbectApp);
 
+                
 
                 // close loader from first html page
                 M_VIEW.view.closeLoader(); 
@@ -24857,7 +25238,24 @@ define (
                   // M_VIEW.view.showLoader('#menusBlock','forMenuListKey', 'indexCodeOfLoader' ); 
                 }
 
-                if(iNojbectData['filter']) {
+                if ( iNojbectData['forUserId'] ) {
+                  // set header chose user
+                  VIEW.menuPseudoUser_switchUserInHeaderByUid(iNojbectData['forUserId']);
+                  // hide pseudo menu
+                  VIEW.menuPseudoUser_hideMenu();
+                  // if we choose user we set for older filter
+                  USER.setActiveUserId(iNojbectData['forUserId']);
+                }
+
+
+                if ( iNojbectData['filter'] ) {
+                  // add userId
+                  if ( USER.getMyId() ){
+                    // if we is auth user 
+                    iNojbectData['toUserId']  = USER.getMyId();
+                    iNojbectData['owner']     = '@system';
+                  }
+
                   // if clicked side buttons - setGlobalSetFilterForGetChats
                   M_APP.view.sideButtons_addSelectedEffectsByFilter(iNojbectData['filter']);
 
@@ -24867,6 +25265,7 @@ define (
                   //create service chat list and move position to top
                   MODEL.chat_openChatWithCreateIfNotExist(iNojbectData);
                 }
+
 
                 // sort all chats
                 M_CATEGORY.view.startEffSortChats();
@@ -25027,7 +25426,8 @@ define (
 
       //@overide
       function onAppear (iNstring,iNobject) {
-
+        // hide app header
+        M_APP.view.d_hideAppHeaders();
 
       }
       _['onAppear'] = onAppear;
@@ -26468,7 +26868,7 @@ require2.config({
     });
 
 
-require2 (
+require2(
     ['jquery','dictionary','m_engine','m_routing','m_app','m_synchronize','m_user', 'm_push'], 
     function( $, DICTIONARY, ENGINE, ROUTING, M_APP, SYNCHRONIZE, USER , PUSH) {
 

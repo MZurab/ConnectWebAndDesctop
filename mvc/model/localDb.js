@@ -6,6 +6,7 @@ define( [] , function () {
 		const VAL = {}; DB.val = VAL;
 
 		VAL['systemUser'] = '@system';
+		VAL['activeUser'] = 'connectActiveUserId';
 	//@> db > valuse
 
 

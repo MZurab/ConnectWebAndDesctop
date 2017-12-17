@@ -68,16 +68,23 @@ define( ['localdb'] , function (LOCALDB) {
 
 							// index > userName
 							var USERNAME = {}; PAGE_INDEX['userName'] = USERNAME;
-							USERNAME.val = BASEHEADER.val + ' .appBase_ListHeader_dName';
-							
-							// index > userNameWihPseudoFlag
-							var userNameWihPseudoFlag = {}; PAGE_INDEX['userNameWihPseudoFlag'] = userNameWihPseudoFlag;
-							userNameWihPseudoFlag.val = `${BASEHEADER.val}.${LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser} .appBase_ListHeader_dName`;
+							USERNAME.val = BASEHEADER.val + ' .appBase_ListHeader_dName a';
 
+							// index > userLogin
+							var USERLOGIN = {}; PAGE_INDEX['userLogin'] = USERLOGIN;
+							USERLOGIN.val = BASEHEADER.val + ' .appBase_ListHeader_login';
 							
-							// index > iconNameWihPseudoFlag
-							var userIconWihPseudoFlag = {}; PAGE_INDEX['userIconWihPseudoFlag'] = userIconWihPseudoFlag;
-							userIconWihPseudoFlag.val = `${BASEHEADER.val}.${LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser} .appBase_userIcon`;
+							// // index > userNameWihPseudoFlag
+							// var userNameWihPseudoFlag = {}; PAGE_INDEX['userNameWihPseudoFlag'] = userNameWihPseudoFlag;
+							// userNameWihPseudoFlag.val = `${BASEHEADER.val}.${LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser} .appBase_ListHeader_dName`;
+
+							// index > userHeaderBox
+							var userHeaderBox = {}; PAGE_INDEX['userHeaderBox'] = userHeaderBox;
+							userHeaderBox.val = `${BASEHEADER.val}.${LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser}`;
+							
+							// // index > iconNameWihPseudoFlag
+							// var userIconWihPseudoFlag = {}; PAGE_INDEX['userIconWihPseudoFlag'] = userIconWihPseudoFlag;
+							// userIconWihPseudoFlag.val = `${BASEHEADER.val}.${LOCALDB.db.main.blocks.second.header.base.index.flags.hasPseudoUser} .appBase_userIcon`;
 
 							// index > menuSwitchUserBox
 							var menuSwitchUserBox = {}; PAGE_INDEX['menuSwitchUserBox'] = menuSwitchUserBox;

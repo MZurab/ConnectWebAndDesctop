@@ -715,12 +715,6 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 		// right functions OnInit OnUpdate OnDisappear
 		rightInvokePageFunctions (iNapp,iNdata,objectForCreatePage,iNdataForApp);
 
-
-		// safe did appear function for page
-		// if(typeof(iNapp.pages[objectForCreateApp['page']].onAppear) == 'function') iNapp.pages[objectForCreateApp['page']].onAppear();
-		// did show this app + show if need and invoke onEnter if need ADD
-		// VIEW._d_viewPage(objectForCreateApp);
-
 		// safe invoke passed function
 		if (typeof(iNfunction) == 'function')iNfunction();
 	}
@@ -970,56 +964,6 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	}
 	_['openListApp'] = _openListApp;
 	
-
-	// function _openApp ( iNdata, iNapp,iNtype) {
-	// 	/*
-	// 		@disc
-	// 			open app
-	// 				check funcitons optional
-	// 				check apps
-	// 				check pages
-					
-	// 		@input
-	// 			@input
-	// 				@required
-	// 					iNdata
-	// 						@required
-	// 							app
-	// 							page
-	// 						@optional
-	// 							extra
-	// 							content
-	// 							other
-	// 					iNapp -> app object
-	// 				@optional
-	// 					iNtype
-
-	// 		@deps
-	// 			function : getAppByName 
-	// 	*/
-
-	// 	//get module name by app name
-	// 	var page, objForOpenApp = iNdata, appName = objForOpenApp['app'], pageName = objForOpenApp['page'];
-	// 	// iNapp = getAppByName(appName);
-	// 	if ( typeof(iNapp.pages) != 'object' || typeof(iNapp.pages[pageName]) != 'object' ) return false;
-	// 	//get data from pages
-	// 	page = iNapp.pages[pageName];
-
-
-
-	// 	_openChiefApp ( objForOpenApp ,iNapp, function () {
-	// 		if( typeof(iNapp['onStart']) == 'function' ) iNapp.onStart();
-	// 		// iNapp.onInit();
-
-	// 		if ( typeof(iNapp['openPage']) != 'function' )
-	// 			d_openPage(appName,pageName, iNtype);
-	// 		else
-	// 			iNapp.openPage( appName, pageName, iNtype);
-	// 		iNapp.onAppear();
-	// 		if( typeof(iNapp['onFinish']) == 'function' ) iNapp.onFinish();
-	// 	});
-	// }
-
 	function _closeApp (iName,iNpage) {
 		/*
 			@disc
@@ -1080,14 +1024,6 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	_['setGlobalVar'] = setGlobalVar;
 
 
-	//@< work with header
-		// var _td_loadCSS  		= VIEW.d_loadCSS;
-		// var _td_removeByClass  	= VIEW.d_removeByClass;
-		// var _td_loadJS  		= VIEW.d_loadJS;
-		// _['d_loadCSS'] = _td_loadCSS;
-	//@< work with header
-
-
 	//@< work with global functions
 	function globalFunctions_invoke (iName) {
 		if(typeof window.GF == 'object' && typeof window.GF[iName] == 'function') {
@@ -1107,61 +1043,4 @@ define(['v_app','jquery','v_view'],function(VIEW,$,V_VIEW) {
 	//@> work with global functions
 
 	return _;
-	// {
-	// 	'globalFunctions_invoke' : globalFunctions_invoke,
-	// 	'globalFunctions_create' : globalFunctions_create,
-
-	//     'openChiefApp'  : _openChiefApp,
-	//     'openListApp'   : _openListApp,
-	//     'readyListApp'  : _readyListApp,
-	//     'readyChiefApp' : _readyChiefApp,
-	//     'invokeOpenApp' : _invokeOpenedApp,
-	//     'invokeApp' 	: _invokeApp,
-	//     'clone' 		: _clone,
-
-	//     'setApp' 		: _setApp,
-	//     'setPage' 		: setOpeningPageByApp,
-	//     'thisApp' 		: getOpeningApp,
-	//     'thisPage' 		: getOpeningPageByApp, 
-
-	//     'd_hidePages'   : _td_hidePages,
-	//     'd_showPages'   : _td_showPages,
-	//     'd_hideApps'    : _td_hideApps,
-	//     'd_showApps'    : _td_showApps,
-	//     'd_openPage'    : _td_openPage,
-
-	//     //work with header
-	//     'd_loadCSS' 		: _td_loadCSS,
-	//     'd_loadJS' 			: _td_loadJS,
-	//     'd_removeByClass' 	: _td_removeByClass,
-	// 	'addScript' 		: _addScript,
-
-	//     //  time functions
-	//     'getSec' : _getSec,
-	// 	'getTime' : _getTime,
-
-	// 	//  local storage
-	// 	'save' : _save,
-	// 	'get' : _get,
-	// 	'del' : _del,
-	// 	'clear' : _clear,
-
-	// 	//  object functions
-	// 	'getJsonKey' : _getJsonKey,
-	// 	'getJsonKeys' : _getJsonKeys,
-	// 	'forEach' : _forEach,
-
-	// 	//  audio functions
-	// 	'playSound' : _playSound,
-	// 		'addSource' : addSource,
-
-
-	// 	//  global resourse
-	// 	'setGlobalApp' : setGlobalApp,
-	// 	'setGlobalVar' : setGlobalVar,
-	// 	'getGlobalVar' : getGlobalVar,
-	// 	'getGlobalApp' : getGlobalApp,
-
-	// 	'view' : VIEW
-	// }
 });

@@ -607,7 +607,9 @@ define(['jquery','template7','v_view', 'selector'],function($,Template7,V_VIEW, 
 	        		CONST['pathAppHeader'] + ' ' 	+ 
 	        		'.'+CONST['nameInAppHeader']
         		).hide();
-	        }
+	        } _.d_hideAppHeaders = d_hideAppHeaders;
+
+
 	        function d_removeAppHeader (iNdata) {
 	        	/*
 	        		@discr
@@ -701,7 +703,7 @@ define(['jquery','template7','v_view', 'selector'],function($,Template7,V_VIEW, 
 	        		@inputs
 	        			iNcontent -> string
 	        	*/
-	        	$( CONST['pathAppHeader'] + ' .topBlockInViewBlock' ).html(iNcontent);
+	        	$( CONST['pathAppHeader'] ).html(iNcontent);
 	        } _.d_setAppHeader = d_setAppHeader;
 
 	        function d_getLengthAppHeader (iNdata) {
@@ -714,9 +716,12 @@ define(['jquery','template7','v_view', 'selector'],function($,Template7,V_VIEW, 
         					@optional
 	        					page
 	        	*/
-	        	var selector = CONST['pathAppHeader'] + ' .topBlockInViewBlock .' + CONST['nameInAppHeader'] + '[app-name="'+iNdata['app']+'"]';
+	        	console.log('d_getLengthAppHeader INVOKE',iNdata);
+	        	var selector = CONST['pathAppHeader'] + ' .' + CONST['nameInAppHeader'] + '[app-name="'+iNdata['app']+'"]';
 	        	if ( typeof iNdata['page'] == 'string' )
-	        		selector += '.' + CONST['pageNameInAppHeader'] + '[page-name="'+ iNdata['page'] +'"]';
+	        		selector += ' .' + CONST['pageNameInAppHeader'] + '[page-name="'+ iNdata['page'] +'"]';
+	        	console.log('d_getLengthAppHeader selector',selector,$(selector).length);
+	        	console.log('d_getLengthAppHeader $(selector)',$(selector));
 	        	return $(selector).length;
 	        } _.d_getLengthAppHeader = d_getLengthAppHeader;
 
@@ -810,9 +815,35 @@ define(['jquery','template7','v_view', 'selector'],function($,Template7,V_VIEW, 
 				d_addAppHeaderByTemplate(iNdata,iNtype);
 			} else if ( typeof iNdata['page'] == 'string' && d_getLengthAppHeader(iNdata) < 1 ) {
 				d_addPageAppHeaderByTemplate( iNdata,iNtype);
+			} else if ( iNdata['withReplace']) {
+				d_setPageAppHeaderByTemplate( iNdata );
 			}
 
 		} _.safeAddAppHeader =safeAddAppHeader;
+
+		 function d_setPageAppHeaderByTemplate (iNdata) {
+        	/*
+        		@discr
+        			add content with page for app into  header block by template
+        		@inputs
+        			iNdata -> object
+        				app
+        				page
+        				content
+    				@optional
+					iNtype -> string 
+						in [end,begin, after, before, change]
+
+        	*/
+        	if( typeof iNtype != 'string') iNtype = 'end';
+        	var selector = CONST['pathAppHeader'] + ' .' + CONST['nameInAppHeader']+'[app-name="'+iNdata['app']+'"]',
+        		content = getPageAppHeader(iNdata);
+
+    		if ( typeof iNdata['page'] == 'string' )
+        		selector += ' .' + CONST['pageNameInAppHeader'] + '[page-name="'+ iNdata['page'] +'"]';
+
+			V_VIEW.d_addDataToViewEl(selector, content /* getPageForListApp(content) */, 'replace'); 
+        } _.d_setPageAppHeaderByTemplate = d_setPageAppHeaderByTemplate;
 
         function d_addPageAppHeaderByTemplate (iNdata,iNtype) {
         	/*
@@ -831,6 +862,7 @@ define(['jquery','template7','v_view', 'selector'],function($,Template7,V_VIEW, 
         	if( typeof iNtype != 'string') iNtype = 'end';
         	var selector = CONST['pathAppHeader'] + ' .' + CONST['nameInAppHeader']+'[app-name="'+iNdata['app']+'"]',
         		content = getPageAppHeader(iNdata);
+
 			V_VIEW.d_addDataToViewEl(selector, content /* getPageForListApp(content) */, iNtype); 
         } _.d_addPageAppHeaderByTemplate = d_addPageAppHeaderByTemplate;
 
@@ -1002,7 +1034,10 @@ define(['jquery','template7','v_view', 'selector'],function($,Template7,V_VIEW, 
 						iNtype -> string 
 							in [end,begin, after, before, change]
 				*/
-				if( typeof iNtype != 'string' ) iNtype = 'end';
+				if( typeof iNtype != 'string' ) iNtype = 'start';
+				console.log('safeAddAppMenuHeader INVOKE', iNdata,iNtype );
+				console.log('safeAddAppMenuHeader - d_getLengthMenuHeader',d_getLengthMenuHeader ({'app':iNdata['app']}));
+				console.log('safeAddAppMenuHeader - d_getLengthMenuHeader(iNdata)',d_getLengthMenuHeader(iNdata) );
 				if( d_getLengthMenuHeader ({'app':iNdata['app']}) < 1 ) {
 					// check app container
 					d_addAppMenuHeaderByTemplate(iNdata,iNtype);
@@ -1039,9 +1074,14 @@ define(['jquery','template7','v_view', 'selector'],function($,Template7,V_VIEW, 
         					@optional
 	        					page
 	        	*/
+	        	console.log('d_getLengthMenuHeader INVOKE',iNdata);
 	        	var selector = CONST['pathMenuHeader'] + ' .' + CONST['nameInMenuHeader'] + '[app-name="'+iNdata['app']+'"]';
 	        	if ( typeof iNdata['page'] == 'string' )
-	        		selector += '.' + CONST['pageNameInMenuHeader'] + '[page-name="'+ iNdata['page'] +'"]';
+	        		selector += ' .' + CONST['pageNameInMenuHeader'] + '[page-name="'+ iNdata['page'] +'"]';
+
+	        	console.log('d_getLengthMenuHeader selector',selector,$(selector).length);
+	        	console.log('d_getLengthMenuHeader $(selector)',$(selector));
+
 	        	return $(selector).length;
 	        }
 
@@ -1074,10 +1114,13 @@ define(['jquery','template7','v_view', 'selector'],function($,Template7,V_VIEW, 
 	    				iNtype -> string
 	    					in [end,begin, after, before, change]
 	        	*/
+        		console.log('d_addAppMenuHeaderByTemplate INVOKE',iNdata,iNtype);
 				if( typeof iNtype != 'string' ) iNtype = 'end';
 	        	var selector = CONST['pathMenuHeader'],
 	        		content = getAppMenuHeader(iNdata);
 	        	// d_addAppHeaderByTemplate(iNdata,iNtype);
+        		console.log('d_addAppMenuHeaderByTemplate selector',selector,iNtype);
+        		console.log('d_addAppMenuHeaderByTemplate content',content);
 				V_VIEW.d_addDataToViewEl(selector, content ,iNtype);//getPageForListApp(content)
 	        } _.d_addAppMenuHeaderByTemplate = d_addAppMenuHeaderByTemplate;
 	        
@@ -1098,10 +1141,13 @@ define(['jquery','template7','v_view', 'selector'],function($,Template7,V_VIEW, 
     						in [end,begin, after, before, change]
 	        	*/
 	    		
-				if( typeof iNtype != 'string' ) iNtype = 'end';		
+        		console.log('d_addPageMenuHeaderByTemplate INVOKE',iNdata,iNtype);
+
+				if( typeof iNtype != 'string' ) iNtype = 'start';		
 	        	var selector = CONST['pathMenuHeader'] + ' .' + CONST['nameInMenuHeader']+'[app-name="'+iNdata['app']+'"]',
 	        		content = getPageMenuHeader(iNdata);
 				V_VIEW.d_addDataToViewEl(selector, content ,iNtype);
+
 	        } _.d_addPageMenuHeaderByTemplate = d_addPageMenuHeaderByTemplate
         //> app headers
 
@@ -1623,7 +1669,7 @@ define(['jquery','template7','v_view', 'selector'],function($,Template7,V_VIEW, 
 		function clear () {
 			// right header
 			$( SELECTOR.db.main.blocks.second.header.val ).html('');
-			
+
 			// right body
 	        $( SELECTOR.db.main.blocks.second.body.val  ).html('');
 
