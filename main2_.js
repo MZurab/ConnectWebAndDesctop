@@ -198,10 +198,10 @@ require.config({
                 'firebase': {
                     exports: 'firebase',
                 },
-                'firestore': {
-                    deps: ['firebase'],
-                    exports: 'firebase.firestore'
-                },
+                // 'firestore': {
+                //     deps: ['firebase'],
+                //     exports: 'firebase.firestore'
+                // },
 
             /* >! google modules */
 

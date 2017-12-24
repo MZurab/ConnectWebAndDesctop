@@ -93,23 +93,23 @@ define(
 
         function getMessagesFromDb (iNchatId, iNtype, iNobject) {
             /*
-                    @inputs
-                        @required
-                            iNchatId -> string
-                            iNtype -> string
-                                child_changed || child_added
-                        @optional
-                            iNobject -> object
-                                functionOnChildChanged
-                                functionOnChildAdded
-                                functionOnChild
-                */
+                @inputs
+                    @required
+                        iNchatId -> string
+                        iNtype -> string
+                            child_changed || child_added
+                    @optional
+                        iNobject -> object
+                            functionOnChildChanged
+                            functionOnChildAdded
+                            functionOnChild
+            */
 
             if (typeof iNobject != 'object') iNobject = {};
             LOG.on();
-
+            console.log('order by limitToLast desc 4')
             var iNobject = {
-                'limitToFirst' : 40,
+                'limitToLast' : 40,
                 'functionOnAdd':    (messagesData) => {
                     console.log('getMessagesFromDb functionOnAdd',messagesData);
                     callbackAddOrChangeMessageForDb(messagesData, iNchatId, 'child_added', iNobject);
@@ -749,6 +749,8 @@ define(
                 collection  = 'chats';
 
             pathToDb = iNchatId + '/messages/' + msgId;
+            console.log('msg_addToDb pathToDb',pathToDb);
+            console.log('msg_addToDb objForSentToDb',objForSentToDb);
             M_DATABASE.addFirestoreDb ( collection, pathToDb, objForSentToDb );
 
 
@@ -1096,6 +1098,7 @@ define(
                 var progressBar     = VIEW.msgLiveVideo_initLoader(iNchatId, iNmsgId);
                 var file            = '1.webm';
                 var pathForSaveFile = 'chats/'+iNchatId+'/'+iNmyUid+'/liveVideo/'+iNmsgId+'/' + file;
+                console.log('controller_msgLiveVideo_record_sendVideoToStorage - pathForSaveFile',pathForSaveFile);
                 M_STORAGE.uploadBlob(
                     iNblob, {
                         'pathForSaveFile': pathForSaveFile,
@@ -1351,6 +1354,7 @@ define(
                 var progressBar = VIEW.msgLiveAudio_initLoader(iNchatId, iNmsgId);
                 var file = '1.ogg';
                 var pathForSaveFile = 'chats/'+iNchatId+'/'+iNmyUid+'/liveAudio/'+iNmsgId+'/' + file;
+                console.log('controller_msgLiveAudio_record_sendAudioToStorage pathForSaveFile',pathForSaveFile);
                 M_STORAGE.uploadBlob (
                     iNblob, {
                         'pathForSaveFile': pathForSaveFile,

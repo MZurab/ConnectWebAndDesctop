@@ -177,6 +177,7 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 		/*
 			@discr
 				for record audion
+				https://github.com/chris-rudmin/opus-recorder
 			@inputs
 				iNdata -> object
 					onSuccess 		-> function
@@ -194,8 +195,10 @@ define(['jquery', 'mediaStreamRecorder','WebAudioRecorder', 'Recorder' ],functio
 			        // encoderSampleRate: parseInt(encoderSampleRate.value,10),
 
 			        // leaveStreamOpen : true,
-			        encoderSampleRate : 16000,
-			        resampleQuality: 0,
+			        encoderSampleRate : 16000,//1 = mono, 2 = stereo. Defaults to 1. 
+			        // numberOfChannels : 1,//1
+			        originalSampleRateOverride : 16000,
+			        // resampleQuality: 10,
 			        encoderPath: "res/js/recorder/OggOpusRecorder/dist/encoderWorker.min.js", ///Users/zurab/Мои работы/ConnectWeb/ConnectWebAndDesctop/res/js/recorder/OggOpusRecorder/src/encoderWorker.js
 			      });
 

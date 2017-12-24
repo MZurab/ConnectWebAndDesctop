@@ -553,17 +553,15 @@ define(
               }
 
               //get pseudo user 
-              console.log('USER.userData_getByUid - pseudoUserid',pseudoUserid);
               USER.userData_getByUid(
                 pseudoUserid,
                 (errUserData,userData) => {
-                  console.log('USER.userData_getByUid - errUserData, userData',errUserData,userData);
                   // if this userId not founded in system
                   if(errUserData)return;
                   // get user data from db
                   var userBlock       = userData,
                       objForAddToMenu = {};
-
+                      
                   // get user id from db
                   objForAddToMenu['uid']    = userBlock.id;
                   objForAddToMenu['owner']  = userBlock.owner;
@@ -575,7 +573,7 @@ define(
                   if ( objForAddToMenu['owner'] == LOCALDB.db.val.systemUser ) delete objForAddToMenu['owner'];
 
                   // add menu
-                  VIEW.menuPseudoUser_addItem(objForAddToMenu );
+                  VIEW.menuPseudoUser_addItem (objForAddToMenu );
 
                   // get chats for pseudouserid   
                   getChatsByUserId(objForAddToMenu['uid']);
@@ -823,49 +821,33 @@ define(
 
       var user2       = M_CATEGORY.userForPrivateChat(iNchatId);
 
-      var usersRef    = firebase.database().ref( 'users/' + user2 );
-
-      console.log('safeUpdatePrivateChatBlockFromUserDb - user2', user2);
-      console.log('safeUpdatePrivateChatBlockFromUserDb - path', 'users/'+user2);
-      console.log('safeUpdatePrivateChatBlockFromUserDb - iNchatId,iNobject,iNchatType',iNchatId,iNobject,iNchatType);
-
-      function functWhenGet (usersData) {
+      function functWhenGet (errodUserData, usersData) {
           /*
             @inputs
               @required
 
           */
-          var objForCreate  = {};
-          var user2id       = usersData.id;
-          var user2Object   = usersData.data();
-
-          var chatId = iNchatId; // M_CATEGORY.view.getChatIdByUid(user2id);
-
-          var chatName    = user2Object.info.data.name;
-          var login       = user2Object.info.data.login;
-          var user2Phone  = user2Object.info.data.phone;
-          var user2Icon   = user2Object.info.data.icon;
-          var userType    = user2Object.info.data.type;
-          var userOnline  = user2Object.info.live.online;
-          var owner  = user2Object.owner||'@system';
-
-          console.log('safeUpdatePrivateChatBlockFromUserDb  functWhenGet - iNobject',iNobject);
-          var toUserId    = iNobject.toUserId;
+          var objForCreate  = {},
+              user2id       = usersData.id,
+              user2Object   = usersData, //usersData.data();
+              chatId        = iNchatId, // M_CATEGORY.view.getChatIdByUid(user2id);
+              owner         = user2Object.owner||'@system',
+              toUserId      = iNobject.toUserId;
 
           
           // create object for create chat
-          var objForCreateChat = {}; // objForCreate;
-              objForCreateChat['uuid']      = user2id,
-              objForCreateChat['chatId']    = chatId,
-              objForCreateChat['chatName']  = chatName,
-              objForCreateChat['userPhone'] = user2Phone,
-              objForCreateChat['icon']      = user2Icon,
-              objForCreateChat['login']     = login;
+          var objForCreateChat                = {}; // objForCreate;
+              objForCreateChat['uuid']        = user2id,
+              objForCreateChat['chatId']      = chatId,
+              objForCreateChat['chatName']    = user2Object.info.data.displayName;// chatName,   .name
+              objForCreateChat['userPhone']   = user2Object.info.data.phone;//user2Phone,
+              objForCreateChat['icon']        = user2Object.info.data.icon;//user2Icon,
+              objForCreateChat['login']       = user2Object.info.data.login;//login;
               // user type (business (2) or user(1) or app of system (3) )
-              objForCreateChat['userType']    = userType;
-              objForCreateChat['userOnline']  = userOnline;
+              objForCreateChat['userType']    = user2Object.info.data.type;//userType;
+              objForCreateChat['userOnline']  = user2Object.info.live.online;//userOnline;
               
-              objForCreateChat['owner']  = owner;
+              objForCreateChat['owner']       = owner;
               objForCreateChat['toUserId']    = toUserId;
 
           // add user options
@@ -884,13 +866,13 @@ define(
             // add user apps for filter
             objForCreateChat['appsForFilter'] = user2Object.info.options.apps.join(' ');
           }
-
+          // delete live when we first add
+          delete objForCreateChat.liveData;
 
           console.log('safeUpdatePrivateChatBlockFromUserDb objForCreateChat',objForCreateChat);
-          delete objForCreateChat.liveData;
           M_CATEGORY.safeUpdateChatBlock (objForCreateChat,iNchatType);
-          //getContatct 
-          activeContactChangeInChatBlock(user2Phone);
+          // get Contatct 
+          // activeContactChangeInChatBlock(user2Phone);
 
           // safe invoke once iNsuccessFunction just one
           if (typeof iNsuccessFunction == 'function') {
@@ -899,75 +881,77 @@ define(
           }
       }
 
-      M_DATABASE.getRealtimeDataFromFirestoreDb (
-            'users',
-            user2,
-            {
-              'functionOnOther' : () => {
+      USER.userData_getByUid (user2, functWhenGet);
 
-              },
+      // M_DATABASE.getRealtimeDataFromFirestoreDb (
+      //       'users',
+      //       user2,
+      //       {
+      //         'functionOnOther' : () => {
+      //       },
               
-              'functionOnChangeFromServer' : (dataFromDb) => {
-                functWhenGet (dataFromDb);
+      //         'functionOnChangeFromServer' : (dataFromDb) => {
+      //           functWhenGet (dataFromDb);
+      //         },
               
-              },
-              
-              'functionOnAdd' : (dataFromDb) => {
-                functWhenGet (dataFromDb);
-              }
-            }
-      );
+      //         'functionOnAdd' : (dataFromDb) => {
+      //           functWhenGet (dataFromDb);
+      //         }
+      //       }
+      // );
 
   }
 
-  function activeContactChangeInChatBlock (user2Phone){
-      var myUid       = firebase.auth().currentUser.uid;
-    // var contactsRef = firebase.database().ref('contacts/' + myUid + '/' + user2Phone);
+  // function activeContactChangeInChatBlock (iNphone){
+  //   /*
+  //     @discr
+  //     @inputs
+  //       @required
 
-      var functWhenGet = function function_name(argument) {
-        var contactBlock    = contactData.val();
-          if(contactBlock != null && typeof contactBlock == 'object') {
-            var chatName        = contactBlock.name;
-            var userPhone       = contactBlock.phone;
-            var user2id         = contactBlock.uid;
-            if( typeof chatName != 'string' || chatName.length > 0) return false;
-          var chatId = M_CATEGORY.view.getChatIdByUid(user2id);
-            M_CATEGORY.safeUpdateChatBlock(
-                {
-                    'uuid'      : user2id,
-                    'chatId'    : chatId,
-                    'chatName'  : chatName,
-                    'userPhone' : userPhone
-                },1//CHANGE IT
-            );
-        }
-      }
-      // get contact by phone
-      M_DATABASE.getRealtimeDataFromFirestoreDb (
-            'users' , myUid  + '/contacts'  ,
-            {
-              'whereEquilTo' : {
-                'phone' : user2Phone
-              },
-              'functionOnOther' : () => {
+  //   */
+  //     var functWhenGetContact = function function_name(contactData) {
+  //         var contactBlock    = contactData.data();
+  //         console.log('contactBlock',contactBlock);
+  //         if( typeof contactBlock == 'object' ) {
+  //           var chatName        = contactBlock.name;
+  //           var userPhone       = contactBlock.phone;
+  //           var user2id         = contactBlock.uid;
+  //           if( typeof chatName != 'string' || chatName.length > 0) return false;
+            
+  //           var chatId = M_CATEGORY.view.getChatIdByUid(user2id);
+  //           M_CATEGORY.safeUpdateChatBlock(
+  //               {
+  //                   'uuid'      : user2id,
+  //                   'chatId'    : chatId,
+  //                   'chatName'  : chatName,
+  //                   'userPhone' : userPhone
+  //               },1//CHANGE IT
+  //           );
+  //       }
+  //     }
+  //     // get contact by phone
+  //     M_DATABASE.getRealtimeDataFromFirestoreDb (
+  //           'users' , USER.getMyId()  + '/contact'  ,
+  //           {
+  //             'whereEquilTo' : {
+  //               'phone' : iNphone
+  //             },
+  //             'functionOnOther' : () => {
 
-              },
+  //             },
               
-              'functionOnChangeFromServer' : (dataFromDb) => {
-                functWhenGet (dataFromDb);
+  //             'functionOnChangeFromServer' : (dataFromDb) => {
+  //               functWhenGetContact (dataFromDb);
               
-              },
+  //             },
               
-              'functionOnAdd' : (dataFromDb) => {
-                functWhenGet (dataFromDb);
-              }
-            }
-      );
+  //             'functionOnAdd' : (dataFromDb) => {
+  //               functWhenGetContact (dataFromDb);
+  //             }
+  //           }
+  //     );
 
-      // contactsRef.on('value', function(contactData) {
-          
-      // });
-  }
+  // }
 
 
 //@<CONTROLLER MY ONLINE STATUS

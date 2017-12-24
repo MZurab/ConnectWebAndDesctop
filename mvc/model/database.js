@@ -197,7 +197,7 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
 
     function isFirestoreLocalMutation (doc) {
         console.log('isFirestoreLocalMutation doc',doc);
-        return doc.et.hasLocalMutations;
+        return doc.nt.hasLocalMutations;
     }
     _['isFirestoreLocalMutation'] = isFirestoreLocalMutation;
 
@@ -420,7 +420,7 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
                 //
                 if( typeof iNdata['limitToLast'] == 'number' ) {
                     var limit = iNdata['limitToLast'];
-                    ref = ref.orderBy("time", "desc")
+                    ref = ref.orderBy("time", "asc")
                     ref = ref.limit( limit );
                 }
                 //
@@ -510,7 +510,7 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
         //@ORDER>
 
         //@<WHERE
-            console.log( 'whereEquilTo', typeof iNdata['whereEquilTo'] , Array.isArray( iNdata['whereEquilTo'] ) );
+            console.log ( 'whereEquilTo', typeof iNdata['whereEquilTo'] , Array.isArray( iNdata['whereEquilTo'] ) );
             if( typeof iNdata['whereEquilTo'] == 'object' && Array.isArray(iNdata['whereEquilTo']) ) {   // ==
                     where = iNdata['whereEquilTo'];
                     console.log('whereEquilTo', where);
@@ -616,7 +616,13 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
         ref.onSnapshot( 
         (snapshot) => {
             if(type == 'collection') {
-                    if ( snapshot.docChanges.length > 0 )
+                    if ( snapshot.docChanges.length > 0 ) {
+
+                        // reverse order array 
+                        if ( iNdata['limitToLast'] ) {
+                            snapshot.docChanges = snapshot.docChanges.reverse();
+                        }
+                        
                         snapshot.docChanges.forEach( function (change) {
                             if (change.type === "added") {
                                 if(typeof iNdata['functionOnAdd'] == 'function')
@@ -642,7 +648,7 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
                                     iNdata['functionOnDelete'](change.doc);
                             }
                         });
-                    else {
+                    } else {
                         if(typeof iNdata['functionOnOther'] == 'function')
                             iNdata['functionOnOther'](snapshot);
                     } 

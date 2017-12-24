@@ -32,6 +32,8 @@ define(
 
   	//@< GET USER FROM DB - get user from db
   		const userData_const_keyForLocalStorage = 'connectUserData';
+  		const userData_const_funcOnChange 		= [];
+  		const userData_const_funcOnChangePhone	= [];
 
 
   		function userData_getByUid (iNuid, iNfuntion) {
@@ -55,6 +57,43 @@ define(
 
   		} _.userData_getByUid = userData_getByUid;
 
+  		function userData_setOnChange (iNfuntion) {
+  			/*
+  				@discr
+  					set function on change user data from user db
+  				@inputs
+  					@required
+  						iNfuntion -> function
+  			*/
+  			userData_const_funcOnChange.push(iNfuntion);
+  		} _.userData_setOnChange = userData_setOnChange;
+
+  		function userData_setOnChangePhone (iNfuntion) {
+  			/*
+  				@discr
+  					set function on change user contact data from user db
+  				@inputs
+  					@required
+  						iNfuntion -> function
+  			*/
+  			
+  			userData_const_funcOnChangePhone.push(iNfuntion);
+  		} _.userData_setOnChangePhone = userData_setOnChangePhone;
+
+  		function userData_invokeOnChange (iNval1,iNval2,iNval3,iNval4,iNval5,iNval6,iNval7,iNval8) {
+  			for (var iKey in userData_const_funcOnChange ) {
+  				//invoke function
+  				userData_const_funcOnChange[iKey](iNval1,iNval2,iNval3,iNval4,iNval5,iNval6,iNval7,iNval8)
+  			}
+  		} 
+
+  		// function userData_invokeOnChangePhone (iNval1,iNval2,iNval3,iNval4,iNval5,iNval6,iNval7,iNval8) {
+  		// 	for (var iKey in userData_const_funcOnChangePhone ) {
+  		// 		//invoke function
+  		// 		userData_const_funcOnChangePhone[iKey](iNval1,iNval2,iNval3,iNval4,iNval5,iNval6,iNval7,iNval8)
+  		// 	}
+  		// } 
+
   		function userData_getByUidFromDb (iNuid, iNfuntion) {
   			/*
   				@discr
@@ -73,28 +112,118 @@ define(
                     objForAddToLocalStorage 		= userData.data();
                     // add user id
                     objForAddToLocalStorage['id'] 	= userData.id;
-                    // safe data
-                    userData_setToLocalStorageByUid (iNuid,objForAddToLocalStorage);
-                    iNfuntion(false, userData.data())
+
+
+                    // add displayName of user
+                    objForAddToLocalStorage.info.data.displayName 	= objForAddToLocalStorage.info.data.name;
+                    objForAddToLocalStorage.info.data.conctactName 	= null;
+
+					// save data to local storage
+                    userData_setToLocalStorageByUid ( uid, objForAddToLocalStorage );
+					// invoke result function
+                    iNfuntion(false, objForAddToLocalStorage)
+
+
+                    // get conctact by phone from conctact if we are usual user (type==1)
+                    var type 	= objForAddToLocalStorage.info.data.type,
+                    	phone 	= objForAddToLocalStorage.info.data.phone;
+
+                	// change contact data if this user is usual user
+                	if ( type == 1 ) {
+                		userData_getContactByPhone (
+	                    	uid,
+	                    	phone,
+	                    	(errConctact, conctactObject) => {
+	                    		if ( errConctact && typeof conctactObject['name'] != 'string') {
+	                    			//ERROR  conctact not found OR name of conctact does not exist
+	                    			return;
+	                    		}
+	                    		//SUCCESS contact found => save phone
+
+	                    		// get from localstorage
+	                    		var userObject = userData_getByUidFromLocalStorage (uid);
+	                    		// set display name
+	                    		userObject.info.data.displayName 	= conctactObject['name'];
+	                    		userObject.info.data.conctactName 	= conctactObject['name'];
+
+	                    		// save object to local storage
+	                    		userData_setToLocalStorageByUid ( uid , userObject );
+	                    		// invoke function when contact change
+                    			userData_invokeOnChange(userObject);
+	                    	}
+	                	);
+                	}             
                 },
                 'functionOnChange': (userData) => {
                     // if change user
                     objForAddToLocalStorage 		= userData.data();
                     // add user id
                     objForAddToLocalStorage['id'] 	= userData.id;
-                    // safe data
+                    // get from localstorage
+            		var userObject = userData_getByUidFromLocalStorage (uid);
+
+            		//add data from last local storage
+            		objForAddToLocalStorage.info.data.displayName 	= userObject.info.data.displayName;
+            		objForAddToLocalStorage.info.data.conctactName 	= userObject.info.data.conctactName;
+
+                    // save data
                     userData_setToLocalStorageByUid (iNuid, objForAddToLocalStorage);
-                    iNfuntion(false, userData.data())
+
+            		// invoke function when contact change
+        			userData_invokeOnChange(objForAddToLocalStorage);
+
+                    //invoke result function
+                    iNfuntion(false, objForAddToLocalStorage)
+
+                    
                 }
                 ,
                 'functionOnOther'           : () => { 
-                    // if not data
+                    //invoke result function
                     iNfuntion(true);
                 }
             };
-
+            //invoke
             M_DATABASE.getRealtimeDataFromFirestoreDb('users', uid , objectForGetFromDb);
+  		}
+
+  		function userData_getContactByPhone (iNuid,iNphone, iNfuntion) {
+  			/*
+  				@discr
+  					get active user pseudo or i
+  				@inputs
+  					@required
+  						iNuid -> string
+  						iNfuntion -> function
+  			*/
+  			var uid = iNuid, objForAddToLocalStorage = {}, phone = iNphone;
   			
+
+            var objectForGetFromDb = {
+            	'whereEquilTo' 				: [phone],
+                'functionOnAdd'             : (contactData) => {
+                    // if added contact data
+                    objForAddToLocalStorage 		= contactData.data();
+                    // add id to contact daa
+                    objForAddToLocalStorage['id'] 	= contactData.id;
+                    // invoke function
+                    iNfuntion ( false, objForAddToLocalStorage );
+                },
+                'functionOnChange': (contactData) => {
+                    // if added contact data
+                    objForAddToLocalStorage 		= contactData.data();
+                    // add id to contact daa
+                    objForAddToLocalStorage['id'] 	= contactData.id;
+                    // invoke function
+                    iNfuntion ( false, objForAddToLocalStorage );
+                },
+                'functionOnOther'           : () => { 
+                    // if not data
+                    iNfuntion (true);
+                }
+            };
+
+            M_DATABASE.getRealtimeDataFromFirestoreDb( 'users', uid + '/contact/' + phone , objectForGetFromDb );
   		}
 
   		function userData_getByUidFromLocalStorage (iNuid) {
