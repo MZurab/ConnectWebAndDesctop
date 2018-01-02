@@ -120,22 +120,22 @@ define(
 
 					// save data to local storage
                     userData_setToLocalStorageByUid ( uid, objForAddToLocalStorage );
-					// invoke result function
-                    iNfuntion(false, objForAddToLocalStorage)
 
 
                     // get conctact by phone from conctact if we are usual user (type==1)
                     var type 	= objForAddToLocalStorage.info.data.type,
                     	phone 	= objForAddToLocalStorage.info.data.phone;
 
+                	console.log('userData_getByUidFromDb - objForAddToLocalStorage',objForAddToLocalStorage);
                 	// change contact data if this user is usual user
                 	if ( type == 1 ) {
                 		userData_getContactByPhone (
-	                    	uid,
 	                    	phone,
 	                    	(errConctact, conctactObject) => {
-	                    		if ( errConctact && typeof conctactObject['name'] != 'string') {
+	                    		if ( errConctact || typeof conctactObject['name'] != 'string') {
 	                    			//ERROR  conctact not found OR name of conctact does not exist
+	                    			// invoke result function
+                					iNfuntion(false, objForAddToLocalStorage)  
 	                    			return;
 	                    		}
 	                    		//SUCCESS contact found => save phone
@@ -150,9 +150,14 @@ define(
 	                    		userData_setToLocalStorageByUid ( uid , userObject );
 	                    		// invoke function when contact change
                     			userData_invokeOnChange(userObject);
+                    			// invoke result function
+            					iNfuntion(false, userObject)  
 	                    	}
 	                	);
-                	}             
+	                	return;
+                	}          
+
+					 
                 },
                 'functionOnChange': (userData) => {
                     // if change user
@@ -187,21 +192,23 @@ define(
             M_DATABASE.getRealtimeDataFromFirestoreDb('users', uid , objectForGetFromDb);
   		}
 
-  		function userData_getContactByPhone (iNuid,iNphone, iNfuntion) {
+  		function userData_getContactByPhone (  iNphone, iNfuntion ) {
   			/*
   				@discr
   					get active user pseudo or i
   				@inputs
   					@required
-  						iNuid -> string
+  						iNphone -> string
   						iNfuntion -> function
   			*/
-  			var uid = iNuid, objForAddToLocalStorage = {}, phone = iNphone;
+  			var uid = getMyId(), objForAddToLocalStorage = {}, phone = iNphone;
   			
+            console.log('userData_getContactByPhone - uid, phone',uid, phone);
 
             var objectForGetFromDb = {
-            	'whereEquilTo' 				: [phone],
+            	'whereEquilTo' 				: [ { 'phone' : phone } ],
                 'functionOnAdd'             : (contactData) => {
+                	console.log('userData_getContactByPhone - contactData', contactData );
                     // if added contact data
                     objForAddToLocalStorage 		= contactData.data();
                     // add id to contact daa
@@ -209,7 +216,7 @@ define(
                     // invoke function
                     iNfuntion ( false, objForAddToLocalStorage );
                 },
-                'functionOnChange': (contactData) => {
+                'functionOnChange'			: (contactData) => {
                     // if added contact data
                     objForAddToLocalStorage 		= contactData.data();
                     // add id to contact daa
@@ -223,8 +230,9 @@ define(
                 }
             };
 
-            M_DATABASE.getRealtimeDataFromFirestoreDb( 'users', uid + '/contact/' + phone , objectForGetFromDb );
+            M_DATABASE.getRealtimeDataFromFirestoreDb( 'users', uid + '/contact' , objectForGetFromDb );
   		}
+  		window.userData_getContactByPhone = userData_getContactByPhone;
 
   		function userData_getByUidFromLocalStorage (iNuid) {
   			/*

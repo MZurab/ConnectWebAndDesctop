@@ -917,7 +917,7 @@ define(
   //           var userPhone       = contactBlock.phone;
   //           var user2id         = contactBlock.uid;
   //           if( typeof chatName != 'string' || chatName.length > 0) return false;
-            
+  //        
   //           var chatId = M_CATEGORY.view.getChatIdByUid(user2id);
   //           M_CATEGORY.safeUpdateChatBlock(
   //               {
@@ -933,24 +933,26 @@ define(
   //     M_DATABASE.getRealtimeDataFromFirestoreDb (
   //           'users' , USER.getMyId()  + '/contact'  ,
   //           {
-  //             'whereEquilTo' : {
-  //               'phone' : iNphone
-  //             },
+  //             'whereEquilTo' : [
+  //                 {
+  //                   'phone' : iNphone
+  //                 }
+  //              ],
   //             'functionOnOther' : () => {
-
+  //
   //             },
-              
+  //            
   //             'functionOnChangeFromServer' : (dataFromDb) => {
   //               functWhenGetContact (dataFromDb);
-              
+  //          
   //             },
-              
+  //          
   //             'functionOnAdd' : (dataFromDb) => {
   //               functWhenGetContact (dataFromDb);
   //             }
   //           }
   //     );
-
+  //
   // }
 
 

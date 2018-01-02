@@ -10,10 +10,9 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
 
     // set firebase realtime db framework 
     const Datebase      = FIREBASE.database;
-    const Datebase2     = FIREBASE.firestore;
+    const firestore     = FIREBASE.firestore;
     const fstore        = _;
           window.fstore = fstore;
-    window.db2 = Datebase2;
 
 
     function getBatchFirestoreDb (iNdb) {
@@ -31,7 +30,7 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
     _['runBatchFirestoreDb'] = runBatchFirestoreDb;
 
     function getFirestoreDb () {
-        return Datebase2();
+        return firestore();
     }
     _['getFirestoreDb'] = getFirestoreDb;
 
@@ -71,7 +70,7 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
 
             var baseKey = iNcollection + '/' + iNpath;
 
-            var docRef = Datebase2().doc(baseKey);
+            var docRef = firestore().doc(baseKey);
             console.log("updateFirestoreDb baseKey ", baseKey);
             console.log("updateFirestoreDb iNdata ", iNdata);
             // Update the timestamp field with the value from the server
@@ -109,7 +108,7 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
             if ( typeof iNdb != 'undefined')
                 docRef = iNdb.doc(baseKey);
             else
-                docRef = Datebase2().doc(baseKey);
+                docRef = firestore().doc(baseKey);
 
             console.log('safeUpdateFirestoreDb baseKey, iNdata',baseKey, iNdata);
             // Update the timestamp field with the value from the server
@@ -162,10 +161,10 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
             var lengthBaseKey = baseKey.split('/').length;
             console.log('addFirestoreDb baseKey,lengthBaseKey',baseKey,lengthBaseKey );
             if(lengthBaseKey  % 2 == 0) {
-                ref = Datebase2().doc(baseKey);
+                ref = firestore().doc(baseKey);
                 typeAdd = 'set';
             } else {
-                ref = Datebase2().collection(baseKey);
+                ref = firestore().collection(baseKey);
                 typeAdd = 'add';
             }
 
@@ -215,7 +214,7 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
       var path = iNcollection + '/' + iNpath;
 
       console.log('generateIdForFirestoreByFullPathToDb path', path);
-      var generateIdForRealtimeDbByFullPathToDb = Datebase2().collection(path).doc();
+      var generateIdForRealtimeDbByFullPathToDb = firestore().collection(path).doc();
       return generateIdForRealtimeDbByFullPathToDb.id;
     }
     _['generateIdForFirestoreByFullPathToDb'] = generateIdForFirestoreByFullPathToDb;
@@ -297,11 +296,11 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
 
             if(path.split('/').length % 2 == 0) {
                 // its document
-                    ref = Datebase2().doc(path);
+                    ref = firestore().doc(path);
                     type = 'document';
             } else {
                 // its collection
-                    ref = Datebase2().collection(path);
+                    ref = firestore().collection(path);
                     type = 'collection';
             }
                 
@@ -328,7 +327,7 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
         //@ORDER>
 
         //@<WHERE
-            console.log( 'whereEquilTo', typeof iNdata['whereEquilTo'] , Array.isArray( iNdata['whereEquilTo'] ) );
+            console.log ( 'whereEquilTo', typeof iNdata['whereEquilTo'] , Array.isArray( iNdata['whereEquilTo'] ) );
             if( typeof iNdata['whereEquilTo'] == 'object' && Array.isArray(iNdata['whereEquilTo']) ) {   // ==
                     where = iNdata['whereEquilTo'];
                     console.log('whereEquilTo', where);
@@ -345,6 +344,7 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
                     }
                     console.log('whereEquilTo where',iNdata['where']);
             }
+
             if( typeof iNdata['whereMore'] == 'object' ) {      // ==
                     where = iNdata['whereMore'];
                     for(var iKey in where) {
@@ -436,9 +436,9 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
             if(type == 'collection') {
                     // if collection
                     if ( !doc.empty ) {
-                        if(typeof iNdata['functionOnGetData'] == 'function') iNdata['functionOnGet'](doc,type);
+                        if(typeof iNdata['functionOnGetData'] == 'function')    iNdata['functionOnGet'](doc,type);
                     } else {
-                        if(typeof iNdata['functionOnGetEmpty'] == 'function') iNdata['functionOnGetEmpty'](type);
+                        if(typeof iNdata['functionOnGetEmpty'] == 'function')   iNdata['functionOnGetEmpty'](type);
                     }
             } else {
                 if (doc.exists) {
@@ -479,11 +479,11 @@ define(['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
 
             if(path.split('/').length % 2 == 0) {
                 // its document
-                    ref = Datebase2().doc(path);
+                    ref = firestore().doc(path);
                     type = 'document';
             } else {
                 // its collection
-                    ref = Datebase2().collection(path);
+                    ref = firestore().collection(path);
                     type = 'collection';
             }
                 

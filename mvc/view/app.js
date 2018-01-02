@@ -1680,6 +1680,37 @@ define(['jquery','template7','v_view', 'selector'],function($,Template7,V_VIEW, 
 	        $(SELECTOR.db.main.blocks.third.body.val).html('');
 		} _.clear = clear;
 
+
+
+
+
+
+//@< WORK WITH TEXT
+	function offTextSelectable (iNselector) {
+		var selector = iNselector||'*';
+		$(selector).css('-moz-user-select','-moz-none');
+		$(selector).css('-khtml-user-select','none');
+		$(selector).css('-webkit-user-select','none');
+		$(selector).css('-ms-user-user-select','none');
+		$(selector).css('user-select','none');
+	}
+	_.offTextSelectable = offTextSelectable;
+
+	function onTextSelectable (iNselector) {
+		var selector = iNselector||'*';
+		$(selector).css('-moz-user-select','');
+		$(selector).css('-khtml-user-select','');
+		$(selector).css('-webkit-user-select','');
+		$(selector).css('-ms-user-user-select','');
+		$(selector).css('user-select','');
+	}
+	_.onTextSelectable = onTextSelectable;
+//@> WORK WITH TEXT
+
+
+
+
+
 		return _;
 
 });

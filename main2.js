@@ -8381,6 +8381,37 @@ define('v_app',['jquery','template7','v_view', 'selector'],function($,Template7,
 	        $(SELECTOR.db.main.blocks.third.body.val).html('');
 		} _.clear = clear;
 
+
+
+
+
+
+//@< WORK WITH TEXT
+	function offTextSelectable (iNselector) {
+		var selector = iNselector||'*';
+		$(selector).css('-moz-user-select','-moz-none');
+		$(selector).css('-khtml-user-select','none');
+		$(selector).css('-webkit-user-select','none');
+		$(selector).css('-ms-user-user-select','none');
+		$(selector).css('user-select','none');
+	}
+	_.offTextSelectable = offTextSelectable;
+
+	function onTextSelectable (iNselector) {
+		var selector = iNselector||'*';
+		$(selector).css('-moz-user-select','');
+		$(selector).css('-khtml-user-select','');
+		$(selector).css('-webkit-user-select','');
+		$(selector).css('-ms-user-user-select','');
+		$(selector).css('user-select','');
+	}
+	_.onTextSelectable = onTextSelectable;
+//@> WORK WITH TEXT
+
+
+
+
+
 		return _;
 
 });
@@ -9819,7 +9850,7 @@ define('m_database',['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
         //@ORDER>
 
         //@<WHERE
-            console.log( 'whereEquilTo', typeof iNdata['whereEquilTo'] , Array.isArray( iNdata['whereEquilTo'] ) );
+            console.log ( 'whereEquilTo', typeof iNdata['whereEquilTo'] , Array.isArray( iNdata['whereEquilTo'] ) );
             if( typeof iNdata['whereEquilTo'] == 'object' && Array.isArray(iNdata['whereEquilTo']) ) {   // ==
                     where = iNdata['whereEquilTo'];
                     console.log('whereEquilTo', where);
@@ -9836,6 +9867,7 @@ define('m_database',['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
                     }
                     console.log('whereEquilTo where',iNdata['where']);
             }
+
             if( typeof iNdata['whereMore'] == 'object' ) {      // ==
                     where = iNdata['whereMore'];
                     for(var iKey in where) {
@@ -9927,9 +9959,9 @@ define('m_database',['m_firebase', 'algolia'],function( FIREBASE, ALGOLIA ) {
             if(type == 'collection') {
                     // if collection
                     if ( !doc.empty ) {
-                        if(typeof iNdata['functionOnGetData'] == 'function') iNdata['functionOnGet'](doc,type);
+                        if(typeof iNdata['functionOnGetData'] == 'function')    iNdata['functionOnGet'](doc,type);
                     } else {
-                        if(typeof iNdata['functionOnGetEmpty'] == 'function') iNdata['functionOnGetEmpty'](type);
+                        if(typeof iNdata['functionOnGetEmpty'] == 'function')   iNdata['functionOnGetEmpty'](type);
                     }
             } else {
                 if (doc.exists) {
@@ -10391,22 +10423,22 @@ define(
 
 					// save data to local storage
                     userData_setToLocalStorageByUid ( uid, objForAddToLocalStorage );
-					// invoke result function
-                    iNfuntion(false, objForAddToLocalStorage)
 
 
                     // get conctact by phone from conctact if we are usual user (type==1)
                     var type 	= objForAddToLocalStorage.info.data.type,
                     	phone 	= objForAddToLocalStorage.info.data.phone;
 
+                	console.log('userData_getByUidFromDb - objForAddToLocalStorage',objForAddToLocalStorage);
                 	// change contact data if this user is usual user
                 	if ( type == 1 ) {
                 		userData_getContactByPhone (
-	                    	uid,
 	                    	phone,
 	                    	(errConctact, conctactObject) => {
-	                    		if ( errConctact && typeof conctactObject['name'] != 'string') {
+	                    		if ( errConctact || typeof conctactObject['name'] != 'string') {
 	                    			//ERROR  conctact not found OR name of conctact does not exist
+	                    			// invoke result function
+                					iNfuntion(false, objForAddToLocalStorage)  
 	                    			return;
 	                    		}
 	                    		//SUCCESS contact found => save phone
@@ -10421,9 +10453,14 @@ define(
 	                    		userData_setToLocalStorageByUid ( uid , userObject );
 	                    		// invoke function when contact change
                     			userData_invokeOnChange(userObject);
+                    			// invoke result function
+            					iNfuntion(false, userObject)  
 	                    	}
 	                	);
-                	}             
+	                	return;
+                	}          
+
+					 
                 },
                 'functionOnChange': (userData) => {
                     // if change user
@@ -10458,21 +10495,23 @@ define(
             M_DATABASE.getRealtimeDataFromFirestoreDb('users', uid , objectForGetFromDb);
   		}
 
-  		function userData_getContactByPhone (iNuid,iNphone, iNfuntion) {
+  		function userData_getContactByPhone (  iNphone, iNfuntion ) {
   			/*
   				@discr
   					get active user pseudo or i
   				@inputs
   					@required
-  						iNuid -> string
+  						iNphone -> string
   						iNfuntion -> function
   			*/
-  			var uid = iNuid, objForAddToLocalStorage = {}, phone = iNphone;
+  			var uid = getMyId(), objForAddToLocalStorage = {}, phone = iNphone;
   			
+            console.log('userData_getContactByPhone - uid, phone',uid, phone);
 
             var objectForGetFromDb = {
-            	'whereEquilTo' 				: [phone],
+            	'whereEquilTo' 				: [ { 'phone' : phone } ],
                 'functionOnAdd'             : (contactData) => {
+                	console.log('userData_getContactByPhone - contactData', contactData );
                     // if added contact data
                     objForAddToLocalStorage 		= contactData.data();
                     // add id to contact daa
@@ -10480,7 +10519,7 @@ define(
                     // invoke function
                     iNfuntion ( false, objForAddToLocalStorage );
                 },
-                'functionOnChange': (contactData) => {
+                'functionOnChange'			: (contactData) => {
                     // if added contact data
                     objForAddToLocalStorage 		= contactData.data();
                     // add id to contact daa
@@ -10494,8 +10533,9 @@ define(
                 }
             };
 
-            M_DATABASE.getRealtimeDataFromFirestoreDb( 'users', uid + '/contact/' + phone , objectForGetFromDb );
+            M_DATABASE.getRealtimeDataFromFirestoreDb( 'users', uid + '/contact' , objectForGetFromDb );
   		}
+  		window.userData_getContactByPhone = userData_getContactByPhone;
 
   		function userData_getByUidFromLocalStorage (iNuid) {
   			/*
@@ -13984,6 +14024,7 @@ define(
 	const CONST = {};
 	const templates = {};
 
+	window.M_PROGRESSBAR = M_PROGRESSBAR;
   $.fn.extend({
 		/* EXTENCION */
 			'specialClick': function (iNdata) {
@@ -21789,8 +21830,8 @@ _['printObject'] = printObject;
 return _;
 });
 define(
-    'm_message',['jquery', 'v_message', 'm_moment', 'm_user', 'm_app', 'm_category', 'm_storage', 'm_record', 'm_progressbar', 'm_database', 'log', 'url'],
-    function($, VIEW, MOMENT, USER, M_APP, M_CATEGORY, M_STORAGE, M_RECORD, M_PROGRESSBAR, M_DATABASE, LOG, M_URL) {
+    'm_message',['jquery', 'v_message', 'm_moment', 'm_user', 'm_app', 'm_category', 'm_storage', 'm_record', /*'m_progressbar',*/ 'm_database', 'log', 'url'],
+    function($, VIEW, MOMENT, USER, M_APP, M_CATEGORY, M_STORAGE, M_RECORD, /*'M_PROGRESSBAR',*/ M_DATABASE, LOG, M_URL) {
         const _ = {
             'view': VIEW
         };
@@ -22504,46 +22545,51 @@ define(
 
         function msg_addToDb (iNdata, iNchatId, iNmsgId) {
             /*
-        @discr
-            send msg to firebase realtime db
-        @inputs
-            @required
-                1 - iNdata
+                @discr
+                    send msg to firebase realtime db
+                @inputs
                     @required
-                        content
-                    @optional
-                        src
-                        block
-                        fire
-                        group
-                        type
+                        1 - iNdata
+                            @required
+                                content
+                            @optional
+                                src
+                                block
+                                fire
+                                group
+                                type
 
-                        msgId
-                2 - iNchatId
-        @return
-            result form Firebse update
+                                msgId
+                        2 - iNchatId
+                @return
+                    result form Firebse update
 
-      */
+            */
             //default message type
             iNdata.type = iNdata.type || 1;
 
 
-            // get my user id
-            let myUid = USER.getActiveUserId(); // USER.getMyId();//FIREBASE.auth().currentUser.uid;
+            // get active user id
+            let myUid = USER.getActiveUserId();
             // get right object for add to msg db
             let objForSentToDb = prepareObjectForSentToMsgBase(iNdata, myUid);
 
             let collection  = 'messages', pathToDb, msgId;
 
-                msgId       = iNmsgId || msg_generateMsgIdByChatId(iNchatId);
-                collection  = 'chats';
+            msgId       = iNmsgId || msg_generateMsgIdByChatId(iNchatId);
+            collection  = 'chats';
+            pathToDb    = iNchatId + '/messages/' + msgId;
+            console.log('msg_addToDb pathToDb'  ,   pathToDb );
+            console.log('msg_addToDb objForSentToDb'    ,   objForSentToDb );
 
-            pathToDb = iNchatId + '/messages/' + msgId;
-            console.log('msg_addToDb pathToDb',pathToDb);
-            console.log('msg_addToDb objForSentToDb',objForSentToDb);
-            M_DATABASE.addFirestoreDb ( collection, pathToDb, objForSentToDb );
-
-
+            // add user language to message from userDb
+            USER.userData_getByUid (
+                USER.getMyId(),
+                (errUserData,userData) => {
+                    objForSentToDb['lang']  = userData.lang||false;
+                    M_DATABASE.addFirestoreDb ( collection, pathToDb, objForSentToDb );
+                }
+            );
         }
         _['msg_addToDb'] = msg_addToDb;
 
@@ -22955,6 +23001,10 @@ define(
 
                     },
                     'onStart': () => {
+
+                        //off textSelectable 
+                        M_APP.view.offTextSelectable();
+
                         // when mouse up from btn for live recording
                         M_RECORD.video({
                             'onSuccess': (stream, recorderObject, mediationObjectForPassToVideoRecord) => {
@@ -22993,6 +23043,9 @@ define(
 
                     },
                     'onDelete': () => {
+                        //on textSelectable 
+                        M_APP.view.onTextSelectable();
+
                         // when mouse up from outside btn || from cancel btn 
 
                         // hide stream recorder view
@@ -23009,6 +23062,9 @@ define(
 
                     },
                     'onSend': () => {
+                        //on textSelectable 
+                        M_APP.view.onTextSelectable();
+
                         // when mouse up from inside btn for live recording
 
                         // is recording started
@@ -23190,14 +23246,20 @@ define(
                 'audio', {
                     // defaultState : false,
                     'onTimerTick': (iNperiods) => {
+
                         var hours = iNperiods[4],mins = iNperiods[5],sec = iNperiods[6];
                         var allSeconds = (hours*3600) + (mins*60) + sec;
                         msgLiveAudio_flashSending(allSeconds);
                         console.log('tick audioLiveMsg');
                     },
                     'onStart': () => {
+                        //off textSelectable 
+                        M_APP.view.offTextSelectable();
+
                         // when mouse up from btn for live recording
-                        // if ( permissionForLiveAudioRecord == false ) {
+
+
+
                         M_RECORD.liveAudioRecord({
                             'onSuccess': (stream, recorderObject) => {
                                 if (typeof mediationObjectLiveAudioStreamObject != 'undefined') {
@@ -23232,6 +23294,10 @@ define(
 
                     },
                     'onDelete': () => {
+
+                        //on textSelectable 
+                        M_APP.view.onTextSelectable();
+
                         // when mouse up from outside btn || from cancel btn 
                         console.log('onDelete permissionForLiveAudioRecord', permissionForLiveAudioRecord);
                         if (permissionForLiveAudioRecord == true) {
@@ -23244,6 +23310,9 @@ define(
 
                     },
                     'onSend': () => {
+                        //on textSelectable 
+                        M_APP.view.onTextSelectable();
+
                         // when mouse up from inside btn for live recording
                         if (permissionForLiveAudioRecord == true) {
                             mediationObjectLiveAudioRecorderObject.save();
@@ -25033,7 +25102,7 @@ define(
   //           var userPhone       = contactBlock.phone;
   //           var user2id         = contactBlock.uid;
   //           if( typeof chatName != 'string' || chatName.length > 0) return false;
-            
+  //        
   //           var chatId = M_CATEGORY.view.getChatIdByUid(user2id);
   //           M_CATEGORY.safeUpdateChatBlock(
   //               {
@@ -25049,24 +25118,26 @@ define(
   //     M_DATABASE.getRealtimeDataFromFirestoreDb (
   //           'users' , USER.getMyId()  + '/contact'  ,
   //           {
-  //             'whereEquilTo' : {
-  //               'phone' : iNphone
-  //             },
+  //             'whereEquilTo' : [
+  //                 {
+  //                   'phone' : iNphone
+  //                 }
+  //              ],
   //             'functionOnOther' : () => {
-
+  //
   //             },
-              
+  //            
   //             'functionOnChangeFromServer' : (dataFromDb) => {
   //               functWhenGetContact (dataFromDb);
-              
+  //          
   //             },
-              
+  //          
   //             'functionOnAdd' : (dataFromDb) => {
   //               functWhenGetContact (dataFromDb);
   //             }
   //           }
   //     );
-
+  //
   // }
 
 
@@ -26770,7 +26841,7 @@ define('m_synchronize',['jquery','m_user','m_app','m_firebase'],function( $, USE
 });
 // monitor js crash service - https://sentry.io/
 
-require.config({
+require2.config({
         // baseUrl: 'https://ramman.net/files/', //',
         waitSeconds: 59,
 
@@ -26989,7 +27060,7 @@ require.config({
     });
 
 
-require(
+require2 (
     ['jquery','dictionary','m_engine','m_routing','m_app','m_synchronize','m_user', 'm_push'], 
     function( $, DICTIONARY, ENGINE, ROUTING, M_APP, SYNCHRONIZE, USER , PUSH) {
 

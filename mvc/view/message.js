@@ -5,6 +5,7 @@ define(
 	const CONST = {};
 	const templates = {};
 
+	window.M_PROGRESSBAR = M_PROGRESSBAR;
   $.fn.extend({
 		/* EXTENCION */
 			'specialClick': function (iNdata) {

@@ -1358,7 +1358,7 @@ input,textarea {outline:none;}
 										    right: 3.50rem;
 										    color: #26C281;
 										    font-size: 1rem;
-										    max-width: 500px;
+										    min-width: 500px;
 										    background: #f2f2f2;
 										    display: table;
 										    font-weight: 900;
@@ -1472,7 +1472,7 @@ input,textarea {outline:none;}
 											    left: 3.50rem;
 											    color: #26C281;
 											    font-size: 1rem;
-											    max-width: 500px;
+											    min-width: 500px;
 											    background: #f2f2f2;
 											    display: table;
 											    font-weight: 900;
@@ -1560,29 +1560,49 @@ input,textarea {outline:none;}
 	    						display: none;
 							}
 								.timerInMsgSenderBlock > div { /*< gifs in timer live recording */
-									display: inline;
+								    display: inline-block;
+								    width: 2.5rem;
+								    height: 2.5rem;
+								    position: relative;
 								}
-								.timerInMsgSenderBlock > div:before { /*< gifs in timer live recording */
-									display: inline;
+								.timerInMsgSenderBlock > div:before {
+								    display: inline;
 								    content: "";
 								    float: left;
 								    background-size: 100%;
 								    background-repeat: no-repeat;
 								    margin-right: 0.25rem;
-								    width: 1.75rem;
-								    height: 2rem;
+								    width: 1.55rem;
+								    height: 1.8rem;
+								    position: absolute;
+								    z-index: 1;
 								}
 								.audioTimerInMsgSenderBlock:before {
-								    background-image: url(http://cdn.ramman.net/web/res/images/gif/messages/live/audioRecording.gif);
+							        background-image: url(http://cdn.ramman.net/web/res/images/gif/messages/live/audioRecording.gif);
 								    background-position-y: -0.07rem;
+								    background-position-x: 0.158rem;
+								    position: absolute;
+    								z-index: 1;
 								}
 								.videoTimerInMsgSenderBlock:before {
 								    background-image: url(http://cdn.ramman.net/web/res/images/gif/messages/live/videoRecording.gif);
-								    background-position-y: -0.07rem;
+							        background-position-y: -0.07rem;
+    								background-position-x: 0.1rem;
+								    position: absolute;
+    								z-index: 1;
 								}
 								.timerInMsgSenderBlock span {
-								    margin-top: 0.1rem;
-								    display: inline-block;
+						            display: inline-block;
+								    position: absolute;
+								    top: 0.05rem;
+								    left: 1.25rem;
+								}
+								/* progress bar */
+								.timerInMsgSenderBlock > div > svg {
+							        position: absolute;
+								    top: -0.5rem;
+								    right: 0.35rem;
+								    z-index: 0;
 								}
 						/*> timer msg block */
 

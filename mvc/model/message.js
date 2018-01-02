@@ -1,6 +1,6 @@
 define(
-    ['jquery', 'v_message', 'm_moment', 'm_user', 'm_app', 'm_category', 'm_storage', 'm_record', 'm_progressbar', 'm_database', 'log', 'url'],
-    function($, VIEW, MOMENT, USER, M_APP, M_CATEGORY, M_STORAGE, M_RECORD, M_PROGRESSBAR, M_DATABASE, LOG, M_URL) {
+    ['jquery', 'v_message', 'm_moment', 'm_user', 'm_app', 'm_category', 'm_storage', 'm_record', /*'m_progressbar',*/ 'm_database', 'log', 'url'],
+    function($, VIEW, MOMENT, USER, M_APP, M_CATEGORY, M_STORAGE, M_RECORD, /*'M_PROGRESSBAR',*/ M_DATABASE, LOG, M_URL) {
         const _ = {
             'view': VIEW
         };
@@ -714,46 +714,51 @@ define(
 
         function msg_addToDb (iNdata, iNchatId, iNmsgId) {
             /*
-        @discr
-            send msg to firebase realtime db
-        @inputs
-            @required
-                1 - iNdata
+                @discr
+                    send msg to firebase realtime db
+                @inputs
                     @required
-                        content
-                    @optional
-                        src
-                        block
-                        fire
-                        group
-                        type
+                        1 - iNdata
+                            @required
+                                content
+                            @optional
+                                src
+                                block
+                                fire
+                                group
+                                type
 
-                        msgId
-                2 - iNchatId
-        @return
-            result form Firebse update
+                                msgId
+                        2 - iNchatId
+                @return
+                    result form Firebse update
 
-      */
+            */
             //default message type
             iNdata.type = iNdata.type || 1;
 
 
-            // get my user id
-            let myUid = USER.getActiveUserId(); // USER.getMyId();//FIREBASE.auth().currentUser.uid;
+            // get active user id
+            let myUid = USER.getActiveUserId();
             // get right object for add to msg db
             let objForSentToDb = prepareObjectForSentToMsgBase(iNdata, myUid);
 
             let collection  = 'messages', pathToDb, msgId;
 
-                msgId       = iNmsgId || msg_generateMsgIdByChatId(iNchatId);
-                collection  = 'chats';
+            msgId       = iNmsgId || msg_generateMsgIdByChatId(iNchatId);
+            collection  = 'chats';
+            pathToDb    = iNchatId + '/messages/' + msgId;
+            console.log('msg_addToDb pathToDb'  ,   pathToDb );
+            console.log('msg_addToDb objForSentToDb'    ,   objForSentToDb );
 
-            pathToDb = iNchatId + '/messages/' + msgId;
-            console.log('msg_addToDb pathToDb',pathToDb);
-            console.log('msg_addToDb objForSentToDb',objForSentToDb);
-            M_DATABASE.addFirestoreDb ( collection, pathToDb, objForSentToDb );
-
-
+            // add user language to message from userDb
+            USER.userData_getByUid (
+                USER.getMyId(),
+                (errUserData,userData) => {
+                    objForSentToDb['lang']  = userData.lang||false;
+                    M_DATABASE.addFirestoreDb ( collection, pathToDb, objForSentToDb );
+                }
+            );
         }
         _['msg_addToDb'] = msg_addToDb;
 
@@ -1165,6 +1170,10 @@ define(
 
                     },
                     'onStart': () => {
+
+                        //off textSelectable 
+                        M_APP.view.offTextSelectable();
+
                         // when mouse up from btn for live recording
                         M_RECORD.video({
                             'onSuccess': (stream, recorderObject, mediationObjectForPassToVideoRecord) => {
@@ -1203,6 +1212,9 @@ define(
 
                     },
                     'onDelete': () => {
+                        //on textSelectable 
+                        M_APP.view.onTextSelectable();
+
                         // when mouse up from outside btn || from cancel btn 
 
                         // hide stream recorder view
@@ -1219,6 +1231,9 @@ define(
 
                     },
                     'onSend': () => {
+                        //on textSelectable 
+                        M_APP.view.onTextSelectable();
+
                         // when mouse up from inside btn for live recording
 
                         // is recording started
@@ -1400,14 +1415,20 @@ define(
                 'audio', {
                     // defaultState : false,
                     'onTimerTick': (iNperiods) => {
+
                         var hours = iNperiods[4],mins = iNperiods[5],sec = iNperiods[6];
                         var allSeconds = (hours*3600) + (mins*60) + sec;
                         msgLiveAudio_flashSending(allSeconds);
                         console.log('tick audioLiveMsg');
                     },
                     'onStart': () => {
+                        //off textSelectable 
+                        M_APP.view.offTextSelectable();
+
                         // when mouse up from btn for live recording
-                        // if ( permissionForLiveAudioRecord == false ) {
+
+
+
                         M_RECORD.liveAudioRecord({
                             'onSuccess': (stream, recorderObject) => {
                                 if (typeof mediationObjectLiveAudioStreamObject != 'undefined') {
@@ -1442,6 +1463,10 @@ define(
 
                     },
                     'onDelete': () => {
+
+                        //on textSelectable 
+                        M_APP.view.onTextSelectable();
+
                         // when mouse up from outside btn || from cancel btn 
                         console.log('onDelete permissionForLiveAudioRecord', permissionForLiveAudioRecord);
                         if (permissionForLiveAudioRecord == true) {
@@ -1454,6 +1479,9 @@ define(
 
                     },
                     'onSend': () => {
+                        //on textSelectable 
+                        M_APP.view.onTextSelectable();
+
                         // when mouse up from inside btn for live recording
                         if (permissionForLiveAudioRecord == true) {
                             mediationObjectLiveAudioRecorderObject.save();
